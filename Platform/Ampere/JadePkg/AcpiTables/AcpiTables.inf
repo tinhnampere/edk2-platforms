@@ -23,6 +23,7 @@
   Sdei.asl
   Einj.asl
   Hest.asl
+  Bert.asl
 
 [Packages]
   ArmPkg/ArmPkg.dec
