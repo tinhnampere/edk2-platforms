@@ -20,6 +20,7 @@
   Gtdt.aslc
   Fadt.aslc
   Spcr.aslc
+  Sdei.asl
 
 [Packages]
   ArmPkg/ArmPkg.dec
