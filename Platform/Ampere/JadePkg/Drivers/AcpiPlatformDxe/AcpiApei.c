@@ -7,6 +7,8 @@
 **/
 
 #include "AcpiApei.h"
+#include <Library/NVParamLib.h>
+#include <NVParamDef.h>
 
 #ifdef DEBUG
 #define DBG(arg...)  DEBUG((DEBUG_VERBOSE, ## arg))
@@ -63,6 +65,25 @@ AcpiApeiUninstallTable (UINT32 Signature)
 }
 
 /*
+ * Checks Status of NV_SI_RAS_SDEI_ENABLED
+ * Returns 1 if enabled and 0 if disabled or error occurred
+ */
+UINT32
+IsSdeiEnabled (VOID)
+{
+  EFI_STATUS                Status;
+  UINT32                    Value;
+
+  Status = NVParamGet (
+             NV_SI_RAS_SDEI_ENABLED,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &Value
+             );
+
+  return (EFI_ERROR (Status)) ? 0 : Value;
+}
+
+/*
  * Update APEI
  *
  */
@@ -85,6 +106,10 @@ AcpiApeiUpdate (VOID)
       AcpiApeiUninstallTable (EFI_ACPI_6_3_HARDWARE_ERROR_SOURCE_TABLE_SIGNATURE);
       AcpiApeiUninstallTable (EFI_ACPI_6_3_SOFTWARE_DELEGATED_EXCEPTIONS_INTERFACE_TABLE_SIGNATURE);
       AcpiApeiUninstallTable (EFI_ACPI_6_3_ERROR_INJECTION_TABLE_SIGNATURE);
+  }
+
+  if (IsSdeiEnabled () == 0) {
+      AcpiApeiUninstallTable (EFI_ACPI_6_3_SOFTWARE_DELEGATED_EXCEPTIONS_INTERFACE_TABLE_SIGNATURE);
   }
 
   return EFI_SUCCESS;
