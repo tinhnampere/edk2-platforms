@@ -1,0 +1,31 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x0001001B
+  PACKAGE_NAME                   = Ac01Pkg
+  PACKAGE_GUID                   = 481F7D0D-7525-4B76-AF12-58E7B82C46C2
+  PACKAGE_VERSION                = 0.1
+
+[Includes]
+  Include
+
+[LibraryClasses]
+  ##  @libraryclass  Defines a set of methods to retrieve CPU info.
+  AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/AmpereCpuLib.h
+
+  ##  @libraryclass  Defines a set of methods to get/set NVParam.
+  NVParamLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/NVParamLib.h
+
+  ##  @libraryclass  Defines a set of methods to retrieve platform info.
+  PlatformInfoLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PlatformInfo.h
+
+  ##  @libraryclass  Defines a set of methods to communicate with SMPro.
+  SMProLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/SMProLib.h
+
+[Guids]

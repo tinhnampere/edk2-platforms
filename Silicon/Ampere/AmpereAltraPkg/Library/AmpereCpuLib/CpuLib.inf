@@ -1,0 +1,46 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = CpuLib
+  FILE_GUID                      = 4ACE898C-4DDC-4EF7-BB6C-91549BDF5B9C
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = CpuLib
+
+[Sources]
+  CpuLib.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  BaseLib
+  HobLib
+  IoLib
+  NVParamLib
+
+[FixedPcd]
+  gArmPlatformTokenSpaceGuid.PcdCoreCount
+  gArmPlatformTokenSpaceGuid.PcdClusterCount
+
+  gAmpereTokenSpaceGuid.PcdTurboDefaultFreq
+  gAmpereTokenSpaceGuid.PcdSmproDb
+  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
+  gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0
+  gAmpereTokenSpaceGuid.PcdSmproI2cBmcBusAddr
+  gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex
+
+[Depex]
+  TRUE
