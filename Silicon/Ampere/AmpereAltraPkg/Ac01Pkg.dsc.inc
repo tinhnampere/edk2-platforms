@@ -14,6 +14,7 @@
 
 [BuildOptions]
   GCC:RELEASE_*_*_CC_FLAGS  = -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -DUEFI_UUID=$(UEFI_UUID)
 
 [LibraryClasses.common]
 !if $(TARGET) == RELEASE
@@ -196,6 +197,7 @@
   PeiResourcePublicationLib|MdePkg/Library/PeiResourcePublicationLib/PeiResourcePublicationLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   PeiServicesTablePointerLib|ArmPkg/Library/PeiServicesTablePointerLib/PeiServicesTablePointerLib.inf
+  MmCommunicationPeiLib|Silicon/Ampere/AmpereAltraPkg/Library/MmCommunicationPeiLib/MmCommunicationPeiLib.inf
 
 [LibraryClasses.common.SEC, LibraryClasses.common.PEIM]
   MemoryInitPeiLib|Silicon/Ampere/AmpereAltraPkg/Library/MemoryInitPeiLib/MemoryInitPeiLib.inf
@@ -498,6 +500,8 @@
   ArmPlatformPkg/PlatformPei/PlatformPeim.inf
   Silicon/Ampere/Drivers/ATFHobPei/ATFHobPeim.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/MemoryInitPeim/MemoryInitPeim.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationPei/MmCommunicationPei.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/FlashPei/FlashPei.inf
   ArmPkg/Drivers/CpuPei/CpuPei.inf
   UefiCpuPkg/CpuIoPei/CpuIoPei.inf
   MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
@@ -545,13 +549,14 @@
   EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
   EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
   EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
 
   #
   # Environment Variables Protocol
   #
+  Silicon/Ampere/AmpereAltraPkg/Drivers/FlashFvbDxe/FlashFvbDxe.inf
+  MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.inf
   MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf {
-    <PcdsFixedAtBuild>
-      gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvModeEnable|TRUE
     <LibraryClasses>
       AuthVariableLib|MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
       TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf

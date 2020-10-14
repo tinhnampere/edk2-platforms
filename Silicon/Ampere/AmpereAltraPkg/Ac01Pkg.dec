@@ -34,4 +34,9 @@
   ##  @libraryclass  Defines a set of methods to get/set GPIO.
   DwapbGpioLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/DwapbGpioLib.h
 
+  ##  @libraryclass  Defines a set of methods to communicate with secure parition over MM interface.
+  MmCommunicationPeiLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/MmCommunicationPeiLib.h
+
 [Guids]
+  ## SPI NOR Proxy MM GUID
+  gSpiNorMmGuid                = { 0xC8D76438, 0x4D3C, 0x4BEA, { 0xBF, 0x86, 0x92, 0x6B, 0x83, 0x07, 0xA2, 0x39 } }
