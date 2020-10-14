@@ -1,0 +1,35 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = I2CLib
+  FILE_GUID                      = 222609E2-C181-11E6-A4A6-CEC0C932CE01
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = I2CLib
+
+[Sources]
+  I2CLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  IoLib
+  DebugLib
+  BaseLib
+  BaseMemoryLib
+  TimerLib
+  HobLib
+
+[Guids]
+  gEfiEventVirtualAddressChangeGuid

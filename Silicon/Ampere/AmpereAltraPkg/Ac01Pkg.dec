@@ -28,4 +28,10 @@
   ##  @libraryclass  Defines a set of methods to communicate with SMPro.
   SMProLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/SMProLib.h
 
+  ##  @libraryclass  Defines a set of methods to read/write to I2C devices.
+  I2CLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/I2CLib.h
+
+  ##  @libraryclass  Defines a set of methods to get/set GPIO.
+  DwapbGpioLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/DwapbGpioLib.h
+
 [Guids]
