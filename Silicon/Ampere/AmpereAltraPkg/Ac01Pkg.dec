@@ -40,6 +40,9 @@
   ##  @libraryclass  Provides functions to retrieve CPU info.
   CpuCommonLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/CpuCommonLib.h
 
+  ##  @libraryclass  Defines a set of methods to initialize PHY
+  PHYLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PciePhyLib.h
+
 [Guids]
   ## SPI NOR Proxy MM GUID
   gSpiNorMmGuid                = { 0xC8D76438, 0x4D3C, 0x4BEA, { 0xBF, 0x86, 0x92, 0x6B, 0x83, 0x07, 0xA2, 0x39 } }
