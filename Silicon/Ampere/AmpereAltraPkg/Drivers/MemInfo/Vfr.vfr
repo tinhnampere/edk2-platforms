@@ -1,0 +1,56 @@
+ /**
+ *
+ * Copyright (c) 2020, Ampere Computing LLC
+ *
+ *  This program and the accompanying materials
+ *  are licensed and made available under the terms and conditions of the BSD License
+ *  which accompanies this distribution.  The full text of the license may be found at
+ *  http://opensource.org/licenses/bsd-license.php
+ *
+ *  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+ *
+ **/
+
+#include <Guid/PlatformManagerHii.h>
+#include "NVDataStruc.h"
+
+formset 
+  guid    = MEM_INFO_FORM_SET_GUID,
+  title   = STRING_TOKEN(STR_MEM_INFO_FORM),
+  help    = STRING_TOKEN(STR_MEM_INFO_FORM_HELP),
+  classguid = gPlatformManagerFormsetGuid,
+
+  //
+  // Define a variable Storage
+  //
+  varstore MEM_INFO_VARSTORE_DATA,
+    varid = MEM_INFO_VARSTORE_ID,
+    name  = MemInfoIfrNVData,
+    guid  = MEM_INFO_FORM_SET_GUID;
+
+  form
+    formid = MEM_INFO_FORM_ID,
+    title = STRING_TOKEN(STR_MEM_INFO_FORM);
+
+    subtitle text = STRING_TOKEN(STR_MEM_INFO_FORM);
+
+    label LABEL_UPDATE;
+    // dynamic content here
+    label LABEL_END;
+
+  endform;
+
+  form
+    formid = MEM_INFO_FORM_PERFORMANCE_ID,
+    title = STRING_TOKEN(STR_MEM_INFO_PERFORMANCE_FORM);
+
+    subtitle text = STRING_TOKEN(STR_MEM_INFO_PERFORMANCE_FORM);
+
+    label LABEL_UPDATE;
+    // dynamic content here
+    label LABEL_END;
+
+  endform;
+
+endformset;

@@ -1,0 +1,64 @@
+##
+#
+#  Copyright (c) 2020, Ampere Computing LLC
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution.  The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = MemInfoDxe
+  MODULE_UNI_FILE                = MemInfoDxe.uni
+  FILE_GUID                      = d9efcefe-189b-4599-bb07-04f0a8df5c2f
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = MemInfoScreenInitialize
+
+[Sources]
+  MemInfoScreen.c
+  MemInfoNvramLib.c
+  MemInfoScreenStrings.uni
+  Vfr.vfr
+  MemInfoScreen.h
+  NVDataStruc.h
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  HobLib
+  UefiLib
+  DevicePathLib
+  MemoryAllocationLib
+  BaseLib
+  HiiLib
+  AmpereCpuLib
+  NVParamLib
+
+[Guids]
+  gEfiIfrTianoGuid                              ## PRODUCES ## UNDEFINED
+  gPlatformManagerFormsetGuid
+
+[Protocols]
+  gEfiDevicePathProtocolGuid                    ## CONSUMES
+  gEfiHiiConfigRoutingProtocolGuid              ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
+
+[Depex]
+  TRUE
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  MemInfoDxeExtra.uni

@@ -1,0 +1,51 @@
+﻿// /** @file
+// Copyright (c) 2020, Ampere Computing LLC
+//
+// This program and the accompanying materials
+// are licensed and made available under the terms and conditions of the BSD License
+// which accompanies this distribution. The full text of the license may be found at
+// http://opensource.org/licenses/bsd-license.php
+// THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+// WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//
+// **/
+
+#langdef   en-US "English"    // English
+
+#string STR_MEM_INFO_FORM                   #language en-US "Memory Configuration"
+#string STR_MEM_INFO_FORM_HELP              #language en-US "Memory Configuration"
+#string STR_MEM_INFO_TOTAL_MEM              #language en-US "Total Memory"
+#string STR_MEM_INFO_TOTAL_MEM_VALUE        #language en-US "0 GB"
+#string STR_MEM_INFO_EFFECT_MEM             #language en-US "Effective Memory"
+#string STR_MEM_INFO_EFFECT_MEM_VALUE       #language en-US "0 MB"
+#string STR_MEM_INFO_CURRENT_SPEED          #language en-US "Memory Speed"
+#string STR_MEM_INFO_CURRENT_SPEED_VALUE    #language en-US "0 MHz"
+#string STR_MEM_INFO_SPEED_SELECT_PROMPT    #language en-US "Memory Operating Speed Selection"
+#string STR_MEM_INFO_SPEED_SELECT_HELP      #language en-US "Force specific Memory Operating Speed or use Auto setting."
+#string STR_MEM_INFO_SPEED_SELECT_VALUE0    #language en-US "Auto"
+#string STR_MEM_INFO_SPEED_SELECT_VALUE1    #language en-US "2133"
+#string STR_MEM_INFO_SPEED_SELECT_VALUE2    #language en-US "2400"
+#string STR_MEM_INFO_SPEED_SELECT_VALUE3    #language en-US "2666"
+#string STR_MEM_INFO_SPEED_SELECT_VALUE4    #language en-US "2933"
+#string STR_MEM_INFO_SPEED_SELECT_VALUE5    #language en-US "3200"
+#string STR_MEM_INFO_DIMM_INFO              #language en-US "DIMM Information"
+
+#string STR_MEM_INFO_PERFORMANCE_FORM              #language en-US "Memory RAS and Performance Configuration"
+#string STR_MEM_INFO_PERFORMANCE_FORM_HELP         #language en-US "Displays and provides options to change the memory RAS and performance Settings"
+#string STR_MEM_INFO_ENABLE_ECC_PROMPT             #language en-US "ECC mode"
+#string STR_MEM_INFO_ENABLE_ECC_HELP               #language en-US "ECC mode: Disabled, SECDED or Symbol"
+#string STR_MEM_INFO_ENABLE_ERRCTRL_DE_PROMPT      #language en-US "Defer uncorrectable read errors"
+#string STR_MEM_INFO_ENABLE_ERRCTRL_DE_HELP        #language en-US "When enabled the DMC defers uncorrectable read errors to the consumer by sending an OK response and setting the TXDAT poison flag on the CHI-B interconnect. If this bit is clear the DMC defaults to non-deferred behavior when encountering an unrecoverable error"
+#string STR_MEM_INFO_ENABLE_ERRCTRL_FI_PROMPT      #language en-US "Fault handling interrupt"
+#string STR_MEM_INFO_ENABLE_ERRCTRL_FI_HELP        #language en-US "Enables fault handling interrupt. The fault handling interrupt is raised to give notice that ECC fault has been recorded"
+#string STR_MEM_INFO_ENABLE_SCRUB                  #language en-US "Scrub Patrol duration (hour)"
+#string STR_MEM_INFO_ENABLE_SCRUB_HELP             #language en-US "Select duration (hour) for Scrub Patrol"
+#string STR_MEM_INFO_ENABLE_DEMAND_SCRUB_PROMPT    #language en-US "Demand scrub"
+#string STR_MEM_INFO_ENABLE_DEMAND_SCRUB_HELP      #language en-US "Enable/Disable the ability to write corrected data back to the memory once a correctable error is detected"
+#string STR_MEM_INFO_ENABLE_WRITE_CRC_PROMPT       #language en-US "Write CRC"
+#string STR_MEM_INFO_ENABLE_WRITE_CRC_HELP         #language en-US "Enable/Disable Cyclic Redundancy Check (CRC) functionality on write data. Be noted that enabling CRC will degrade Write bandwidth"
+
+
+#string STR_MEM_INFO_ENABLE_32GB_SLAVE_PROMPT      #language en-US "Enable Slave 32bit memory region"
+#string STR_MEM_INFO_ENABLE_32GB_SLAVE_HELP        #language en-US "Enables 32bit memory region (2GB) for slave socket"
+

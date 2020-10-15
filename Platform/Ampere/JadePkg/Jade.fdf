@@ -306,5 +306,6 @@ APRIORI DXE {
   # HII
   #
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInfoDxe/PlatformInfoDxe.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MemInfo/MemInfoDxe.inf
 
 !include Platform/Ampere/FvRules.fdf.inc
