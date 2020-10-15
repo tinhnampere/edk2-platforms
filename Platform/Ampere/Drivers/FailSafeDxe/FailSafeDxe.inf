@@ -1,0 +1,54 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = FailSafeDxe
+  FILE_GUID                      = 7BC4F970-B1CF-11E6-80F5-76304DEC7EB7
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = FailSafeDxeEntryPoint
+
+[Sources]
+  FailSafe.h
+  FailSafeDxe.c
+  Watchdog.h
+  Watchdog.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+  Platform/Ampere/AmperePkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiLib
+  PcdLib
+  ArmSmcLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  DebugLib
+  NVParamLib
+  FailSafeLib
+  TimerLib
+
+[Pcd]
+  gArmTokenSpaceGuid.PcdGenericWatchdogControlBase
+  gArmTokenSpaceGuid.PcdGenericWatchdogEl2IntrNum
+
+[Protocols]
+  gEfiWatchdogTimerArchProtocolGuid             ## PRODUCES
+  gHardwareInterrupt2ProtocolGuid               ## CONSUMES
+
+[Depex]
+  gHardwareInterrupt2ProtocolGuid

@@ -55,6 +55,11 @@
   #
   RealTimeClockLib|Platform/Ampere/JadePkg/Library/PCF85063RealTimeClockLib/PCF85063.inf
 
+  #
+  # Library for FailSafe support
+  #
+  FailSafeLib|Platform/Ampere/Library/FailSafeLib/FailSafeLib.inf
+
 ################################################################################
 #
 # Specific Platform Pcds
@@ -68,6 +73,11 @@
 #
 ################################################################################
 [Components.common]
+  #
+  # FailSafe and Watchdog Timer
+  #
+  Platform/Ampere/Drivers/FailSafeDxe/FailSafeDxe.inf
+
   #
   # HII
   #
