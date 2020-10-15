@@ -1,0 +1,45 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                   = 0x0001001B
+  BASE_NAME                     = AcpiPccLib
+  FILE_GUID                     = 790519F0-F344-11E3-AC10-0800200C9A66
+  MODULE_TYPE                   = BASE
+  VERSION_STRING                = 1.0
+  LIBRARY_CLASS                 = AcpiPccLib
+
+[Sources.common]
+  AcpiPccLib.c
+
+[FeaturePcd]
+
+[Pcd]
+
+[FixedPcd]
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  MdePkg/MdePkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  ArmLib
+  BaseLib
+  DebugLib
+  IoLib
+  PrintLib
+  TimerLib
+  BaseMemoryLib
+  UefiBootServicesTableLib
+
+[Pcd]
+  gAmpereTokenSpaceGuid.PcdPmproDbBaseReg
+  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
