@@ -67,6 +67,11 @@
   AcpiHelperLib|Platform/Ampere/Library/AcpiHelperLib/AcpiHelperLib.inf
   AcpiPccLib|Platform/Ampere/Library/AcpiPccLib/AcpiPccLib.inf
 
+  #
+  # Pcie Board
+  #
+  PcieBoardLib|Platform/Ampere/JadePkg/Library/Pcie/BoardPcie.inf
+
 ################################################################################
 #
 # Specific Platform Pcds

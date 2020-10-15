@@ -85,6 +85,8 @@
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Library/NVParamLib/NVParamLib.inf
   SMProLib|Silicon/Ampere/AmpereAltraPkg/Library/SMProLib/SMProLib.inf
   PlatformInfoLib|Silicon/Ampere/AmpereAltraPkg/Library/PlatformInfoLib/PlatformInfo.inf
+  PHYLib|Silicon/Ampere/AmpereAltraPkg/Library/PHYLib/PHYLib.inf
+  PcieCoreLib|Silicon/Ampere/AmpereAltraPkg/Library/PcieCore/PcieCoreLib.inf
   AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/CpuLib.inf
   CpuCommonLib|Silicon/Ampere/AmpereAltraPkg/Library/CpuCommonLib/CpuCommonLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
@@ -616,6 +618,12 @@
   MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   FatPkg/EnhancedFatDxe/Fat.inf
+
+  #
+  # PCIe Support
+  #
+  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
 
   #
   # Bds
