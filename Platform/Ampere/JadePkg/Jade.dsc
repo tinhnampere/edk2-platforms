@@ -68,3 +68,7 @@
 #
 ################################################################################
 [Components.common]
+  #
+  # HII
+  #
+  Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInfoDxe/PlatformInfoDxe.inf
