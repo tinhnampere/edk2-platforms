@@ -60,12 +60,23 @@
   #
   FailSafeLib|Platform/Ampere/Library/FailSafeLib/FailSafeLib.inf
 
+  #
+  # ACPI Libraries
+  #
+  AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf
+  AcpiHelperLib|Platform/Ampere/Library/AcpiHelperLib/AcpiHelperLib.inf
+  AcpiPccLib|Platform/Ampere/Library/AcpiPccLib/AcpiPccLib.inf
+
 ################################################################################
 #
 # Specific Platform Pcds
 #
 ################################################################################
 [PcdsFeatureFlag.common]
+  #
+  # Activate AcpiSdtProtocol
+  #
+  gEfiMdeModulePkgTokenSpaceGuid.PcdInstallAcpiSdtProtocol|TRUE
 
 ################################################################################
 #
@@ -77,6 +88,16 @@
   # FailSafe and Watchdog Timer
   #
   Platform/Ampere/Drivers/FailSafeDxe/FailSafeDxe.inf
+
+  #
+  # ACPI
+  #
+  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf {
+    <PcdsFixedAtBuild>
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2B
+  }
+  Platform/Ampere/JadePkg/Drivers/AcpiPlatformDxe/AcpiPlatformDxe.inf
+  Platform/Ampere/JadePkg/AcpiTables/AcpiTables.inf
 
   #
   # HII

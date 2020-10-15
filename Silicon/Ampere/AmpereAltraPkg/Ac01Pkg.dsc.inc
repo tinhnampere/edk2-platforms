@@ -86,6 +86,7 @@
   SMProLib|Silicon/Ampere/AmpereAltraPkg/Library/SMProLib/SMProLib.inf
   PlatformInfoLib|Silicon/Ampere/AmpereAltraPkg/Library/PlatformInfoLib/PlatformInfo.inf
   AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/CpuLib.inf
+  CpuCommonLib|Silicon/Ampere/AmpereAltraPkg/Library/CpuCommonLib/CpuCommonLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
   I2CLib|Silicon/Ampere/AmpereAltraPkg/Library/DWI2CLib/I2CLib.inf
   DwapbGpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwapbGpioLib/DwapbGpioLib.inf
@@ -445,6 +446,14 @@
 
   # GUID of the UI app
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile|{ 0x21, 0xaa, 0x2c, 0x46, 0x14, 0x76, 0x03, 0x45, 0x83, 0x6e, 0x8a, 0xb6, 0xf4, 0x66, 0x23, 0x31 }
+
+  #
+  # ACPI table
+  #
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId|"Ampere"
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId|0x2020202031304341 # AC01
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId|0x2E504D41 # AMP.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision|0x01000013
 
   #
   # Enable strict image permissions for all images. (This applies
