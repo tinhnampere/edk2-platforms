@@ -1,0 +1,56 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PciHostBridgeDxe
+  FILE_GUID                      = D7ABBD62-2E03-11E8-B467-0ED5F89F718B
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InitializePciHostBridge
+
+[Sources]
+  PciHostBridge.h
+  PciHostBridge.c
+  PciRootBridgeIo.h
+  PciRootBridgeIo.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  IoLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  DxeServicesTableLib
+  UefiLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  BaseLib
+  DebugLib
+  DevicePathLib
+  PcdLib
+  PcieCoreLib
+  AcpiHelperLib
+
+[Protocols]
+  gEfiPciHostBridgeResourceAllocationProtocolGuid
+  gEfiPciRootBridgeIoProtocolGuid
+  gEfiMetronomeArchProtocolGuid
+  gEfiDevicePathProtocolGuid
+
+[FixedPcd]
+  gArmTokenSpaceGuid.PcdSystemMemoryBase
+
+[Depex]
+  gEfiMetronomeArchProtocolGuid
