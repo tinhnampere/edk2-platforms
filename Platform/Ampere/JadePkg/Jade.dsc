@@ -126,6 +126,7 @@
   #
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
   Platform/Ampere/JadePkg/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.inf
+  Platform/Ampere/JadePkg/Drivers/SmbiosCpuDxe/SmbiosCpuDxe.inf
 
   #
   # HII
