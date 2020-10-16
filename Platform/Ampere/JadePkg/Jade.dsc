@@ -138,6 +138,13 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdSystemFmpCapsuleImageTypeIdGuid|{0x31, 0xca, 0x8b, 0xf0, 0x2e, 0x54, 0xea, 0x4c, 0x8b, 0x48, 0x8e, 0x54, 0xf9, 0x42, 0x25, 0x94}
   gEfiSignedCapsulePkgTokenSpaceGuid.PcdEdkiiSystemFirmwareFileGuid|{0xed, 0x06, 0x1c, 0x43, 0xe2, 0x4f, 0x8f, 0x43, 0x98, 0xa3, 0xa9, 0xb1, 0xfd, 0x92, 0x30, 0x19}
 
+[PcdsPatchableInModule]
+  #
+  # Console Resolution (HD mode)
+  #
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|1024
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|768
+
 ################################################################################
 #
 # Specific Platform Component
@@ -163,6 +170,11 @@
   # Network PCIe I210
   #
   Platform/Ampere/Drivers/GigUndiDxe/GigUndiDxe.inf
+
+  #
+  # VGA Aspeed
+  #
+  Platform/Ampere/Drivers/ASpeedGopBinPkg/GopDxe.inf
 
   #
   # SMBIOS

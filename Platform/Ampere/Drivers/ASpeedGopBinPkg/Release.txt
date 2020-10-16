@@ -1,0 +1,68 @@
+;===============================================================================
+; ASPEED Graphcis AARCH64 UEFI Driver Release Notes
+;===============================================================================
+v.1.10.00: ycchen@050719
+01.[Bug] Fixed hanged issue if disable P2A
+02.[Bug] Fixed "reconnect -r" failed issue
+-------------------------------------------------------------------------------
+v.1.08.02: ycchen@052418
+01.[Bug] Fixed incorrect FrameBufferBase cause system failed to boot to Linux on ARM Server System
+v.1.08.01: ycchen@051718
+01.[Bug] Initial gamma lut to fix display abnormal issue on CentOS AARCH64
+v.1.08.00: ycchen@050418
+01.[Bug][AST2500] Modify DRAM settings by H/W request
+-------------------------------------------------------------------------------
+v.1.07.02: ycchen@032918
+01.[Bug][AST2500][AARCH64] Fixed Screen Garbage Issue
+v.1.07.01: ycchen@010318
+01.[Bug] Fixed cause console redirection in VGA only mode
+v.1.07.00: ycchen@121217
+01.[Bug] Fixed "reconnect -r" failed on Intel's platform
+-------------------------------------------------------------------------------
+v.1.06.00: ycchen@112217
+01.[Bug] Fixed MaxMode is zero if the Monitor's EDID lack of detailed timing
+02.[Bug][AST2500] disable fast reset after DRAM initial by H/W request
+---------------------------------------------------------------------------------
+v.1.04.03: ycchen@091117
+01.[Bug] [AST2500] Fix stress test failed if alert #EXTRST to low
+v.1.04.02: ycchen@082217
+v.1.04.01: ycchen@072617
+01.[Bug] [AST2500+DP501] Fixed AST2500 + DP501 Reboot Stress may cause no dispplay issue
+v.1.04.00: ycchen@050417
+01.[New] [AST2500] Modify DRAM Settings by H/W request (2017_03_30)
+02.[Bug] [AST2500+DP501] Fixed Read EDID Failed Issue
+03.[New] [AST2500] Support AST2500 + ITE66121
+---------------------------------------------------------------------------------
+v.1.03.05: ycchen@010917
+01.[Bug] [AST2500] Fixed AST2500 + DP501 cannot display issue
+v.1.03.04: ycchen@120916
+01.[Bug] [GOP] Fixed "reconnect -r" failed issue
+02.[Bug] [GOP] Fixed Scrolling Screen Abormal if disable P2A
+v.1.03.03: ycchen@101816
+01.[New] [AST2500] Support AST2500 + Sil164 (AST2500.DVO)
+02.[New] [AST2500] Support AST2500 + DP501 (AST2500.501)
+v.1.03.02: ycchen@082316
+01.[Bug] Fixed display garbage issue for early display
+v.1.03.00: ycchen@070116
+01.[Bug] [AST2500] Fixed USB unknown device issue
+02.[Bug] [AST2500] Fixed failed to initial DRAM if enable GPIOZ7
+03.[New] [AST2400/2500] Support AST2400/2500 + ANX9807
+04.[New] [DP501] Add S/W Reset for the platform lack of H/W Reset
+---------------------------------------------------------------------------------
+v.1.02.07: ycchen@032316
+v.1.02.06: ycchen@022616
+01.[Bug] [DP501] Modify I2C Timing by request.
+v.1.02.05: ycchen@121515
+01.[New] [AST2500] Modify by H/W request (2015_12_12)
+02.[Bug] [ITE66121] Fixed Screen Blank Sometimes
+v.1.02.04: ycchen@112315
+v.1.02.03: ycchen@100515
+01.[New] [AST2300/2400] New DRAM Setting by H/W request
+v.1.02.02: ycchen@082415
+01.[New] [AST2400/2300] Support DRAM Auto Sizing in VGA only mode
+v.1.02.01: ycchen@072715
+01.[New] Add options for inhibit P2A Access
+02.[New] [AST2400/2500] Support 25MHz V-PLL reference Clock
+---------------------------------------------------------------------------------
+v.1.01.05: ycchen@052715
+01.[New] First Release for AARCH64 GOP Driver
