@@ -184,6 +184,8 @@ APRIORI PEI {
   #
   # Print platform information before passing control into the Driver Execution Environment (DXE) phase
   #
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/DebugInfoPei/DebugInfoPei.inf
+
   INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
 
   INF RuleOverride = FMP_IMAGE_DESC Platform/Ampere/JadePkg/Capsule/SystemFirmwareDescriptor/SystemFirmwareDescriptor.inf
