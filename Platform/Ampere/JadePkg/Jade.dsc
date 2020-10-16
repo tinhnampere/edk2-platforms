@@ -160,6 +160,11 @@
   Platform/Ampere/JadePkg/AcpiTables/AcpiTables.inf
 
   #
+  # Network PCIe I210
+  #
+  Platform/Ampere/Drivers/GigUndiDxe/GigUndiDxe.inf
+
+  #
   # SMBIOS
   #
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
