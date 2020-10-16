@@ -31,6 +31,7 @@
   BaseLib
   BaseMemoryLib
   DebugLib
+  TimerLib
 
 [FixedPcd]
   gAmpereTokenSpaceGuid.PcdSmproDb

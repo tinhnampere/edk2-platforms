@@ -319,6 +319,11 @@ APRIORI DXE {
   INF Silicon/Ampere/AmpereAltraPkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
 
   #
+  # Random Number Generator Support
+  #
+  INF Silicon/Ampere/Drivers/RngDxe/RngDxe.inf
+
+  #
   # UEFI application (Shell Embedded Boot Loader)
   #
   INF ShellPkg/Application/Shell/Shell.inf
