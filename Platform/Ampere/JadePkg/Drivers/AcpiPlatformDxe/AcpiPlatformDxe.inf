@@ -15,6 +15,13 @@
   ENTRY_POINT                    = AcpiPlatformDxeInitialize
 
 [Sources.common]
+  AcpiDsdt.c
+  AcpiMADT.c
+  AcpiNfit.c
+  AcpiPCCT.c
+  AcpiPPTT.c
+  AcpiSLIT.c
+  AcpiSRAT.c
   AcpiPlatform.h
   AcpiPlatformDxe.c
 
@@ -35,11 +42,26 @@
   BaseLib
   UefiLib
   AcpiLib
+  AcpiPccLib
+  AcpiHelperLib
+  AmpereCpuLib
+  CpuCommonLib
 
 [Pcd]
+  gArmPlatformTokenSpaceGuid.PcdCoreCount
+  gArmPlatformTokenSpaceGuid.PcdClusterCount
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
+  gAmpereTokenSpaceGuid.PcdPmproDbBaseReg
+  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
 
 [Guids]
+  gArmMpCoreInfoGuid
   gEfiAcpiTableGuid
+  gEfiEventReadyToBootGuid
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## ALWAYS_CONSUMED

@@ -49,6 +49,67 @@ AcpiNotificationEvent (
   DEBUG ((EFI_D_INFO, "[%a:%d]-\n", __FUNCTION__, __LINE__));
 }
 
+VOID
+EFIAPI
+InstallAcpiOnReadyToBoot (
+  IN EFI_EVENT        Event,
+  IN VOID             *Context
+  )
+{
+  EFI_STATUS Status;
+
+  Status = AcpiInstallMadtTable ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_INFO, "Installed MADT table\n"));
+  }
+
+  Status = AcpiInstallPpttTable ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_INFO, "Installed PPTT table\n"));
+  }
+
+  Status = AcpiInstallSlitTable ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_INFO, "Installed SLIT table\n"));
+  }
+
+  Status = AcpiInstallSratTable ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_INFO, "Installed SRAT table\n"));
+  }
+
+  Status = AcpiInstallPcctTable ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_INFO, "Installed PCCT table\n"));
+  }
+
+  Status = AcpiInstallNfitTable ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_ERROR, "Installed NFIT table\n"));
+  }
+}
+
+VOID
+EFIAPI
+UpdateAcpiOnExitBootServices(
+  IN EFI_EVENT        Event,
+  IN VOID             *Context
+  )
+{
+  EFI_STATUS  Status;
+
+  Status = AcpiPatchDsdtTable ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_INFO, "DSDT Table updated!\n"));
+  }
+
+  // Configure PCC mailbox base address and unmask interrupt
+  Status = AcpiPcctInit();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_INFO, "PCCT Table updated!\n"));
+  }
+}
+
 EFI_STATUS
 EFIAPI
 AcpiPlatformDxeInitialize (
@@ -56,6 +117,10 @@ AcpiPlatformDxeInitialize (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
+  EFI_EVENT             ReadyToBootEvent;
+  EFI_EVENT             ExitBootServicesEvent;
+  EFI_STATUS            Status;
+
   EfiCreateProtocolNotifyEvent (
     &gEfiAcpiTableProtocolGuid,
     TPL_CALLBACK,
@@ -63,6 +128,25 @@ AcpiPlatformDxeInitialize (
     NULL,
     &mAcpiRegistration
     );
+
+  Status = gBS->CreateEvent (
+                  EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                  TPL_CALLBACK,
+                  UpdateAcpiOnExitBootServices,
+                  NULL,
+                  &ExitBootServicesEvent
+                  );
+  ASSERT_EFI_ERROR (Status);
+
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  InstallAcpiOnReadyToBoot,
+                  NULL,
+                  &gEfiEventReadyToBootGuid,
+                  &ReadyToBootEvent
+                  );
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
