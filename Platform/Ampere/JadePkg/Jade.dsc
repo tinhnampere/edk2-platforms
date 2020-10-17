@@ -112,6 +112,14 @@
   #
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxSizeNonPopulateCapsule|0xE00000
 
+!if $(SECURE_BOOT_ENABLE) == TRUE
+  # Override the default values from SecurityPkg to ensure images
+  # from all sources are verified in secure boot
+  gEfiSecurityPkgTokenSpaceGuid.PcdOptionRomImageVerificationPolicy|0x04
+  gEfiSecurityPkgTokenSpaceGuid.PcdFixedMediaImageVerificationPolicy|0x04
+  gEfiSecurityPkgTokenSpaceGuid.PcdRemovableMediaImageVerificationPolicy|0x04
+!endif
+
 [PcdsDynamicDefault.common.DEFAULT]
   # SMBIOS Type 0 - BIOS Information
   gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVendor|"Ampere Computing"

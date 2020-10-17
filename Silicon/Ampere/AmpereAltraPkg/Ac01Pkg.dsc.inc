@@ -579,9 +579,10 @@
   MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.inf
   MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf {
     <LibraryClasses>
-      AuthVariableLib|MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
+      BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
       TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
       VarCheckLib|MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
+      NULL|MdeModulePkg/Library/VarCheckUefiLib/VarCheckUefiLib.inf
   }
 
   #
