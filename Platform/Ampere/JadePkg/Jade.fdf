@@ -390,6 +390,7 @@ APRIORI DXE {
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInfoDxe/PlatformInfoDxe.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/MemInfo/MemInfoDxe.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/CpuDxe/AmpereCpuDxe.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/AcpiConfigDxe/AcpiConfigDxe.inf
 
 [FV.SystemFirmwareDescriptor]
 FvAlignment        = 8
