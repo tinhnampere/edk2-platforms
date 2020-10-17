@@ -1,0 +1,66 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = AmpereCpuDxe
+  MODULE_UNI_FILE                = CpuDxe.uni
+  FILE_GUID                      = A20D8E6E-EE6C-43C5-809F-19BB930653AE
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = CpuDxeInitialize
+
+[Sources.common]
+  CpuDxe.c
+  CpuConfig.c
+  CpuConfig.h
+  NVDataStruc.h
+  Vfr.vfr
+  VfrStrings.uni
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[BuildOptions]
+  *_*_*_CC_FLAGS = -Wno-missing-braces
+
+[LibraryClasses]
+  IoLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  DebugLib
+  ArmLib
+  BaseLib
+  UefiLib
+  PcdLib
+  HobLib
+  IoLib
+  PrintLib
+  MemoryAllocationLib
+  UefiRuntimeServicesTableLib
+  HiiLib
+  DevicePathLib
+  NVParamLib
+
+[Protocols]
+  gEfiHiiConfigRoutingProtocolGuid             ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid              ## PRODUCES
+  gEfiDevicePathProtocolGuid                   ## PRODUCES
+
+[Guids]
+  gCpuConfigFormSetGuid
+  gPlatformManagerFormsetGuid
+
+[Depex]
+  TRUE
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  CpuDxeExtra.uni

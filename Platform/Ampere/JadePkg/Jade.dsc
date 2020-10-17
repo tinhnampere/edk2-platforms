@@ -181,3 +181,4 @@
   #
   Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInfoDxe/PlatformInfoDxe.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/MemInfo/MemInfoDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/CpuDxe/AmpereCpuDxe.inf
