@@ -36,10 +36,10 @@
   #
   # Network definition
   #
-  DEFINE NETWORK_IP6_ENABLE                  = FALSE
+  DEFINE NETWORK_IP6_ENABLE                  = TRUE
   DEFINE NETWORK_HTTP_BOOT_ENABLE            = TRUE
   DEFINE NETWORK_ALLOW_HTTP_CONNECTIONS      = TRUE
-  DEFINE NETWORK_TLS_ENABLE                  = FALSE
+  DEFINE NETWORK_TLS_ENABLE                  = TRUE
 
 # Include default Ampere Platform DSC file
 !include Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dsc.inc
