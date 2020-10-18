@@ -121,7 +121,7 @@
 
   # BDS Libraries
   UefiBootManagerLib|MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib.inf
-  PlatformBootManagerLib|ArmPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
+  PlatformBootManagerLib|Silicon/Ampere/Library/LinuxBootBootManagerLib/LinuxBootBootManagerLib.inf
   BootLogoLib|MdeModulePkg/Library/BootLogoLib/BootLogoLib.inf
 
   SortLib|MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf

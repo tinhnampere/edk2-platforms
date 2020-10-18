@@ -22,12 +22,12 @@
 
 [FD.BL33_JADE_UEFI]
 BaseAddress   = 0x92000000|gArmTokenSpaceGuid.PcdFdBaseAddress  # The base address of the Firmware in NOR Flash.
-Size          = 0x00B00000|gArmTokenSpaceGuid.PcdFdSize         # The size in bytes of the FLASH Device
+Size          = 0x00AC0000|gArmTokenSpaceGuid.PcdFdSize         # The size in bytes of the FLASH Device
 ErasePolarity = 1
 
 # This one is tricky, it must be: BlockSize * NumBlocks = Size
-BlockSize     = 0x1000
-NumBlocks     = 0xB00
+BlockSize     = 0x10000
+NumBlocks     = 0xAC
 
 ################################################################################
 #
@@ -48,18 +48,18 @@ NumBlocks     = 0xB00
 #
 # FV_PEI
 # Offset: 0x00000000
-# Size:   0x00088000
+# Size:   0x00050000
 #
-0x00000000|0x00090000
+0x00000000|0x00050000
 gAmpereTokenSpaceGuid.PcdFvPeiBaseAddress|gAmpereTokenSpaceGuid.PcdFvPeiSize
 FV = FV_PEI
 
 #
 # FV_MAIN
-# Offset: 0x00090000
+# Offset: 0x00050000
 # Size:   0x00A70000
 #
-0x00090000|0x00A70000
+0x00050000|0x00A70000
 gAmpereTokenSpaceGuid.PcdFvMainCoreBaseAddress|gAmpereTokenSpaceGuid.PcdFvMainCoreSize
 FV = FvMain
 
@@ -75,8 +75,8 @@ FV = FvMain
 ################################################################################
 
 [FV.FV_PEI]
-BlockSize          = 0x1000
-NumBlocks          = 0x90
+BlockSize          = 0x10000
+NumBlocks          = 0x5
 FvAlignment        = 16
 ERASE_POLARITY     = 1
 MEMORY_MAPPED      = TRUE
@@ -112,8 +112,8 @@ APRIORI PEI {
   INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
 
 [FV.FvMain]
-BlockSize          = 0x1000
-NumBlocks          = 0xA70
+BlockSize          = 0x10000
+NumBlocks          = 0xA7
 FvAlignment        = 16
 ERASE_POLARITY     = 1
 MEMORY_MAPPED      = TRUE
