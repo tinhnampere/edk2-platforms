@@ -162,9 +162,7 @@ APRIORI DXE {
   #
   INF MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
   INF MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
-  INF MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
-  INF MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
-  INF MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+
   #
   # Timer
   #
@@ -188,16 +186,11 @@ APRIORI DXE {
   #
   # Bds
   #
-  INF MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
-  INF MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
-  INF MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
   INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
-  INF MdeModulePkg/Application/UiApp/UiApp.inf
 
   #
   # Driver to handle HW Watchdog
   #
-
   INF Platform/Ampere/Drivers/FailSafeDxe/FailSafeDxe.inf
 
   #
