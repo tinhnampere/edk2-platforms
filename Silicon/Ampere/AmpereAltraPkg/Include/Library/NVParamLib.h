@@ -30,7 +30,7 @@
   parameters.
 
   Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
-  
+
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/

@@ -1,22 +1,16 @@
-##
+## @file
 #
-#  Copyright (c) 2020, Ampere Computing LLC
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
 #
-#  This program and the accompanying materials
-#  are licensed and made available under the terms and conditions of the BSD License
-#  which accompanies this distribution.  The full text of the license may be found at
-#  http://opensource.org/licenses/bsd-license.php
-#
-#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+# SPDX-License-Identifier: BSD-2-Clause-Patent
 #
 ##
 
 [Defines]
-  INF_VERSION                    = 0x00010005
+  INF_VERSION                    = 0x0001001B
   BASE_NAME                      = MemInfoDxe
   MODULE_UNI_FILE                = MemInfoDxe.uni
-  FILE_GUID                      = d9efcefe-189b-4599-bb07-04f0a8df5c2f
+  FILE_GUID                      = D9EFCEFE-189B-4599-BB07-04F0A8DF5C2F
   MODULE_TYPE                    = DXE_DRIVER
   ENTRY_POINT                    = MemInfoScreenInitialize
 
