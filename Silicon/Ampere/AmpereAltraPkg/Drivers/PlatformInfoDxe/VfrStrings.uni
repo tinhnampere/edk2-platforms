@@ -49,3 +49,8 @@
 
 #string STR_PLATFORM_INFO_AHBCLK                    #language en-US "AHB Clock"
 #string STR_PLATFORM_INFO_AHBCLK_VALUE              #language en-US "0MHz"
+
+#string STR_CPU_FORM_INTER_SOCKET_LINK0             #language en-US "Inter Socket Connection: Link 0"
+#string STR_CPU_FORM_INTER_SOCKET_LINK0_VALUE       #language en-US ""
+#string STR_CPU_FORM_INTER_SOCKET_LINK1             #language en-US "Inter Socket Connection: Link 1"
+#string STR_CPU_FORM_INTER_SOCKET_LINK1_VALUE       #language en-US ""

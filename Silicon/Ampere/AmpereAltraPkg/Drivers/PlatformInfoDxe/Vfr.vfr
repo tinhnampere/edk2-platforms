@@ -6,10 +6,7 @@
 
 **/
 
-#define PLATFORM_INFO_FORMSET_GUID \
-  { \
-    0x8DF0F6FB, 0x65A5, 0x434B, { 0xB2, 0xA6, 0xCE, 0xDF, 0xD2, 0x0A, 0x96, 0x8A } \
-  }
+#include "PlatformInfoHii.h"
 
 formset
   guid      = PLATFORM_INFO_FORMSET_GUID,
@@ -18,7 +15,7 @@ formset
   classguid = gPlatformManagerFormsetGuid,
 
   form
-    formid = 1,
+    formid = PLATFORM_INFO_FORM_ID,
     title  = STRING_TOKEN(STR_PLATFORM_INFO_FORM);
     subtitle text = STRING_TOKEN(STR_PLATFORM_INFO_FORM_HELP);
 
@@ -105,6 +102,10 @@ formset
       text   = STRING_TOKEN(STR_PLATFORM_INFO_AHBCLK_VALUE),
       flags  = 0,
       key    = 0;
+
+    label LABEL_UPDATE;
+    // dynamic content here
+    label LABEL_END;
 
   endform;
 

@@ -7,6 +7,7 @@
 **/
 
 #include <Uefi.h>
+#include <Guid/MdeModuleHii.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -19,6 +20,11 @@
 #include <Library/DevicePathLib.h>
 #include <Library/HobLib.h>
 #include <Library/PlatformInfo.h>
+#include <Library/IoLib.h>
+#include <Library/AmpereCpuLib.h>
+#include <Pcie.h>
+
+#include "PlatformInfoHii.h"
 
 //
 // uni string and Vfr Binary data.
@@ -42,9 +48,7 @@ typedef struct {
 #pragma pack()
 
 // PLATFORM_INFO_FORMSET_GUID
-CONST EFI_GUID gPlatformInfoFormSetGuid = {
-  0x8DF0F6FB, 0x65A5, 0x434B, { 0xB2, 0xA6, 0xCE, 0xDF, 0xD2, 0x0A, 0x96, 0x8A }
-  };
+EFI_GUID gPlatformInfoFormSetGuid = PLATFORM_INFO_FORMSET_GUID;
 
 HII_VENDOR_DEVICE_PATH  mPlatformInfoHiiVendorDevicePath = {
   {
@@ -56,7 +60,7 @@ HII_VENDOR_DEVICE_PATH  mPlatformInfoHiiVendorDevicePath = {
         (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
       }
     },
-    gPlatformInfoFormSetGuid
+    PLATFORM_INFO_FORMSET_GUID
   },
   {
     END_DEVICE_PATH_TYPE,
@@ -72,6 +76,62 @@ HII_VENDOR_DEVICE_PATH  mPlatformInfoHiiVendorDevicePath = {
 #define MHZ_SCALE_FACTOR    1000000
 
 STATIC
+UINT32
+GetCCIXLinkWidth (
+  IN UINTN Socket
+  )
+{
+  UINT64 PcieTcuBase[] = {AC01_PCIE_REGISTER_BASE};
+  UINT64 LinkStsReg = ((Socket == 0) ? PcieTcuBase[0] : PcieTcuBase[1]) + 0x10008080;
+
+  return ((MmioRead32 (LinkStsReg) >> 20) & 0x3F);
+}
+
+STATIC
+CHAR8 *
+GetCCIXLinkSpeed (
+  IN UINTN Socket
+  )
+{
+  UINT64 PcieTcuBase[] = {AC01_PCIE_REGISTER_BASE};
+  UINT64 LinkStsReg = ((Socket == 0) ? PcieTcuBase[0] : PcieTcuBase[1]) + 0x10008080;
+  UINT64 EsmStatReg = ((Socket == 0) ? PcieTcuBase[0] : PcieTcuBase[1]) + 0x100083a0;
+
+  if (MmioRead32 (EsmStatReg) & 0x80) {
+    /* ESM_CALIB_CMPLT is set */
+    switch (MmioRead32 (EsmStatReg) & 0x7f) {
+    case 1:
+      return "2.5 GT/s";
+    case 2:
+      return "5 GT/s";
+    case 3:
+      return "8 GT/s";
+    case 6:
+      return "16 GT/s";
+    case 0xa:
+      return "20 GT/s";
+    case 0xf:
+      return "25 GT/s";
+    }
+  } else {
+    switch ((MmioRead32 (LinkStsReg) >> 16) & 0xF) {
+    case 1:
+      return "2.5 GT/s";
+    case 2:
+      return "5 GT/s";
+    case 3:
+      return "8 GT/s";
+    case 4:
+      return "16 GT/s";
+    case 5:
+      return "32 GT/s";
+    }
+  }
+
+  return "Unknown";
+}
+
+STATIC
 EFI_STATUS
 UpdatePlatformInfoScreen (
   IN EFI_HII_HANDLE *HiiHandle
@@ -81,6 +141,11 @@ UpdatePlatformInfoScreen (
   PlatformInfoHob_V2                  *PlatformHob;
   CONST EFI_GUID                      PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   CHAR16                              Str[MAX_STRING_SIZE];
+
+  VOID                                *StartOpCodeHandle;
+  EFI_IFR_GUID_LABEL                  *StartLabel;
+  VOID                                *EndOpCodeHandle;
+  EFI_IFR_GUID_LABEL                  *EndLabel;
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&PlatformHobGuid);
@@ -152,6 +217,93 @@ UpdatePlatformInfoScreen (
   HiiSetString (HiiHandle,
     STRING_TOKEN (STR_PLATFORM_INFO_SYSCLK_VALUE),
     Str, NULL);
+
+  /* Initialize the container for dynamic opcodes */
+  StartOpCodeHandle = HiiAllocateOpCodeHandle ();
+  ASSERT (StartOpCodeHandle != NULL);
+
+  EndOpCodeHandle = HiiAllocateOpCodeHandle ();
+  ASSERT (EndOpCodeHandle != NULL);
+
+  /* Create Hii Extend Label OpCode as the start opcode */
+  StartLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
+                                        StartOpCodeHandle,
+                                        &gEfiIfrTianoGuid,
+                                        NULL,
+                                        sizeof (EFI_IFR_GUID_LABEL)
+                                        );
+  ASSERT (StartLabel != NULL);
+  StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
+  StartLabel->Number       = LABEL_UPDATE;
+
+  /* Create Hii Extend Label OpCode as the end opcode */
+  EndLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
+                                      EndOpCodeHandle,
+                                      &gEfiIfrTianoGuid,
+                                      NULL,
+                                      sizeof (EFI_IFR_GUID_LABEL)
+                                      );
+  ASSERT (EndLabel != NULL);
+  EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
+  EndLabel->Number       = LABEL_END;
+
+  if (GetNumberActiveSockets () > 1) {
+    /* Create the inter socket link text string */
+    UnicodeSPrint (
+      Str,
+      sizeof (Str),
+      L"Width x%d / Speed %a",
+      GetCCIXLinkWidth (0),
+      GetCCIXLinkSpeed (0)
+      );
+
+    HiiSetString (
+      mHiiHandle,
+      STRING_TOKEN (STR_CPU_FORM_INTER_SOCKET_LINK0_VALUE),
+      Str,
+      NULL
+      );
+
+    HiiCreateTextOpCode (
+      StartOpCodeHandle,
+      STRING_TOKEN (STR_CPU_FORM_INTER_SOCKET_LINK0),
+      STRING_TOKEN (STR_CPU_FORM_INTER_SOCKET_LINK0),
+      STRING_TOKEN (STR_CPU_FORM_INTER_SOCKET_LINK0_VALUE)
+      );
+
+    UnicodeSPrint (
+      Str,
+      sizeof (Str),
+      L"Width x%d / Speed %a",
+      GetCCIXLinkWidth (1),
+      GetCCIXLinkSpeed (1)
+      );
+
+    HiiSetString (
+      mHiiHandle,
+      STRING_TOKEN (STR_CPU_FORM_INTER_SOCKET_LINK1_VALUE),
+      Str,
+      NULL
+      );
+
+    HiiCreateTextOpCode (
+      StartOpCodeHandle,
+      STRING_TOKEN (STR_CPU_FORM_INTER_SOCKET_LINK1),
+      STRING_TOKEN (STR_CPU_FORM_INTER_SOCKET_LINK1),
+      STRING_TOKEN (STR_CPU_FORM_INTER_SOCKET_LINK1_VALUE)
+      );
+  }
+
+  HiiUpdateForm (
+    mHiiHandle,                 // HII handle
+    &gPlatformInfoFormSetGuid,  // Formset GUID
+    PLATFORM_INFO_FORM_ID,      // Form ID
+    StartOpCodeHandle,          // Label for where to insert opcodes
+    EndOpCodeHandle             // Insert data
+    );
+
+  HiiFreeOpCodeHandle (StartOpCodeHandle);
+  HiiFreeOpCodeHandle (EndOpCodeHandle);
 
   return EFI_SUCCESS;
 }

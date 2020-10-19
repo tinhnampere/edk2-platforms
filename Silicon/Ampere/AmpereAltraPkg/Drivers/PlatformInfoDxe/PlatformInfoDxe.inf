@@ -16,6 +16,7 @@
 
 [Sources.common]
   PlatformInfoDxe.c
+  PlatformInfoHii.h
   Vfr.vfr
   VfrStrings.uni
 
@@ -37,9 +38,12 @@
   HiiLib
   DevicePathLib
   HobLib
+  AmpereCpuLib
+  IoLib
 
 [Guids]
   gPlatformManagerFormsetGuid
+  gEfiIfrTianoGuid
 
 [Protocols]
 
