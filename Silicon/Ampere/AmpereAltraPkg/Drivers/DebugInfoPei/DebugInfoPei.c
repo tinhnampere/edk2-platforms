@@ -186,7 +186,7 @@ PrintSystemInfo (
   SerialPrint ("Failsafe status                 : %d\n", PlatformHob->FailSafeStatus);
   SerialPrint ("Reset status                    : %d\n", PlatformHob->ResetStatus);
   SerialPrint ("CPU info\n");
-  SerialPrint ("    CPU ID                      : %X\n", ArmReadMpidr ());
+  SerialPrint ("    CPU ID                      : %X\n", ArmReadMidr ());
   SerialPrint ("    CPU Clock                   : %d MHz\n", PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
   SerialPrint ("    Number of active sockets    : %d\n", GetNumberActiveSockets ());
   SerialPrint ("    Number of active cores      : %d\n", GetNumberActiveCores ());
