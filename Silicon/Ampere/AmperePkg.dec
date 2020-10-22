@@ -72,7 +72,6 @@
   gAmpereTokenSpaceGuid.PcdFvMainCoreBaseAddress|0|UINT64|0xA0000002
   gAmpereTokenSpaceGuid.PcdFvMainCoreSize|0|UINT32|0xA0000003
   gAmpereTokenSpaceGuid.PcdFvBlockSize|0x00040000|UINT32|0xA0000004
-  gAmpereTokenSpaceGuid.PcdFvNvRamBaseAddress|0|UINT64|0xA0000005
 
 [PcdsFixedAtBuild, PcdsDynamic, PcdsDynamicEx]
   #

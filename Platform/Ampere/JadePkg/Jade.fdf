@@ -60,7 +60,7 @@ FV = FV_PEI
 # Size:   0x00080000
 #
 0x000C0000|0x00030000
-gAmpereTokenSpaceGuid.PcdFvNvRamBaseAddress|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
+gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
 DATA = {
   ## This is the EFI_FIRMWARE_VOLUME_HEADER
   # ZeroVector []

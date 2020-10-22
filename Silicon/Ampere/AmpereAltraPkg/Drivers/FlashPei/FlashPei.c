@@ -79,19 +79,10 @@ FlashPeiEntryPoint (
   UINT64                               NV2Base, NV2Size;
 #endif
 
-  NvRamAddress = (VOID *) FixedPcdGet64 (PcdFvNvRamBaseAddress);
+  NvRamAddress = (VOID *) PcdGet64 (PcdFlashNvStorageVariableBase64);
   NvRamSize = FixedPcdGet32 (PcdFlashNvStorageVariableSize) +
               FixedPcdGet32 (PcdFlashNvStorageFtwWorkingSize) +
               FixedPcdGet32 (PcdFlashNvStorageFtwSpareSize);
-
-  PcdSet64 (PcdFlashNvStorageVariableBase64, (UINT64)(UINTN) NvRamAddress);
-
-  PcdSet64 (PcdFlashNvStorageFtwWorkingBase64, (UINT64)(UINTN) NvRamAddress +
-    FixedPcdGet32 (PcdFlashNvStorageVariableSize));
-
-  PcdSet64 (PcdFlashNvStorageFtwSpareBase64, (UINT64)(UINTN) NvRamAddress +
-    FixedPcdGet32 (PcdFlashNvStorageVariableSize) +
-    FixedPcdGet32 (PcdFlashNvStorageFtwWorkingSize));
 
   /* Find out about the start offset of NVRAM to be passed to SMC */
   ZeroMem ((VOID *)MmData, sizeof (MmData));

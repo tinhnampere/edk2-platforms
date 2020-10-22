@@ -35,7 +35,6 @@
   gSpiNorMmGuid
 
 [FixedPcd]
-  gAmpereTokenSpaceGuid.PcdFvNvRamBaseAddress
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize
