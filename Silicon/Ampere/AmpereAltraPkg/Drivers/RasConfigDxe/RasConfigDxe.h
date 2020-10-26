@@ -6,33 +6,30 @@
 
 **/
 
-#ifndef _DRIVER_SAMPLE_H_
-#define _DRIVER_SAMPLE_H_
+#ifndef _RAS_CONFIG_DXE_H_
+#define _RAS_CONFIG_DXE_H_
 
 #include <Uefi.h>
-#include <Protocol/HiiConfigRouting.h>
-#include <Protocol/HiiConfigAccess.h>
 #include <Guid/MdeModuleHii.h>
-#include <Library/DebugLib.h>
-#include <Library/BaseLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/UefiDriverEntryPoint.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/BaseLib.h>
+#include <Library/UefiLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/DebugLib.h>
+#include <Library/PrintLib.h>
 #include <Library/HiiLib.h>
 #include <Library/DevicePathLib.h>
-#include <Library/PrintLib.h>
-#include <Library/UefiLib.h>
 #include <Library/HobLib.h>
-
-#include <Protocol/AcpiSystemDescriptionTable.h>
-#include <Guid/AcpiConfigFormSet.h>
-#include <Library/AcpiHelperLib.h>
 #include <Library/PlatformInfo.h>
-#include <Library/PMProLib.h>
-#include <Library/AcpiHelperLib.h>
-#include <AcpiNVDataStruc.h>
+#include <Library/NVParamLib.h>
+#include <Library/AmpereCpuLib.h>
+#include <NVParamDef.h>
+#include <Protocol/HiiConfigAccess.h>
+#include <Protocol/HiiConfigRouting.h>
+
+#include "NVDataStruc.h"
 
 //
 // This is the generated IFR binary data for each formset defined in VFR.
@@ -42,19 +39,18 @@ extern UINT8  VfrBin[];
 //
 // This is the generated String package data for all .UNI files.
 //
-extern UINT8  AcpiConfigDxeStrings[];
+extern UINT8  RasConfigDxeStrings[];
 
-#define ACPI_CONFIG_PRIVATE_SIGNATURE SIGNATURE_32 ('A', 'C', 'P', 'I')
+#define RAS_2P_CE_THRESHOLD  OFFSET_OF (RAS_CONFIG_VARSTORE_DATA, Ras2pCeThreshold)
+
+#define RAS_CONFIG_PRIVATE_SIGNATURE SIGNATURE_32 ('R', 'A', 'S', 'C')
 
 typedef struct {
   UINTN                            Signature;
 
   EFI_HANDLE                       DriverHandle;
   EFI_HII_HANDLE                   HiiHandle;
-  ACPI_CONFIG_VARSTORE_DATA        Configuration;
-  PlatformInfoHob_V2               *PlatformHob;
-  EFI_ACPI_SDT_PROTOCOL            *AcpiTableProtocol;
-  EFI_ACPI_HANDLE                  AcpiTableHandle;
+  RAS_CONFIG_VARSTORE_DATA         Configuration;
 
   //
   // Consumed protocol
@@ -65,9 +61,9 @@ typedef struct {
   // Produced protocol
   //
   EFI_HII_CONFIG_ACCESS_PROTOCOL   ConfigAccess;
-} ACPI_CONFIG_PRIVATE_DATA;
+} RAS_CONFIG_PRIVATE_DATA;
 
-#define ACPI_CONFIG_PRIVATE_FROM_THIS(a)  CR (a, ACPI_CONFIG_PRIVATE_DATA, ConfigAccess, ACPI_CONFIG_PRIVATE_SIGNATURE)
+#define RAS_CONFIG_PRIVATE_FROM_THIS(a)  CR (a, RAS_CONFIG_PRIVATE_DATA, ConfigAccess, RAS_CONFIG_PRIVATE_SIGNATURE)
 
 #pragma pack(1)
 
@@ -81,4 +77,4 @@ typedef struct {
 
 #pragma pack()
 
-#endif
+#endif /* _RAS_CONFIG_DXE_H_ */
