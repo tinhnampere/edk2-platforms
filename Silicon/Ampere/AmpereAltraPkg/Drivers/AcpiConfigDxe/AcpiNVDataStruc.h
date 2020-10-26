@@ -12,6 +12,7 @@
 #pragma pack(1)
 
 typedef struct {
+  UINT32  EnableApeiSupport;
   UINT32  AcpiCppcEnable;
   UINT32  AcpiLpiEnable;
   UINT32  AcpiTurboSupport;

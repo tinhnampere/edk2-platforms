@@ -28,6 +28,14 @@ formset
     subtitle text = STRING_TOKEN(STR_ACPI_FORM_HELP);
 
     oneof
+      varid   = AcpiConfigNVData.EnableApeiSupport,
+      prompt  = STRING_TOKEN(STR_ACPI_APEI_SUPPORT_PROMPT),
+      help    = STRING_TOKEN(STR_ACPI_APEI_SUPPORT_HELP),
+      option text = STRING_TOKEN(STR_ACPI_COMMON_DISABLE), value = 0, flags = 0;
+      option text = STRING_TOKEN(STR_ACPI_COMMON_ENABLE), value = 1, flags = DEFAULT;
+    endoneof;
+
+    oneof
       varid   = AcpiConfigNVData.AcpiCppcEnable,
       prompt  = STRING_TOKEN(STR_ACPI_CPPC_PROMPT),
       help    = STRING_TOKEN(STR_ACPI_CPPC_HELP),
