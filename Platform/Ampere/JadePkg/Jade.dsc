@@ -201,3 +201,4 @@
   Silicon/Ampere/AmpereAltraPkg/Drivers/MemInfo/MemInfoDxe.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/CpuDxe/AmpereCpuDxe.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/AcpiConfigDxe/AcpiConfigDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/RasConfigDxe/RasConfigDxe.inf
