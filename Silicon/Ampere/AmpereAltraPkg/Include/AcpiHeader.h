@@ -15,7 +15,7 @@
 // ACPI table information used to initialize tables.
 //
 #define EFI_ACPI_OEM_ID           {'A','m','p','e','r','e'}
-#define EFI_ACPI_OEM_TABLE_ID     SIGNATURE_64('A','C','0','1',' ',' ',' ',' ')
+#define EFI_ACPI_OEM_TABLE_ID     SIGNATURE_64('A','l','t','r','a',' ',' ',' ')
 #define EFI_ACPI_OEM_REVISION     FixedPcdGet32 (PcdAcpiDefaultOemRevision)
 #define EFI_ACPI_CREATOR_ID       SIGNATURE_32('A','M','P','.')
 #define EFI_ACPI_CREATOR_REVISION FixedPcdGet32 (PcdAcpiDefaultCreatorRevision)

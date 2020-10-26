@@ -6,7 +6,7 @@
 
 **/
 
-DefinitionBlock("Ssdt.aml", "SSDT", 2, "Ampere", "AC01    ", 0x00000001)
+DefinitionBlock("Ssdt.aml", "SSDT", 2, "Ampere", "Altra   ", 0x00000001)
 {
     Method (MAIN, 0, NotSerialized)
     {

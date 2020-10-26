@@ -459,7 +459,7 @@
   # ACPI table
   #
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId|"Ampere"
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId|0x2020202031304341 # AC01
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId|0x2020206172746C41 # Altra
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId|0x2E504D41 # AMP.
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision|0x01000013
 
