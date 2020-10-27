@@ -21,6 +21,7 @@
   Fadt.aslc
   Spcr.aslc
   Sdei.asl
+  Hest.asl
 
 [Packages]
   ArmPkg/ArmPkg.dec
