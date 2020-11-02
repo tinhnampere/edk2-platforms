@@ -30,6 +30,7 @@
 [LibraryClasses]
   UefiDriverEntryPoint
   UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
   MemoryAllocationLib
   BaseMemoryLib
   BaseLib
@@ -44,6 +45,7 @@
 [Guids]
   gEfiIfrTianoGuid
   gPlatformManagerFormsetGuid
+  gAcpiConfigFormSetGuid
 
 [Protocols]
   gEfiDevicePathProtocolGuid                    ## CONSUMES

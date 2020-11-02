@@ -15,18 +15,19 @@
 // ACPI Configuration NV data structure definition
 //
 typedef struct {
-  UINT32  EnableApeiSupport;
-  UINT32  AcpiCppcEnable;
-  UINT32  AcpiLpiEnable;
-  UINT32  AcpiTurboSupport;
-  UINT32  AcpiTurboMode;
-  UINT32  Reserved[4];
+  UINT32        EnableApeiSupport;
+  UINT32        AcpiCppcEnable;
+  UINT32        AcpiLpiEnable;
+  UINT32        AcpiTurboSupport;
+  UINT32        AcpiTurboMode;
+  UINT32        Reserved[4];
 } ACPI_CONFIG_VARSTORE_DATA;
 
 //
 // Ras Configuration NV data structure definition
 //
 typedef struct {
+  UINT32        EnableApeiSupport;
   UINT32        RasHardwareEinj;
   UINT32        RasSdeiEnabled;
   UINT32        RasDdrCeThreshold;

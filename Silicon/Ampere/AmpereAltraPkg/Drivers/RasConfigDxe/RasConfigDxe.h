@@ -12,6 +12,7 @@
 #include <Uefi.h>
 #include <Guid/MdeModuleHii.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/BaseLib.h>

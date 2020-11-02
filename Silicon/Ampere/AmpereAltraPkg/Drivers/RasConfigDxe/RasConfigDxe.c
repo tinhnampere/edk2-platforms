@@ -37,6 +37,29 @@ HII_VENDOR_DEVICE_PATH  mRasConfigHiiVendorDevicePath = {
   }
 };
 
+// Return 0 when Apei is disable, else Apei enabled
+STATIC
+UINT32
+IsApeiSupport (VOID)
+{
+  EFI_STATUS                 Status;
+  ACPI_CONFIG_VARSTORE_DATA  AcpiConfigData;
+  UINTN                      BufferSize;
+
+  BufferSize = sizeof (ACPI_CONFIG_VARSTORE_DATA);
+  Status = gRT->GetVariable (
+             L"AcpiConfigNVData",
+             &gAcpiConfigFormSetGuid,
+             NULL,
+             &BufferSize,
+             &AcpiConfigData);
+  if (!EFI_ERROR (Status)) {
+    return AcpiConfigData.EnableApeiSupport;
+  }
+
+  return 0;
+}
+
 STATIC
 EFI_STATUS
 RasConfigNvParamGet (
@@ -86,6 +109,8 @@ RasConfigNvParamGet (
              &Value
              );
   Configuration->RasLinkErrThreshold = (EFI_ERROR (Status)) ? 1 : Value;
+
+  Configuration->EnableApeiSupport = IsApeiSupport ();
 
   return EFI_SUCCESS;
 }
@@ -394,6 +419,29 @@ RasConfigCallback (
 }
 
 STATIC
+UINT8*
+HiiCreateGrayoutIf (
+  IN VOID               *OpCodeHandle,
+  IN EFI_QUESTION_ID    QuestionId
+  )
+{
+  struct {
+    EFI_IFR_OP_HEADER Header;
+    EFI_IFR_EQ_ID_VAL Condition;
+  } Buffer;
+
+  Buffer.Header.OpCode=EFI_IFR_GRAY_OUT_IF_OP;
+  Buffer.Header.Length=sizeof(EFI_IFR_OP_HEADER);
+  Buffer.Header.Scope=1;
+  Buffer.Condition.Header.OpCode=EFI_IFR_EQ_ID_VAL_OP;
+  Buffer.Condition.Header.Scope=0;
+  Buffer.Condition.Header.Length=sizeof(EFI_IFR_EQ_ID_VAL);
+  Buffer.Condition.QuestionId=QuestionId;
+  Buffer.Condition.Value=1;
+  return HiiCreateRawOpCodes(OpCodeHandle, (UINT8*)&Buffer, sizeof(Buffer));
+}
+
+STATIC
 EFI_STATUS
 UpdateRasConfigScreen (
   IN RAS_CONFIG_PRIVATE_DATA *PrivateData
@@ -447,6 +495,9 @@ UpdateRasConfigScreen (
   EndLabel->Number       = LABEL_END;
 
   if (GetNumberActiveSockets () > 1) {
+    if (PrivateData->Configuration.EnableApeiSupport == 0) {
+      HiiCreateGrayoutIf (StartOpCodeHandle, 0x8005);
+    }
     //
     // Create the numeric for 2P CE threshold
     //
@@ -464,6 +515,10 @@ UpdateRasConfigScreen (
       1,
       NULL
       );
+
+    if (PrivateData->Configuration.EnableApeiSupport == 0) {
+      HiiCreateEndOpCode (StartOpCodeHandle);
+    }
   }
 
   Status = HiiUpdateForm (
