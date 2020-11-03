@@ -15,6 +15,8 @@
   ENTRY_POINT                    = AcpiPlatformDxeInitialize
 
 [Sources.common]
+  AcpiApei.c
+  AcpiApei.h
   AcpiDsdt.c
   AcpiMADT.c
   AcpiNfit.c
@@ -62,6 +64,7 @@
   gArmMpCoreInfoGuid
   gEfiAcpiTableGuid
   gEfiEventReadyToBootGuid
+  gAcpiConfigFormSetGuid
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## ALWAYS_CONSUMED

@@ -7,6 +7,7 @@
 **/
 
 #include "AcpiPlatform.h"
+#include "AcpiApei.h"
 
 STATIC EFI_EVENT mAcpiRegistration = NULL;
 
@@ -46,7 +47,7 @@ AcpiNotificationEvent (
     Rsdp->RsdtAddress = 0;
   }
 
-  DEBUG ((EFI_D_INFO, "[%a:%d]-\n", __FUNCTION__, __LINE__));
+  DEBUG ((DEBUG_INFO, "[%a:%d]-\n", __FUNCTION__, __LINE__));
 }
 
 VOID
@@ -60,32 +61,32 @@ InstallAcpiOnReadyToBoot (
 
   Status = AcpiInstallMadtTable ();
   if (!EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_INFO, "Installed MADT table\n"));
+    DEBUG ((DEBUG_INFO, "Installed MADT table\n"));
   }
 
   Status = AcpiInstallPpttTable ();
   if (!EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_INFO, "Installed PPTT table\n"));
+    DEBUG ((DEBUG_INFO, "Installed PPTT table\n"));
   }
 
   Status = AcpiInstallSlitTable ();
   if (!EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_INFO, "Installed SLIT table\n"));
+    DEBUG ((DEBUG_INFO, "Installed SLIT table\n"));
   }
 
   Status = AcpiInstallSratTable ();
   if (!EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_INFO, "Installed SRAT table\n"));
+    DEBUG ((DEBUG_INFO, "Installed SRAT table\n"));
   }
 
   Status = AcpiInstallPcctTable ();
   if (!EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_INFO, "Installed PCCT table\n"));
+    DEBUG ((DEBUG_INFO, "Installed PCCT table\n"));
   }
 
   Status = AcpiInstallNfitTable ();
   if (!EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Installed NFIT table\n"));
+    DEBUG ((DEBUG_ERROR, "Installed NFIT table\n"));
   }
 }
 
@@ -100,13 +101,19 @@ UpdateAcpiOnExitBootServices(
 
   Status = AcpiPatchDsdtTable ();
   if (!EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_INFO, "DSDT Table updated!\n"));
+    DEBUG ((DEBUG_INFO, "DSDT Table updated!\n"));
+  }
+
+  // Configure ACPI Platform Error Interfaces
+  Status = AcpiApeiUpdate ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "APEI Table updated!\n"));
   }
 
   // Configure PCC mailbox base address and unmask interrupt
   Status = AcpiPcctInit();
   if (!EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_INFO, "PCCT Table updated!\n"));
+    DEBUG ((DEBUG_INFO, "PCCT Table updated!\n"));
   }
 }
 
