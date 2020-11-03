@@ -21,6 +21,7 @@
   Fadt.aslc
   Spcr.aslc
   Sdei.asl
+  Einj.asl
   Hest.asl
 
 [Packages]
