@@ -78,6 +78,7 @@
   AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf
   AcpiHelperLib|Platform/Ampere/Library/AcpiHelperLib/AcpiHelperLib.inf
   AcpiPccLib|Platform/Ampere/Library/AcpiPccLib/AcpiPccLib.inf
+  AcpiApeiLib|Platform/Ampere/Library/AcpiApeiLib/AcpiApeiLib.inf
 
   #
   # Pcie Board
