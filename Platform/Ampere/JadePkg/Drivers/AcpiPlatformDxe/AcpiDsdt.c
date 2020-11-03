@@ -8,6 +8,10 @@
 
 #include "AcpiPlatform.h"
 
+#define SUBNUMA_MODE_MONOLITHIC        0
+#define SUBNUMA_MODE_HEMISPHERE        1
+#define SUBNUMA_MODE_QUADRANT          2
+
 STATIC VOID
 AcpiPatchCmn600 (VOID)
 {
@@ -145,6 +149,68 @@ AcpiPatchDsu (VOID)
   }
 }
 
+STATIC UINT8
+PcieGetSubNumaMode (
+  VOID
+  )
+{
+  EFI_GUID                    PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
+  PlatformInfoHob_V2          *PlatformHob;
+  VOID                        *Hob;
+
+  /* Get the Platform HOB */
+  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  if (!Hob) {
+    return SUBNUMA_MODE_MONOLITHIC;
+  }
+  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+
+  return PlatformHob->SubNumaMode[0];
+}
+
+VOID
+AcpiPatchPcieNuma (
+  VOID
+  )
+{
+  CHAR8     NodePath[MAX_ACPI_NODE_PATH];
+  UINTN     Index;
+  UINTN     NumaIdx;
+  UINTN     NumPciePort;
+  UINTN     NumaAssignment[3][16] = {
+              { 0, 0, 0, 0, 0, 0, 0, 0,   // Monolitic Node 0 (S0)
+                1, 1, 1, 1, 1, 1, 1, 1 }, // Monolitic Node 1 (S1)
+              { 0, 1, 0, 1, 0, 0, 1, 1,   // Hemisphere Node 0, 1 (S0)
+                2, 3, 2, 3, 2, 2, 3, 3 }, // Hemisphere Node 2, 3 (S1)
+              { 0, 2, 1, 3, 1, 1, 3, 3,   // Quadrant Node 0, 1, 2, 3 (S0)
+                4, 6, 5, 7, 5, 5, 7, 7 }, // Quadrant Node 4, 5, 6, 7 (S1)
+              };
+
+  switch (PcieGetSubNumaMode()) {
+  case SUBNUMA_MODE_MONOLITHIC:
+  default:
+    NumaIdx = 0;
+    break;
+  case SUBNUMA_MODE_HEMISPHERE:
+    NumaIdx = 1;
+    break;
+  case SUBNUMA_MODE_QUADRANT:
+    NumaIdx = 2;
+    break;
+  }
+
+  if (GetNumberActiveSockets() > 1) {
+    NumPciePort = 16; // 16 ports total (8 per socket)
+  } else {
+    NumPciePort = 8;  // 8 ports total
+  }
+
+  for (Index = 0; Index < NumPciePort; Index++) {
+    AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.PCI%X._PXM", Index);
+    AcpiDSDTSetNodeStatusValue (NodePath, NumaAssignment[NumaIdx][Index]);
+  }
+}
+
 EFI_STATUS
 AcpiPatchDsdtTable (VOID)
 {
@@ -153,6 +219,7 @@ AcpiPatchDsdtTable (VOID)
   AcpiPatchDsu ();
   AcpiPatchHwmon ();
   AcpiPatchNvdimm ();
+  AcpiPatchPcieNuma ();
 
   return EFI_SUCCESS;
 }

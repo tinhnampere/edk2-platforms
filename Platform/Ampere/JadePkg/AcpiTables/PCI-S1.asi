@@ -333,7 +333,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x01)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCIA RCA2
 
@@ -660,7 +661,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x01)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCIB RCA3
 
@@ -1007,7 +1009,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x01)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCIC RCB0
 
@@ -1355,7 +1358,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x01)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCID RCB1
 
@@ -1702,7 +1706,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x01)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCIE RCB2
 
@@ -2049,6 +2054,7 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x01)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCIF RCB3

@@ -333,7 +333,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x00)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCI0 RCA0
 
@@ -664,6 +665,7 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x00)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCI1 RCA1

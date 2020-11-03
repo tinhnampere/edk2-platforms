@@ -329,7 +329,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x00)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCI2 RCA2
 
@@ -656,7 +657,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x00)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCI3 RCA3
 
@@ -1005,7 +1007,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x00)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCI4 RCB0
 
@@ -1351,7 +1354,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x00)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCI5 RCB1
 
@@ -1700,7 +1704,8 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x00)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCI6 RCB2
 
@@ -2048,6 +2053,7 @@
     }
 
     Method (_PXM, 0, NotSerialized) {
-      Return(0x00)
+      // Patch by code
+      Return(0xFF)
     }
   } // PCI7 RCB3
