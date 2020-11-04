@@ -77,6 +77,13 @@ RasConfigNvParamGet (
   Configuration->RasHardwareEinj = (EFI_ERROR (Status)) ? 0 : Value;
 
   Status = NVParamGet (
+             NV_SI_RAS_BERT_ENABLED,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &Value
+             );
+  Configuration->RasBertEnabled = (EFI_ERROR (Status)) ? 1 : Value;
+
+  Status = NVParamGet (
              NV_SI_RAS_SDEI_ENABLED,
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
@@ -126,6 +133,13 @@ RasConfigNvParamSet (
     NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
     NV_PERM_BIOS | NV_PERM_MANU,
     Configuration->RasHardwareEinj
+    );
+
+  NVParamSet (
+    NV_SI_RAS_BERT_ENABLED,
+    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+    NV_PERM_BIOS | NV_PERM_MANU,
+    Configuration->RasBertEnabled
     );
 
   NVParamSet (

@@ -29,6 +29,7 @@ typedef struct {
 typedef struct {
   UINT32        EnableApeiSupport;
   UINT32        RasHardwareEinj;
+  UINT32        RasBertEnabled;
   UINT32        RasSdeiEnabled;
   UINT32        RasDdrCeThreshold;
   UINT32        Ras2pCeThreshold;
