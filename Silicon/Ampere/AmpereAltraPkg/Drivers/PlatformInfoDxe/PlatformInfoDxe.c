@@ -155,19 +155,19 @@ UpdatePlatformInfoScreen (
   PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
 
   /* SCP Version */
-  AsciiStrToUnicodeStr((const CHAR8 *) PlatformHob->SmPmProVer, Str);
+  AsciiStrToUnicodeStrS((const CHAR8 *) PlatformHob->SmPmProVer, Str, MAX_STRING_SIZE);
   HiiSetString (HiiHandle,
     STRING_TOKEN(STR_PLATFORM_INFO_SCPVER_VALUE),
     Str, NULL);
 
-    /* SCP build */
-  AsciiStrToUnicodeStr((const CHAR8 *) PlatformHob->SmPmProBuild, Str);
+  /* SCP build */
+  AsciiStrToUnicodeStrS((const CHAR8 *) PlatformHob->SmPmProBuild, Str, MAX_STRING_SIZE);
   HiiSetString (HiiHandle,
     STRING_TOKEN(STR_PLATFORM_INFO_SCPBUILD_VALUE),
     Str, NULL);
 
   /* CPU Info */
-  AsciiStrToUnicodeStr((const CHAR8 *) PlatformHob->CpuInfo, Str);
+  AsciiStrToUnicodeStrS((const CHAR8 *) PlatformHob->CpuInfo, Str, MAX_STRING_SIZE);
   UnicodeSPrint (Str, sizeof (Str), L"%s", Str);
   HiiSetString (HiiHandle,
     STRING_TOKEN(STR_PLATFORM_INFO_CPUINFO_VALUE),
