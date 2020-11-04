@@ -39,6 +39,17 @@ formset
   endif;
 
   grayoutif ideqval RasConfigNVData.EnableApeiSupport == 0;
+    oneof varid  = RasConfigNVData.RasBertEnabled,
+      prompt      = STRING_TOKEN(STR_RAS_BERT_ENABLED_PROMPT),
+      help        = STRING_TOKEN(STR_RAS_BERT_ENABLED_HELP),
+      flags       = NUMERIC_SIZE_4 | RESET_REQUIRED,
+      option text = STRING_TOKEN(STR_RAS_COMMON_ENABLE), value = 1, flags = DEFAULT;
+      option text = STRING_TOKEN(STR_RAS_COMMON_DISABLE), value = 0, flags = 0;
+
+    endoneof;
+  endif;
+
+  grayoutif ideqval RasConfigNVData.EnableApeiSupport == 0;
     oneof varid  = RasConfigNVData.RasSdeiEnabled,
       prompt      = STRING_TOKEN(STR_RAS_SDEI_ENABLED_PROMPT),
       help        = STRING_TOKEN(STR_RAS_SDEI_ENABLED_HELP),
