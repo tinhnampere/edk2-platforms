@@ -1,8 +1,8 @@
 # Sample board setting
-# 
-# This is a sample board setting as used for the 
+#
+# This is a sample board setting as used for the
 # Ampere eMAG2 reference design.
-# 
+#
 # Name, offset (hex), value
 # value can be hex or decimal
 #

@@ -164,17 +164,17 @@ enum RC_TYPE {
 };
 
 enum RC_BLOCK {
-	RCA0 = 0,
-	RCA1,
-	RCA2,
-	RCA3,
-	MAX_RCA,
-	RCB0 = MAX_RCA,
-	RCB1,
-	RCB2,
-	RCB3,
-	MAX_RCB,
-	MAX_RC = MAX_RCB
+  RCA0 = 0,
+  RCA1,
+  RCA2,
+  RCA3,
+  MAX_RCA,
+  RCB0 = MAX_RCA,
+  RCB1,
+  RCB2,
+  RCB3,
+  MAX_RCB,
+  MAX_RC = MAX_RCB
 };
 
 typedef struct _AC01_PCIE {

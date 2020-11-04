@@ -138,7 +138,7 @@ VOID
 NfitFillRegionMapping (
   IN OUT EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE *NfitRegionMappingPointer,
   IN EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE *NfitControlRegionPointer,
-	IN EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *NfitSpaPointer
+  IN EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *NfitSpaPointer
   )
 {
   NfitRegionMappingPointer->NVDIMMControlRegionStructureIndex    = NfitControlRegionPointer->NVDIMMControlRegionStructureIndex;
@@ -191,21 +191,21 @@ AcpiNfitFillTable (
       NfitControlRegionPointer = (EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE *)
                                  (NfitSpaPointer + 1);
       CopyMem ((VOID *) NfitControlRegionPointer,
-	       (VOID *) &NvdimmControlRegionTemplate,
-	       sizeof (NvdimmControlRegionTemplate));
+               (VOID *) &NvdimmControlRegionTemplate,
+               sizeof (NvdimmControlRegionTemplate));
       NfitFillControlRegion (NfitControlRegionPointer, NvdRegionIndex);
 
       NfitRegionMappingPointer = (EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE *)
-			         (NfitControlRegionPointer + 1);
+                                 (NfitControlRegionPointer + 1);
       CopyMem ((VOID *) NfitRegionMappingPointer,
-	       (VOID *) &NvdimmRegionMappingTemplate,
-	       sizeof (NvdimmRegionMappingTemplate));
+               (VOID *) &NvdimmRegionMappingTemplate,
+               sizeof (NvdimmRegionMappingTemplate));
       NfitFillRegionMapping (NfitRegionMappingPointer,
-			     NfitControlRegionPointer,
-			     NfitSpaPointer);
+                             NfitControlRegionPointer,
+                             NfitSpaPointer);
       /* Next Region */
       NfitSpaPointer = (EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *)
-		       (NfitRegionMappingPointer + 1);
+                       (NfitRegionMappingPointer + 1);
     }
   }
 
@@ -241,7 +241,7 @@ AcpiInstallNfitTable (
   Size = sizeof (EFI_ACPI_6_3_NVDIMM_FIRMWARE_INTERFACE_TABLE) +
          ((sizeof (EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE) +
            sizeof (EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE) +
-	   sizeof (EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE)) * NvdRegionNum);
+           sizeof (EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE)) * NvdRegionNum);
   NfitTablePointer = (EFI_ACPI_6_3_NVDIMM_FIRMWARE_INTERFACE_TABLE *) AllocateZeroPool(Size);
   if (!NfitTablePointer) {
     return EFI_OUT_OF_RESOURCES;
@@ -260,8 +260,8 @@ AcpiInstallNfitTable (
   AcpiTableChecksum((UINT8 *)NfitTablePointer, NfitTablePointer->Header.Length);
   Status = AcpiTableProtocol->InstallAcpiTable (AcpiTableProtocol,
                                                 (VOID *) NfitTablePointer,
-						NfitTablePointer->Header.Length,
-						&NfitTableKey);
+                                                NfitTablePointer->Header.Length,
+                                                &NfitTableKey);
   if (EFI_ERROR (Status)) {
     FreePool ((VOID *) NfitTablePointer);
   }

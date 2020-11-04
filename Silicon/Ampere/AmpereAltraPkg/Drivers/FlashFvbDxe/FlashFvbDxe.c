@@ -184,7 +184,7 @@ FlashSmcGetInfo (
 STATIC
 EFI_STATUS
 CommonEraseCommand (
-  IN      UINT8	    *pBlockAddress,
+  IN      UINT8     *pBlockAddress,
   IN      UINT32    Length
   )
 {
@@ -222,7 +222,7 @@ STATIC
 EFI_STATUS
 CommonProgramCommand (
   IN      UINT8     *pByteAddress,
-  IN      UINT8	    *Byte,
+  IN      UINT8     *Byte,
   IN OUT  UINTN     *Length
   )
 {
@@ -272,7 +272,7 @@ STATIC
 EFI_STATUS
 CommonReadCommand (
   IN      UINT8     *pByteAddress,
-  OUT     UINT8	    *Byte,
+  OUT     UINT8     *Byte,
   IN OUT  UINTN     *Length
   )
 {

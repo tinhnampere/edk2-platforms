@@ -3,7 +3,7 @@
   The non-volatile parameter layout in SPI-NOR is shown below. There is
   two copies. The master copy is changeable by the user. The Last Known
   copy is handled by the fail safe future. It is a last know bootable copy.
- 
+
    ---------------------------
    | Master Copy             | 16KB
    | Pre-boot parameters     |
@@ -25,7 +25,7 @@
    | Manufactory &           | 32KB
    | Users parameters        |
    ---------------------------
- 
+
   As each non-volatile parameter requires 8 bytes, there is a total of 8K
   parameters.
 

@@ -43,9 +43,9 @@ PMProTurboEnable (
 
 /*
  * Send PSCI Statistic address to ACL
- * Socket 	Socket to send address to
- * AdrHi 	Upper 32 bits of the address
- * AdrLo	Lower 32 bits of the address
+ * Socket   Socket to send address to
+ * AdrHi    Upper 32 bits of the address
+ * AdrLo    Lower 32 bits of the address
  */
 EFI_STATUS
 EFIAPI
@@ -57,9 +57,9 @@ PMProAclAdd (
 
 /*
  * Send PSCI Statistic address to PMPro
- * Socket 	Socket to send address to
- * AdrHi 	Upper 32 bits of the address
- * AdrLo	Lower 32 bits of the address
+ * Socket   Socket to send address to
+ * AdrHi    Upper 32 bits of the address
+ * AdrLo    Lower 32 bits of the address
  */
 EFI_STATUS
 EFIAPI

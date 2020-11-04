@@ -172,7 +172,7 @@ BOOLEAN Ac01PcieCheckRootBridgeDisabled (
   RCIndex = HBIndex;
   Ret = (RCList[RCIndex].Active == FALSE);
   if (Ret) {
-    PciList[HBIndex] = -1;	
+    PciList[HBIndex] = -1;
   } else {
     PciList[HBIndex] = HBIndex;
   }

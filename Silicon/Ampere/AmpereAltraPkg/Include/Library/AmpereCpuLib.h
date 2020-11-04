@@ -41,7 +41,7 @@ UINT32
 GetNumberActiveCPMsPerSocket (UINT32 SocketId);
 
 /**
-  Get the configured number of CPM per socket. This number 
+  Get the configured number of CPM per socket. This number
   should be the same for all sockets.
 
   @return   UINT32      Configurated number of CPM.
@@ -52,7 +52,7 @@ UINT32
 GetConfiguratedNumberCPMs (IN UINTN Socket);
 
 /**
-  Set the configured number of CPM per socket. This number 
+  Set the configured number of CPM per socket. This number
   should be the same for all sockets.
 
   @param    Number      Number of CPM to be configurated.
@@ -75,7 +75,7 @@ UINT32
 GetMaximumNumberOfCores (VOID);
 
 /**
-  Get the maximum number of CPM per socket. This number 
+  Get the maximum number of CPM per socket. This number
   should be the same for all sockets.
 
   @return   UINT32      Maximum number of CPM.

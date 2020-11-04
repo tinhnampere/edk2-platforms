@@ -190,7 +190,7 @@ EFIAPI AcpiPatchPciMem32 (INT8 *PciSegEnabled
 
         KB += 5; /* Point to Resource type */
         Rs = (RESOURCE *) KB;
-	    Mem32 = 0;
+        Mem32 = 0;
         while (!Mem32 && ((KB - B) < DataSize)) {
           if (Rs->ResourceType == ACPI_RESOURCE_NAME_ADDRESS16) {
             KB += (Rs->ResourceSize + 3); /* Type + Size */
@@ -350,7 +350,7 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
        {
           EFI_ACPI_IORT_TYPE_SMMUv3,
           sizeof(AC01_SMMU_NODE),
-          0x2,	/* Revision */
+          0x2,  /* Revision */
           0x0,
           0x2,  /* Mapping Count */
           FIELD_OFFSET(AC01_SMMU_NODE, InterruptMsiMapping),

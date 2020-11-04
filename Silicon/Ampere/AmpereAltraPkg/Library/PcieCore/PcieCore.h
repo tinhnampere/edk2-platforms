@@ -88,7 +88,7 @@
 #define PORT_LOCIG_VC0_NP_RX_Q_CTRL_OFF     0x74C
 
 /* TCU registers */
-#define SMMU_GBPA		0x044
+#define SMMU_GBPA    0x044
 
 /* SNPSRAM Synopsys Memory Read/Write Margin registers */
 #define SPRF_RMR                0x0
@@ -344,8 +344,8 @@
 #define SPCIE_CAP_ID                0x19
 #define CAP_OFF_0C                  0x0C
 #define LINK_CONTROL3_REG_OFF       0x4
-#define DSP_TX_PRESET0_SET(dst,src)	(((dst) & ~0xF) | (((UINT32)(src)) & 0xF))
-#define DSP_TX_PRESET1_SET(dst,src)	(((dst) & ~0xF0000) | (((UINT32)(src) << 16) & 0xF0000))
+#define DSP_TX_PRESET0_SET(dst,src)  (((dst) & ~0xF) | (((UINT32)(src)) & 0xF))
+#define DSP_TX_PRESET1_SET(dst,src)  (((dst) & ~0xF0000) | (((UINT32)(src) << 16) & 0xF0000))
 
 // UNCORR_ERR_STATUS_OFF
 #define CMPLT_TIMEOUT_ERR_STATUS_GET(val) ((val & 0x4000) >> 14)

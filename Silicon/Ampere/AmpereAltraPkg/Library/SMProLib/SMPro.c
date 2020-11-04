@@ -44,7 +44,7 @@
 
 #define IPP_MSG_TYPE_SHIFT              28
 #define IPP_MSG_CONTROL_BYTE_SHIFT      16
-#define IPP_MSG_CONTROL_BYTE_MASK	0x00FF0000U
+#define IPP_MSG_CONTROL_BYTE_MASK       0x00FF0000U
 
 #define IPP_ENCODE_RAS_MSG(cmd, cb)     \
                 (((UINT32) (IPP_RAS_MSG) << IPP_MSG_TYPE_SHIFT) | \

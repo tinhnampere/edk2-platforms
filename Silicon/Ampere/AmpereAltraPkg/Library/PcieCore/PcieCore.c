@@ -613,7 +613,7 @@ STATIC BOOLEAN RasdpMitigationCheck (AC01_RC *RC, INTN PcieIndex)
 /**
    Setup and initialize the AC01 PCIe Root Complex and underneath PCIe controllers
 
-   @param RC	                Pointer to Root Complex structure
+   @param RC                    Pointer to Root Complex structure
    @param ReInit                Re-init status
    @param ReInitPcieIndex       PCIe index
 **/
@@ -756,7 +756,7 @@ INT32 Ac01PcieCoreSetupRC (
       // Change the Read Margin dual ported RAMs
       Val = 0x10; // Margin to 0x0 (most conservative setting)
       Ac01PcieCsrOut32 (SnpsRamAddr + TPSRAM_RMR, Val);
- 
+
       //Generate the DLINK capability address
       DlinkBaseAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
       NextExtendedCapabilityOff = 0x100; // This is the 1st extended capability offset
@@ -775,17 +775,17 @@ INT32 Ac01PcieCoreSetupRC (
          }
          NextExtendedCapabilityOff = (Val >> 20);
       } while (NextExtendedCapabilityOff != 0);
-     
+
       // Disable the scaled credit mode
       if (DlinkBaseAddr != 0x0) {
-        Val=1;     
+        Val=1;
         Ac01PcieCsrOut32 (DlinkBaseAddr + DATA_LINK_FEATURE_CAP_OFF, Val);
         Ac01PcieCsrIn32 (DlinkBaseAddr + DATA_LINK_FEATURE_CAP_OFF, &Val);
         if (Val!=1) {
           PCIE_ERR ("- Pcie[%d] - Unable to disable scaled credit\n", PcieIndex);
           return -1;
         }
-      } 
+      }
       else {
         PCIE_ERR ("- Pcie[%d] - Unable to locate data link feature cap offset\n", PcieIndex);
         return -1;

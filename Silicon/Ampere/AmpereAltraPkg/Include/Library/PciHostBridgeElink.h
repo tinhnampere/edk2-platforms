@@ -5,7 +5,7 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
- 
+
 #include <Protocol/PciHostBridgeResourceAllocation.h>
 
 typedef BOOLEAN (PCI_CHECK_ROOT_BRIDGE_DISABLED_FUNC)(IN UINTN, IN UINTN);

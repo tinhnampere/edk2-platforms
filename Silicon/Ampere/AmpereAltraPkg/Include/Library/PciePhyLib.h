@@ -67,8 +67,8 @@ typedef struct {
 } phy_plat_resource_t;
 
 typedef struct {
-  unsigned long sds_addr;		// PHY base address
-  unsigned long pcie_ctrl_info;	// PCIe controller related information passed here
+  unsigned long sds_addr;        // PHY base address
+  unsigned long pcie_ctrl_info;  // PCIe controller related information passed here
                   // BIT0-1: SoC revision
                   //   0: Ampere Altra
                   //   1: Ampere Mystique
@@ -81,8 +81,8 @@ typedef struct {
                   // 0 : x16, 1: x8 , 2:x4, 3: 0x2
                   // BIT10-11 : Gen
                   // 0 : Gen1, 1: Gen2, 2: Gen3 ; 3: Gen4 + ESM
-  phy_setting_t phy_setting;	// PHY input setting
-  phy_plat_resource_t *phy_plat_resource;	// Debug and misc function pointers
+  phy_setting_t phy_setting;               // PHY input setting
+  phy_plat_resource_t *phy_plat_resource;  // Debug and misc function pointers
   PHY_DBG_FLAGS debug;
 } phy_context_t;
 
@@ -90,7 +90,7 @@ typedef struct {
  * Description
  *
  * Input:
- *  ctx		- Serdes context pointer
+ *  ctx    - Serdes context pointer
  *
  * Return:
  *  PHY_STATUS - Return status

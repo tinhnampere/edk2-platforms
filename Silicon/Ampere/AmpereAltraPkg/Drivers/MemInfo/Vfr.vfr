@@ -9,7 +9,7 @@
 #include <Guid/PlatformManagerHii.h>
 #include "NVDataStruc.h"
 
-formset 
+formset
   guid    = MEM_INFO_FORM_SET_GUID,
   title   = STRING_TOKEN(STR_MEM_INFO_FORM),
   help    = STRING_TOKEN(STR_MEM_INFO_FORM_HELP),

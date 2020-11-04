@@ -271,7 +271,7 @@ RootBridgeIoMemRW (
   UINT8                                  *Uint8Buffer;
 
   PCIE_MMIO_DEBUG("%a: W: %d, Width: %d, Addr: 0x%lx, Count: %d\n", __FUNCTION__,
-		  Write, Width, Address, Count);
+      Write, Width, Address, Count);
 
   Status = RootBridgeIoCheckParameter (This, MemOperation, Width, Address, Count, Buffer);
   if (EFI_ERROR (Status)) {
@@ -376,7 +376,7 @@ RootBridgeIoIoRW (
   UINT8                                  *Uint8Buffer;
 
   PCIE_MMIO_DEBUG("%a: W: %d, Width: %d, Addr: 0x%lx, Count: %d\n", __FUNCTION__,
-		  Write, Width, Address, Count);
+      Write, Width, Address, Count);
 
   Status = RootBridgeIoCheckParameter (This, IoOperation, Width, Address, Count, Buffer);
   if (EFI_ERROR (Status)) {

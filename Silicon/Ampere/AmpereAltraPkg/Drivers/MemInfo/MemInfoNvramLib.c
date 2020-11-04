@@ -38,7 +38,7 @@ MemInfoNvparamGet (
 
   Status = NVParamGet (
              NV_SI_DDR_SPEED,
-             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC, 
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
              );
   if (EFI_ERROR (Status)) {
@@ -282,7 +282,7 @@ MemInfoNvparamSet(
   if (EFI_ERROR (Status) || Value != TmpValue ) {
     if (TmpValue == DDR_DEFAULT_WRITE_CRC) {
       Status = NVParamClr (
-                 NV_SI_DDR_CRC_MODE, 
+                 NV_SI_DDR_CRC_MODE,
                  NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC
                  );
     } else {

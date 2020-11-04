@@ -25,8 +25,8 @@ PlatformPeim (
   VOID
   )
 {
-  UINT64		FvMainBase;
-  UINT32		FvMainSize;
+  UINT64    FvMainBase;
+  UINT32    FvMainSize;
 
   ASSERT (FixedPcdGet32 (PcdFvMainCoreSize) != 0);
 

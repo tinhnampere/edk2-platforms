@@ -16,13 +16,13 @@
 #include <MmLib.h>
 
 // Convert to string
-#define _STR(x)			    #x
+#define _STR(x)          #x
 
 // Make sure the argument is expanded before converting to string
-#define STR(x)			    _STR(x)
+#define STR(x)          _STR(x)
 
 // Use dynamic UEFI_UUID of each build time
-#define UEFI_UUID_BUILD	    STR(UEFI_UUID)
+#define UEFI_UUID_BUILD      STR(UEFI_UUID)
 
 EFI_MM_COMM_REQUEST mEfiMmSpiNorReq;
 
@@ -72,7 +72,7 @@ FlashPeiEntryPoint (
   UINT64                               MmData[5];
   UINTN                                Size;
   VOID                                 *NvRamAddress;
-  UINTN			                           NvRamSize;
+  UINTN                                NvRamSize;
 
 #if defined(RAM_BLOCKIO_START_ADDRESS) && defined(RAM_BLOCKIO_SIZE)
   EFI_MM_COMMUNICATE_SPINOR_NVINFO_RES *MmSpiNorNV2InfoRes;

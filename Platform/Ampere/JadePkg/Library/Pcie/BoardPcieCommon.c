@@ -13,18 +13,18 @@
 #include "Pcie.h"
 
 /* Host bridge registers */
-#define HBRCAPDMR		0x0
-#define HBRCBPDMR		0x4
+#define HBRCAPDMR    0x0
+#define HBRCBPDMR    0x4
 
 /* HBRCAPDMR */
 #define RCAPCIDEVMAP_SET(dst, src) \
-	(((dst) & ~0x7) | (((UINT32)(src)) & 0x7))
+  (((dst) & ~0x7) | (((UINT32)(src)) & 0x7))
 
 /* HBRCBPDMR */
 #define RCBPCIDEVMAPLO_SET(dst, src) \
-	(((dst) & ~0x7) | (((UINT32)(src)) & 0x7))
+  (((dst) & ~0x7) | (((UINT32)(src)) & 0x7))
 #define RCBPCIDEVMAPHI_SET(dst, src) \
-	(((dst) & ~0x70) | (((UINT32)(src) << 4) & 0x70))
+  (((dst) & ~0x70) | (((UINT32)(src) << 4) & 0x70))
 
 #define PCIE_GET_MAX_WIDTH(Pcie, Max) \
   !((Pcie).MaxWidth) ? (Max) : MIN((Pcie).MaxWidth, (Max))

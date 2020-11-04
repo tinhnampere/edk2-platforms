@@ -23,7 +23,7 @@ EFI_RNG_ALGORITHM mSupportedRngAlgorithms[] = {
 };
 
 enum SCP_RNG_MSG_REQ {
-	SCP_RNG_GET_TRNG = 1,
+  SCP_RNG_GET_TRNG = 1,
 };
 
 STATIC

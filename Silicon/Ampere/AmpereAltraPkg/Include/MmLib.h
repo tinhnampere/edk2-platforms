@@ -24,7 +24,7 @@ enum {
 
 #define EFI_MM_MAX_PAYLOAD_U64_E  10
 #define EFI_MM_MAX_PAYLOAD_SIZE   (EFI_MM_MAX_PAYLOAD_U64_E * sizeof(UINT64))
-#define EFI_MM_MAX_TMP_BUF_SIZE	  0x1000000
+#define EFI_MM_MAX_TMP_BUF_SIZE   0x1000000
 
 typedef struct {
   /* Allows for disambiguation of the message format */
