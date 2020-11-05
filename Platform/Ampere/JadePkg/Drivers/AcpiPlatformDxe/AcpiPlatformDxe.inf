@@ -47,6 +47,7 @@
   AcpiPccLib
   AcpiHelperLib
   AmpereCpuLib
+  FlashLib
 
 [Pcd]
   gArmPlatformTokenSpaceGuid.PcdCoreCount

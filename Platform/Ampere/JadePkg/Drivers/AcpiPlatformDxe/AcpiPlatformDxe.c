@@ -46,6 +46,8 @@ AcpiNotificationEvent (
     // ARM Platforms must set the RSDT address to NULL
     Rsdp->RsdtAddress = 0;
   }
+
+  DEBUG ((DEBUG_INFO, "[%a:%d]-\n", __FUNCTION__, __LINE__));
 }
 
 VOID
@@ -85,6 +87,11 @@ InstallAcpiOnReadyToBoot (
   Status = AcpiInstallNfitTable ();
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Installed NFIT table\n"));
+  }
+
+  Status = AcpiPopulateBert ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "Populate BERT record\n"));
   }
 
   //
