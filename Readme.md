@@ -227,6 +227,9 @@ they will be documented with the platform.
 * [Juno](Platform/ARM/JunoPkg)
 * [SGI family](Platform/ARM/SgiPkg)
 
+## [Ampere](Platform/Ampere/Readme.md)
+* [Mt. Jade](Platform/Ampere/JadePkg)
+
 ## BeagleBoard
 * [BeagleBoard](Platform/BeagleBoard/BeagleBoardPkg)
 
