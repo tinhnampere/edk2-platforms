@@ -12,7 +12,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PeimEntryPoint.h>
-#include <Library/MmCommunicationPeiLib.h>
+#include <Library/MmCommunicationLib.h>
 #include <MmLib.h>
 
 // Convert to string
@@ -90,7 +90,7 @@ FlashPeiEntryPoint (
   UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
 
   Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-  Status = MmCommunicationCommunicatePei (
+  Status = MmCommunicationCommunicate (
              (VOID *) &mEfiMmSpiNorReq,
              &Size
              );
@@ -118,7 +118,7 @@ FlashPeiEntryPoint (
   UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
 
   Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-  Status = MmCommunicationCommunicatePei (
+  Status = MmCommunicationCommunicate (
              (VOID *) &mEfiMmSpiNorReq,
              &Size
              );
@@ -137,7 +137,7 @@ FlashPeiEntryPoint (
     UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
 
     Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-    Status = MmCommunicationCommunicatePei (
+    Status = MmCommunicationCommunicate (
                (VOID *) &mEfiMmSpiNorReq,
                &Size
                );
@@ -156,7 +156,7 @@ FlashPeiEntryPoint (
     UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
 
     Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-    Status = MmCommunicationCommunicatePei (
+    Status = MmCommunicationCommunicate (
                (VOID *) &mEfiMmSpiNorReq,
                &Size
                );
@@ -175,7 +175,7 @@ FlashPeiEntryPoint (
     UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
 
     Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-    Status = MmCommunicationCommunicatePei(
+    Status = MmCommunicationCommunicate(
                (VOID *) &mEfiMmSpiNorReq,
                &Size
                );
@@ -194,7 +194,7 @@ FlashPeiEntryPoint (
     UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
 
     Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-    Status = MmCommunicationCommunicatePei (
+    Status = MmCommunicationCommunicate (
                (VOID *) &mEfiMmSpiNorReq,
                &Size
                );
@@ -215,7 +215,7 @@ FlashPeiEntryPoint (
     UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
 
     Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-    Status = MmCommunicationCommunicatePei (
+    Status = MmCommunicationCommunicate (
                (VOID *) &mEfiMmSpiNorReq,
                &Size
                );
@@ -235,7 +235,7 @@ FlashPeiEntryPoint (
   UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
 
   Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-  Status = MmCommunicationCommunicatePei (
+  Status = MmCommunicationCommunicate (
              (VOID *) &mEfiMmSpiNorReq,
              &Size
              );
@@ -257,7 +257,7 @@ FlashPeiEntryPoint (
       UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
 
       Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-      Status = MmCommunicationCommunicatePei (
+      Status = MmCommunicationCommunicate (
                  (VOID *)&mEfiMmSpiNorReq,
                  &Size
                  );

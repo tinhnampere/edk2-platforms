@@ -28,7 +28,7 @@
   ArmSmcLib
   BaseMemoryLib
   DebugLib
-  MmCommunicationPeiLib
+  MmCommunicationLib
   PeimEntryPoint
 
 [Guids]

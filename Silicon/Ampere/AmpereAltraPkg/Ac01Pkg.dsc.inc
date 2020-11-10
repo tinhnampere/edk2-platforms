@@ -93,6 +93,7 @@
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
   I2CLib|Silicon/Ampere/AmpereAltraPkg/Library/DWI2CLib/I2CLib.inf
   DwapbGpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwapbGpioLib/DwapbGpioLib.inf
+  MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Library/MmCommunicationLib/MmCommunicationLib.inf
 
   # ARM PL011 UART Driver
   PL011UartLib|ArmPlatformPkg/Library/PL011UartLib/PL011UartLib.inf
@@ -206,7 +207,6 @@
   PeiResourcePublicationLib|MdePkg/Library/PeiResourcePublicationLib/PeiResourcePublicationLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   PeiServicesTablePointerLib|ArmPkg/Library/PeiServicesTablePointerLib/PeiServicesTablePointerLib.inf
-  MmCommunicationPeiLib|Silicon/Ampere/AmpereAltraPkg/Library/MmCommunicationPeiLib/MmCommunicationPeiLib.inf
 
 [LibraryClasses.common.SEC, LibraryClasses.common.PEIM]
   MemoryInitPeiLib|Silicon/Ampere/AmpereAltraPkg/Library/MemoryInitPeiLib/MemoryInitPeiLib.inf

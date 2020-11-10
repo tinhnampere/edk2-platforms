@@ -8,15 +8,15 @@
 
 [Defines]
   INF_VERSION                    = 0x0001001B
-  BASE_NAME                      = MmCommunicationPeiLib
+  BASE_NAME                      = MmCommunicationLib
   FILE_GUID                      = 106099B8-0051-4B35-9578-EFB1045D2FA8
-  MODULE_TYPE                    = PEIM
+  MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = MmCommunicationPeiLib|PEIM
-  CONSTRUCTOR                    = MmCommunicationPeiLibConstructor
+  LIBRARY_CLASS                  = MmCommunicationLib
+  CONSTRUCTOR                    = MmCommunicationLibConstructor
 
 [Sources]
-  MmCommunicationPeiLib.c
+  MmCommunicationLib.c
 
 [Packages]
   ArmPkg/ArmPkg.dec

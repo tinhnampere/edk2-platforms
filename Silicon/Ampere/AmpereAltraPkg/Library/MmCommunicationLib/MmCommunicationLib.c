@@ -11,7 +11,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PcdLib.h>
-#include <Library/MmCommunicationPeiLib.h>
+#include <Library/MmCommunicationLib.h>
 #include <Protocol/MmCommunication.h>
 
 #include <IndustryStandard/ArmStdSmc.h>
@@ -24,9 +24,8 @@ STATIC ARM_MEMORY_REGION_DESCRIPTOR  mNsCommBuffMemRegion;
 
 EFI_STATUS
 EFIAPI
-MmCommunicationPeiLibConstructor (
-  IN       EFI_PEI_FILE_HANDLE       FileHandle,
-  IN CONST EFI_PEI_SERVICES          **PeiServices
+MmCommunicationLibConstructor (
+  VOID
   )
 {
   mNsCommBuffMemRegion.PhysicalBase = PcdGet64 (PcdMmBufferBase);
@@ -64,7 +63,7 @@ MmCommunicationPeiLibConstructor (
 **/
 EFI_STATUS
 EFIAPI
-MmCommunicationCommunicatePei (
+MmCommunicationCommunicate (
   IN OUT VOID                             *CommBuffer,
   IN OUT UINTN                            *CommSize OPTIONAL
   )
