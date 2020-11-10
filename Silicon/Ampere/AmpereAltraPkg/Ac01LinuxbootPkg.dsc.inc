@@ -88,6 +88,7 @@
   DwapbGpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwapbGpioLib/DwapbGpioLib.inf
   PcieBoardLib|Platform/Ampere/JadePkg/Library/Pcie/BoardPcie.inf
   I2CLib|Silicon/Ampere/AmpereAltraPkg/Library/DWI2CLib/I2CLib.inf
+  MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Library/MmCommunicationLib/MmCommunicationLib.inf
 
   # ARM PL011 UART Driver
   PL011UartLib|ArmPlatformPkg/Library/PL011UartLib/PL011UartLib.inf
@@ -436,6 +437,12 @@
   # Enable the non-executable DXE stack. (This gets set up by DxeIpl)
   #
   gEfiMdeModulePkgTokenSpaceGuid.PcdSetNxForStack|TRUE
+
+  #
+  # MmCommunication
+  #
+  gArmTokenSpaceGuid.PcdMmBufferBase|0x88300000
+  gArmTokenSpaceGuid.PcdMmBufferSize|0x100000
 
 [PcdsDynamicHii.common.DEFAULT]
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|L"Timeout"|gEfiGlobalVariableGuid|0x0|0

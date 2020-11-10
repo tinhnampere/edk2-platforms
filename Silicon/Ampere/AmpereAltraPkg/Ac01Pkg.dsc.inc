@@ -261,6 +261,7 @@
 
   EfiResetSystemLib|ArmPkg/Library/ArmPsciResetSystemLib/ArmPsciResetSystemLib.inf
   ArmSmcLib|ArmPkg/Library/ArmSmcLib/ArmSmcLib.inf
+  NVParamLib|Silicon/Ampere/AmpereAltraPkg/Library/NVParamDxeLib/NVParamDxeLib.inf
 
 [LibraryClasses.ARM,LibraryClasses.AARCH64]
   #

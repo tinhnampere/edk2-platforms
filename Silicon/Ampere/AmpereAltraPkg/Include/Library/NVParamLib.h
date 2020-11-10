@@ -66,11 +66,11 @@
  * caller will carry the correct permission over various call sequences.
  *
  */
-INTN
+EFI_STATUS
 NVParamGet (
-  UINT32 Param,
-  UINT16 ACLRd,
-  UINT32 *Val
+  IN  UINT32 Param,
+  IN  UINT16 ACLRd,
+  OUT UINT32 *Val
   );
 
 /*
@@ -91,12 +91,12 @@ NVParamGet (
  * caller will carry the correct permission over various call sequences.
  *
  */
-INTN
+EFI_STATUS
 NVParamSet (
-  UINT32 Param,
-  UINT16 ACLRd,
-  UINT16 ACLWr,
-  UINT32 Val
+  IN UINT32 Param,
+  IN UINT16 ACLRd,
+  IN UINT16 ACLWr,
+  IN UINT32 Val
   );
 
 /*
@@ -113,10 +113,10 @@ NVParamSet (
  * over various call sequences.
  *
  */
-INTN
+EFI_STATUS
 NVParamClr (
-  UINT32 Param,
-  UINT16 ACLWr
+  IN UINT32 Param,
+  IN UINT16 ACLWr
   );
 
 /*
@@ -125,9 +125,7 @@ NVParamClr (
  * @return:     EFI_UNSUPPORTED if service unavailable
  *              Otherwise, 0 for success
  */
-INTN
-NVParamClrAll (
-  VOID
-  );
+EFI_STATUS
+NVParamClrAll (VOID);
 
 #endif /* _NVParam_H_ */
