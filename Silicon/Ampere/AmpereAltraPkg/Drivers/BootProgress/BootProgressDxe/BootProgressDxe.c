@@ -203,19 +203,19 @@ BootProgressListenerDxe (
     mBootstate = BOOT_FAILED;
   }
   else if (Value == (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_READY_TO_BOOT_EVENT)) {
-    /* Complete boot because of ready to boot checkpoint*/
+    /* Set boot complete when reach to ReadyToBoot event */
     mBootstate = BOOT_COMPLETE;
-  }
-  else if (Value == (EFI_SOFTWARE_EFI_BOOT_SERVICE | EFI_SW_BS_PC_EXIT_BOOT_SERVICES) &&
-           mRscHandlerProtocol != NULL) {
-    mRscHandlerProtocol->Unregister (BootProgressListenerDxe);
-    return EFI_SUCCESS;
   }
 
   BootProgressSendSMpro (
     (((UINT32) mBootstate << BOOT_STATE_SHIFT) & BOOT_STATE_MASK) | (((UINT32) Value << STATUS_SHIFT) & STATUS_MASK),
     Value >> STATUS_SHIFT
   );
+
+  if (Value == (EFI_SOFTWARE_EFI_BOOT_SERVICE | EFI_SW_BS_PC_EXIT_BOOT_SERVICES) &&
+      mRscHandlerProtocol != NULL) {
+    mRscHandlerProtocol->Unregister (BootProgressListenerDxe);
+  }
 
   return EFI_SUCCESS;
 }
