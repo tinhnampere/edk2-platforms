@@ -43,6 +43,9 @@
   ##  @libraryclass  Defines a set of methods to communicate with PMPro.
   PMProLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PMProLib.h
 
+  ##  @libraryclass  Defines a set of methods to access flash memory.
+  FlashLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/FlashLib.h
+
 [Guids]
   # GUID for the CPU HII configuration form
   gCpuConfigFormSetGuid        = { 0x43FAA144, 0xA2DF, 0x4050, { 0xA7, 0xFD, 0xEE, 0x17, 0xC9, 0xB8, 0x88, 0x8E } }
