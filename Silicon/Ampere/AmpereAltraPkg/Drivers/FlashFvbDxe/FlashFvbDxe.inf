@@ -25,16 +25,13 @@
   Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
 
 [LibraryClasses]
-  ArmLib
-  ArmSmcLib
-  BaseLib
   DebugLib
-  UefiLib
+  PcdLib
+  FlashLib
   UefiDriverEntryPoint
   UefiBootServicesTableLib
   UefiRuntimeLib
-  DxeServicesTableLib
-  PcdLib
+
 
 [FixedPcd]
   gAmpereTokenSpaceGuid.PcdFvBlockSize

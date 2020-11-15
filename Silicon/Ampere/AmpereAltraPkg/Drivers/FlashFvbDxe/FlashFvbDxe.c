@@ -6,56 +6,22 @@
 
 **/
 
-#include <Library/ArmLib.h>
-#include <Library/ArmSmcLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PcdLib.h>
+#include <Library/FlashLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeLib.h>
 #include <Protocol/FirmwareVolumeBlock.h>
-#include <Protocol/MmCommunication.h>
-#include <MmLib.h>
-
-
-EFI_MM_COMMUNICATION_PROTOCOL *mMmCommunicationProtocol = NULL;
-EFI_MM_COMM_REQUEST           *mCommBuffer = NULL;
 
 //
 // These temporary buffers are used to calculate and convert linear virtual
 // to physical address
 //
-STATIC UINT64   mTmpBufMapped;
-STATIC UINT64   mTmpBufPhy;
-
-STATIC UINT64   mFWNvRamStartOffset;
-STATIC BOOLEAN  mFWNvRamValid;
-STATIC BOOLEAN  mIsEfiRuntime;
+STATIC UINT64   mNvFlashBase;
+STATIC UINT32   mNvFlashSize;
 STATIC UINT32   mFlashBlockSize;
 STATIC UINT64   mNvStorageBase;
 STATIC UINT64   mNvStorageSize;
-
-
-STATIC
-EFI_STATUS
-UefiMmCreateSpiNorReq (
-  VOID *Data,
-  UINT64 Size
-  )
-{
-  CopyGuid (&mCommBuffer->EfiMmHdr.HeaderGuid, &gSpiNorMmGuid);
-  mCommBuffer->EfiMmHdr.MsgLength = Size;
-
-  if (Size != 0) {
-    ASSERT (Data != NULL);
-    ASSERT (Size <= EFI_MM_MAX_PAYLOAD_SIZE);
-
-    CopyMem (mCommBuffer->PayLoad.Data, Data, Size);
-  }
-
-  return EFI_SUCCESS;
-}
 
 /**
   Fixup internal data so that EFI can be call in virtual mode.
@@ -65,258 +31,14 @@ UefiMmCreateSpiNorReq (
   @param[in]    Event   The Event that is being processed
   @param[in]    Context Event Context
 **/
-STATIC
 VOID
 EFIAPI
-VariableClassAddressChangeEvent (
+FlashFvbAddressChangeEvent (
   IN EFI_EVENT        Event,
   IN VOID             *Context
   )
 {
-  EfiConvertPointer (0x0, (VOID **) &mTmpBufMapped);
   EfiConvertPointer (0x0, (VOID **) &mNvStorageBase);
-  EfiConvertPointer (0x0, (VOID **) &mCommBuffer);
-  EfiConvertPointer (0x0, (VOID **) &mMmCommunicationProtocol);
-
-  mIsEfiRuntime = TRUE;
-}
-
-/**
-  Convert Virtual Address to Physical Address at Runtime Services
-
-  @param  VirtualPtr          Virtual Address Pointer
-  @param  Size                Total bytes of the buffer
-
-  @retval Ptr                 Return the pointer of the converted address
-
-**/
-
-STATIC
-UINT8 *
-ConvertVirtualToPhysical (
-  IN UINT8    *VirtualPtr,
-  IN UINTN    Size
-  )
-{
-  if (mIsEfiRuntime) {
-    ASSERT (VirtualPtr != NULL);
-    CopyMem ((VOID *) mTmpBufMapped, (VOID *) VirtualPtr, Size);
-    return (UINT8 *) mTmpBufPhy;
-  }
-
-  return (UINT8 *) VirtualPtr;
-}
-
-/**
-  Convert Physical Address to Virtual Address at Runtime Services
-
-  @param  VirtualPtr          Physical Address Pointer
-  @param  Size                Total bytes of the buffer
-
-**/
-
-STATIC
-VOID
-ConvertPhysicaltoVirtual (
-  IN UINT8    *PhysicalPtr,
-  IN UINTN    Size
-  )
-{
-  if (mIsEfiRuntime) {
-    ASSERT(PhysicalPtr != NULL);
-    CopyMem ((VOID *) PhysicalPtr, (VOID *) mTmpBufMapped, Size);
-  }
-}
-
-STATIC
-UINT64
-ConvertToFWOffset (
-  IN UINT64    Offset
-  )
-{
-  if (mFWNvRamValid && Offset >= mNvStorageBase && Offset < (mNvStorageBase + mNvStorageSize * 2)) {
-    return (Offset - mNvStorageBase + mFWNvRamStartOffset);
-  }
-
-  return Offset;
-}
-
-STATIC
-EFI_STATUS
-FlashSmcGetInfo (
-  VOID
-  )
-{
-  EFI_MM_COMM_REQUEST                  *EfiMmSpiNorReq;
-  EFI_MM_COMMUNICATE_SPINOR_NVINFO_RES *MmSpiNorNVInfoRes;
-  EFI_STATUS                           Status;
-  UINT64                               MmData[5];
-  UINTN                                Size;
-
-  mFWNvRamValid = FALSE;
-
-  // Get NV region information
-  MmData[0] = MM_SPINOR_FUNC_GET_NVRAM_INFO;
-  UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
-
-  Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-  Status = mMmCommunicationProtocol->Communicate (
-                                       mMmCommunicationProtocol,
-                                       mCommBuffer,
-                                       &Size
-                                       );
-  ASSERT_EFI_ERROR (Status);
-
-  EfiMmSpiNorReq = (EFI_MM_COMM_REQUEST *)mCommBuffer;
-  MmSpiNorNVInfoRes = (EFI_MM_COMMUNICATE_SPINOR_NVINFO_RES *)&EfiMmSpiNorReq->PayLoad;
-  if (MmSpiNorNVInfoRes->Status == MM_SPINOR_RES_SUCCESS) {
-    mFWNvRamStartOffset = MmSpiNorNVInfoRes->NVBase;
-    DEBUG ((DEBUG_INFO,"NVInfo Base 0x%llx, Size 0x%llx\n", mFWNvRamStartOffset,
-            MmSpiNorNVInfoRes->NVSize));
-    if (MmSpiNorNVInfoRes->NVSize >= (mNvStorageSize * 2)) {
-      mFWNvRamValid = TRUE;
-    }
-  }
-
-  return EFI_SUCCESS;
-}
-
-STATIC
-EFI_STATUS
-CommonEraseCommand (
-  IN      UINT8     *pBlockAddress,
-  IN      UINT32    Length
-  )
-{
-  EFI_MM_COMMUNICATE_SPINOR_RES *MmSpiNorRes;
-  EFI_STATUS                    Status;
-  UINT64                        MmData[5];
-  UINTN                         Size;
-
-  ASSERT (pBlockAddress != NULL);
-
-  MmData[0] = MM_SPINOR_FUNC_ERASE;
-  MmData[1] = ConvertToFWOffset ((UINT64) pBlockAddress);
-  MmData[2] = Length;
-
-  UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
-
-  Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-  Status = mMmCommunicationProtocol->Communicate (
-                                       mMmCommunicationProtocol,
-                                       mCommBuffer,
-                                       &Size
-                                       );
-  ASSERT_EFI_ERROR (Status);
-
-  MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *)&mCommBuffer->PayLoad;
-  if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
-    DEBUG((DEBUG_ERROR, "Flash Erase: Device error %llx\n", MmSpiNorRes->Status));
-    return EFI_DEVICE_ERROR;
-  }
-
-  return EFI_SUCCESS;
-}
-
-STATIC
-EFI_STATUS
-CommonProgramCommand (
-  IN      UINT8     *pByteAddress,
-  IN      UINT8     *Byte,
-  IN OUT  UINTN     *Length
-  )
-{
-  EFI_MM_COMMUNICATE_SPINOR_RES *MmSpiNorRes;
-  EFI_STATUS                    Status;
-  UINT64                        MmData[5];
-  UINTN                         Remain, Size, NumWrite;
-  UINTN                         Count = 0;
-
-  ASSERT (pByteAddress != NULL);
-  ASSERT (Byte != NULL);
-  ASSERT (Length != NULL);
-
-  Remain = *Length;
-  while (Remain > 0) {
-    NumWrite = (Remain > EFI_MM_MAX_TMP_BUF_SIZE) ? EFI_MM_MAX_TMP_BUF_SIZE : Remain;
-
-    MmData[0] = MM_SPINOR_FUNC_WRITE;
-    MmData[1] = ConvertToFWOffset ((UINT64) pByteAddress);
-    MmData[2] = NumWrite;
-    MmData[3] = (UINT64)ConvertVirtualToPhysical (Byte + Count, NumWrite);
-
-    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
-
-    Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-    Status = mMmCommunicationProtocol->Communicate (
-                                         mMmCommunicationProtocol,
-                                         mCommBuffer,
-                                         &Size
-                                         );
-    ASSERT_EFI_ERROR(Status);
-
-    MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *)&mCommBuffer->PayLoad;
-    if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
-      DEBUG((DEBUG_ERROR, "Flash program: Device error 0x%llx\n", MmSpiNorRes->Status));
-      return EFI_SUCCESS;
-    }
-
-    Remain -= NumWrite;
-    Count += NumWrite;
-  }
-
-  return EFI_SUCCESS;
-}
-
-STATIC
-EFI_STATUS
-CommonReadCommand (
-  IN      UINT8     *pByteAddress,
-  OUT     UINT8     *Byte,
-  IN OUT  UINTN     *Length
-  )
-{
-  EFI_MM_COMMUNICATE_SPINOR_RES *MmSpiNorRes;
-  EFI_STATUS                    Status;
-  UINT64                        MmData[5];
-  UINTN                         Remain, Size, NumRead;
-  UINTN                         Count = 0;
-
-  ASSERT (pByteAddress != NULL);
-  ASSERT (Byte != NULL);
-  ASSERT (Length != NULL);
-
-  Remain = *Length;
-  while (Remain > 0) {
-    NumRead = (Remain > EFI_MM_MAX_TMP_BUF_SIZE) ? EFI_MM_MAX_TMP_BUF_SIZE : Remain;
-
-    MmData[0] = MM_SPINOR_FUNC_READ;
-    MmData[1] = ConvertToFWOffset ((UINT64) pByteAddress);
-    MmData[2] = NumRead;
-    MmData[3] = (UINT64) ConvertVirtualToPhysical (Byte + Count, NumRead);
-
-    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
-
-    Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-    Status = mMmCommunicationProtocol->Communicate (
-                                         mMmCommunicationProtocol,
-                                         mCommBuffer,
-                                         &Size
-                                         );
-    ASSERT_EFI_ERROR(Status);
-
-    MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *)&mCommBuffer->PayLoad;
-    if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
-      DEBUG ((DEBUG_ERROR, "Flash Read: Device error %llx\n", MmSpiNorRes->Status));
-      return EFI_DEVICE_ERROR;
-    }
-
-    ConvertPhysicaltoVirtual (Byte + Count, NumRead);
-    Remain -= NumRead;
-    Count += NumRead;
-  }
-
-  return EFI_SUCCESS;
 }
 
 /**
@@ -334,14 +56,14 @@ CommonReadCommand (
                       returned.
 
 **/
-STATIC
 EFI_STATUS
+EFIAPI
 FlashFvbDxeGetAttributes (
   IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
   OUT       EFI_FVB_ATTRIBUTES_2                *Attributes
   )
 {
-  ASSERT(Attributes != NULL);
+  ASSERT (Attributes != NULL);
 
   *Attributes = EFI_FVB2_READ_ENABLED_CAP   | // Reads may be enabled
                 EFI_FVB2_READ_STATUS        | // Reads are currently enabled
@@ -377,8 +99,8 @@ FlashFvbDxeGetAttributes (
                                 volume header.
 
 **/
-STATIC
 EFI_STATUS
+EFIAPI
 FlashFvbDxeSetAttributes (
   IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
   IN OUT    EFI_FVB_ATTRIBUTES_2                *Attributes
@@ -404,8 +126,8 @@ FlashFvbDxeSetAttributes (
   @retval EFI_UNSUPPORTED   The firmware volume is not memory mapped.
 
 **/
-STATIC
 EFI_STATUS
+EFIAPI
 FlashFvbDxeGetPhysicalAddress (
   IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
   OUT       EFI_PHYSICAL_ADDRESS                *Address
@@ -444,8 +166,8 @@ FlashFvbDxeGetPhysicalAddress (
   @retval EFI_INVALID_PARAMETER   The requested LBA is out of range.
 
 **/
-STATIC
 EFI_STATUS
+EFIAPI
 FlashFvbDxeGetBlockSize (
   IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
   IN        EFI_LBA                             Lba,
@@ -518,8 +240,8 @@ FlashFvbDxeGetBlockSize (
                               not be read.
 
 **/
-STATIC
 EFI_STATUS
+EFIAPI
 FlashFvbDxeRead (
   IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
   IN        EFI_LBA                             Lba,
@@ -537,13 +259,18 @@ FlashFvbDxeRead (
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  Status = CommonReadCommand (
-             (UINT8 *) (mFWNvRamStartOffset + Lba * mFlashBlockSize + Offset),
+  Status = FlashReadCommand (
+             (UINT8 *) (mNvFlashBase + Lba * mFlashBlockSize + Offset),
              Buffer,
              NumBytes
              );
 
-  return Status;
+  if (EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_ERROR, "Failed to do flash read\n"));
+    return EFI_DEVICE_ERROR;
+  }
+
+  return EFI_SUCCESS;
 }
 
 /**
@@ -604,8 +331,8 @@ FlashFvbDxeRead (
                               and could not be written.
 
 **/
-STATIC
 EFI_STATUS
+EFIAPI
 FlashFvbDxeWrite (
   IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
   IN        EFI_LBA                             Lba,
@@ -623,11 +350,16 @@ FlashFvbDxeWrite (
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  Status = CommonProgramCommand (
-             (UINT8 *) mFWNvRamStartOffset + Lba * mFlashBlockSize + Offset,
+  Status = FlashProgramCommand (
+             (UINT8 *) (mNvFlashBase + Lba * mFlashBlockSize + Offset),
              Buffer,
              NumBytes
              );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_ERROR, "Failed to do flash program\n"));
+    return EFI_DEVICE_ERROR;
+  }
 
   return Status;
 }
@@ -680,8 +412,8 @@ FlashFvbDxeWrite (
                                 not exist in the firmware volume.
 
 **/
-STATIC
 EFI_STATUS
+EFIAPI
 FlashFvbDxeErase (
   IN CONST  EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL *This,
   ...
@@ -692,7 +424,7 @@ FlashFvbDxeErase (
   UINTN         Length;
   EFI_STATUS    Status;
 
-  Status = EFI_DEVICE_ERROR;
+  Status = EFI_SUCCESS;
 
   VA_START (Args, This);
 
@@ -700,18 +432,22 @@ FlashFvbDxeErase (
        Start != EFI_LBA_LIST_TERMINATOR;
        Start = VA_ARG (Args, EFI_LBA)) {
     Length = VA_ARG (Args, UINTN);
-    Status = CommonEraseCommand (
-      (UINT8 *) mFWNvRamStartOffset + Start * mFlashBlockSize,
+    Status = FlashEraseCommand (
+      (UINT8 *) (mNvFlashBase + Start * mFlashBlockSize),
       Length * mFlashBlockSize
     );
   }
 
   VA_END (Args);
 
-  return Status;
+  if (EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_ERROR, "Failed to do flash erase\n"));
+    return EFI_DEVICE_ERROR;
+  }
+
+  return EFI_SUCCESS;
 }
 
-STATIC
 EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL mFlashFvbProtocol = {
   FlashFvbDxeGetAttributes,
   FlashFvbDxeSetAttributes,
@@ -733,46 +469,7 @@ FlashFvbDxeInitialize (
   EFI_HANDLE      FvbHandle = NULL;
   EFI_EVENT       VirtualAddressChangeEvent;
 
-  mCommBuffer = (EFI_MM_COMM_REQUEST *) AllocateRuntimeZeroPool (
-                                          sizeof(EFI_MM_COMM_REQUEST)
-                                          );
-  if (mCommBuffer == NULL) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "%a Failed to allocate memory for Mm buffer.\n",
-      __FUNCTION__
-      ));
-    Status = EFI_OUT_OF_RESOURCES;
-    goto exit;
-  }
-
-  Status = gBS->LocateProtocol (
-                  &gEfiMmCommunicationProtocolGuid,
-                  NULL,
-                  (VOID **)&mMmCommunicationProtocol
-                  );
-  if (EFI_ERROR (Status)) {
-    DEBUG((
-      DEBUG_ERROR,
-      "%a: Can't locate gEfiMmCommunicationProtocolGuid\n",
-      __FUNCTION__
-      ));
-    goto exit;
-  }
-
-  // Get Flash information
-  Status = FlashSmcGetInfo ();
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Fail to get Flash info\n", __FUNCTION__));
-    goto exit;
-  }
-
-  mTmpBufPhy = (UINT64) AllocateRuntimeZeroPool (EFI_MM_MAX_TMP_BUF_SIZE);
-  ASSERT (mTmpBufPhy);
-
-  mIsEfiRuntime = FALSE;
-  mTmpBufMapped = mTmpBufPhy;
-
+  // Get NV store FV info
   mFlashBlockSize = FixedPcdGet32 (PcdFvBlockSize);
   mNvStorageBase = PcdGet64 (PcdFlashNvStorageVariableBase64);
   mNvStorageSize = FixedPcdGet32 (PcdFlashNvStorageVariableSize) +
@@ -787,10 +484,24 @@ FlashFvbDxeInitialize (
     mNvStorageSize
     ));
 
+  // Get NV Flash information
+  Status = FlashGetNvRamInfo ((UINT64 *)&mNvFlashBase, (UINT32 *)&mNvFlashSize);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Failed to get Flash info\n", __FUNCTION__));
+    return EFI_DEVICE_ERROR;
+  }
+
+  if (mNvFlashSize >= (mNvStorageSize * 2)) {
+    DEBUG ((DEBUG_INFO, "%a: NV store on Flash is valid\n", __FUNCTION__));
+  } else {
+    DEBUG ((DEBUG_ERROR, "%a: NV store on Flash is invalid\n", __FUNCTION__));
+    return EFI_DEVICE_ERROR;
+  }
+
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
                   TPL_NOTIFY,
-                  VariableClassAddressChangeEvent,
+                  FlashFvbAddressChangeEvent,
                   NULL,
                   &gEfiEventVirtualAddressChangeGuid,
                   &VirtualAddressChangeEvent
@@ -806,15 +517,8 @@ FlashFvbDxeInitialize (
 
   if (EFI_ERROR (Status)) {
     DEBUG ((EFI_D_ERROR, "Failed to install Firmware Volume Block protocol\n"));
-  } else {
-    DEBUG ((EFI_D_INFO, "Successful to install Firmware Volume Block protocol\n"));
-    return EFI_SUCCESS;
+    return Status;
   }
 
-exit:
-  if (mCommBuffer) {
-    FreePool (mCommBuffer);
-  }
-
-  return Status;
+  return EFI_SUCCESS;
 }
