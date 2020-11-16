@@ -514,29 +514,9 @@ VOID I2CSclInit (UINT32 Bus, UINT32 I2CClkFreq, UINT32 I2CSpeed)
  **/
 STATIC EFI_STATUS I2CInit (UINT32 Bus, UINTN BusSpeed)
 {
-  UINTN               Base;
-  VOID                *Hob;
-  PlatformInfoHob     *PlatformHob;
-  PlatformInfoHob_V2  *PlatformHob_V2;
-  CONST EFI_GUID      PlatformHobGuid = PLATFORM_INFO_HOB_GUID;
-  CONST EFI_GUID      PlatformHobGuid_V2 = PLATFORM_INFO_HOB_GUID_V2;
+  UINTN     Base;
 
-  /* Get the Platform HOB */
-  if (!I2CClock) {
-    Hob = GetFirstGuidHob (&PlatformHobGuid);
-    if (!Hob) {
-      Hob = GetFirstGuidHob (&PlatformHobGuid_V2);
-      if (!Hob) {
-        return EFI_INVALID_PARAMETER;
-      }
-      PlatformHob_V2 = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
-      I2CClock = PlatformHob_V2->AhbClk;
-    } else {
-      PlatformHob = (PlatformInfoHob *) GET_GUID_HOB_DATA (Hob);
-      I2CClock = PlatformHob->ApbClk;
-    }
-  }
-  ASSERT (I2CClock);
+  ASSERT (I2CClock != 0);
 
   I2CBusList[Bus].BusSpeed = BusSpeed;
   I2CHWInit (Bus);
@@ -848,4 +828,34 @@ I2CSetupRuntime (IN UINT32 Bus)
   I2CRuntimeEnableArray[Bus] = TRUE;
 
   return Status;
+}
+
+EFI_STATUS
+EFIAPI
+I2CLibConstructor (
+  VOID
+  )
+{
+  VOID                *Hob;
+  PlatformInfoHob     *PlatformHob;
+  PlatformInfoHob_V2  *PlatformHob_V2;
+  CONST EFI_GUID      PlatformHobGuid = PLATFORM_INFO_HOB_GUID;
+  CONST EFI_GUID      PlatformHobGuid_V2 = PLATFORM_INFO_HOB_GUID_V2;
+
+  /* Get I2C Clock from the Platform HOB */
+  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  if (Hob == NULL) {
+    Hob = GetFirstGuidHob (&PlatformHobGuid_V2);
+    if (Hob == NULL) {
+      return EFI_NOT_FOUND;
+    }
+    PlatformHob_V2 = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+    I2CClock = PlatformHob_V2->AhbClk;
+  } else {
+    PlatformHob = (PlatformInfoHob *) GET_GUID_HOB_DATA (Hob);
+    I2CClock = PlatformHob->ApbClk;
+  }
+  ASSERT (I2CClock != 0);
+
+  return EFI_SUCCESS;
 }
