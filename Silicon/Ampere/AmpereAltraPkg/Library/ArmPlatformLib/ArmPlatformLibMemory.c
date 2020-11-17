@@ -15,7 +15,7 @@
 #include <PlatformInfoHob.h>
 
 /* Number of Virtual Memory Map Descriptors */
-#define MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS          49
+#define MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS          50
 
 /* DDR attributes */
 #define DDR_ATTRIBUTES_CACHED           ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK
@@ -350,6 +350,14 @@ ArmPlatformGetVirtualMemoryMap (
   VirtualMemoryTable[++Index].PhysicalBase = 0x58000000ULL;
   VirtualMemoryTable[Index].VirtualBase  = 0x58000000ULL;
   VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
+
+  /*
+   *  - BERT memory region
+   */
+  VirtualMemoryTable[++Index].PhysicalBase = 0x88230000ULL;
+  VirtualMemoryTable[Index].VirtualBase  = 0x88230000ULL;
+  VirtualMemoryTable[Index].Length       = 0x30000ULL;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
