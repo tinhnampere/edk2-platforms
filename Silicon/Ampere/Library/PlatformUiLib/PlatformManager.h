@@ -20,18 +20,11 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseLib.h>
 #include <Library/HiiLib.h>
+#include <Library/UefiLib.h>
 #include <Library/DevicePathLib.h>
 #include <Library/UefiHiiServicesLib.h>
 
-
-//
-// These are defined as the same with vfr file
-//
-#define LABEL_FORM_ID_OFFSET                 0x0100
-#define LABEL_END                            0xffff
-
-#define PLATFORM_MANAGER_FORM_ID             0x1000
-#define ENTRY_KEY_OFFSET                     0x4000
+#include "PlatformManagerVfr.h"
 
 //
 // These are the VFR compiler generated data representing our VFR data.

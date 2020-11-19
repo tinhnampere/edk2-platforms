@@ -13,7 +13,7 @@ PLATFORM_MANAGER_CALLBACK_DATA  gPlatformManagerPrivate = {
   NULL
 };
 
-EFI_GUID mPlatformManagerGuid = PLATFORM_MANAGER_FORMSET_GUID;
+EFI_GUID mPlatformManagerGuid = FORMSET_GUID;
 
 HII_VENDOR_DEVICE_PATH  mPlatformManagerHiiVendorDevicePath = {
   {
@@ -262,6 +262,7 @@ PlatformManagerUiLibConstructor (
   )
 {
   EFI_STATUS                  Status;
+  EFI_EVENT                   PlatformUiEntryEvent;
 
   gPlatformManagerPrivate.DriverHandle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
@@ -276,12 +277,12 @@ PlatformManagerUiLibConstructor (
   // Publish our HII data.
   //
   gPlatformManagerPrivate.HiiHandle = HiiAddPackages (
-                  &mPlatformManagerGuid,
-                  gPlatformManagerPrivate.DriverHandle,
-                  PlatformManagerVfrBin,
-                  PlatformManagerUiLibStrings,
-                  NULL
-                  );
+                                        &mPlatformManagerGuid,
+                                        gPlatformManagerPrivate.DriverHandle,
+                                        PlatformManagerVfrBin,
+                                        PlatformManagerUiLibStrings,
+                                        NULL
+                                        );
   if (gPlatformManagerPrivate.HiiHandle != NULL) {
     //
     // Update platform manager page
@@ -291,6 +292,19 @@ PlatformManagerUiLibConstructor (
     DEBUG ((DEBUG_ERROR, "%a: Failed to add Hii package\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
+
+  // Signal Entry event
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  EfiEventEmptyFunction,
+                  NULL,
+                  &gPlatformManagerEntryEventGuid,
+                  &PlatformUiEntryEvent
+                  );
+  ASSERT_EFI_ERROR (Status);
+  gBS->SignalEvent (PlatformUiEntryEvent);
+  gBS->CloseEvent (PlatformUiEntryEvent);
 
   return EFI_SUCCESS;
 }
@@ -311,6 +325,7 @@ PlatformManagerUiLibDestructor (
   )
 {
   EFI_STATUS                  Status;
+  EFI_EVENT                   PlatformUiExitEvent;
 
   Status = gBS->UninstallMultipleProtocolInterfaces (
                   gPlatformManagerPrivate.DriverHandle,
@@ -321,6 +336,19 @@ PlatformManagerUiLibDestructor (
   ASSERT_EFI_ERROR (Status);
 
   HiiRemovePackages (gPlatformManagerPrivate.HiiHandle);
+
+  // Signal Exit event
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  EfiEventEmptyFunction,
+                  NULL,
+                  &gPlatformManagerExitEventGuid,
+                  &PlatformUiExitEvent
+                  );
+  ASSERT_EFI_ERROR (Status);
+  gBS->SignalEvent (PlatformUiExitEvent);
+  gBS->CloseEvent (PlatformUiExitEvent);
 
   return EFI_SUCCESS;
 }

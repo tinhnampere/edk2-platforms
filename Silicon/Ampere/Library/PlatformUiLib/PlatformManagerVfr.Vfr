@@ -7,15 +7,10 @@
 **/
 
 #include <Guid/HiiPlatformSetupFormset.h>
-#include <Guid/PlatformManagerHii.h>
-
-#define LABEL_ENTRY_LIST                 0x1100
-#define LABEL_END                        0xffff
-
-#define PLATFORM_MANAGER_FORM_ID         0x1000
+#include "PlatformManagerVfr.h"
 
 formset
-  guid      = PLATFORM_MANAGER_FORMSET_GUID,
+  guid      = FORMSET_GUID,
   title     = STRING_TOKEN(STR_EDKII_MENU_TITLE),
   help      = STRING_TOKEN(STR_EDKII_MENU_HELP),
   classguid = EFI_HII_PLATFORM_SETUP_FORMSET_GUID,
