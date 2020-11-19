@@ -29,7 +29,7 @@ formset
     subtitle text = STRING_TOKEN(STR_CPU_FORM_HELP);
 
     oneof
-      varid   = CpuConfigNVData.CpuSubnumaMode,
+      varid   = CpuConfigNVData.CpuSubNumaMode,
       prompt  = STRING_TOKEN(STR_CPU_SUBNUMA_MODE_PROMPT),
       help    = STRING_TOKEN(STR_CPU_SUBNUMA_MODE_HELP),
       flags   = RESET_REQUIRED,

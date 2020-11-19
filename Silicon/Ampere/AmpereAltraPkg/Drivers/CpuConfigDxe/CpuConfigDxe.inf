@@ -8,17 +8,16 @@
 
 [Defines]
   INF_VERSION                    = 0x0001001B
-  BASE_NAME                      = AmpereCpuDxe
-  MODULE_UNI_FILE                = CpuDxe.uni
+  BASE_NAME                      = CpuConfigDxe
+  MODULE_UNI_FILE                = CpuConfigDxe.uni
   FILE_GUID                      = A20D8E6E-EE6C-43C5-809F-19BB930653AE
   MODULE_TYPE                    = DXE_DRIVER
   VERSION_STRING                 = 1.0
-  ENTRY_POINT                    = CpuDxeInitialize
+  ENTRY_POINT                    = CpuConfigDxeEntryPoint
 
 [Sources.common]
-  CpuDxe.c
-  CpuConfig.c
-  CpuConfig.h
+  CpuConfigDxe.c
+  CpuConfigDxe.h
   NVDataStruc.h
   Vfr.vfr
   VfrStrings.uni
@@ -28,9 +27,6 @@
   MdeModulePkg/MdeModulePkg.dec
   Silicon/Ampere/AmperePkg.dec
   Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
-
-[BuildOptions]
-  *_*_*_CC_FLAGS = -Wno-missing-braces
 
 [LibraryClasses]
   IoLib
@@ -42,7 +38,6 @@
   UefiLib
   PcdLib
   HobLib
-  IoLib
   PrintLib
   MemoryAllocationLib
   UefiRuntimeServicesTableLib
@@ -61,6 +56,3 @@
 
 [Depex]
   TRUE
-
-[UserExtensions.TianoCore."ExtraFiles"]
-  CpuDxeExtra.uni

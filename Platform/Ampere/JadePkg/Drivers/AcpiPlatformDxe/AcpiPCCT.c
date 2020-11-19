@@ -54,7 +54,7 @@ AcpiPcctIsV2 (VOID)
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (!Hob) {
+  if (Hob == NULL) {
     return FALSE;
   }
 
@@ -72,7 +72,7 @@ AcpiPcctGetNumOfSocket (VOID)
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (!Hob) {
+  if (Hob == NULL) {
     return 1;
   }
   PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
@@ -84,7 +84,7 @@ AcpiPcctGetNumOfSocket (VOID)
     Socket = &PlatformHob->ClusterEn[Index];
     Count = sizeof (Socket->EnableMask) / sizeof (Socket->EnableMask[0]);
     for (Index1 = 0; Index1 < Count; Index1++) {
-      if (Socket->EnableMask[Index1]) {
+      if (Socket->EnableMask[Index1] != 0) {
         NumberActiveSockets++;
         break;
       }
@@ -95,21 +95,21 @@ AcpiPcctGetNumOfSocket (VOID)
 }
 
 EFI_STATUS
-AcpiPcctInit(VOID)
+AcpiPcctInit (VOID)
 {
-  INTN                          NumOfSocket = AcpiPcctGetNumOfSocket();
-  INTN                          Subspace;
-  INTN                          Socket;
+  INTN NumOfSocket = AcpiPcctGetNumOfSocket ();
+  INTN Subspace;
+  INTN Socket;
 
   for (Socket = 0; Socket < NumOfSocket; Socket++) {
     for (Subspace = 0; Subspace < PCC_MAX_SUBSPACES_PER_SOCKET; Subspace++ ) {
-      if (AcpiPcctIsV2() == TRUE) {
-        AcpiPccSharedMemInitV2(Socket, Subspace);
+      if (AcpiPcctIsV2 ()) {
+        AcpiPccSharedMemInitV2 (Socket, Subspace);
       } else {
-        AcpiPccSharedMemInit(Socket, Subspace);
+        AcpiPccSharedMemInit (Socket, Subspace);
       }
-      AcpiPccSyncSharedMemAddr(Socket, Subspace);
-      AcpiPccUnmaskInt(Socket, Subspace);
+      AcpiPccSyncSharedMemAddr (Socket, Subspace);
+      AcpiPccUnmaskInt (Socket, Subspace);
     }
   }
 
@@ -124,11 +124,11 @@ AcpiPcctInit(VOID)
  *    8 - 15 : SMPro subspaces
  */
 EFI_STATUS
-AcpiInstallPcctTable(VOID)
+AcpiInstallPcctTable (VOID)
 {
   EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER *PcctTablePointer = NULL;
   EFI_ACPI_6_3_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS *PcctEntryPointer = NULL;
-  INTN                          NumOfSocket = AcpiPcctGetNumOfSocket();
+  INTN                          NumOfSocket = AcpiPcctGetNumOfSocket ();
   UINT64                        PccSharedMemPointer = 0;
   EFI_ACPI_TABLE_PROTOCOL       *AcpiTableProtocol;
   UINTN                         PcctTableKey  = 0;
@@ -141,7 +141,7 @@ AcpiInstallPcctTable(VOID)
   INTN                          Socket;
 
   if (IsAcpiInstalled (EFI_ACPI_6_3_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE)) {
-    DEBUG ((EFI_D_INFO, "PCCT table is already installed.  Skipping...\n"));
+    DEBUG ((DEBUG_INFO, "PCCT table is already installed.  Skipping...\n"));
     return EFI_ABORTED;
   }
 
@@ -159,25 +159,25 @@ AcpiInstallPcctTable(VOID)
                     NumOfSubspace * sizeof(EFI_ACPI_6_3_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS);
 
       PcctTablePointer = (EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER *)AllocateZeroPool(Size);
-      if (!PcctTablePointer) {
+      if (PcctTablePointer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
       /* Allocation PCC shared memory */
-      AcpiPccAllocSharedMemory(&PccSharedMemPointer, NumOfSubspace);
-      if (!PccSharedMemPointer) {
+      AcpiPccAllocSharedMemory (&PccSharedMemPointer, NumOfSubspace);
+      if (PccSharedMemPointer == 0) {
         FreePool ((VOID *)PcctTablePointer);
         return EFI_OUT_OF_RESOURCES;
       }
 
-      PcctEntryPointer = (EFI_ACPI_6_3_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS *) ((UINT64)PcctTablePointer +
-          sizeof(EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER));
+      PcctEntryPointer = (EFI_ACPI_6_3_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS *) ((UINT64) PcctTablePointer +
+          sizeof (EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER));
 
       for (Socket = 0; Socket < NumOfSocket; Socket++) {
         for (Subspace = 0; Subspace < PCC_MAX_SUBSPACES_PER_SOCKET; Subspace++ ) {
           SubspaceIdx = Subspace + PCC_MAX_SUBSPACES_PER_SOCKET * Socket;
 
-          CopyMem(&PcctEntryPointer[SubspaceIdx], &PCCTSubspaceTemplate,
+          CopyMem (&PcctEntryPointer[SubspaceIdx], &PCCTSubspaceTemplate,
                   sizeof(EFI_ACPI_6_3_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS));
 
           PcctEntryPointer[SubspaceIdx].BaseAddress = PccSharedMemPointer +
@@ -191,15 +191,15 @@ AcpiInstallPcctTable(VOID)
           if (Subspace < PMPRO_MAX_DB) {
             IntNum += PMPRO_DB0_IRQ_NUM + Subspace;
             /* PCC subspaces for 8 PMpro Doorbells */
-            PcctEntryPointer[SubspaceIdx].DoorbellRegister.Address = PMPRO_DBx_REG(Socket, Subspace, DB_OUT);
+            PcctEntryPointer[SubspaceIdx].DoorbellRegister.Address = PMPRO_DBx_REG (Socket, Subspace, DB_OUT);
             PcctEntryPointer[SubspaceIdx].PlatformInterrupt = IntNum;
-            PcctEntryPointer[SubspaceIdx].PlatformInterruptAckRegister.Address = PMPRO_DBx_REG(Socket, Subspace, DB_STATUS);
+            PcctEntryPointer[SubspaceIdx].PlatformInterruptAckRegister.Address = PMPRO_DBx_REG (Socket, Subspace, DB_STATUS);
           } else {
             IntNum += SMPRO_DB0_IRQ_NUM + Subspace - PMPRO_MAX_DB;
             /* PCC subspaces for 8 SMpro Doorbells */
-            PcctEntryPointer[SubspaceIdx].DoorbellRegister.Address = SMPRO_DBx_REG(Socket,Subspace - PMPRO_MAX_DB, DB_OUT);
+            PcctEntryPointer[SubspaceIdx].DoorbellRegister.Address = SMPRO_DBx_REG (Socket,Subspace - PMPRO_MAX_DB, DB_OUT);
             PcctEntryPointer[SubspaceIdx].PlatformInterrupt = IntNum;
-            PcctEntryPointer[SubspaceIdx].PlatformInterruptAckRegister.Address = SMPRO_DBx_REG(Socket, Subspace - PMPRO_MAX_DB, DB_STATUS);
+            PcctEntryPointer[SubspaceIdx].PlatformInterruptAckRegister.Address = SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_STATUS);
           }
 
           /* Timing */
@@ -216,7 +216,7 @@ AcpiInstallPcctTable(VOID)
           } else {
             PcctEntryPointer[SubspaceIdx].DoorbellWrite = PCC_MSG;
           }
-          if (AcpiPcctIsV2() != TRUE) {
+          if (!AcpiPcctIsV2 ()) {
             /* Store the upper address (Bit 40-43) of PCC shared memory */
             PcctEntryPointer[SubspaceIdx].DoorbellWrite |=
                 (PcctEntryPointer[SubspaceIdx].BaseAddress >> 40) & PCP_MSG_UPPER_ADDR_MASK;
@@ -224,32 +224,32 @@ AcpiInstallPcctTable(VOID)
         }
       }
 
-      CopyMem(PcctTablePointer, &PCCTTableHeaderTemplate,
-              sizeof(EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER));
+      CopyMem (PcctTablePointer, &PCCTTableHeaderTemplate,
+              sizeof (EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER));
 
       PcctTablePointer->Header.Length = Size;
       CopyMem (
         PcctTablePointer->Header.OemId,
         PcdGetPtr (PcdAcpiDefaultOemId),
-        sizeof(PcctTablePointer->Header.OemId)
+        sizeof (PcctTablePointer->Header.OemId)
         );
       PcctTablePointer->Header.OemTableId = EFI_ACPI_OEM_TABLE_ID;
       PcctTablePointer->Header.OemRevision = 3;
       PcctTablePointer->Header.CreatorId = EFI_ACPI_CREATOR_ID;
       PcctTablePointer->Header.CreatorRevision = EFI_ACPI_CREATOR_REVISION;
 
-      AcpiTableChecksum((UINT8 *)PcctTablePointer,
+      AcpiTableChecksum ((UINT8 *) PcctTablePointer,
                         PcctTablePointer->Header.Length);
 
       Status = AcpiTableProtocol->InstallAcpiTable (
                                     AcpiTableProtocol,
-                                    (VOID *)PcctTablePointer,
+                                    (VOID *) PcctTablePointer,
                                     PcctTablePointer->Header.Length,
                                     &PcctTableKey
                                     );
       if (EFI_ERROR (Status)) {
-        AcpiPccFreeSharedMemory(&PccSharedMemPointer, NumOfSubspace);
-        FreePool ((VOID *)PcctTablePointer);
+        AcpiPccFreeSharedMemory (&PccSharedMemPointer, NumOfSubspace);
+        FreePool ((VOID *) PcctTablePointer);
         return Status;
       }
       break;

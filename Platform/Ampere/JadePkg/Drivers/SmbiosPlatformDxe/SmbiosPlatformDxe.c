@@ -146,7 +146,7 @@ STATIC ARM_TYPE0 mArmDefaultType0 = {
   {
     { // Header
       EFI_SMBIOS_TYPE_BIOS_INFORMATION, // UINT8 Type
-      sizeof(SMBIOS_TABLE_TYPE0),       // UINT8 Length, The length of the structure’s string-set is not included.
+      sizeof(SMBIOS_TABLE_TYPE0),       // UINT8 Length, The length of the structure's string-set is not included.
       SMBIOS_HANDLE_PI_RESERVED,
     },
 
@@ -820,7 +820,7 @@ UpdateSmbiosType0 (
   ReleaseDateBuf = &mArmDefaultType0.Strings[0]
                 + sizeof (VENDOR_TEMPLATE) - 1
                 + sizeof (BIOS_VERSION_TEMPLATE) - 1;
-  PcdReleaseDate = (CHAR8*)PcdGetPtr (PcdSmbiosTables0BiosReleaseDate);
+  PcdReleaseDate = (CHAR8*) PcdGetPtr (PcdSmbiosTables0BiosReleaseDate);
 
   if (AsciiStrnCmp (PcdReleaseDate, RELEASE_DATE_TEMPLATE, AsciiStrLen (RELEASE_DATE_TEMPLATE)) == 0) {
     // If PCD is still template date MM/DD/YYYY, use compiler date
@@ -835,8 +835,7 @@ UpdateSmbiosType0 (
 
     mArmDefaultType0.Base.ExtendedBiosSize.Size = 0;
     mArmDefaultType0.Base.ExtendedBiosSize.Unit = 0;
-  }
-  else {
+  } else {
     // TODO: Need to update Extended BIOS ROM Size
     mArmDefaultType0.Base.BiosSize = 0xFF;
 
@@ -849,7 +848,7 @@ UpdateSmbiosType0 (
 
   MiscExt->BiosReserved.AcpiIsSupported = 1;
 
-  // Type0 BIOS Characteristics Extension Bypte 2
+  // Type0 BIOS Characteristics Extension Byte 2
   MiscExt->SystemReserved.BiosBootSpecIsSupported = 1;
   MiscExt->SystemReserved.FunctionKeyNetworkBootIsSupported = 1;
   MiscExt->SystemReserved.UefiSpecificationSupported = 1;
@@ -888,7 +887,9 @@ InstallType3Structure (
   EFI_STATUS          Status = EFI_SUCCESS;
   EFI_SMBIOS_HANDLE   SmbiosHandle;
 
-  SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*)&mArmDefaultType3)->Handle;
+  ASSERT (Smbios != NULL);
+
+  SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*) &mArmDefaultType3)->Handle;
   Status = Smbios->Add (
                      Smbios,
                      NULL,
@@ -896,7 +897,7 @@ InstallType3Structure (
                      (EFI_SMBIOS_TABLE_HEADER*)&mArmDefaultType3
                    );
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "adding SMBIOS type 3 failed\n"));
+    DEBUG ((DEBUG_ERROR, "adding SMBIOS type 3 failed\n"));
     //stop adding rather than continuing
     return Status;
   }
@@ -923,16 +924,18 @@ InstallStructures (
   EFI_SMBIOS_HANDLE   SmbiosHandle;
   UINTN               TableIndex;
 
+  ASSERT (Smbios != NULL);
+
   for (TableIndex = 0; DefaultTables[TableIndex] != NULL; TableIndex++) {
-    SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*)DefaultTables[TableIndex])->Handle;
+    SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*) DefaultTables[TableIndex])->Handle;
     Status = Smbios->Add (
                        Smbios,
                        NULL,
                        &SmbiosHandle,
-                       (EFI_SMBIOS_TABLE_HEADER*)DefaultTables[TableIndex]
-                     );
+                       (EFI_SMBIOS_TABLE_HEADER *) DefaultTables[TableIndex]
+                       );
     if (EFI_ERROR (Status)) {
-      DEBUG((EFI_D_ERROR, "adding %d failed\n", TableIndex));
+      DEBUG ((DEBUG_ERROR, "%a: adding %d failed\n", __FUNCTION__, TableIndex));
 
       //stop adding rather than continuing
       return Status;
@@ -944,9 +947,7 @@ InstallStructures (
 
 STATIC
 VOID
-UpdateSmbiosInfo (
-  VOID
-  )
+UpdateSmbiosInfo (VOID)
 {
   VOID                        *Hob;
   PlatformInfoHob_V2          *PlatformHob;
@@ -979,10 +980,12 @@ InstallAllStructures (
   IN EFI_SMBIOS_PROTOCOL  *Smbios
   )
 {
-  EFI_STATUS                            Status        = EFI_SUCCESS;
+  EFI_STATUS Status = EFI_SUCCESS;
+
+  ASSERT (Smbios != NULL);
 
   //Update SMBIOS Tables
-  UpdateSmbiosInfo();
+  UpdateSmbiosInfo ();
 
   // Install Type 3 table
   InstallType3Structure (Smbios);
@@ -1020,16 +1023,15 @@ SmbiosPlatformDxeEntry (
   Status = gBS->LocateProtocol (
                   &gEfiSmbiosProtocolGuid,
                   NULL,
-                  (VOID**)&Smbios
+                  (VOID**) &Smbios
                 );
 
   if (EFI_ERROR (Status)) {
-    ASSERT(FALSE);
     return Status;
   }
 
   Status = InstallAllStructures (Smbios);
-  DEBUG ((EFI_D_ERROR, "SmbiosPlatform install: %x\n", Status));
+  DEBUG ((DEBUG_ERROR, "SmbiosPlatform install - %r\n", Status));
 
   return Status;
 }

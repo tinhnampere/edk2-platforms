@@ -7,20 +7,13 @@
 /=#
 
 #langdef   en-US "English"
-#langdef   fr-FR "Français"
 
 #string STR_EDKII_MENU_TITLE           #language en-US  "Platform Manager"
-                                       #language fr-FR  "Platform Manager"
 #string STR_EDKII_MENU_HELP            #language en-US  "This selection will take you to the Platform Manager"
-                                       #language fr-FR  "This selection will take you to the Platform Manager"
 #string STR_PLATFORM_LIST              #language en-US  "Platform Configuration"
-                                       #language fr-FR  "Platform Configuration"
 #string STR_MISSING_STRING             #language en-US  "Missing String"
-                                       #language fr-FR  "Missing String"
 #string STR_EMPTY_STRING               #language en-US  ""
-                                       #language fr-FR  ""
 #string STR_EXIT_STRING                #language en-US  "Press ESC to exit."
-                                       #language fr-FR  "Press ESC to exit."
 //
 // Ensure that this is the last string.  We are using it programmatically
 // to do string token re-usage settings for the Device Manager since we are

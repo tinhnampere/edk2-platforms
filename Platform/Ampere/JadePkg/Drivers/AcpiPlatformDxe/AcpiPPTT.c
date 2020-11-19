@@ -48,7 +48,11 @@ STATIC UINT32 PpttL1DataCacheOffset[PLATFORM_CPU_MAX_NUM_CORES];
 STATIC UINT32 PpttL1InstructionCacheOffset[PLATFORM_CPU_MAX_NUM_CORES];
 STATIC UINT32 PpttL2CacheOffset[PLATFORM_CPU_MAX_NUM_CORES];
 
-STATIC UINT32 AcpiPpttProcessorThreadNode (VOID *EntryPointer, UINT32 CpuId)
+STATIC UINT32
+AcpiPpttProcessorThreadNode (
+  VOID    *EntryPointer,
+  UINT32  CpuId
+  )
 {
   EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
   UINT32                                *ResPointer;
@@ -67,7 +71,7 @@ STATIC UINT32 AcpiPpttProcessorThreadNode (VOID *EntryPointer, UINT32 CpuId)
   PpttProcessorEntryPointer->Parent = (UINT32) PpttCoreOffset[CpuId];
   PpttProcessorEntryPointer->NumberOfPrivateResources = 2; /* L1I + L1D */
 
-  ResPointer = (UINT32 *)((UINT64) EntryPointer +
+  ResPointer = (UINT32 *) ((UINT64) EntryPointer +
                           sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
   ResPointer[0] = PpttL1InstructionCacheOffset[CpuId];
   ResPointer[1] = PpttL1DataCacheOffset[CpuId];
@@ -77,7 +81,11 @@ STATIC UINT32 AcpiPpttProcessorThreadNode (VOID *EntryPointer, UINT32 CpuId)
   return PpttProcessorEntryPointer->Length;
 }
 
-STATIC UINT32 AcpiPpttProcessorCoreNode (VOID *EntryPointer, UINT32 CpuId)
+STATIC UINT32
+AcpiPpttProcessorCoreNode (
+  VOID    *EntryPointer,
+  UINT32  CpuId
+  )
 {
   EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
 
@@ -92,7 +100,11 @@ STATIC UINT32 AcpiPpttProcessorCoreNode (VOID *EntryPointer, UINT32 CpuId)
   return PpttProcessorEntryPointer->Length;
 }
 
-STATIC UINT32 AcpiPpttClusterNode (VOID *EntryPointer, UINT32 ClusterId)
+STATIC UINT32
+AcpiPpttClusterNode (
+  VOID *EntryPointer,
+  UINT32 ClusterId
+  )
 {
   EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
 
@@ -107,14 +119,18 @@ STATIC UINT32 AcpiPpttClusterNode (VOID *EntryPointer, UINT32 ClusterId)
   return PpttProcessorEntryPointer->Length;
 }
 
-STATIC UINT32 AcpiPpttSocketNode (VOID *EntryPointer, UINT32 SocketId)
+STATIC UINT32
+AcpiPpttSocketNode (
+  VOID    *EntryPointer,
+  UINT32  SocketId
+  )
 {
   EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
 
   PpttSocketOffset[SocketId] = (UINT64) EntryPointer - (UINT64) PpttTablePointer;
 
   CopyMem (PpttProcessorEntryPointer, &PPTTProcessorTemplate,
-          sizeof  (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
+          sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
 
   PpttProcessorEntryPointer->Flags.PhysicalPackage = 1;
   PpttProcessorEntryPointer->Flags.IdenticalImplementation = 1;
@@ -123,23 +139,30 @@ STATIC UINT32 AcpiPpttSocketNode (VOID *EntryPointer, UINT32 SocketId)
   return PpttProcessorEntryPointer->Length;
 }
 
-STATIC UINT32 AcpiPpttRootNode (VOID *EntryPointer)
+STATIC UINT32
+AcpiPpttRootNode (
+  VOID *EntryPointer
+  )
 {
   EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
 
   PpttRootOffset = (UINT64) EntryPointer - (UINT64) PpttTablePointer;
 
   CopyMem (PpttProcessorEntryPointer, &PPTTProcessorTemplate,
-          sizeof  (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
+          sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
 
   PpttProcessorEntryPointer->Flags.IdenticalImplementation = 1;
 
   return PpttProcessorEntryPointer->Length;
 }
 
-STATIC VOID AcpiPpttFillCacheSizeInfo (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *Node, UINT32 Level)
+STATIC VOID
+AcpiPpttFillCacheSizeInfo (
+  EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *Node,
+  UINT32                            Level
+  )
 {
-  UINT64 CacheCCSIDR = Aarch64ReadCCSIDRReg (Level);
+  UINT64 CacheCCSIDR = AArch64ReadCCSIDRReg (Level);
   UINT32 CacheLineSize;
   UINT32 Count;
 
@@ -158,11 +181,15 @@ STATIC VOID AcpiPpttFillCacheSizeInfo (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *Node, 
   Node->Associativity = CCSIDR_ASSOCIATIVITY (CacheCCSIDR) + 1;
   Node->LineSize = CacheLineSize;
   Node->Size = Node->NumberOfSets *
-                Node->Associativity *
-                Node->LineSize;
+               Node->Associativity *
+               Node->LineSize;
 }
 
-STATIC UINT32 AcpiPpttL1DataCacheNode (VOID *EntryPointer, UINT32 CpuId)
+STATIC UINT32
+AcpiPpttL1DataCacheNode (
+  VOID    *EntryPointer,
+  UINT32  CpuId
+  )
 {
   EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer = EntryPointer;
 
@@ -177,7 +204,11 @@ STATIC UINT32 AcpiPpttL1DataCacheNode (VOID *EntryPointer, UINT32 CpuId)
   return PpttCacheEntryPointer->Length;
 }
 
-STATIC UINT32 AcpiPpttL1InstructionCacheNode (VOID *EntryPointer, UINT32 CpuId)
+STATIC UINT32
+AcpiPpttL1InstructionCacheNode (
+  VOID    *EntryPointer,
+  UINT32  CpuId
+  )
 {
   EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer = EntryPointer;
 
@@ -192,7 +223,11 @@ STATIC UINT32 AcpiPpttL1InstructionCacheNode (VOID *EntryPointer, UINT32 CpuId)
   return PpttCacheEntryPointer->Length;
 }
 
-STATIC UINT32 AcpiPpttL2CacheNode (VOID *EntryPointer, UINT32 CpuId)
+STATIC UINT32
+AcpiPpttL2CacheNode (
+  VOID    *EntryPointer,
+  UINT32  CpuId
+  )
 {
   EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer = EntryPointer;
 
@@ -221,7 +256,7 @@ AcpiInstallPpttTable (VOID)
   UINTN                                   Size;
 
   if (IsAcpiInstalled (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_STRUCTURE_SIGNATURE)) {
-    DEBUG ((EFI_D_INFO, "PPTT table is already installed.  Skipping...\n"));
+    DEBUG ((DEBUG_INFO, "PPTT table is already installed.  Skipping...\n"));
     return EFI_ABORTED;
   }
 
@@ -245,7 +280,7 @@ AcpiInstallPpttTable (VOID)
 
       PpttTablePointer =
         (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER *) AllocateZeroPool (Size);
-      if (!PpttTablePointer) {
+      if (PpttTablePointer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 

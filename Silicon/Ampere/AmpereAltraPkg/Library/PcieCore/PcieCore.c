@@ -18,35 +18,59 @@
 #define DEV_MASK 0x00F8000
 #define BUS_MASK 0xFF00000
 
-STATIC INT32 Ac01PcieCsrOut32 (VOID *Addr, UINT32 Val)
+STATIC INT32
+Ac01PcieCsrOut32 (
+  VOID   *Addr,
+  UINT32 Val
+  )
 {
-  MmioWrite32 ((UINT64)Addr, Val);
-  PCIE_CSR_DEBUG ("PCIE CSR WR: 0x%p value: 0x%08X (0x%08X)\n",
-              Addr, Val, MmioRead32 ((UINT64)Addr));
+  MmioWrite32 ((UINT64) Addr, Val);
+  PCIE_CSR_DEBUG (
+    "PCIE CSR WR: 0x%p value: 0x%08X (0x%08X)\n",
+    Addr,
+    Val,
+    MmioRead32 ((UINT64) Addr)
+    );
 
   return 0;
 }
 
-STATIC INT32 Ac01PcieCsrOut32Serdes (VOID *Addr, UINT32 Val)
+STATIC INT32
+Ac01PcieCsrOut32Serdes (
+  VOID   *Addr,
+  UINT32 Val
+  )
 {
-  MmioWrite32 ((UINT64)Addr, Val);
-  PCIE_CSR_DEBUG ("PCIE CSR WR: 0x%p value: 0x%08X (0x%08X)\n",
-              Addr, Val, MmioRead32 ((UINT64)Addr));
+  MmioWrite32 ((UINT64) Addr, Val);
+  PCIE_CSR_DEBUG (
+    "PCIE CSR WR: 0x%p value: 0x%08X (0x%08X)\n",
+    Addr,
+    Val,
+    MmioRead32 ((UINT64) Addr)
+    );
 
   return 0;
 }
 
-STATIC INT32 Ac01PcieCsrIn32 (VOID *Addr, UINT32 *Val)
+STATIC INT32
+Ac01PcieCsrIn32 (
+  VOID   *Addr,
+  UINT32 *Val
+  )
 {
-  *Val = MmioRead32 ((UINT64)Addr);
+  *Val = MmioRead32 ((UINT64) Addr);
   PCIE_CSR_DEBUG ("PCIE CSR RD: 0x%p value: 0x%08X\n", Addr, *Val);
 
   return 0;
 }
 
-STATIC INT32 Ac01PcieCsrIn32Serdes (VOID *Addr, UINT32 *Val)
+STATIC INT32
+Ac01PcieCsrIn32Serdes (
+  VOID   *Addr,
+  UINT32 *Val
+  )
 {
-  *Val = MmioRead32 ((UINT64)Addr);
+  *Val = MmioRead32 ((UINT64) Addr);
   PCIE_CSR_DEBUG ("PCIE CSR RD: 0x%p value: 0x%08X\n", Addr, *Val);
 
   return 0;
@@ -118,14 +142,19 @@ Ac01PcieDelay (
    @param Addr          Address within config space
    @param Val           32-bit value to write
 **/
-INT32 Ac01PcieCfgOut32 (
+INT32
+Ac01PcieCfgOut32 (
   IN VOID *Addr,
   IN UINT32 Val
   )
 {
-  MmioWrite32 ((UINT64)Addr, Val);
-  PCIE_DEBUG_CFG ("PCIE CFG WR: 0x%p value: 0x%08X (0x%08X)\n",
-                  Addr, Val, MmioRead32 ((UINT64)Addr));
+  MmioWrite32 ((UINT64) Addr, Val);
+  PCIE_DEBUG_CFG (
+    "PCIE CFG WR: 0x%p value: 0x%08X (0x%08X)\n",
+    Addr,
+    Val,
+    MmioRead32 ((UINT64) Addr)
+    );
 
   return 0;
 }
@@ -144,7 +173,7 @@ INT32 Ac01PcieCfgOut16 (
   UINT64 AlignedAddr = (UINT64) Addr & ~0x3;
   UINT32 Val32  = MmioRead32 (AlignedAddr);
 
-  switch ((UINT64)Addr & 0x3) {
+  switch ((UINT64) Addr & 0x3) {
   case 2:
     Val32 &= ~0xFFFF0000;
     Val32 |= (UINT32) Val << 16;
@@ -157,8 +186,13 @@ INT32 Ac01PcieCfgOut16 (
     break;
   }
   MmioWrite32 (AlignedAddr, Val32);
-  PCIE_DEBUG_CFG ("PCIE CFG WR16: 0x%p value: 0x%04X (0x%08llX 0x%08X)\n",
-                  Addr, Val, AlignedAddr, MmioRead32 ((UINT64)AlignedAddr));
+  PCIE_DEBUG_CFG (
+    "PCIE CFG WR16: 0x%p value: 0x%04X (0x%08llX 0x%08X)\n",
+    Addr,
+    Val,
+    AlignedAddr,
+    MmioRead32 ((UINT64) AlignedAddr)
+    );
 
   return 0;
 }
@@ -178,7 +212,7 @@ Ac01PcieCfgOut8 (
   UINT64 AlignedAddr = (UINT64) Addr & ~0x3;
   UINT32 Val32  = MmioRead32 (AlignedAddr);
 
-  switch ((UINT64)Addr & 0x3) {
+  switch ((UINT64) Addr & 0x3) {
   case 0:
     Val32 &= ~0xFF;
     Val32 |= Val;
@@ -201,8 +235,13 @@ Ac01PcieCfgOut8 (
     break;
   }
   MmioWrite32 (AlignedAddr, Val32);
-  PCIE_DEBUG_CFG ("PCIE CFG WR8: 0x%p value: 0x%04X (0x%08llX 0x%08X)\n",
-                  Addr, Val, AlignedAddr, MmioRead32 ((UINT64)AlignedAddr));
+  PCIE_DEBUG_CFG (
+    "PCIE CFG WR8: 0x%p value: 0x%04X (0x%08llX 0x%08X)\n",
+    Addr,
+    Val,
+    AlignedAddr,
+    MmioRead32 ((UINT64) AlignedAddr)
+    );
 
   return 0;
 }
@@ -222,30 +261,45 @@ Ac01PcieCfgIn32 (
   UINT32 RegC, Reg18;
   UINT8  MfHt, Primary = 0, Sec = 0, Sub = 0;
 
-  if ((BUS_NUM(Addr) > 0) && (DEV_NUM(Addr) > 0) && (CFG_REG(Addr) == 0)) {
-    *Val = MmioRead32 ((UINT64)Addr);
-    PCIE_DEBUG_CFG ("PCIE CFG RD: B%X|D%X 0x%p value: 0x%08X\n", BUS_NUM(Addr), DEV_NUM(Addr), Addr, *Val);
+  if ((BUS_NUM (Addr) > 0) && (DEV_NUM (Addr) > 0) && (CFG_REG (Addr) == 0)) {
+    *Val = MmioRead32 ((UINT64) Addr);
+    PCIE_DEBUG_CFG (
+      "PCIE CFG RD: B%X|D%X 0x%p value: 0x%08X\n",
+      BUS_NUM (Addr),
+      DEV_NUM (Addr),
+      Addr, *Val
+      );
 
     if (*Val != 0xffffffff) {
-      RegC = MmioRead32 ((UINT64)Addr + 0xC);
+      RegC = MmioRead32 ((UINT64) Addr + 0xC);
       PCIE_DEBUG_CFG ("Peek PCIE MfHt RD32: 0x%p value: 0x%08X\n", Addr + 0xc, RegC);
       MfHt = RegC >> 16;
       PCIE_DEBUG_CFG ("  Peek RD8 MfHt=0x%02X\n", MfHt);
 
       if ((MfHt & 0x7F)!= 0) { /* Type 1 header */
-        Reg18 = MmioRead32 ((UINT64)Addr + 0x18);
+        Reg18 = MmioRead32 ((UINT64) Addr + 0x18);
         Primary = Reg18; Sec = Reg18 >> 8; Sub = Reg18 >> 16;
-        PCIE_DEBUG_CFG ("  Bus Peek PCIE Sub:%01X Sec:%01X Primary:%01X  RD: 0x%p value: 0x%08X\n",
-                Sub, Sec, Primary, Addr + 0x18, Reg18);
+        PCIE_DEBUG_CFG (
+          "  Bus Peek PCIE Sub:%01X Sec:%01X Primary:%01X  RD: 0x%p value: 0x%08X\n",
+          Sub,
+          Sec,
+          Primary,
+          Addr + 0x18,
+          Reg18
+          );
       }
-      if (!MfHt || Primary) { /* QS RPs Primary Bus is 0b */
+      if ((MfHt == 0) || (Primary != 0)) { /* QS RPs Primary Bus is 0b */
         *Val = 0xffffffff;
-        PCIE_DEBUG_CFG ("  Skip RD32 B%X|D%X PCIE CFG RD: 0x%p return 0xffffffff\n",
-                        BUS_NUM(Addr), DEV_NUM(Addr), Addr);
+        PCIE_DEBUG_CFG (
+          "  Skip RD32 B%X|D%X PCIE CFG RD: 0x%p return 0xffffffff\n",
+          BUS_NUM (Addr),
+          DEV_NUM (Addr),
+          Addr
+          );
       }
     }
   } else {
-    *Val = MmioRead32 ((UINT64)Addr);
+    *Val = MmioRead32 ((UINT64) Addr);
   }
   PCIE_DEBUG_CFG ("PCIE CFG RD: 0x%p value: 0x%08X\n", Addr, *Val);
 
@@ -268,34 +322,49 @@ Ac01PcieCfgIn16 (
   UINT8  MfHt, Primary = 0, Sec = 0, Sub = 0;
   UINT32 Val32;
 
-  if ((BUS_NUM(Addr) > 0) && (DEV_NUM(Addr) > 0) && (CFG_REG(Addr) == 0)) {
-    *Val = MmioRead32 ((UINT64)Addr);
-    PCIE_DEBUG_CFG ("PCIE CFG16 RD: B%X|D%X 0x%p value: 0x%08X\n", BUS_NUM(Addr), DEV_NUM(Addr), Addr, *Val);
+  if ((BUS_NUM (Addr) > 0) && (DEV_NUM (Addr) > 0) && (CFG_REG (Addr) == 0)) {
+    *Val = MmioRead32 ((UINT64) Addr);
+    PCIE_DEBUG_CFG (
+      "PCIE CFG16 RD: B%X|D%X 0x%p value: 0x%08X\n",
+      BUS_NUM (Addr),
+      DEV_NUM (Addr),
+      Addr,
+      *Val
+      );
 
     if (*Val != 0xffff) {
-      RegC = MmioRead32 ((UINT64)Addr + 0xC);
+      RegC = MmioRead32 ((UINT64) Addr + 0xC);
       PCIE_DEBUG_CFG ("  Peek PCIE MfHt RD: 0x%p value: 0x%08X\n", Addr + 0xc, RegC);
       MfHt = RegC >> 16;
       PCIE_DEBUG_CFG ("  Peek RD8 MfHt=0x%02X\n", MfHt);
 
 
       if ((MfHt & 0x7F)!= 0) { /* Type 1 header */
-        Reg18 = MmioRead32 ((UINT64)Addr + 0x18);
+        Reg18 = MmioRead32 ((UINT64) Addr + 0x18);
         Primary = Reg18; Sec = Reg18 >> 8; Sub = Reg18 >> 16;
-        PCIE_DEBUG_CFG ("  Bus Peek PCIE Sub:%01X Sec:%01X Primary:%01X  RD: 0x%p value: 0x%08X\n",
-                Sub, Sec, Primary, Addr + 0x18, Reg18);
+        PCIE_DEBUG_CFG (
+          "  Bus Peek PCIE Sub:%01X Sec:%01X Primary:%01X  RD: 0x%p value: 0x%08X\n",
+          Sub,
+          Sec,
+          Primary,
+          Addr + 0x18, Reg18
+          );
       }
-      if (!MfHt || Primary) { /* QS RPs Primary Bus is 0b */
+      if ((MfHt == 0) || (Primary != 0)) { /* QS RPs Primary Bus is 0b */
         *Val = 0xffff;
-        PCIE_DEBUG_CFG ("  Skip RD16 B%X|D%X PCIE CFG RD: 0x%p return 0xffff\n",
-                        BUS_NUM(Addr), DEV_NUM(Addr), Addr);
+        PCIE_DEBUG_CFG (
+          "  Skip RD16 B%X|D%X PCIE CFG RD: 0x%p return 0xffff\n",
+          BUS_NUM (Addr),
+          DEV_NUM (Addr),
+          Addr
+          );
         return 0;
       }
     }
   }
 
   Val32 = MmioRead32 (AlignedAddr);
-  switch ((UINT64)Addr & 0x3) {
+  switch ((UINT64) Addr & 0x3) {
   case 2:
     *Val = Val32 >> 16;
     break;
@@ -305,8 +374,13 @@ Ac01PcieCfgIn16 (
     *Val = Val32;
     break;
   }
-  PCIE_DEBUG_CFG ("PCIE CFG RD16: 0x%p value: 0x%04X (0x%08llX 0x%08X)\n",
-                  Addr, *Val, AlignedAddr, Val32);
+  PCIE_DEBUG_CFG (
+    "PCIE CFG RD16: 0x%p value: 0x%04X (0x%08llX 0x%08X)\n",
+    Addr,
+    *Val,
+    AlignedAddr,
+    Val32
+    );
 
   return 0;
 }
@@ -324,13 +398,13 @@ Ac01PcieCfgIn8 (
   )
 {
   UINT64 AlignedAddr = (UINT64) Addr & ~0x3;
-  if ((((UINT64)Addr & DEV_MASK) >> 15 )> 0 && (((UINT64)Addr & BUS_MASK)  >> 20)> 0) {
+  if ((((UINT64) Addr & DEV_MASK) >> 15 )> 0 && (((UINT64) Addr & BUS_MASK)  >> 20)> 0) {
     *Val = 0xff;
    return 0;
   }
 
   UINT32 Val32 = MmioRead32 (AlignedAddr);
-  switch ((UINT64)Addr & 0x3) {
+  switch ((UINT64) Addr & 0x3) {
   case 3:
     *Val = Val32 >> 24;
     break;
@@ -348,8 +422,13 @@ Ac01PcieCfgIn8 (
     *Val = Val32;
     break;
   }
-  PCIE_DEBUG_CFG ("PCIE CFG RD8: 0x%p value: 0x%02X (0x%08llX 0x%08X)\n",
-                  Addr, *Val, AlignedAddr, Val32);
+  PCIE_DEBUG_CFG (
+    "PCIE CFG RD8: 0x%p value: 0x%02X (0x%08llX 0x%08X)\n",
+    Addr,
+    *Val,
+    AlignedAddr,
+    Val32
+    );
 
   return 0;
 }
@@ -375,9 +454,9 @@ PcieCheckCap (
   UINT32        Val = 0, NextCap = 0, CapId = 0, ExCap = 0;
 
   if (IsRC) {
-    CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+    CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
   } else {
-    CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 20));
+    CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 20));
   }
 
   Ac01PcieCsrIn32 (CfgAddr + TYPE1_CAP_PTR_REG, &Val);
@@ -385,7 +464,7 @@ PcieCheckCap (
 
   // Loop untill desired capability is found else return 0
   while (1) {
-    if (NextCap & 0x3) {
+    if ((NextCap & 0x3) != 0) {
      /* Not alignment, just return */
       return 0;
     }
@@ -456,20 +535,24 @@ Ac01PcieCoreBuildRCStruct (
     RC->Pcie[PcieIndex].DevNum = PcieIndex + 1;
   }
 
-  PCIE_DEBUG (" + S%d - RC%a%d, MMCfgAddr:0x%lx, MmioAddr:0x%lx, Mmio32Addr:0x%lx, Enabled:%a\n",
-              RC->Socket,
-              (RC->Type == RCA) ? "A" : "B",
-              RC->ID,
-              RC->MmcfgAddr,
-              RC->MmioAddr,
-              RC->Mmio32Addr,
-              (RC->Active == TRUE) ? "Y" : "N");
+  PCIE_DEBUG (
+    " + S%d - RC%a%d, MMCfgAddr:0x%lx, MmioAddr:0x%lx, Mmio32Addr:0x%lx, Enabled:%a\n",
+    RC->Socket,
+    (RC->Type == RCA) ? "A" : "B",
+    RC->ID,
+    RC->MmcfgAddr,
+    RC->MmioAddr,
+    RC->Mmio32Addr,
+    (RC->Active) ? "Y" : "N"
+    );
   PCIE_DEBUG (" +   DevMapLo/Hi: 0x%x/0x%x\n", RC->DevMapLo, RC->DevMapHi);
   for (PcieIndex = 0; PcieIndex < RC->MaxPcieController; PcieIndex++) {
-    PCIE_DEBUG (" +     PCIE%d:0x%lx - Enabled:%a - DevNum:0x%x\n", PcieIndex,
-                RC->Pcie[PcieIndex].CsrAddr,
-                (RC->Pcie[PcieIndex].Active) ? "Y" : "N",
-                RC->Pcie[PcieIndex].DevNum);
+    PCIE_DEBUG (
+      " +     PCIE%d:0x%lx - Enabled:%a - DevNum:0x%x\n", PcieIndex,
+      RC->Pcie[PcieIndex].CsrAddr,
+      (RC->Pcie[PcieIndex].Active) ? "Y" : "N",
+      RC->Pcie[PcieIndex].DevNum
+      );
   }
 }
 
@@ -489,7 +572,7 @@ Ac01PcieConfigureEqualization (
   VOID *CfgAddr;
   UINT32 Val;
 
-  CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+  CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
   // Select the FoM method, need double-write to convey settings
   Ac01PcieCfgIn32 (CfgAddr + GEN3_EQ_CONTROL_OFF, &Val);
@@ -516,7 +599,7 @@ Ac01PcieConfigurePresetGen3 (
 {
   VOID *CfgAddr, *SpcieBaseAddr;
   UINT32 Val, Idx;
-  CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+  CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
   // Bring to legacy mode
   Ac01PcieCfgIn32 (CfgAddr + GEN3_RELATED_OFF, &Val);
@@ -527,10 +610,13 @@ Ac01PcieConfigurePresetGen3 (
   Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
 
   // Generate SPCIE capability address
-  SpcieBaseAddr = (VOID *)PcieCheckCap (RC, PcieIndex, 0x1, SPCIE_CAP_ID);
+  SpcieBaseAddr = (VOID *) PcieCheckCap (RC, PcieIndex, 0x1, SPCIE_CAP_ID);
   if (SpcieBaseAddr == 0) {
-    PCIE_ERR ("PCIE%d.%d: Cannot get SPCIE capability address\n",
-              RC->ID, PcieIndex);
+    PCIE_ERR (
+      "PCIE%d.%d: Cannot get SPCIE capability address\n",
+      RC->ID,
+      PcieIndex
+      );
     return;
   }
 
@@ -561,7 +647,7 @@ Ac01PcieConfigurePresetGen4 (
   UINT32    LinkWidth, i;
   UINT8     Preset;
 
-  CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+  CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
   // Bring to legacy mode
   Ac01PcieCfgIn32 (CfgAddr + GEN3_RELATED_OFF, &Val);
@@ -574,16 +660,22 @@ Ac01PcieConfigurePresetGen4 (
   // Generate the PL16 capability address
   Pl16BaseAddr = (VOID *) PcieCheckCap (RC, PcieIndex, 0x1, PL16_CAP_ID);
   if (Pl16BaseAddr == 0) {
-    PCIE_ERR ("PCIE%d.%d: Cannot get PL16 capability address\n",
-              RC->ID, PcieIndex);
+    PCIE_ERR (
+      "PCIE%d.%d: Cannot get PL16 capability address\n",
+      RC->ID,
+      PcieIndex
+      );
     return;
   }
 
   // Generate the SPCIE capability address
   SpcieBaseAddr = (VOID *) PcieCheckCap (RC, PcieIndex, 0x1, SPCIE_CAP_ID);
   if (SpcieBaseAddr == 0) {
-    PCIE_ERR ("PCIE%d.%d: Cannot get SPICE capability address\n",
-              RC->ID, PcieIndex);
+    PCIE_ERR (
+      "PCIE%d.%d: Cannot get SPICE capability address\n",
+      RC->ID,
+      PcieIndex
+      );
     return;
   }
 
@@ -620,7 +712,11 @@ Ac01PcieConfigurePresetGen4 (
   }
 }
 
-STATIC BOOLEAN RasdpMitigationCheck (AC01_RC *RC, INTN PcieIndex)
+STATIC BOOLEAN
+RasdpMitigationCheck (
+  AC01_RC *RC,
+  INTN    PcieIndex
+  )
 {
   EFI_GUID           PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2 *PlatformHob;
@@ -629,7 +725,7 @@ STATIC BOOLEAN RasdpMitigationCheck (AC01_RC *RC, INTN PcieIndex)
   Hob = GetFirstGuidHob (&PlatformHobGuid);
   PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
   if ((PlatformHob->ScuProductId[0] & 0xff) == 0x01) {
-    if (AsciiStrCmp ((CONST CHAR8 *)PlatformHob->CpuVer, "A0") == 0) {
+    if (AsciiStrCmp ((CONST CHAR8 *) PlatformHob->CpuVer, "A0") == 0) {
       return ((RC->Type == RCB)||(PcieIndex > 0)) ? TRUE : FALSE;
     }
   }
@@ -644,7 +740,8 @@ STATIC BOOLEAN RasdpMitigationCheck (AC01_RC *RC, INTN PcieIndex)
    @param ReInit                Re-init status
    @param ReInitPcieIndex       PCIe index
 **/
-INT32 Ac01PcieCoreSetupRC (
+INT32
+Ac01PcieCoreSetupRC (
   IN AC01_RC    *RC,
   IN UINT8      ReInit,
   IN UINT8      ReInitPcieIndex
@@ -697,9 +794,9 @@ INT32 Ac01PcieCoreSetupRC (
 
     PCIE_DEBUG ("Initializing Controller %d\n", PcieIndex);
 
-    CsrAddr = (VOID*) RC->Pcie[PcieIndex].CsrAddr;
-    SnpsRamAddr = (VOID*) RC->Pcie[PcieIndex].SnpsRamAddr;
-    CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+    CsrAddr = (VOID *) RC->Pcie[PcieIndex].CsrAddr;
+    SnpsRamAddr = (VOID *) RC->Pcie[PcieIndex].SnpsRamAddr;
+    CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
     // Put Controller into reset if not in reset already
     Ac01PcieCsrIn32 (CsrAddr +  RESET, &Val);
@@ -785,30 +882,30 @@ INT32 Ac01PcieCoreSetupRC (
       Ac01PcieCsrOut32 (SnpsRamAddr + TPSRAM_RMR, Val);
 
       //Generate the DLINK capability address
-      DlinkBaseAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+      DlinkBaseAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
       NextExtendedCapabilityOff = 0x100; // This is the 1st extended capability offset
       do {
         Ac01PcieCsrIn32 (DlinkBaseAddr + NextExtendedCapabilityOff, &Val);
         if (Val == 0xFFFFFFFF) {
-           DlinkBaseAddr = 0x0;
-           break;
-         }
-         if ((Val & 0xFFFF) == DLINK_VENDOR_CAP_ID) {
-           Ac01PcieCsrIn32 (DlinkBaseAddr + NextExtendedCapabilityOff + 0x4, &VsecVal);
-             if (VsecVal == DLINK_VSEC) {
-               DlinkBaseAddr = DlinkBaseAddr + NextExtendedCapabilityOff;
-               break;
-             }
-         }
-         NextExtendedCapabilityOff = (Val >> 20);
+          DlinkBaseAddr = 0x0;
+          break;
+        }
+        if ((Val & 0xFFFF) == DLINK_VENDOR_CAP_ID) {
+          Ac01PcieCsrIn32 (DlinkBaseAddr + NextExtendedCapabilityOff + 0x4, &VsecVal);
+            if (VsecVal == DLINK_VSEC) {
+              DlinkBaseAddr = DlinkBaseAddr + NextExtendedCapabilityOff;
+              break;
+            }
+        }
+        NextExtendedCapabilityOff = (Val >> 20);
       } while (NextExtendedCapabilityOff != 0);
 
       // Disable the scaled credit mode
       if (DlinkBaseAddr != 0x0) {
-        Val=1;
+        Val = 1;
         Ac01PcieCsrOut32 (DlinkBaseAddr + DATA_LINK_FEATURE_CAP_OFF, Val);
         Ac01PcieCsrIn32 (DlinkBaseAddr + DATA_LINK_FEATURE_CAP_OFF, &Val);
-        if (Val!=1) {
+        if (Val != 1) {
           PCIE_ERR ("- Pcie[%d] - Unable to disable scaled credit\n", PcieIndex);
           return -1;
         }
@@ -841,12 +938,15 @@ INT32 Ac01PcieCoreSetupRC (
     case LNKW_X2:
       Val = LINK_CAPABLE_SET (Val, LINK_CAPABLE_X2);
       break;
+
     case LNKW_X4:
       Val = LINK_CAPABLE_SET (Val, LINK_CAPABLE_X4);
       break;
+
     case LNKW_X8:
       Val = LINK_CAPABLE_SET (Val, LINK_CAPABLE_X8);
       break;
+
     case LNKW_X16:
     default:
       Val = LINK_CAPABLE_SET (Val, LINK_CAPABLE_X16);
@@ -858,12 +958,15 @@ INT32 Ac01PcieCoreSetupRC (
     case LNKW_X2:
       Val = NUM_OF_LANES_SET (Val, NUM_OF_LANES_X2);
       break;
+
     case LNKW_X4:
       Val = NUM_OF_LANES_SET (Val, NUM_OF_LANES_X4);
       break;
+
     case LNKW_X8:
       Val = NUM_OF_LANES_SET (Val, NUM_OF_LANES_X8);
       break;
+
     case LNKW_X16:
     default:
       Val = NUM_OF_LANES_SET (Val, NUM_OF_LANES_X16);
@@ -875,12 +978,15 @@ INT32 Ac01PcieCoreSetupRC (
     case LNKW_X2:
       Val = PCIE_CAP_MAX_LINK_WIDTH_SET (Val, PCIE_CAP_MAX_LINK_WIDTH_X2);
       break;
+
     case LNKW_X4:
       Val = PCIE_CAP_MAX_LINK_WIDTH_SET (Val, PCIE_CAP_MAX_LINK_WIDTH_X4);
       break;
+
     case LNKW_X8:
       Val = PCIE_CAP_MAX_LINK_WIDTH_SET (Val, PCIE_CAP_MAX_LINK_WIDTH_X8);
       break;
+
     case LNKW_X16:
     default:
       Val = PCIE_CAP_MAX_LINK_WIDTH_SET (Val, PCIE_CAP_MAX_LINK_WIDTH_X16);
@@ -889,16 +995,19 @@ INT32 Ac01PcieCoreSetupRC (
 
     switch (RC->Pcie[PcieIndex].MaxGen) {
     case SPEED_GEN1:
-      Val = PCIE_CAP_MAX_LINK_SPEED_SET(Val, MAX_LINK_SPEED_25);
+      Val = PCIE_CAP_MAX_LINK_SPEED_SET (Val, MAX_LINK_SPEED_25);
       break;
+
     case SPEED_GEN2:
-      Val = PCIE_CAP_MAX_LINK_SPEED_SET(Val, MAX_LINK_SPEED_50);
+      Val = PCIE_CAP_MAX_LINK_SPEED_SET (Val, MAX_LINK_SPEED_50);
       break;
+
     case SPEED_GEN3:
-      Val = PCIE_CAP_MAX_LINK_SPEED_SET(Val, MAX_LINK_SPEED_80);
+      Val = PCIE_CAP_MAX_LINK_SPEED_SET (Val, MAX_LINK_SPEED_80);
       break;
+
     default:
-      Val = PCIE_CAP_MAX_LINK_SPEED_SET(Val, MAX_LINK_SPEED_160);
+      Val = PCIE_CAP_MAX_LINK_SPEED_SET (Val, MAX_LINK_SPEED_160);
       break;
     };
     Ac01PcieCsrOut32 (CfgAddr + LINK_CAPABILITIES_REG, Val);
@@ -906,16 +1015,19 @@ INT32 Ac01PcieCoreSetupRC (
     Ac01PcieCsrIn32 (CfgAddr + LINK_CONTROL2_LINK_STATUS2_REG, &Val);
     switch (RC->Pcie[PcieIndex].MaxGen) {
     case SPEED_GEN1:
-      Val = PCIE_CAP_TARGET_LINK_SPEED_SET(Val, MAX_LINK_SPEED_25);
+      Val = PCIE_CAP_TARGET_LINK_SPEED_SET (Val, MAX_LINK_SPEED_25);
       break;
+
     case SPEED_GEN2:
-      Val = PCIE_CAP_TARGET_LINK_SPEED_SET(Val, MAX_LINK_SPEED_50);
+      Val = PCIE_CAP_TARGET_LINK_SPEED_SET (Val, MAX_LINK_SPEED_50);
       break;
+
     case SPEED_GEN3:
-      Val = PCIE_CAP_TARGET_LINK_SPEED_SET(Val, MAX_LINK_SPEED_80);
+      Val = PCIE_CAP_TARGET_LINK_SPEED_SET (Val, MAX_LINK_SPEED_80);
       break;
+
     default:
-      Val = PCIE_CAP_TARGET_LINK_SPEED_SET(Val, MAX_LINK_SPEED_160);
+      Val = PCIE_CAP_TARGET_LINK_SPEED_SET (Val, MAX_LINK_SPEED_160);
       break;
     };
     Ac01PcieCsrOut32 (CfgAddr + LINK_CONTROL2_LINK_STATUS2_REG, Val);
@@ -948,10 +1060,11 @@ INT32 Ac01PcieCoreSetupRC (
 
     if (RC->Pcie[PcieIndex].MaxGen != SPEED_GEN1) {
       Ac01PcieConfigureEqualization (RC, PcieIndex);
-      if (RC->Pcie[PcieIndex].MaxGen == SPEED_GEN3)
+      if (RC->Pcie[PcieIndex].MaxGen == SPEED_GEN3) {
         Ac01PcieConfigurePresetGen3 (RC, PcieIndex);
-      else if (RC->Pcie[PcieIndex].MaxGen == SPEED_GEN4)
+      } else if (RC->Pcie[PcieIndex].MaxGen == SPEED_GEN4) {
         Ac01PcieConfigurePresetGen4 (RC, PcieIndex);
+      }
     }
 
     // Mask Completion Timeout
@@ -1002,8 +1115,9 @@ INT32 Ac01PcieCoreSetupRC (
     Val = DBI_RO_WR_EN_SET (Val, 0);
     Ac01PcieCsrOut32 (CfgAddr + MISC_CONTROL_1_OFF, Val);
 
-    if (ReInit == 1)
+    if (ReInit == 1) {
       break;
+    }
   }
 
   // Program VendorID and DeviceId
@@ -1016,15 +1130,16 @@ INT32 Ac01PcieCoreSetupRC (
   return 0;
 }
 
-STATIC BOOLEAN PcieLinkUpCheck (
-  IN AC01_PCIE *Pcie,
-  OUT UINT32 *LtssmState
+STATIC BOOLEAN
+PcieLinkUpCheck (
+  IN AC01_PCIE  *Pcie,
+  OUT UINT32    *LtssmState
   )
 {
-  VOID*         CsrAddr;
+  VOID *        CsrAddr;
   UINT32        BlockEvent, LinkStat;
 
-  CsrAddr = (VOID*) Pcie->CsrAddr;
+  CsrAddr = (VOID *) Pcie->CsrAddr;
 
   // Check if card present
   // smlh_ltssm_state[13:8] = 0
@@ -1033,7 +1148,7 @@ STATIC BOOLEAN PcieLinkUpCheck (
   // rdlh_link_up[0] = 0
   Ac01PcieCsrIn32 (CsrAddr + LINKSTAT, &LinkStat);
   LinkStat = LinkStat & (SMLH_LTSSM_STATE_MASK | PHY_STATUS_MASK_BIT |
-                         SMLH_LINK_UP_MASK_BIT |RDLH_LINK_UP_MASK_BIT);
+                         SMLH_LINK_UP_MASK_BIT | RDLH_LINK_UP_MASK_BIT);
   if (LinkStat == 0x0000) {
     return 0;
   }
@@ -1041,8 +1156,8 @@ STATIC BOOLEAN PcieLinkUpCheck (
    Ac01PcieCsrIn32 (CsrAddr +  BLOCKEVENTSTAT, &BlockEvent);
    Ac01PcieCsrIn32 (CsrAddr +  LINKSTAT, &LinkStat);
 
-   if (BlockEvent & LINKUP_MASK) {
-     *LtssmState = SMLH_LTSSM_STATE_GET(LinkStat);
+   if ((BlockEvent & LINKUP_MASK) != 0) {
+     *LtssmState = SMLH_LTSSM_STATE_GET (LinkStat);
      PCIE_DEBUG ("%a *LtssmState=%lx Linkup\n", __func__, *LtssmState);
      return 1;
    }
@@ -1050,7 +1165,8 @@ STATIC BOOLEAN PcieLinkUpCheck (
    return 0;
 }
 
-VOID Ac01PcieCoreUpdateLink (
+VOID
+Ac01PcieCoreUpdateLink (
   IN AC01_RC  *RC,
   OUT BOOLEAN *IsNextRoundNeeded,
   OUT INT8    *FailedPciePtr,
@@ -1065,26 +1181,31 @@ VOID Ac01PcieCoreUpdateLink (
 
   *IsNextRoundNeeded = FALSE;
   *FailedPcieCount   = 0;
-  for (i = 0; i < MAX_PCIE_B; i++)
+  for (i = 0; i < MAX_PCIE_B; i++) {
     FailedPciePtr[i] = -1;
+  }
 
-  if (!RC->Active)
+  if (!RC->Active) {
     return;
+  }
 
   // Loop for all controllers
   for (PcieIndex = 0; PcieIndex < RC->MaxPcieController; PcieIndex++) {
     Pcie = &RC->Pcie[PcieIndex];
-    CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+    CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
     if (Pcie->Active && !Pcie->LinkUp) {
       if (PcieLinkUpCheck (Pcie, &Ltssm)) {
         Pcie->LinkUp = 1;
         Ac01PcieCsrIn32 (CfgAddr + LINK_CONTROL_LINK_STATUS_REG, &Val);
-        PCIE_DEBUG ("%a S%d RC%d RP%d NEGO_LINK_WIDTH: 0x%x LINK_SPEED: 0x%x\n",
-                    __func__, RC->Socket, RC->ID, PcieIndex,
-                    PCIE_CAP_NEGO_LINK_WIDTH_GET(Val),
-                    PCIE_CAP_LINK_SPEED_GET(Val)
-                    );
+        PCIE_DEBUG (
+          "%a S%d RC%d RP%d NEGO_LINK_WIDTH: 0x%x LINK_SPEED: 0x%x\n",
+          __FUNCTION__,
+          RC->Socket, RC->ID,
+          PcieIndex,
+          PCIE_CAP_NEGO_LINK_WIDTH_GET (Val),
+          PCIE_CAP_LINK_SPEED_GET (Val)
+          );
 
         // Un-mask Completion Timeout
         Ac01PcieCsrIn32 (CfgAddr + AMBA_LINK_TIMEOUT_OFF, &Val);
@@ -1106,7 +1227,10 @@ VOID Ac01PcieCoreUpdateLink (
   }
 }
 
-VOID Ac01PcieCoreEndEnumeration (AC01_RC *RC)
+VOID
+Ac01PcieCoreEndEnumeration (
+  AC01_RC *RC
+  )
 {
   //
   // Reserved for hook from stack ending of enumeration phase processing.
@@ -1135,8 +1259,8 @@ PcieRetrainLink (
   INTN        TimeOut;
   UINT32      Val, LinkStat;
 
-  CsrAddr = (VOID*) RC->Pcie[PcieIndex].CsrAddr;
-  CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+  CsrAddr = (VOID *) RC->Pcie[PcieIndex].CsrAddr;
+  CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
   // Allow programming to config space
   Ac01PcieCsrIn32 (CfgAddr + MISC_CONTROL_1_OFF, &Val);
@@ -1148,8 +1272,11 @@ PcieRetrainLink (
   SpcieBaseAddr = (VOID *) PcieCheckCap (RC, PcieIndex, 0x1, SPCIE_CAP_ID);
 
   if (SpcieBaseAddr == 0) {
-    PCIE_ERR ("PCIE%d.%d: Cannot get SPCIE capability address\n",
-              RC->ID, PcieIndex);
+    PCIE_ERR (
+      "PCIE%d.%d: Cannot get SPCIE capability address\n",
+      RC->ID,
+      PcieIndex
+      );
     return LINK_RETRAIN_FAILED;
   }
 
@@ -1192,7 +1319,7 @@ PcieRetrainLink (
   do {
     Ac01PcieCfgIn32 (CfgAddr + LINK_CONTROL2_LINK_STATUS2_REG, &Val);
     TimeOut--;
-    if (PCIE_CAP_EQ_CPL_GET(Val) && PCIE_CAP_EQ_CPL_P3_GET(Val)) {
+    if (PCIE_CAP_EQ_CPL_GET (Val) && PCIE_CAP_EQ_CPL_P3_GET (Val)) {
       break;
     }
     MicroSecondDelay (1);
@@ -1221,16 +1348,20 @@ PcieRetrainLink (
     do {
       Ac01PcieCsrIn32 (CfgAddr + LINK_CONTROL_LINK_STATUS_REG, &Val);
       TimeOut--;
-      if (PCIE_CAP_LINK_TRAINING_GET (Val) == 0)
+      if (PCIE_CAP_LINK_TRAINING_GET (Val) == 0) {
         break;
+      }
       MicroSecondDelay (1);
     } while (TimeOut > 0);
 
     // Generate the PL16 capability address
     Pl16BaseAddr = (VOID *) PcieCheckCap (RC, PcieIndex, 0x1, PL16_CAP_ID);
     if (Pl16BaseAddr == 0) {
-      PCIE_ERR ("PCIE%d.%d: Cannot get PL16 capability address\n",
-                RC->ID, PcieIndex);
+      PCIE_ERR (
+        "PCIE%d.%d: Cannot get PL16 capability address\n",
+        RC->ID,
+        PcieIndex
+        );
       return LINK_RETRAIN_FAILED;
     }
 
@@ -1238,8 +1369,9 @@ PcieRetrainLink (
     do {
       Ac01PcieCfgIn32 (Pl16BaseAddr + PL16G_STATUS_REG_OFF, &Val);
       TimeOut--;
-      if (PL16G_STATUS_EQ_CPL_GET(Val) && PL16G_STATUS_EQ_CPL_P3_GET(Val))
-          break;
+      if (PL16G_STATUS_EQ_CPL_GET (Val) && PL16G_STATUS_EQ_CPL_P3_GET (Val)) {
+        break;
+      }
       MicroSecondDelay (1);
     } while (TimeOut > 0);
 
@@ -1279,8 +1411,8 @@ Ac01PcieCoreLinkRetraining (
   INT32         NumberOfRetrain = MAX_RETRAIN; // TODO: optimize retry count
   UINT32        MaxWidth = 0, MaxGen = 0;
 
-  CsrAddr = (VOID*) RC->Pcie[PcieIndex].CsrAddr;
-  CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+  CsrAddr = (VOID *) RC->Pcie[PcieIndex].CsrAddr;
+  CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
   if (!RC->Pcie[PcieIndex].LinkUp) {
      return LINK_RETRAIN_FAILED;
@@ -1311,8 +1443,13 @@ Ac01PcieCoreLinkRetraining (
     MaxGen = PCIE_CAP_MAX_LINK_SPEED_GET (Val);
   }
 
-  PCIE_DEBUG ("PCIE%d.%d: Link Retrain MaxWidth %d MaxGen %d\n", RC->ID,
-              PcieIndex, MaxWidth, MaxGen);
+  PCIE_DEBUG (
+    "PCIE%d.%d: Link Retrain MaxWidth %d MaxGen %d\n",
+    RC->ID,
+    PcieIndex,
+    MaxWidth,
+    MaxGen
+    );
 
 retry_retrain:
   NumberOfRetrain--;
@@ -1331,7 +1468,8 @@ retry_retrain:
     // If link speed is not equal to Max speed and LTSSM state is not L0,
     // then retraining sequence will be called
     if ((PCIE_CAP_LINK_SPEED_GET (Val) != MaxGen)  ||
-        (RDLH_SMLH_LINKUP_STATUS_GET (LinkStat) != 0x3)) {
+        (RDLH_SMLH_LINKUP_STATUS_GET (LinkStat) != 0x3))
+    {
 
       if (PcieRetrainLink (RC, PcieIndex, MaxGen) == LINK_RETRAIN_FAILED) {
         goto retry_retrain;
@@ -1346,7 +1484,8 @@ retry_retrain:
                   PCIE_CAP_NEGO_LINK_WIDTH_GET (Val), PCIE_CAP_LINK_SPEED_GET (Val));
 
       if ((PCIE_CAP_LINK_SPEED_GET (Val) == MaxGen) &&
-          (RDLH_SMLH_LINKUP_STATUS_GET (LinkStat) == 0x3)) {
+          (RDLH_SMLH_LINKUP_STATUS_GET (LinkStat) == 0x3))
+      {
         PCIE_DEBUG (" Link Retrain Passed!!!\n");
         return LINK_RETRAIN_SUCCESS;
       } else {
@@ -1387,7 +1526,7 @@ Ac01PcieCoreSyncEndpointInfo (
   VOID         *RcCfgAddr, *PcieCapBaseAddr, *EpCfgAddr;
   UINT32       Val = 0;
 
-  RcCfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+  RcCfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
   // Allow programming to config space
   Ac01PcieCsrIn32 (RcCfgAddr + MISC_CONTROL_1_OFF, &Val);
@@ -1406,7 +1545,7 @@ Ac01PcieCoreSyncEndpointInfo (
   Val = PRIM_BUS_SET (Val, 0x0);
   Ac01PcieCsrOut32 (RcCfgAddr + SEC_LAT_TIMER_SUB_BUS_SEC_BUS_PRI_BUS_REG, Val);
 
-  EpCfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 20));
+  EpCfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 20));
   Ac01PcieCsrIn32 (EpCfgAddr, &Val);
 
   // Check whether EP config space is accessible or not
@@ -1415,7 +1554,7 @@ Ac01PcieCoreSyncEndpointInfo (
     *EpMaxGen = 0;     // Invalid Speed
     PCIE_ERR ("PCIE%d.%d Cannot access EP config space!\n", RC->ID, PcieIndex);
   } else {
-    PcieCapBaseAddr = (VOID *)PcieCheckCap (RC, PcieIndex, 0x0, PCIE_CAP_ID);
+    PcieCapBaseAddr = (VOID *) PcieCheckCap (RC, PcieIndex, 0x0, PCIE_CAP_ID);
     if (PcieCapBaseAddr == 0) {
       *EpMaxWidth = 0;   // Invalid Width
       *EpMaxGen = 0;     // Invalid Speed
@@ -1457,7 +1596,7 @@ Ac01PcieCoreQoSLinkCheckRecovery (
   IN INTN      PcieIndex
   )
 {
-  VOID*       CfgAddr;
+  VOID *      CfgAddr;
   UINT32      Val, Ltssm;
   INT32       NumberOfReset; // Number of soft reset retry
   UINT8       EpMaxWidth = 0, EpMaxGen = 0;
@@ -1475,10 +1614,10 @@ Ac01PcieCoreQoSLinkCheckRecovery (
     NumberOfReset--;
     if (NumberOfReset >= 0) {
       PCIE_DEBUG ("PCIE%d.%d Start link re-initialization..\n", RC->ID, PcieIndex);
-      CfgAddr = (VOID*) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+      CfgAddr = (VOID *) (RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
       if (PcieLinkUpCheck (&RC->Pcie[PcieIndex], &Ltssm)) {
-        RC->Pcie[PcieIndex].LinkUp = 1;
+        RC->Pcie[PcieIndex].LinkUp = TRUE;
         // Un-mask Completion Timeout
         Ac01PcieCsrIn32 (CfgAddr + AMBA_LINK_TIMEOUT_OFF, &Val);
         Val = LINK_TIMEOUT_PERIOD_DEFAULT_SET (Val, 32);
@@ -1489,7 +1628,7 @@ Ac01PcieCoreQoSLinkCheckRecovery (
         PCIE_ERR ("PCIE%d.%d Link re-initialization passed!\n", RC->ID,
                   PcieIndex);
       } else {
-        RC->Pcie[PcieIndex].LinkUp = 0;
+        RC->Pcie[PcieIndex].LinkUp = FALSE;
       }
     } else {
       PCIE_ERR ("PCIE%d.%d Link re-initialization failed!\n", RC->ID,

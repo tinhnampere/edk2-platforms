@@ -22,22 +22,21 @@ EFI_RNG_ALGORITHM mSupportedRngAlgorithms[] = {
   EFI_RNG_ALGORITHM_RAW
 };
 
-enum SCP_RNG_MSG_REQ {
-  SCP_RNG_GET_TRNG = 1,
+enum {
+  SCP_RNG_GET_TRNG = 1
 };
 
-STATIC
 EFI_STATUS
 SMProRNGRead (
-  IN  OUT UINT8 *Data,
-  IN  UINTN     DataLen
+  IN UINT8 *Data,
+  IN UINTN DataLen
   )
 {
   UINT32      Msg[3];
   EFI_STATUS  Status;
 
   /* SMPro only supports 64bits at a time */
-  if (DataLen != sizeof (UINT64)) {
+  if ((DataLen != sizeof (UINT64)) || (Data == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -45,12 +44,24 @@ SMProRNGRead (
   Msg[1] = 0;
   Msg[2] = 0;
 
-  Status = SMProDBWr (SMPRO_NS_RNG_MAILBOX_INDEX, Msg[0], Msg[1], Msg[2], SMPRO_DB_BASE_REG);
+  Status = SMProDBWr (
+             SMPRO_NS_RNG_MAILBOX_INDEX,
+             Msg[0],
+             Msg[1],
+             Msg[2],
+             SMPRO_DB_BASE_REG
+             );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
 
-  Status = SMProDBRd (SMPRO_NS_RNG_MAILBOX_INDEX, &Msg[0], &Msg[1], &Msg[2], SMPRO_DB_BASE_REG);
+  Status = SMProDBRd (
+             SMPRO_NS_RNG_MAILBOX_INDEX,
+             &Msg[0],
+             &Msg[1],
+             &Msg[2],
+             SMPRO_DB_BASE_REG
+             );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -59,7 +70,6 @@ SMProRNGRead (
   CopyMem (Data + sizeof (Msg[1]), &Msg[2], sizeof (Msg[2]));
 
   return EFI_SUCCESS;
-
 }
 
 /**
@@ -218,8 +228,8 @@ RngDriverEntry (
   IN EFI_SYSTEM_TABLE    *SystemTable
   )
 {
-  EFI_STATUS                        Status;
-  EFI_HANDLE                        Handle;
+  EFI_STATUS             Status;
+  EFI_HANDLE             Handle;
 
   //
   // Install UEFI RNG (Random Number Generator) Protocol

@@ -45,7 +45,9 @@
  */
 EFI_STATUS
 EFIAPI
-PlatformGetTime (OUT EFI_TIME *Time);
+PlatformGetTime (
+  OUT EFI_TIME *Time
+  );
 
 /**
  * Set the time and date information to the hardware platform.
@@ -59,7 +61,9 @@ PlatformGetTime (OUT EFI_TIME *Time);
  **/
 EFI_STATUS
 EFIAPI
-PlatformSetTime (IN EFI_TIME *Time);
+PlatformSetTime (
+  IN EFI_TIME *Time
+  );
 
 /**
  * Callback function for hardware platform to convert data pointers to virtual address

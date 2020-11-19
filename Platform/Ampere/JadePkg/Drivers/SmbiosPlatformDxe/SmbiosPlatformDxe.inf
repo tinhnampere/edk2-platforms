@@ -34,12 +34,8 @@
   BaseMemoryLib
   HobLib
 
-[Guids]
-
 [Protocols]
   gEfiSmbiosProtocolGuid                     ## CONSUMED
-
-[FixedPcd]
 
 [Pcd]
   # Type 0

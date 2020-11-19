@@ -32,7 +32,7 @@ AcpiInstallSlitTable (VOID)
   UINTN                                                           NumDomainPerSocket;
 
   if (IsAcpiInstalled (EFI_ACPI_6_3_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE)) {
-    DEBUG ((EFI_D_INFO, "SLIT table is already installed.  Skipping...\n"));
+    DEBUG ((DEBUG_INFO, "SLIT table is already installed.  Skipping...\n"));
     return EFI_ABORTED;
   }
 
@@ -42,12 +42,12 @@ AcpiInstallSlitTable (VOID)
     return Status;
   }
 
-  NumDomainPerSocket = CPUGetNumOfSubNuma();
-  NumDomain = NumDomainPerSocket * GetNumberActiveSockets();
+  NumDomainPerSocket = CPUGetNumOfSubNuma ();
+  NumDomain = NumDomainPerSocket * GetNumberActiveSockets ();
 
   SlitTablePointer = (EFI_ACPI_6_3_SYSTEM_LOCALITY_DISTANCE_INFORMATION_TABLE_HEADER *)
                   AllocateZeroPool (sizeof (SLITTableHeaderTemplate) + NumDomain * NumDomain);
-  if (!SlitTablePointer) {
+  if (SlitTablePointer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
   CopyMem ((VOID *) SlitTablePointer, (VOID *) &SLITTableHeaderTemplate, sizeof (SLITTableHeaderTemplate));
@@ -69,12 +69,12 @@ AcpiInstallSlitTable (VOID)
 
   SlitTablePointer->Header.Length = sizeof (SLITTableHeaderTemplate) + NumDomain * NumDomain;
 
-  AcpiTableChecksum((UINT8 *)SlitTablePointer,
+  AcpiTableChecksum ((UINT8 *) SlitTablePointer,
                     SlitTablePointer->Header.Length);
 
   Status = AcpiTableProtocol->InstallAcpiTable (
                                 AcpiTableProtocol,
-                                (VOID *)SlitTablePointer,
+                                (VOID *) SlitTablePointer,
                                 SlitTablePointer->Header.Length,
                                 &SlitTableKey
                                 );

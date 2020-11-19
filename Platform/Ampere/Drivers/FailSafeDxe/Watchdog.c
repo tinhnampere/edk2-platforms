@@ -52,8 +52,8 @@ WatchdogTimerWriteCompareRegister (
 STATIC
 EFI_STATUS
 WatchdogTimerEnable (
-    IN BOOLEAN Enable
-    )
+  IN BOOLEAN Enable
+  )
 {
   UINT32 Val =  MmioRead32 ((UINTN) (WDT_CTRL_BASE_REG + WDT_CTRL_WCS_OFF));
 
@@ -77,7 +77,10 @@ WatchdogTimerSetup (VOID)
   WatchdogTimerEnable (FALSE);
 
   if (!mInterruptWS0Enabled) {
-    Status = mInterruptProtocol->EnableInterruptSource (mInterruptProtocol, WS0_INTERRUPT_SOURCE);
+    Status = mInterruptProtocol->EnableInterruptSource (
+                                   mInterruptProtocol,
+                                   WS0_INTERRUPT_SOURCE
+                                   );
     ASSERT_EFI_ERROR (Status);
 
     mInterruptWS0Enabled = TRUE;
@@ -279,7 +282,9 @@ STATIC EFI_WATCHDOG_TIMER_ARCH_PROTOCOL gWatchdogTimer = {
 
 EFI_STATUS
 EFIAPI
-WatchdogTimerInstallProtocol (EFI_WATCHDOG_TIMER_ARCH_PROTOCOL **WatchdogTimerProtocol)
+WatchdogTimerInstallProtocol (
+  EFI_WATCHDOG_TIMER_ARCH_PROTOCOL **WatchdogTimerProtocol
+  )
 {
   EFI_STATUS      Status;
   EFI_HANDLE      Handle;
@@ -290,7 +295,7 @@ WatchdogTimerInstallProtocol (EFI_WATCHDOG_TIMER_ARCH_PROTOCOL **WatchdogTimerPr
      This will avoid conflicts with the universal Watchdog */
   ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiWatchdogTimerArchProtocolGuid);
 
-  ASSERT (ArmGenericTimerGetTimerFreq() != 0);
+  ASSERT (ArmGenericTimerGetTimerFreq () != 0);
 
   /* Install interrupt handler */
   Status = gBS->LocateProtocol (
@@ -307,24 +312,27 @@ WatchdogTimerInstallProtocol (EFI_WATCHDOG_TIMER_ARCH_PROTOCOL **WatchdogTimerPr
   CurrentTpl = gBS->RaiseTPL (TPL_HIGH_LEVEL);
 
   Status = mInterruptProtocol->RegisterInterruptSource (
-             mInterruptProtocol,
-             WS0_INTERRUPT_SOURCE,
-             WatchdogTimerInterruptHandler
-             );
+                                 mInterruptProtocol,
+                                 WS0_INTERRUPT_SOURCE,
+                                 WatchdogTimerInterruptHandler
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   /* Don't enable interrupt until FailSafe off */
   mInterruptWS0Enabled = FALSE;
-  Status = mInterruptProtocol->DisableInterruptSource (mInterruptProtocol, WS0_INTERRUPT_SOURCE);
+  Status = mInterruptProtocol->DisableInterruptSource (
+                                 mInterruptProtocol,
+                                 WS0_INTERRUPT_SOURCE
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   gBS->RestoreTPL (CurrentTpl);
 
   Status = mInterruptProtocol->SetTriggerType (
-             mInterruptProtocol,
-             WS0_INTERRUPT_SOURCE,
-             EFI_HARDWARE_INTERRUPT2_TRIGGER_LEVEL_HIGH
-             );
+                                 mInterruptProtocol,
+                                 WS0_INTERRUPT_SOURCE,
+                                 EFI_HARDWARE_INTERRUPT2_TRIGGER_LEVEL_HIGH
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   /* Install the Timer Architectural Protocol onto a new handle */
@@ -339,7 +347,7 @@ WatchdogTimerInstallProtocol (EFI_WATCHDOG_TIMER_ARCH_PROTOCOL **WatchdogTimerPr
 
   mNumTimerTicks = 0;
 
-  if (WatchdogTimerProtocol) {
+  if (WatchdogTimerProtocol != NULL) {
     *WatchdogTimerProtocol = &gWatchdogTimer;
   }
 

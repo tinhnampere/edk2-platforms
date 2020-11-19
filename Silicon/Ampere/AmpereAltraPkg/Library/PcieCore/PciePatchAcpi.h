@@ -10,11 +10,21 @@
 #define __PCIEPATCHACPI_H__
 
 EFI_STATUS
-EFIAPI AcpiPatchPciMem32 (INT8 *PciSegEnabled);
+EFIAPI
+AcpiPatchPciMem32 (
+  INT8 *PciSegEnabled
+  );
 
 EFI_STATUS
-EFIAPI AcpiInstallMcfg (INT8 *PciSegEnabled);
+EFIAPI
+AcpiInstallMcfg (
+  INT8 *PciSegEnabled
+  );
 
 EFI_STATUS
-EFIAPI AcpiInstallIort (INT8 *PciSegEnabled);
+EFIAPI
+AcpiInstallIort (
+  INT8 *PciSegEnabled
+  );
+
 #endif /* __PCIEPATCHACPI_H__ */

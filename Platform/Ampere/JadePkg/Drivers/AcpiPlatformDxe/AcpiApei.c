@@ -10,19 +10,15 @@
 #include <Library/NVParamLib.h>
 #include <NVParamDef.h>
 
-#ifdef DEBUG
-#define DBG(arg...)  DEBUG((DEBUG_VERBOSE, ## arg))
-#else
-#define DBG(arg...)
-#endif
-
 STATIC VOID
-AcpiApeiUninstallTable (UINT32 Signature)
+AcpiApeiUninstallTable (
+  UINT32 Signature
+  )
 {
   EFI_STATUS                  Status;
-  EFI_ACPI_TABLE_PROTOCOL     *AcpiTableProtocol = NULL;
-  EFI_ACPI_SDT_PROTOCOL       *AcpiTableSdtProtocol = NULL;
-  EFI_ACPI_SDT_HEADER         *Table = NULL;
+  EFI_ACPI_TABLE_PROTOCOL     *AcpiTableProtocol;
+  EFI_ACPI_SDT_PROTOCOL       *AcpiTableSdtProtocol;
+  EFI_ACPI_SDT_HEADER         *Table;
   EFI_ACPI_TABLE_VERSION      TableVersion;
   UINTN                       TableKey;
   UINTN                       Idx;
@@ -32,13 +28,13 @@ AcpiApeiUninstallTable (UINT32 Signature)
    */
   Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID**) &AcpiTableProtocol);
   if (EFI_ERROR (Status)) {
-    DBG("[%a:%d]: Unable to locate ACPI table protocol\n", __FUNCTION__, __LINE__);
+    DEBUG ((DEBUG_ERROR, "%a:%d: Unable to locate ACPI table protocol\n", __FUNCTION__, __LINE__));
     return;
   }
 
   Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID**) &AcpiTableSdtProtocol);
   if (EFI_ERROR (Status)) {
-    DBG("[%a:%d]: Unable to locate ACPI table support protocol\n", __FUNCTION__, __LINE__);
+    DEBUG ((DEBUG_ERROR, "%a:%d: Unable to locate ACPI table support protocol\n", __FUNCTION__, __LINE__));
     return;
   }
 
@@ -48,7 +44,7 @@ AcpiApeiUninstallTable (UINT32 Signature)
   for (Idx = 0; ; Idx++) {
     Status = AcpiTableSdtProtocol->GetAcpiTable (Idx, &Table, &TableVersion, &TableKey);
     if (EFI_ERROR (Status)) {
-      DBG("APEI: Unable to get ACPI table index:%d\n", Idx);
+      DEBUG ((DEBUG_ERROR, "%a:%d: Unable to get ACPI table index %d \n", __FUNCTION__, __LINE__, Idx));
       return;
     } else if (Table->Signature == Signature) {
       break;
@@ -60,7 +56,7 @@ AcpiApeiUninstallTable (UINT32 Signature)
    */
   Status = AcpiTableProtocol->UninstallAcpiTable (AcpiTableProtocol, TableKey);
   if (EFI_ERROR (Status)) {
-    DBG("APEI: Unable to uninstall table\n");
+    DEBUG ((DEBUG_ERROR, "%a:%d: Unable to uninstall table\n", __FUNCTION__, __LINE__));
   }
 }
 
@@ -88,6 +84,7 @@ IsSdeiEnabled (VOID)
  *
  */
 EFI_STATUS
+EFIAPI
 AcpiApeiUpdate (VOID)
 {
   EFI_STATUS                 Status;
@@ -96,12 +93,13 @@ AcpiApeiUpdate (VOID)
 
   BufferSize = sizeof (ACPI_CONFIG_VARSTORE_DATA);
   Status = gRT->GetVariable (
-             L"AcpiConfigNVData",
-             &gAcpiConfigFormSetGuid,
-             NULL,
-             &BufferSize,
-             &AcpiConfigData);
-  if (!EFI_ERROR (Status) && !AcpiConfigData.EnableApeiSupport) {
+                  L"AcpiConfigNVData",
+                  &gAcpiConfigFormSetGuid,
+                  NULL,
+                  &BufferSize,
+                  &AcpiConfigData
+                  );
+  if (!EFI_ERROR (Status) && (AcpiConfigData.EnableApeiSupport == 0)) {
       AcpiApeiUninstallTable (EFI_ACPI_6_3_BOOT_ERROR_RECORD_TABLE_SIGNATURE);
       AcpiApeiUninstallTable (EFI_ACPI_6_3_HARDWARE_ERROR_SOURCE_TABLE_SIGNATURE);
       AcpiApeiUninstallTable (EFI_ACPI_6_3_SOFTWARE_DELEGATED_EXCEPTIONS_INTERFACE_TABLE_SIGNATURE);

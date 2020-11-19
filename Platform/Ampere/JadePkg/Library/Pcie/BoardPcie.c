@@ -70,7 +70,9 @@
 extern CHAR16   VariableName[];
 extern EFI_GUID gPcieFormSetGuid;
 
-VOID PcieBoardLoadPreset (
+VOID
+EFIAPI
+PcieBoardLoadPreset (
   IN   AC01_RC *RC
   )
 {
@@ -162,6 +164,7 @@ VOID PcieBoardLoadPreset (
 }
 
 VOID
+EFIAPI
 PcieBoardParseRCParams (
   IN   AC01_RC *RC
   )
@@ -173,13 +176,13 @@ PcieBoardParseRCParams (
   EFI_STATUS          Status;
   VOID                *Hob;
   UINTN               BufferSize;
-  static PCIE_VARSTORE_DATA  VarStoreConfig = {
-                                        .RCStatus = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE,
-                                                      TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE},
-                                        .RCBifurLo = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                        .RCBifurHi = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                        .SmmuPmu = 0
-                                        };
+  PCIE_VARSTORE_DATA  VarStoreConfig = {
+                        .RCStatus = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE,
+                                    TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE},
+                        .RCBifurLo = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        .RCBifurHi = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        .SmmuPmu = 0
+                        };
 
   PCIE_DEBUG ("%a - Socket%d RC%d\n", __FUNCTION__, RC->Socket, RC->ID);
 
@@ -187,12 +190,12 @@ PcieBoardParseRCParams (
   // Get RC activation status
   BufferSize = sizeof (PCIE_VARSTORE_DATA);
   Status = gRT->GetVariable (
-            VariableName,
-            &gPcieFormSetGuid,
-            NULL,
-            &BufferSize,
-            &VarStoreConfig
-            );
+                  VariableName,
+                  &gPcieFormSetGuid,
+                  NULL,
+                  &BufferSize,
+                  &VarStoreConfig
+                  );
   if (EFI_ERROR (Status)) {
     PCIE_DEBUG ("%a - Failed to read PCIE variable data from config store.\n", __FUNCTION__);
   }
@@ -201,7 +204,13 @@ PcieBoardParseRCParams (
   RC->DevMapLo = VarStoreConfig.RCBifurLo[PlatRCId];
   RC->DevMapHi = VarStoreConfig.RCBifurHi[PlatRCId];
 
-  PCIE_DEBUG ("%a - Socket%d RC%d is %s\n", __FUNCTION__, RC->Socket, RC->ID, (RC->Active == TRUE) ? "ACTIVE" : "INACTIVE");
+  PCIE_DEBUG (
+    "%a - Socket%d RC%d is %s\n",
+    __FUNCTION__,
+    RC->Socket,
+    RC->ID,
+    (RC->Active) ? "ACTIVE" : "INACTIVE"
+    );
 
   if (GetNumberActiveSockets () == 1 && RC->Socket == 1) {
     RC->Active = FALSE;
@@ -216,15 +225,20 @@ PcieBoardParseRCParams (
     if (Hob) {
       PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
       Efuse = PlatformHob->RcDisableMask[0] | (PlatformHob->RcDisableMask[1] << RCS_PER_SOCKET);
-      PCIE_DEBUG ("RcDisableMask[0]: 0x%x [1]: 0x%x\n", PlatformHob->RcDisableMask[0], PlatformHob->RcDisableMask[1]);
+      PCIE_DEBUG (
+        "RcDisableMask[0]: 0x%x [1]: 0x%x\n",
+        PlatformHob->RcDisableMask[0],
+        PlatformHob->RcDisableMask[1]
+        );
 
       // Update errata flags for Ampere Altra
       if ((PlatformHob->ScuProductId[0] & 0xff) == 0x01) {
-        if (PlatformHob->AHBCId[0] == 0x20100 ||
-            PlatformHob->AHBCId[0] == 0x21100 ||
-            (GetNumberActiveSockets () > 1 &&
-             (PlatformHob->AHBCId[1] == 0x20100 ||
-              PlatformHob->AHBCId[1] == 0x21100))) {
+        if (PlatformHob->AHBCId[0] == 0x20100
+            || PlatformHob->AHBCId[0] == 0x21100
+            || (GetNumberActiveSockets () > 1
+                && (PlatformHob->AHBCId[1] == 0x20100
+                    || PlatformHob->AHBCId[1] == 0x21100)))
+        {
           RC->Flags |= PCIE_ERRATA_SPEED1;
           PCIE_DEBUG ("RC[%d]: Flags 0x%x\n", RC->ID, RC->Flags);
         }
@@ -236,25 +250,28 @@ PcieBoardParseRCParams (
 
   /* Load Gen3/Gen4 preset */
   PcieBoardLoadPreset (RC);
-
   PcieBoardGetLaneAllocation (RC);
   PcieBoardSetupDevmap (RC);
   PcieBoardGetSpeed (RC);
 }
 
 VOID
-PcieBoardReleaseAllPerst (IN UINT8 SocketId)
+EFIAPI
+PcieBoardReleaseAllPerst (
+  IN UINT8 SocketId
+  )
 {
   UINT32 GpioIndex, GpioPin;
 
   // Write 1 to all GPIO[16..21] to release all PERST
   GpioPin = GPIO_DWAPB_PINS_PER_SOCKET * SocketId + 16;
   for (GpioIndex = 0; GpioIndex < 6; GpioIndex++) {
-    DwapbGPIOModeConfig(GpioPin + GpioIndex, GPIO_CONFIG_OUT_HI);
+    DwapbGPIOModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_HI);
   }
 }
 
 VOID
+EFIAPI
 PcieBoardAssertPerst (
   AC01_RC *RC,
   UINT32 PcieIndex,
@@ -273,51 +290,57 @@ PcieBoardAssertPerst (
    */
 
   if (RC->Type == RCA) {
-      switch (Bifurcation)
-      {
-        case 0://RCA_BIFURCATION_ONE_X16:
-          if (PcieIndex != 0) { //1,2,3
-          }
-          break;
-        case 1: //RCA_BIFURCATION_TWO_X8:
-          if ((PcieIndex == 1) || (PcieIndex == 3)) { //1,3
-          }
-          break;
-        case 2: //RCA_BIFURCATION_ONE_X8_TWO_X4:
-          if (PcieIndex == 1) { //1
-          }
-          break;
-        case 3: //RCA_BIFURCATION_FOUR_X4:
-          break;
-        default:
-          PCIE_DEBUG ("Invalid Bifurcation setting\n");
-          break;
+    switch (Bifurcation) {
+    case 0://RCA_BIFURCATION_ONE_X16:
+      if (PcieIndex != 0) { //1,2,3
       }
+      break;
+
+    case 1: //RCA_BIFURCATION_TWO_X8:
+      if ((PcieIndex == 1) || (PcieIndex == 3)) { //1,3
+      }
+      break;
+
+    case 2: //RCA_BIFURCATION_ONE_X8_TWO_X4:
+      if (PcieIndex == 1) { //1
+      }
+      break;
+
+    case 3: //RCA_BIFURCATION_FOUR_X4:
+      break;
+
+    default:
+      PCIE_DEBUG ("Invalid Bifurcation setting\n");
+      break;
+    }
   }
   else { // RCB
-    switch (Bifurcation)
-    {
-      case 0: //RCB_BIFURCATION_ONE_X8:
-        if ((PcieIndex != 0) && (PcieIndex != 4)) { //1,2,3,5,6,7
-        }
-        break;
-      case 1: //RCB_BIFURCATION_TWO_X4:
-        if ((PcieIndex % 2) != 0) { //1,3,5,7
-        }
-        break;
-      case 2: //RCB_BIFURCATION_ONE_X4_TWO_X2:
-        if ((PcieIndex == 1) || (PcieIndex == 5)) {
-        }
-        break;
-      case 3: //RCB_BIFURCATION_FOUR_X2:
-        break;
-      default:
-        PCIE_DEBUG ("Invalid Bifurcation setting\n");
-        break;
+    switch (Bifurcation) {
+    case 0: //RCB_BIFURCATION_ONE_X8:
+      if ((PcieIndex != 0) && (PcieIndex != 4)) { //1,2,3,5,6,7
+      }
+      break;
+
+    case 1: //RCB_BIFURCATION_TWO_X4:
+      if ((PcieIndex % 2) != 0) { //1,3,5,7
+      }
+      break;
+
+    case 2: //RCB_BIFURCATION_ONE_X4_TWO_X2:
+      if ((PcieIndex == 1) || (PcieIndex == 5)) {
+      }
+      break;
+
+    case 3: //RCB_BIFURCATION_FOUR_X2:
+      break;
+
+    default:
+      PCIE_DEBUG ("Invalid Bifurcation setting\n");
+      break;
     }
   }
 
-  if (isPullToHigh == FALSE) { // Pull PERST to Low
+  if (!isPullToHigh) { // Pull PERST to Low
     if (RC->Type == RCA) { // RCA: RC->ID: 0->3 ; PcieIndex: 0->3
       GpioGroupVal = 62 - RC->ID*4 - PcieIndex;
     }
@@ -330,18 +353,18 @@ PcieBoardAssertPerst (
       // 6: Number of GPIO pins to control via CPLD
       Val = (GpioGroupVal & 0x3F) & (1 << GpioIndex);
       if (Val == 0) {
-        DwapbGPIOModeConfig(GpioPin + GpioIndex, GPIO_CONFIG_OUT_LOW);
+        DwapbGPIOModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_LOW);
       }
       else {
-        DwapbGPIOModeConfig(GpioPin + GpioIndex, GPIO_CONFIG_OUT_HI);
+        DwapbGPIOModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_HI);
       }
     }
 
     // Keep reset as low as 100 ms as specification
-    MicroSecondDelay(100 * 1000);
+    MicroSecondDelay (100 * 1000);
   }
   else { // Pull PERST to High
-    PcieBoardReleaseAllPerst(RC->Socket);
+    PcieBoardReleaseAllPerst (RC->Socket);
   }
 }
 
@@ -350,6 +373,7 @@ PcieBoardAssertPerst (
  * a board specific number.
  **/
 VOID
+EFIAPI
 PcieBoardGetRCSegmentNumber (
   IN   AC01_RC *RC,
   OUT UINTN *SegmentNumber
@@ -357,22 +381,26 @@ PcieBoardGetRCSegmentNumber (
 {
   if (RC->Socket == 0) {
     if (RC->Type == RCA) {
-        switch (RC->ID) {
-          case 0:
-            *SegmentNumber = 12;
-            break;
-          case 1:
-            *SegmentNumber = 13;
-            break;
-          case 2:
-            *SegmentNumber = 1;
-            break;
-          case 3:
-            *SegmentNumber = 0;
-            break;
-          default:
-            *SegmentNumber = 16;
-        }
+      switch (RC->ID) {
+        case 0:
+          *SegmentNumber = 12;
+          break;
+
+        case 1:
+          *SegmentNumber = 13;
+          break;
+
+        case 2:
+          *SegmentNumber = 1;
+          break;
+
+        case 3:
+          *SegmentNumber = 0;
+          break;
+
+        default:
+          *SegmentNumber = 16;
+      }
     } else { /* Socket0, CCIX: RCA0 and RCA1 */
       *SegmentNumber = RC->ID - 2;
     }
@@ -386,9 +414,10 @@ PcieBoardGetRCSegmentNumber (
 }
 
 BOOLEAN
+EFIAPI
 PcieBoardCheckSmmuPmuEnabled (VOID)
 {
-  EFI_GUID            PcieFormSetGuid   = PCIE_FORM_SET_GUID;
+  EFI_GUID            PcieFormSetGuid = PCIE_FORM_SET_GUID;
   PCIE_VARSTORE_DATA  VarStoreConfig;
   UINTN               BufferSize;
   EFI_STATUS          Status;
@@ -396,12 +425,12 @@ PcieBoardCheckSmmuPmuEnabled (VOID)
   // Get Buffer Storage data from EFI variable
   BufferSize = sizeof (PCIE_VARSTORE_DATA);
   Status = gRT->GetVariable (
-             PCIE_VARSTORE_NAME,
-             &PcieFormSetGuid,
-             NULL,
-             &BufferSize,
-             &VarStoreConfig
-             );
+                  PCIE_VARSTORE_NAME,
+                  &PcieFormSetGuid,
+                  NULL,
+                  &BufferSize,
+                  &VarStoreConfig
+                  );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }

@@ -6,7 +6,7 @@
 
 **/
 
-#if !defined _MM_COMMUNICATE_H_
+#ifndef _MM_COMMUNICATE_H_
 #define _MM_COMMUNICATE_H_
 
 #define MM_MAJOR_VER_MASK        0xEFFF0000

@@ -8,4 +8,3 @@
 #string STR_MODULE_ABSTRACT             #language en-US "Produces UEFI Random Number Generator protocol"
 
 #string STR_MODULE_DESCRIPTION          #language en-US "This module will produce UEFI Random Number Generator protocol."
-

@@ -21,7 +21,7 @@
 #include <Library/TimerLib.h>
 #include <Library/SMProInterface.h>
 #include <Platform/Ac01.h>
-#include "Common.h"
+#include "PCF85063.h"
 
 #define RTC_TIMEOUT_WAIT_ACCESS        100000 /* 100 miliseconds */
 #define RTC_DEFAULT_MIN_YEAR           2000
@@ -79,12 +79,13 @@ RtcI2CWaitAccess (VOID)
 {
   INTN Timeout = RTC_TIMEOUT_WAIT_ACCESS;
 
-  while (DwapbGpioReadBit (I2C_RTC_ACCESS_GPIO_PIN) && Timeout > 0) {
+  while ((DwapbGpioReadBit (I2C_RTC_ACCESS_GPIO_PIN) != 0) && (Timeout > 0)) {
     MicroSecondDelay (100);
     Timeout -= 100;
   }
+
   if (Timeout <= 0) {
-    DEBUG ((EFI_D_ERROR, "RTC: Timeout while waiting access RTC\n"));
+    DEBUG ((DEBUG_ERROR, "%a: Timeout while waiting access RTC\n", __FUNCTION__));
     return EFI_TIMEOUT;
   }
 
@@ -94,9 +95,9 @@ RtcI2CWaitAccess (VOID)
 STATIC
 EFI_STATUS
 RtcI2CRead (
-  IN  UINT8 Addr,
-  IN  OUT UINT64 Data,
-  IN  UINT32 DataLen
+  IN     UINT8  Addr,
+  IN OUT UINT64 Data,
+  IN     UINT32 DataLen
 )
 {
   EFI_STATUS  Status;
@@ -119,7 +120,7 @@ RtcI2CRead (
   }
 
   /* Read back the date */
-  Status = I2CRead (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, NULL, 0, (UINT8 *)Data, &DataLen);
+  Status = I2CRead (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, NULL, 0, (UINT8 *) Data, &DataLen);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -129,10 +130,10 @@ RtcI2CRead (
 
 EFI_STATUS
 RtcI2CWrite (
-  IN  UINT8 Addr,
-  IN  UINT64 Data,
-  IN  UINT32 DataLen
-)
+  IN  UINT8   Addr,
+  IN  UINT64  Data,
+  IN  UINT32  DataLen
+  )
 {
   EFI_STATUS  Status;
   UINT8       TmpBuf[RTC_DATA_BUF_LEN + 1];
@@ -176,24 +177,26 @@ RtcI2CWrite (
  */
 EFI_STATUS
 EFIAPI
-PlatformGetTime (OUT EFI_TIME *Time)
+PlatformGetTime (
+  OUT EFI_TIME *Time
+  )
 {
   EFI_STATUS    Status;
   UINT8         *Data = (UINT8 *) RtcBufVir;
 
-  if (!Time) {
+  if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   Status = RtcI2CRead (RTC_ADDR, RtcBufVir, RTC_DATA_BUF_LEN);
 
   if (Status == EFI_SUCCESS) {
-    Time->Second = PCF85063_SEC_DEC(Data[PCF85063_OFFSET_SEC]);
-    Time->Minute = PCF85063_MIN_DEC(Data[PCF85063_OFFSET_MIN]);
-    Time->Hour   = PCF85063_HR_DEC(Data[PCF85063_OFFSET_HR]);
-    Time->Day    = PCF85063_DAY_DEC(Data[PCF85063_OFFSET_DAY]);
-    Time->Month  = PCF85063_MON_DEC(Data[PCF85063_OFFSET_MON]);
-    Time->Year   = PCF85063_YEA_DEC(Data[PCF85063_OFFSET_YEA]);
+    Time->Second = PCF85063_SEC_DEC (Data[PCF85063_OFFSET_SEC]);
+    Time->Minute = PCF85063_MIN_DEC (Data[PCF85063_OFFSET_MIN]);
+    Time->Hour   = PCF85063_HR_DEC (Data[PCF85063_OFFSET_HR]);
+    Time->Day    = PCF85063_DAY_DEC (Data[PCF85063_OFFSET_DAY]);
+    Time->Month  = PCF85063_MON_DEC (Data[PCF85063_OFFSET_MON]);
+    Time->Year   = PCF85063_YEA_DEC (Data[PCF85063_OFFSET_YEA]);
     Time->Year  += RTC_DEFAULT_MIN_YEAR;
     if (Time->Year > RTC_DEFAULT_MAX_YEAR) {
       Time->Year = RTC_DEFAULT_MAX_YEAR;
@@ -218,11 +221,13 @@ PlatformGetTime (OUT EFI_TIME *Time)
  **/
 EFI_STATUS
 EFIAPI
-PlatformSetTime (IN EFI_TIME *Time)
+PlatformSetTime (
+  IN EFI_TIME *Time
+  )
 {
   UINT8         *Data = (UINT8 *) RtcBufVir;
 
-  if (!Time) {
+  if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -231,12 +236,12 @@ PlatformSetTime (IN EFI_TIME *Time)
     return EFI_INVALID_PARAMETER;
   }
 
-  Data[PCF85063_OFFSET_SEC] = PCF85063_SEC_ENC(Time->Second);
-  Data[PCF85063_OFFSET_MIN] = PCF85063_MIN_ENC(Time->Minute);
-  Data[PCF85063_OFFSET_HR] = PCF85063_HR_ENC(Time->Hour);
-  Data[PCF85063_OFFSET_DAY] = PCF85063_DAY_ENC(Time->Day);
-  Data[PCF85063_OFFSET_MON] = PCF85063_MON_ENC(Time->Month);
-  Data[PCF85063_OFFSET_YEA] = PCF85063_YEA_ENC(Time->Year - RTC_DEFAULT_MIN_YEAR);
+  Data[PCF85063_OFFSET_SEC] = PCF85063_SEC_ENC (Time->Second);
+  Data[PCF85063_OFFSET_MIN] = PCF85063_MIN_ENC (Time->Minute);
+  Data[PCF85063_OFFSET_HR] = PCF85063_HR_ENC (Time->Hour);
+  Data[PCF85063_OFFSET_DAY] = PCF85063_DAY_ENC (Time->Day);
+  Data[PCF85063_OFFSET_MON] = PCF85063_MON_ENC (Time->Month);
+  Data[PCF85063_OFFSET_YEA] = PCF85063_YEA_ENC (Time->Year - RTC_DEFAULT_MIN_YEAR);
 
   return RtcI2CWrite (RTC_ADDR, RtcBufVir, RTC_DATA_BUF_LEN);
 }

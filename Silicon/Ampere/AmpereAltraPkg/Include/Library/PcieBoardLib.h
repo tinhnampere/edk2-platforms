@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PCIEBOARDLIB_H_
-#define _PCIEBOARDLIB_H_
+#ifndef _PCIE_BOARD_LIB_H_
+#define _PCIE_BOARD_LIB_H_
 
 #include "Pcie.h"
 
@@ -27,8 +27,8 @@ PcieBoardCheckSysSlotEnabled (
 
 VOID
 PcieBoardGetRCSegmentNumber (
-  IN   AC01_RC *RC,
-  OUT UINTN *SegmentNumber
+  IN  AC01_RC *RC,
+  OUT UINTN   *SegmentNumber
   );
 
 /**
@@ -56,7 +56,7 @@ EFI_STATUS
 PcieBoardScreenInitialize (
   IN EFI_HANDLE         ImageHandle,
   IN EFI_SYSTEM_TABLE   *SystemTable,
-  IN AC01_RC           *RCList
+  IN AC01_RC            *RCList
   );
 
 BOOLEAN IsEmptyRC (
@@ -96,4 +96,4 @@ PcieBoardCheckSmmuPmuEnabled (
   VOID
   );
 
-#endif /* _PCIEBOARDLIB_H_ */
+#endif /* _PCIE_BOARD_LIB_H_ */

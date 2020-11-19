@@ -14,49 +14,60 @@
 #undef PCIE_CORE_MMIO_DEBUG
 
 #ifdef PCIE_CORE_CFG_DEBUG
-#define PCIE_DEBUG_CFG(arg...)                                              \
-  if (DebugCodeEnabled()) {                                                 \
-    DEBUG ((EFI_D_INFO,"PCICore (DBG): "));DEBUG((EFI_D_INFO,## arg));     \
+#define PCIE_DEBUG_CFG(arg...)               \
+  if (DebugCodeEnabled()) {                  \
+    DEBUG ((DEBUG_INFO,"PCICore (DBG): "));  \
+    DEBUG ((DEBUG_INFO,## arg));             \
   }
 #else
 #define PCIE_DEBUG_CFG(arg...)
 #endif
 
 #ifdef PCIE_CORE_CSR_DEBUG
-#define PCIE_CSR_DEBUG(arg...)                                              \
-  if (DebugCodeEnabled()) {                                                 \
-    DEBUG ((EFI_D_INFO,"PCICore (DBG): "));DEBUG((EFI_D_INFO,## arg))      \
+#define PCIE_CSR_DEBUG(arg...)               \
+  if (DebugCodeEnabled()) {                  \
+    DEBUG ((DEBUG_INFO,"PCICore (DBG): "));  \
+    DEBUG((DEBUG_INFO,## arg))               \
   }
 #else
 #define PCIE_CSR_DEBUG(arg...)
 #endif
 
 #ifdef PCIE_CORE_PHY_DEBUG
-#define PCIE_PHY_DEBUG(arg...)                                              \
-  if (DebugCodeEnabled()) {                                                 \
-    DEBUG ((EFI_D_INFO,"PCICore (DBG): "));DEBUG((EFI_D_INFO,## arg))      \
+#define PCIE_PHY_DEBUG(arg...)               \
+  if (DebugCodeEnabled()) {                  \
+    DEBUG ((DEBUG_INFO,"PCICore (DBG): "));  \
+    DEBUG ((DEBUG_INFO,## arg))              \
   }
 #else
 #define PCIE_PHY_DEBUG(arg...)
 #endif
 
 #ifdef PCIE_CORE_MMIO_DEBUG
-#define PCIE_DEBUG_MMIO(arg...)       DEBUG ((EFI_D_INFO,"PCICore (DBG): "));DEBUG((EFI_D_INFO,## arg))
+#define PCIE_DEBUG_MMIO(arg...)            \
+  DEBUG ((DEBUG_INFO,"PCICore (DBG): "));  \
+  DEBUG ((DEBUG_INFO,## arg))
 #else
 #define PCIE_DEBUG_MMIO(arg...)
 #endif
 
 #ifdef PCIE_CORE_DEBUG
-#define PCIE_DEBUG(arg...)                                              \
-  if (DebugCodeEnabled()) {                                             \
-    DEBUG ((EFI_D_INFO,"PCICore (DBG): "));DEBUG((EFI_D_INFO,## arg)); \
+#define PCIE_DEBUG(arg...)                   \
+  if (DebugCodeEnabled()) {                  \
+    DEBUG ((DEBUG_INFO,"PCICore (DBG): "));  \
+    DEBUG ((DEBUG_INFO,## arg));             \
   }
 #else
 #define PCIE_DEBUG(arg...)
 #endif
 
-#define PCIE_WARN(arg...)        DEBUG ((EFI_D_WARN,"PCICore (WARN): "));DEBUG((EFI_D_WARN,## arg))
-#define PCIE_ERR(arg...)         DEBUG ((EFI_D_ERROR,"PCICore (ERROR): "));DEBUG((EFI_D_ERROR,## arg))
+#define PCIE_WARN(arg...)                   \
+  DEBUG ((DEBUG_WARN,"PCICore (WARN): "));  \
+  DEBUG ((DEBUG_WARN,## arg))
+
+#define PCIE_ERR(arg...)                      \
+  DEBUG ((DEBUG_ERROR,"PCICore (ERROR): "));  \
+  DEBUG ((DEBUG_ERROR,## arg))
 
 #define RCS_PER_SOCKET          8
 

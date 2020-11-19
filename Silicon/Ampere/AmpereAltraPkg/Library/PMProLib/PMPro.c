@@ -79,7 +79,7 @@
 STATIC
 UINT64
 PMproGetDBBase (
-  UINT8 Socket,
+  UINT8  Socket,
   UINT64 Base
   )
 {
@@ -89,14 +89,14 @@ PMproGetDBBase (
 EFI_STATUS
 EFIAPI
 PMProDBWr (
-  UINT8 Db,
+  UINT8  Db,
   UINT32 Data,
   UINT32 Param,
   UINT32 Param1,
   UINT64 MsgReg
   )
 {
-  INTN TimeoutCnt = MB_TIMEOUTus / MB_POLL_INTERVALus;
+  INTN   TimeoutCnt = MB_TIMEOUTus / MB_POLL_INTERVALus;
   UINT32 IntStatOffset;
   UINT32 PCodeOffset;
   UINT32 ScratchOffset;
@@ -108,7 +108,7 @@ PMProDBWr (
   IntStatOffset = (Db * DBMSG_REG_STRIDE) + DB_STATUS_ADDR;
 
   /* Clear previous pending ack if any */
-  if (MmioRead32 ((MsgReg + IntStatOffset)) & DB_ACK_MASK) {
+  if ((MmioRead32 ((MsgReg + IntStatOffset)) & DB_ACK_MASK) != 0) {
     MmioWrite32 ((MsgReg + IntStatOffset), DB_ACK_MASK);
   }
 
@@ -118,7 +118,7 @@ PMProDBWr (
   MmioWrite32 ((MsgReg + PCodeOffset), Data);
 
   /* Wait for ack */
-  while (!(MmioRead32 (MsgReg + IntStatOffset) & DB_ACK_MASK)) {
+  while ((MmioRead32 (MsgReg + IntStatOffset) & DB_ACK_MASK) == 0) {
     MicroSecondDelay (MB_POLL_INTERVALus);
     if (--TimeoutCnt == 0)
       return EFI_TIMEOUT;
@@ -139,7 +139,9 @@ PMProTurboEnable (
 {
   UINT32 Msg;
 
-  Msg = DB_ENCODE_USER_MSG (DB_CONFIG_SET_HDLR, 0,
+  Msg = DB_ENCODE_USER_MSG (
+          DB_CONFIG_SET_HDLR,
+          0,
           DB_TURBO_CMD,
           DB_TURBO_ENABLE_SUBCMD
           );
@@ -156,36 +158,52 @@ PMProTurboEnable (
 EFI_STATUS
 EFIAPI
 PMProAclAdd (
-  UINT8 Socket,
+  UINT8  Socket,
   UINT32 AdrHi,
   UINT32 AdrLo
   )
 {
   UINT32 Msg;
 
-  Msg = DB_ENCODE_USER_MSG (DB_CONFIG_SET_HDLR, 0,
+  Msg = DB_ENCODE_USER_MSG (
+          DB_CONFIG_SET_HDLR,
+          0,
           DB_ACL_CMD,
           DB_ACL_ENCODE_CMD (DB_ACL_ADD4K_SUBCMD, DB_ACL_RDWR_FLAG)
           );
 
   AdrHi = DB_ACL_SET_HADDR (AdrHi);
 
-  return PMProDBWr (PMPRO_DB, Msg, AdrHi, AdrLo,
-           PMproGetDBBase (Socket, PMPRO_DB_BASE_REG));
+  return PMProDBWr (
+           PMPRO_DB,
+           Msg,
+           AdrHi,
+           AdrLo,
+           PMproGetDBBase (Socket, PMPRO_DB_BASE_REG)
+           );
 }
 
 EFI_STATUS
 EFIAPI
 PMProSendPSCIAddr (
-  UINT8 Socket,
+  UINT8  Socket,
   UINT32 AdrHi,
   UINT32 AdrLo
   )
 {
   UINT32 Msg;
 
-  Msg = DB_ENCODE_PWRMGMT_MSG (DB_PWRMGMT_PSCI_CMD, DB_PWRMGMT_PSCI_STA_SUBCMD, 0);
+  Msg = DB_ENCODE_PWRMGMT_MSG (
+          DB_PWRMGMT_PSCI_CMD,
+          DB_PWRMGMT_PSCI_STA_SUBCMD,
+          0
+          );
 
-  return PMProDBWr (DB_PSCI, Msg, AdrHi, AdrLo,
-           PMproGetDBBase (Socket, PMPRO_DB_BASE_REG));
+  return PMProDBWr (
+           DB_PSCI,
+           Msg,
+           AdrHi,
+           AdrLo,
+           PMproGetDBBase (Socket, PMPRO_DB_BASE_REG)
+           );
 }

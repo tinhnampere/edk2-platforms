@@ -14,4 +14,4 @@
   VERSION_STRING                = 1.0
 
 [Binaries.AArch64]
-    PE32|Aarch64/flashkernel|*
+    PE32|AArch64/flashkernel|*

@@ -38,7 +38,7 @@ extern UINT8  VfrBin[];
 //
 // This is the generated String package data for all .UNI files.
 //
-extern UINT8  AmpereCpuDxeStrings[];
+extern UINT8  CpuConfigDxeStrings[];
 
 #define CPU_CONFIG_PRIVATE_SIGNATURE SIGNATURE_32 ('C', 'P', 'U', '_')
 
@@ -71,19 +71,5 @@ typedef struct {
 } HII_VENDOR_DEVICE_PATH;
 
 #pragma pack()
-
-/**
-  This function initializes CPU Configuration Menu.
-
-  @retval EFI_SUCCESS            The Results is processed successfully.
-  @retval EFI_INVALID_PARAMETER  Configuration is invalid.
-  @retval EFI_OUT_OF_RESOURCES   Not enough memory to store the results.
-
-**/
-EFI_STATUS
-EFIAPI
-CpuConfigInit (
-  VOID
-  );
 
 #endif /* _CPU_CONFIG_H_ */

@@ -266,7 +266,7 @@ FlashFvbDxeRead (
              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Failed to do flash read\n"));
+    DEBUG ((DEBUG_ERROR, "Failed to do flash read\n"));
     return EFI_DEVICE_ERROR;
   }
 
@@ -357,7 +357,7 @@ FlashFvbDxeWrite (
              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Failed to do flash program\n"));
+    DEBUG ((DEBUG_ERROR, "Failed to do flash program\n"));
     return EFI_DEVICE_ERROR;
   }
 
@@ -441,7 +441,7 @@ FlashFvbDxeErase (
   VA_END (Args);
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Failed to do flash erase\n"));
+    DEBUG ((DEBUG_ERROR, "Failed to do flash erase\n"));
     return EFI_DEVICE_ERROR;
   }
 
@@ -516,7 +516,7 @@ FlashFvbDxeInitialize (
                   );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Failed to install Firmware Volume Block protocol\n"));
+    DEBUG ((DEBUG_ERROR, "Failed to install Firmware Volume Block protocol\n"));
     return Status;
   }
 

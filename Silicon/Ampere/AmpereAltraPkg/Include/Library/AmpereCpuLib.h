@@ -34,46 +34,98 @@
 #define SUBNUMA_MODE_HEMISPHERE        1
 #define SUBNUMA_MODE_QUADRANT          2
 
-UINT8 CPUGetSubNumaMode (VOID);
+/**
+  Get the SubNUMA mode.
 
-/*
- * Return the number of SubNUMA region
- */
-UINT8 CPUGetNumOfSubNuma(VOID);
+  @return   UINT8      The SubNUMA mode.
 
-/*
- * Return the SubNUMA node of a CPM
- */
-UINT8 CPUGetSubNumNode(UINT8 Socket, UINT32 Cpm);
-
-/*
- * Return the value of CLIDR register
- */
-UINT64 Aarch64ReadCLIDRReg ();
-
-/*
- * Return the value of CCSID register
- */
-UINT64 Aarch64ReadCCSIDRReg (UINT64 Level);
-
-/*
- * Return the associativity of cache
- */
-UINT32 CpuGetAssociativity (UINTN Level);
-
-/*
- * Return the cache size.
- */
-UINT32 CpuGetCacheSize (UINTN Level);
+**/
+UINT8
+EFIAPI
+CPUGetSubNumaMode (VOID);
 
 /**
-  Get the number of socket supported.
+  Get the number of SubNUMA region.
+
+  @return   UINT8      The number of SubNUMA region.
+
+**/
+UINT8
+EFIAPI
+CPUGetNumOfSubNuma (VOID);
+
+/**
+  Get the SubNUMA node of a CPM.
+
+  @param    SocketId    Socket index.
+  @param    Cpm         CPM index.
+  @return   UINT8       The SubNUMA node of a CPM.
+
+**/
+UINT8
+EFIAPI
+CPUGetSubNumNode (
+  UINT8 Socket,
+  UINT32 Cpm
+  );
+
+/**
+  Get the value of CLIDR register.
+
+  @return   UINT64      The value of CLIDR register.
+
+**/
+UINT64
+EFIAPI
+AArch64ReadCLIDRReg ();
+
+/**
+  Get the value of CCSID register.
+
+  @param    Level       Cache level.
+  @return   UINT64      The value of CCSID register.
+
+**/
+UINT64
+EFIAPI
+AArch64ReadCCSIDRReg (
+  UINT64 Level
+  );
+
+/**
+  Get the associativity of cache.
+
+  @param    Level       Cache level.
+  @return   UINT32      Associativity of cache.
+
+**/
+UINT32
+EFIAPI
+CpuGetAssociativity (
+  UINTN Level
+  );
+
+/**
+  Get the cache size.
+
+  @param    Level       Cache level.
+  @return   UINT32      Cache size.
+
+**/
+UINT32
+EFIAPI
+CpuGetCacheSize (
+  UINTN Level
+  );
+
+/**
+  Get the number of supported socket.
 
   @return   UINT32      Number of supported socket.
 
 **/
-EFIAPI
 UINT32
+EFIAPI
 GetNumberSupportedSockets (VOID);
 
 /**
@@ -82,43 +134,51 @@ GetNumberSupportedSockets (VOID);
   @return   UINT32      Number of active socket.
 
 **/
-EFIAPI
 UINT32
+EFIAPI
 GetNumberActiveSockets (VOID);
 
 /**
   Get the number of active CPM per socket.
 
-  @param    UINT32      Socket index.
+  @param    SocketId    Socket index.
   @return   UINT32      Number of CPM.
 
 **/
-EFIAPI
 UINT32
-GetNumberActiveCPMsPerSocket (UINT32 SocketId);
+EFIAPI
+GetNumberActiveCPMsPerSocket (
+  UINT32 SocketId
+  );
 
 /**
-  Get the configured number of CPM per socket. This number
-  should be the same for all sockets.
+  Get the configured number of CPM per socket.
 
-  @return   UINT32      Configurated number of CPM.
+  @param    SocketId    Socket index.
+  @return   UINT32      Configured number of CPM.
 
 **/
-EFIAPI
 UINT32
-GetConfiguratedNumberCPMs (IN UINTN Socket);
+EFIAPI
+GetConfiguredNumberCPMs (
+  IN UINTN Socket
+  );
 
 /**
-  Set the configured number of CPM per socket. This number
-  should be the same for all sockets.
+  Set the configured number of CPM per socket.
 
-  @param    Number      Number of CPM to be configurated.
-  @return   EFI_STATUS  EFI_SUCCESS if successful.
+  @param    SocketId        Socket index.
+  @param    Number          Number of CPM to be configured.
+  @return   EFI_SUCCESS     Operation succeeded.
+  @return   Others          An error has occurred.
 
 **/
-EFIAPI
 EFI_STATUS
-SetConfiguratedNumberCPMs (IN UINTN Socket, IN UINTN Number);
+EFIAPI
+SetConfiguredNumberCPMs (
+  UINTN Socket,
+  UINTN Number
+  );
 
 /**
   Get the maximum number of core per socket. This number
@@ -127,8 +187,8 @@ SetConfiguratedNumberCPMs (IN UINTN Socket, IN UINTN Number);
   @return   UINT32      Maximum number of core.
 
 **/
-EFIAPI
 UINT32
+EFIAPI
 GetMaximumNumberOfCores (VOID);
 
 /**
@@ -138,8 +198,8 @@ GetMaximumNumberOfCores (VOID);
   @return   UINT32      Maximum number of CPM.
 
 **/
-EFIAPI
 UINT32
+EFIAPI
 GetMaximumNumberCPMs (VOID);
 
 /**
@@ -148,9 +208,11 @@ GetMaximumNumberCPMs (VOID);
   @return   UINT32      Number of active core.
 
 **/
-EFIAPI
 UINT32
-GetNumberActiveCoresPerSocket (UINT32 SocketId);
+EFIAPI
+GetNumberActiveCoresPerSocket (
+  UINT32 SocketId
+  );
 
 /**
   Get the number of active cores of all socket.
@@ -158,21 +220,23 @@ GetNumberActiveCoresPerSocket (UINT32 SocketId);
   @return   UINT32      Number of active core.
 
 **/
-EFIAPI
 UINT32
+EFIAPI
 GetNumberActiveCores (VOID);
 
 /**
   Check if the logical CPU is enabled or not.
 
-  @param    Cpu         The logical Cpu ID. Started from 0.
+  @param    CpuId       The logical Cpu ID. Started from 0.
   @return   BOOLEAN     TRUE if the Cpu enabled
                         FALSE if the Cpu disabled/
 
 **/
-EFIAPI
 BOOLEAN
-IsCpuEnabled (IN UINTN Cpu);
+EFIAPI
+IsCpuEnabled (
+  UINTN CpuId
+  );
 
 
 /**
@@ -182,8 +246,8 @@ IsCpuEnabled (IN UINTN Cpu);
                         FALSE if the Slave Cpu present
 
 **/
-EFIAPI
 BOOLEAN
+EFIAPI
 PlatSlaveSocketPresent (VOID);
 
 #endif /* _AMPERE_CPU_LIB_H_ */

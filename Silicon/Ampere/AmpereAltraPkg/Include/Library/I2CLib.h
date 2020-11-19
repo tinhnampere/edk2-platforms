@@ -25,10 +25,14 @@
                 EFI_TIMEOUT if timeout why transferring data.
                 Otherwise, 0 for success.
  **/
-EFIAPI
 EFI_STATUS
-I2CWrite(IN UINT32 Bus, IN UINT32 SlaveAddr,
-         IN OUT UINT8 *Buf, IN OUT UINT32 *WriteLength);
+EFIAPI
+I2CWrite (
+  IN     UINT32 Bus,
+  IN     UINT32 SlaveAddr,
+  IN OUT UINT8  *Buf,
+  IN OUT UINT32 *WriteLength
+  );
 
 /**
  Read data from I2C bus.
@@ -46,11 +50,16 @@ I2CWrite(IN UINT32 Bus, IN UINT32 SlaveAddr,
                 EFI_CRC_ERROR if there are errors on receiving data.
                 Otherwise, 0 for success.
  **/
-EFIAPI
 EFI_STATUS
-I2CRead(IN UINT32 Bus, IN UINT32 SlaveAddr,
-        IN UINT8 *BufCmd, IN UINT32 CmdLength,
-        IN OUT UINT8 *Buf, IN OUT UINT32 *ReadLength);
+EFIAPI
+I2CRead (
+  IN     UINT32 Bus,
+  IN     UINT32 SlaveAddr,
+  IN     UINT8  *BufCmd,
+  IN     UINT32 CmdLength,
+  IN OUT UINT8  *Buf,
+  IN OUT UINT32 *ReadLength
+  );
 
 /**
  Setup new transaction with I2C slave device.
@@ -60,9 +69,12 @@ I2CRead(IN UINT32 Bus, IN UINT32 SlaveAddr,
  @return:   EFI_INVALID_PARAMETER if parameter is invalid.
             Otherwise, 0 for success.
  **/
-EFIAPI
 EFI_STATUS
-I2CProbe(IN UINT32 Bus, IN UINTN BusSpeed);
+EFIAPI
+I2CProbe (
+  IN UINT32 Bus,
+  IN UINTN  BusSpeed
+  );
 
 /**
  Setup a bus that to be used in runtime service.
@@ -71,8 +83,10 @@ I2CProbe(IN UINT32 Bus, IN UINTN BusSpeed);
  @return:   0 for success.
             Otherwise, error code.
  **/
-EFIAPI
 EFI_STATUS
-I2CSetupRuntime(IN UINT32 Bus);
+EFIAPI
+I2CSetupRuntime (
+  IN UINT32 Bus
+  );
 
 #endif /* _I2CLIB_H_ */

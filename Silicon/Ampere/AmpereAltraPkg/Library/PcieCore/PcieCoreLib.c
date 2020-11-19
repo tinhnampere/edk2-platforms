@@ -24,14 +24,15 @@
 #include <PciePatchAcpi.h>
 #include <PcieCore.h>
 
-STATIC UINT64 RCRegBase[MAX_AC01_PCIE_ROOT_COMPLEX] = {AC01_PCIE_REGISTER_BASE};
-STATIC UINT64 RCMmioBase[MAX_AC01_PCIE_ROOT_COMPLEX] = {AC01_PCIE_MMIO_BASE};
-STATIC UINT64 RCMmio32Base[MAX_AC01_PCIE_ROOT_COMPLEX] = {AC01_PCIE_MMIO32_BASE};
-STATIC UINT64 RCMmio32Base1P[MAX_AC01_PCIE_ROOT_COMPLEX] = {AC01_PCIE_MMIO32_BASE_1P};
+STATIC UINT64 RCRegBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_REGISTER_BASE };
+STATIC UINT64 RCMmioBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO_BASE };
+STATIC UINT64 RCMmio32Base[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO32_BASE };
+STATIC UINT64 RCMmio32Base1P[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO32_BASE_1P };
 STATIC AC01_RC RCList[MAX_AC01_PCIE_ROOT_COMPLEX];
 STATIC INT8 PciList[MAX_AC01_PCIE_ROOT_COMPLEX];
 
-STATIC VOID
+STATIC
+VOID
 SerialPrint (
   IN  CONST CHAR8  *FormatString,
   ...
@@ -42,12 +43,15 @@ SerialPrint (
   UINTN     NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = AsciiVSPrint ((CHAR8 *)Buf, sizeof (Buf), FormatString, Marker);
-  SerialPortWrite(Buf, NumberOfPrinted);
+  NumberOfPrinted = AsciiVSPrint ((CHAR8 *) Buf, sizeof (Buf), FormatString, Marker);
+  SerialPortWrite (Buf, NumberOfPrinted);
   VA_END (Marker);
 }
 
-AC01_RC *GetRCList (UINT8 Idx)
+AC01_RC *
+GetRCList (
+  UINT8 Idx
+  )
 {
   return &RCList[Idx];
 }
@@ -59,7 +63,9 @@ AC01_RC *GetRCList (UINT8 Idx)
    @param  RBIndex               Index to identify of PCIE Root bridge.
    @retval UINT8                 Index to identify Root Complex instance from global RCList.
 **/
-STATIC UINT8 GetRCIndex (
+STATIC
+UINT8
+GetRCIndex (
   IN UINT8 HBIndex,
   IN UINT8 RBIndex
   )
@@ -76,7 +82,8 @@ STATIC UINT8 GetRCIndex (
 
    @retval EFI_SUCCESS           Success to initialize.
 **/
-EFI_STATUS Ac01PcieSetup (
+EFI_STATUS
+Ac01PcieSetup (
   IN EFI_HANDLE         ImageHandle,
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
@@ -105,26 +112,34 @@ EFI_STATUS Ac01PcieSetup (
   return EFI_SUCCESS;
 }
 
-UINT8 Ac01PcieGetTotalHBs (VOID)
+UINT8
+Ac01PcieGetTotalHBs (VOID)
 {
   return 16;
 }
 
-UINT8 Ac01PcieGetTotalRBsPerHB (UINTN RCIndex)
+UINT8
+Ac01PcieGetTotalRBsPerHB (
+  UINTN RCIndex
+  )
 {
   return 1;
 }
 
-UINTN Ac01PcieGetRootBridgeAttribute (
+UINTN
+Ac01PcieGetRootBridgeAttribute (
   IN UINTN HBIndex,
-  IN UINTN RBIndex)
+  IN UINTN RBIndex
+  )
 {
   return 2;
 }
 
-UINTN Ac01PcieGetRootBridgeSegmentNumber (
+UINTN
+Ac01PcieGetRootBridgeSegmentNumber (
   IN UINTN HBIndex,
-  IN UINTN RBIndex)
+  IN UINTN RBIndex
+  )
 {
   UINTN RCIndex;
   AC01_RC *RC;
@@ -135,13 +150,17 @@ UINTN Ac01PcieGetRootBridgeSegmentNumber (
   SegmentNumber = RCIndex;
 
   // Get board specific overrides
-  PcieBoardGetRCSegmentNumber(RC, &SegmentNumber);
+  PcieBoardGetRCSegmentNumber (RC, &SegmentNumber);
   RC->Logical = SegmentNumber;
 
   return SegmentNumber;
 }
 
-STATIC VOID SortPciList (INT8 *PciList)
+STATIC
+VOID
+SortPciList (
+  INT8 *PciList
+  )
 {
   INT8     Idx1, Idx2;
 
@@ -157,11 +176,18 @@ STATIC VOID SortPciList (INT8 *PciList)
   }
 
   for (Idx2 = 0; Idx2 < Idx1; Idx2++) {
-    PCIE_DEBUG (" %a: PciList[%d]=%d TcuAddr=0x%llx\n", __FUNCTION__, Idx2, PciList[Idx2],  RCList[PciList[Idx2]].TcuAddr);
+    PCIE_DEBUG (
+      " %a: PciList[%d]=%d TcuAddr=0x%llx\n",
+      __FUNCTION__,
+      Idx2,
+      PciList[Idx2],
+      RCList[PciList[Idx2]].TcuAddr
+      );
   }
 }
 
-BOOLEAN Ac01PcieCheckRootBridgeDisabled (
+BOOLEAN
+Ac01PcieCheckRootBridgeDisabled (
   IN UINTN HBIndex,
   IN UINTN RBIndex
   )
@@ -170,7 +196,7 @@ BOOLEAN Ac01PcieCheckRootBridgeDisabled (
   INT8          Ret;
 
   RCIndex = HBIndex;
-  Ret = (RCList[RCIndex].Active == FALSE);
+  Ret = !RCList[RCIndex].Active;
   if (Ret) {
     PciList[HBIndex] = -1;
   } else {
@@ -193,8 +219,10 @@ BOOLEAN Ac01PcieCheckRootBridgeDisabled (
    @param  HBIndex               Index to identify of PCIE Host bridge.
    @retval EFI_SUCCESS           Success to initialize.
 **/
-EFI_STATUS Ac01PcieSetupHostBridge (
-  IN UINTN HBIndex)
+EFI_STATUS
+Ac01PcieSetupHostBridge (
+  IN UINTN HBIndex
+  )
 {
   return EFI_SUCCESS;
 }
@@ -208,10 +236,12 @@ EFI_STATUS Ac01PcieSetupHostBridge (
    @retval EFI_SUCCESS           Success to initialize.
    @retval EFI_DEVICE_ERROR      Error when initializing.
 **/
-EFI_STATUS Ac01PcieSetupRootBridge (
+EFI_STATUS
+Ac01PcieSetupRootBridge (
   IN UINTN HBIndex,
   IN UINTN RBIndex,
-  IN PCI_ROOT_BRIDGE *RootBridge)
+  IN PCI_ROOT_BRIDGE *RootBridge
+  )
 {
   UINTN                     RCIndex;
   AC01_RC                   *RC;
@@ -277,7 +307,8 @@ Error:
    Reg = (Address) & 0xFFF;
 **/
 
-EFI_STATUS Ac01PcieConfigRW (
+EFI_STATUS
+Ac01PcieConfigRW (
   IN      VOID      *RootInstance,
   IN      UINT64    Address,
   IN      BOOLEAN   Write,
@@ -298,44 +329,50 @@ EFI_STATUS Ac01PcieConfigRW (
     }
   }
 
-  if (RCIndex == MAX_AC01_PCIE_ROOT_COMPLEX || !RC) {
+  if ((RCIndex == MAX_AC01_PCIE_ROOT_COMPLEX) || (RC == NULL)) {
     PCIE_ERR("Can't find Root Bridge instance:%p\n", RootInstance);
     return EFI_INVALID_PARAMETER;
   }
 
   Reg = Address & 0xFFF;
 
-  CfgBase = (VOID *)((UINT64) RC->MmcfgAddr + (Address & 0x0FFFF000));
+  CfgBase = (VOID *) ((UINT64) RC->MmcfgAddr + (Address & 0x0FFFF000));
   if (Write) {
     switch (Width) {
     case 1:
-      Ac01PcieCfgOut8 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), *((UINT8 *) Data));
+      Ac01PcieCfgOut8 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), *((UINT8 *) Data));
       break;
+
     case 2:
-      Ac01PcieCfgOut16 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), *((UINT16 *) Data));
+      Ac01PcieCfgOut16 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), *((UINT16 *) Data));
       break;
+
     case 4:
-      Ac01PcieCfgOut32 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), *((UINT32 *) Data));
+      Ac01PcieCfgOut32 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), *((UINT32 *) Data));
       break;
+
     default:
       return EFI_INVALID_PARAMETER;
     }
   } else {
     switch (Width) {
     case 1:
-      Ac01PcieCfgIn8 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), (UINT8 *) Data);
+      Ac01PcieCfgIn8 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), (UINT8 *) Data);
       break;
+
     case 2:
-      Ac01PcieCfgIn16 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), (UINT16 *) Data);
+      Ac01PcieCfgIn16 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), (UINT16 *) Data);
       if (Reg == 0xAE && (*((UINT16 *) Data)) == 0xFFFF) {
         SerialPrint ("PANIC due to PCIE RC:%d link issue\n", RC->ID);
         // Loop forever waiting for failsafe/watch dog time out
         do {} while (1);
       }
       break;
+
     case 4:
-      Ac01PcieCfgIn32 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), (UINT32 *) Data);
+      Ac01PcieCfgIn32 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), (UINT32 *) Data);
       break;
+
     default:
       return EFI_INVALID_PARAMETER;
     }
@@ -410,7 +447,8 @@ _link_polling:
 /**
    Prepare to end PCIE core BSP driver
 **/
-VOID Ac01PcieEnd (VOID)
+VOID
+Ac01PcieEnd (VOID)
 {
   Ac01PcieCorePollLinkUp ();
 }
@@ -422,7 +460,8 @@ VOID Ac01PcieEnd (VOID)
    @param  PortIndex             Index to identify of PCIE root port.
    @param  Phase                 The phase of enumeration as informed from PCI stack.
 **/
-VOID Ac01PcieHostBridgeNotifyPhase (
+VOID
+Ac01PcieHostBridgeNotifyPhase (
   IN UINTN HBIndex,
   IN UINTN RBIndex,
   IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PHASE    Phase

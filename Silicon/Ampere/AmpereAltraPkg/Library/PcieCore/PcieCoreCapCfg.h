@@ -61,4 +61,4 @@
 #define RBAR_CAP        0x3E8
 #define VF_RBAR_CAP     0x3E8
 
-#endif
+#endif /* __X16_CAP_PORT_CFG_H__ */

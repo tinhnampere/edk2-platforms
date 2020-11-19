@@ -29,7 +29,6 @@
 #define DB_DOUT1_ADDR                   0x00000018
 #define DB_ACK_MASK                     0x00000001
 
-
 /* RAS message */
 #define IPP_RAS_MSG_HNDL_MASK           0x0F000000U
 #define IPP_RAS_MSG_HNDL_SHIFT          24
@@ -62,52 +61,69 @@
 #define MB_READ_DELAYus                 1000
 #define MB_TIMEOUTus                    10000000
 
-UINT64 SMproGetDBBase(UINT8 socket, UINT64 base)
+UINT64
+SMProGetDBBase (
+  UINT8  Socket,
+  UINT64 Base
+  )
 {
-  return base + SOCKET_BASE_OFFSET * socket;
+  return Base + SOCKET_BASE_OFFSET * Socket;
 }
 
 /*
  * Read a message from doorbell interface
  */
-EFI_STATUS EFIAPI SMProDBRd(UINT8 Db, UINT32 *Data, UINT32 *Param,
-                              UINT32 *Param1, UINT64 MsgReg)
+EFI_STATUS
+EFIAPI
+SMProDBRd (
+  UINT8  Db,
+  UINT32 *Data,
+  UINT32 *Param,
+  UINT32 *Param1,
+  UINT64 MsgReg
+  )
 {
-  INTN TimeoutCnt = MB_TIMEOUTus / MB_POLL_INTERVALus;
+  INTN   TimeoutCnt = MB_TIMEOUTus / MB_POLL_INTERVALus;
   UINT32 DBBaseOffset = Db * DBMSG_REG_STRIDE;
 
   /* Wait for message since we don't operate in interrupt mode */
-  while (!(MmioRead32((MsgReg + DBBaseOffset + DB_STATUS_ADDR)) & DB_AVAIL_MASK)) {
-    MicroSecondDelay(MB_POLL_INTERVALus);
+  while ((MmioRead32 ((MsgReg + DBBaseOffset + DB_STATUS_ADDR)) & DB_AVAIL_MASK) == 0) {
+    MicroSecondDelay (MB_POLL_INTERVALus);
     if (--TimeoutCnt == 0) {
       return EFI_TIMEOUT;
     }
   }
 
   /* Read iPP message */
-  if (Param) {
-    *Param = MmioRead32(MsgReg + DBBaseOffset + DB_DIN0_ADDR);
+  if (Param != NULL) {
+    *Param = MmioRead32 (MsgReg + DBBaseOffset + DB_DIN0_ADDR);
   }
-  if (Param1) {
-    *Param1 = MmioRead32(MsgReg + DBBaseOffset + DB_DIN1_ADDR);
+  if (Param1 != NULL) {
+    *Param1 = MmioRead32 (MsgReg + DBBaseOffset + DB_DIN1_ADDR);
   }
-  *Data = MmioRead32(MsgReg + DBBaseOffset + DB_DIN_ADDR);
+  *Data = MmioRead32 (MsgReg + DBBaseOffset + DB_DIN_ADDR);
 
   /* Send acknowledgment */
-  MmioWrite32(MsgReg + DBBaseOffset + DB_STATUS_ADDR, DB_AVAIL_MASK);
+  MmioWrite32 (MsgReg + DBBaseOffset + DB_STATUS_ADDR, DB_AVAIL_MASK);
 
   return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI SMProDBWr(UINT8 Db, UINT32 Data, UINT32 Param,
-                               UINT32 Param1, UINT64 MsgReg)
+EFI_STATUS
+EFIAPI
+SMProDBWr (
+  UINT8  Db,
+  UINT32 Data,
+  UINT32 Param,
+  UINT32 Param1,
+  UINT64 MsgReg
+  )
 {
-  INTN TimeoutCnt = MB_TIMEOUTus / MB_POLL_INTERVALus;
+  INTN   TimeoutCnt = MB_TIMEOUTus / MB_POLL_INTERVALus;
   UINT32 IntStatOffset;
   UINT32 PCodeOffset;
   UINT32 ScratchOffset;
   UINT32 Scratch1Offset;
-
 
   ScratchOffset = (Db * DBMSG_REG_STRIDE) + DB_DOUT0_ADDR;
   Scratch1Offset = (Db *DBMSG_REG_STRIDE) + DB_DOUT1_ADDR;
@@ -115,85 +131,133 @@ EFI_STATUS EFIAPI SMProDBWr(UINT8 Db, UINT32 Data, UINT32 Param,
   IntStatOffset = (Db * DBMSG_REG_STRIDE) + DB_STATUS_ADDR;
 
   /* Clear previous pending ack if any */
-  if (MmioRead32((MsgReg + IntStatOffset)) & DB_ACK_MASK) {
-    MmioWrite32((MsgReg + IntStatOffset), DB_ACK_MASK);
+  if ((MmioRead32 ((MsgReg + IntStatOffset)) & DB_ACK_MASK) != 0) {
+    MmioWrite32 ((MsgReg + IntStatOffset), DB_ACK_MASK);
   }
 
   /* Send message */
-  MmioWrite32((MsgReg + ScratchOffset), Param);
-  MmioWrite32((MsgReg + Scratch1Offset), Param1);
-  MmioWrite32((MsgReg + PCodeOffset), Data);
+  MmioWrite32 ((MsgReg + ScratchOffset), Param);
+  MmioWrite32 ((MsgReg + Scratch1Offset), Param1);
+  MmioWrite32 ((MsgReg + PCodeOffset), Data);
 
   /* Wait for ack */
-  while (!(MmioRead32(MsgReg + IntStatOffset) & DB_ACK_MASK)) {
-    MicroSecondDelay(MB_POLL_INTERVALus);
+  while ((MmioRead32 (MsgReg + IntStatOffset) & DB_ACK_MASK) == 0) {
+    MicroSecondDelay (MB_POLL_INTERVALus);
     if (--TimeoutCnt == 0)
       return EFI_TIMEOUT;
   }
 
   /* Clear iPP ack */
-  MmioWrite32(MsgReg + IntStatOffset, DB_ACK_MASK);
+  MmioWrite32 (MsgReg + IntStatOffset, DB_ACK_MASK);
 
   return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI SMProAPEISetupCheck(UINT32 UAddress, UINT32 LAddress)
+EFI_STATUS
+EFIAPI
+SMProAPEISetupCheck (
+  UINT32 UAddress,
+  UINT32 LAddress
+  )
 {
-  UINT32 Msg = IPP_ENCODE_RAS_MSG(IPP_RAS_MSG_SETUP_CHECK, 0);
-  return SMProDBWr(SMPRO_DB, Msg, UAddress, LAddress, SMPRO_DB_BASE_REG);
+  UINT32 Msg = IPP_ENCODE_RAS_MSG (IPP_RAS_MSG_SETUP_CHECK, 0);
+  return SMProDBWr (SMPRO_DB, Msg, UAddress, LAddress, SMPRO_DB_BASE_REG);
 }
 
-EFI_STATUS EFIAPI SMProAPEIEnable(UINT8 Enable)
+EFI_STATUS
+EFIAPI
+SMProAPEIEnable (
+  UINT8 Enable
+  )
 {
   UINT32 Msg;
 
-  if (Enable) {
-    Msg = IPP_ENCODE_RAS_MSG(IPP_RAS_MSG_START, 0);
+  if (Enable != 0) {
+    Msg = IPP_ENCODE_RAS_MSG (IPP_RAS_MSG_START, 0);
   } else {
-    Msg = IPP_ENCODE_RAS_MSG(IPP_RAS_MSG_STOP, 0);
+    Msg = IPP_ENCODE_RAS_MSG (IPP_RAS_MSG_STOP, 0);
   }
-  return SMProDBWr(SMPRO_DB, Msg, 0, 0, SMPRO_DB_BASE_REG);
+  return SMProDBWr (SMPRO_DB, Msg, 0, 0, SMPRO_DB_BASE_REG);
 }
 
-EFI_STATUS EFIAPI SMProRegRd(UINT8 socket, UINT64 Addr, UINT32 *Value)
+EFI_STATUS
+EFIAPI
+SMProRegRd (
+  UINT8  Socket,
+  UINT64 Addr,
+  UINT32 *Value
+  )
 {
-  UINT32 Data0 = (UINT32) Addr;
-  UINT32 Upper = (UINT32) (Addr >> 32);
-  UINT32 Data1 = 0;
-  UINT32 Msg;
-  EFI_STATUS Ret;
+  UINT32      Data0 = (UINT32) Addr;
+  UINT32      Upper = (UINT32) (Addr >> 32);
+  UINT32      Data1 = 0;
+  UINT32      Msg;
+  EFI_STATUS  Status;
 
-  Msg = IPP_ENCODE_DEBUG_MSG(IPP_DBG_SUBTYPE_REGREAD, 0, (Upper >> 8) & 0xFF,
-                             Upper & 0xFF);
-  Ret = SMProDBWr(SMPRO_DB, Msg, Data0, Data1,
-                  SMproGetDBBase(socket, SMPRO_DB_BASE_REG));
-  if (Ret != EFI_SUCCESS) {
-    return Ret;
+  Msg = IPP_ENCODE_DEBUG_MSG (
+          IPP_DBG_SUBTYPE_REGREAD,
+          0,
+          (Upper >> 8) & 0xFF,
+          Upper & 0xFF
+          );
+  Status = SMProDBWr (
+             SMPRO_DB,
+             Msg,
+             Data0,
+             Data1,
+             SMProGetDBBase (Socket, SMPRO_DB_BASE_REG)
+             );
+  if (EFI_ERROR (Status)) {
+    return Status;
   }
 
-  Ret = SMProDBRd(SMPRO_DB, &Msg, &Data0, &Data1,
-                  SMproGetDBBase(socket, SMPRO_DB_BASE_REG));
-  if (Ret != EFI_SUCCESS) {
-    return Ret;
+  Status = SMProDBRd (
+             SMPRO_DB,
+             &Msg,
+             &Data0,
+             &Data1,
+             SMProGetDBBase (Socket, SMPRO_DB_BASE_REG)
+             );
+  if (EFI_ERROR (Status)) {
+    return Status;
   }
-  if (!(Msg & IPP_DBGMSG_P0_MASK)) {
+
+  if ((Msg & IPP_DBGMSG_P0_MASK) == 0) {
     return EFI_UNSUPPORTED;
   }
+
   if (Value != NULL) {
     *Value = Data0;
   }
-  return Ret;
+
+  return Status;
 }
 
-EFI_STATUS EFIAPI SMProRegWr(UINT8 socket, UINT64 Addr, UINT32 Value)
+EFI_STATUS
+EFIAPI
+SMProRegWr (
+  UINT8  Socket,
+  UINT64 Addr,
+  UINT32 Value
+  )
 {
   UINT32 Data0 = (UINT32) Addr;
   UINT32 Upper = (UINT32) (Addr >> 32);
   UINT32 Data1 = Value;
   UINT32 Msg;
 
-  Msg = IPP_ENCODE_DEBUG_MSG(IPP_DBG_SUBTYPE_REGWRITE, 0, (Upper >> 8) & 0xFF,
-                             Upper & 0xFF);
-  return SMProDBWr(SMPRO_DB, Msg, Data0, Data1,
-                  SMproGetDBBase(socket, SMPRO_DB_BASE_REG));
+  Msg = IPP_ENCODE_DEBUG_MSG (
+          IPP_DBG_SUBTYPE_REGWRITE,
+          0,
+          (Upper >> 8) & 0xFF,
+          Upper & 0xFF
+          );
+
+  return SMProDBWr (
+           SMPRO_DB,
+           Msg,
+           Data0,
+           Data1,
+           SMProGetDBBase (Socket, SMPRO_DB_BASE_REG)
+           );
 }

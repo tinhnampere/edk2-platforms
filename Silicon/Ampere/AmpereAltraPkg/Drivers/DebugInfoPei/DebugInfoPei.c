@@ -45,7 +45,7 @@ SerialPrint (
 
   VA_START (Marker, FormatString);
   NumberOfPrinted = AsciiVSPrint (Buf, sizeof (Buf), FormatString, Marker);
-  SerialPortWrite((UINT8 *) Buf, NumberOfPrinted);
+  SerialPortWrite ((UINT8 *) Buf, NumberOfPrinted);
   VA_END (Marker);
 }
 
@@ -57,14 +57,16 @@ PrintNVRAM (
   VOID
   )
 {
-  NVPARAM   Idx;
-  UINT32    Val;
-  UINT16    ACLRd = NV_PERM_ALL;
-  BOOLEAN   Flag;
+  EFI_STATUS  Status;
+  NVPARAM     Idx;
+  UINT32      Val;
+  UINT16      ACLRd = NV_PERM_ALL;
+  BOOLEAN     Flag;
 
   Flag = FALSE;
-  for (Idx = NV_PREBOOT_PARAM_START; Idx <= NV_PREBOOT_PARAM_MAX; Idx+=NVPARAM_SIZE) {
-    if (!NVParamGet (Idx, ACLRd, &Val)) {
+  for (Idx = NV_PREBOOT_PARAM_START; Idx <= NV_PREBOOT_PARAM_MAX; Idx += NVPARAM_SIZE) {
+    Status = NVParamGet (Idx, ACLRd, &Val);
+    if (!EFI_ERROR (Status)) {
       if (!Flag) {
         SerialPrint ("Pre-boot Configuration Setting:\n");
         Flag = TRUE;
@@ -72,9 +74,11 @@ PrintNVRAM (
       SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32) Idx, Val, Val);
     }
   }
+
   Flag = FALSE;
-  for (Idx = NV_MANU_PARAM_START; Idx <= NV_MANU_PARAM_MAX; Idx+=NVPARAM_SIZE) {
-    if (!NVParamGet (Idx, ACLRd, &Val)) {
+  for (Idx = NV_MANU_PARAM_START; Idx <= NV_MANU_PARAM_MAX; Idx += NVPARAM_SIZE) {
+    Status = NVParamGet (Idx, ACLRd, &Val);
+    if (!EFI_ERROR (Status)) {
       if (!Flag) {
         SerialPrint ("Manufacturer Configuration Setting:\n");
         Flag = TRUE;
@@ -82,9 +86,11 @@ PrintNVRAM (
       SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32) Idx, Val, Val);
     }
   }
+
   Flag = FALSE;
-  for (Idx = NV_USER_PARAM_START; Idx <= NV_USER_PARAM_MAX; Idx+=NVPARAM_SIZE) {
-    if (!NVParamGet (Idx, ACLRd, &Val)) {
+  for (Idx = NV_USER_PARAM_START; Idx <= NV_USER_PARAM_MAX; Idx += NVPARAM_SIZE) {
+    Status = NVParamGet (Idx, ACLRd, &Val);
+    if (!EFI_ERROR (Status)) {
       if (!Flag) {
         SerialPrint ("User Configuration Setting:\n");
         Flag = TRUE;
@@ -92,9 +98,11 @@ PrintNVRAM (
       SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32) Idx, Val, Val);
     }
   }
+
   Flag = FALSE;
-  for (Idx = NV_BOARD_PARAM_START; Idx <= NV_BOARD_PARAM_MAX; Idx+=NVPARAM_SIZE) {
-    if (!NVParamGet (Idx, ACLRd, &Val)) {
+  for (Idx = NV_BOARD_PARAM_START; Idx <= NV_BOARD_PARAM_MAX; Idx += NVPARAM_SIZE) {
+    Status = NVParamGet (Idx, ACLRd, &Val);
+    if (!EFI_ERROR (Status)) {
       if (!Flag) {
         SerialPrint ("Board Configuration Setting:\n");
         Flag = TRUE;
@@ -110,7 +118,7 @@ GetCCIXLinkWidth (
   IN UINTN Socket
   )
 {
-  UINT64    PcieTcuBase[] = {AC01_PCIE_REGISTER_BASE};
+  UINT64    PcieTcuBase[] = { AC01_PCIE_REGISTER_BASE };
   UINT64    LinkStsReg = ((Socket == 0) ? PcieTcuBase[0] : PcieTcuBase[1]) + 0x10008080;
 
   return ((MmioRead32 (LinkStsReg) >> 20) & 0x3F);
@@ -122,11 +130,11 @@ GetCCIXLinkSpeed (
   IN UINTN Socket
   )
 {
-  UINT64    PcieTcuBase[] = {AC01_PCIE_REGISTER_BASE};
+  UINT64    PcieTcuBase[] = { AC01_PCIE_REGISTER_BASE };
   UINT64    LinkStsReg = ((Socket == 0) ? PcieTcuBase[0] : PcieTcuBase[1]) + 0x10008080;
   UINT64    EsmStatReg = ((Socket == 0) ? PcieTcuBase[0] : PcieTcuBase[1]) + 0x100083a0;
 
-  if (MmioRead32 (EsmStatReg) & 0x80) {
+  if ((MmioRead32 (EsmStatReg) & 0x80) != 0) {
     /* ESM_CALIB_CMPLT is set */
     switch (MmioRead32 (EsmStatReg) & 0x7f) {
     case 1:
@@ -174,7 +182,7 @@ PrintSystemInfo (
   CONST EFI_GUID      PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
 
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (!Hob) {
+  if (Hob == NULL) {
     return;
   }
 

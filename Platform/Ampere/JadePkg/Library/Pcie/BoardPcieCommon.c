@@ -76,36 +76,39 @@ PcieBoardSetRCBifur (
   switch (DevMap) {
   case 1:
     MaxWidth = (RC->Type == RCA) ? LNKW_X8 : LNKW_X4;
-    RC->Pcie[RPStart].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart], MaxWidth);
+    RC->Pcie[RPStart].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart], MaxWidth);
     RC->Pcie[RPStart + 1].Active = 0;
-    RC->Pcie[RPStart + 2].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart + 2], MaxWidth);
+    RC->Pcie[RPStart + 2].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart + 2], MaxWidth);
     RC->Pcie[RPStart + 2].Active = 1;
     RC->Pcie[RPStart + 3].Active = 0;
     break;
+
   case 2:
     MaxWidth = (RC->Type == RCA) ? LNKW_X8 : LNKW_X4;
-    RC->Pcie[RPStart].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart], MaxWidth);
+    RC->Pcie[RPStart].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart], MaxWidth);
     RC->Pcie[RPStart + 1].Active = 0;
     MaxWidth = (RC->Type == RCA) ? LNKW_X4 : LNKW_X2;
-    RC->Pcie[RPStart + 2].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart + 2], MaxWidth);
+    RC->Pcie[RPStart + 2].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart + 2], MaxWidth);
     RC->Pcie[RPStart + 2].Active = 1;
-    RC->Pcie[RPStart + 3].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart + 3], MaxWidth);
+    RC->Pcie[RPStart + 3].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart + 3], MaxWidth);
     RC->Pcie[RPStart + 3].Active = 1;
     break;
+
   case 3:
     MaxWidth = (RC->Type == RCA) ? LNKW_X4 : LNKW_X2;
-    RC->Pcie[RPStart].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart], MaxWidth);
-    RC->Pcie[RPStart + 1].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart + 1], MaxWidth);
+    RC->Pcie[RPStart].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart], MaxWidth);
+    RC->Pcie[RPStart + 1].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart + 1], MaxWidth);
     RC->Pcie[RPStart + 1].Active = 1;
-    RC->Pcie[RPStart + 2].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart + 2], MaxWidth);
+    RC->Pcie[RPStart + 2].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart + 2], MaxWidth);
     RC->Pcie[RPStart + 2].Active = 1;
-    RC->Pcie[RPStart + 3].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart + 3], MaxWidth);
+    RC->Pcie[RPStart + 3].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart + 3], MaxWidth);
     RC->Pcie[RPStart + 3].Active = 1;
     break;
+
   case 0:
   default:
     MaxWidth = (RC->Type == RCA) ? LNKW_X16 : LNKW_X8;
-    RC->Pcie[RPStart].MaxWidth = PCIE_GET_MAX_WIDTH(RC->Pcie[RPStart], MaxWidth);
+    RC->Pcie[RPStart].MaxWidth = PCIE_GET_MAX_WIDTH (RC->Pcie[RPStart], MaxWidth);
     RC->Pcie[RPStart + 1].Active = 0;
     RC->Pcie[RPStart + 2].Active = 0;
     RC->Pcie[RPStart + 3].Active = 0;
@@ -145,6 +148,7 @@ PcieBoardGetLaneAllocation (
       RC->Pcie[RPIndex].MaxGen = SPEED_GEN3;
       RC->Pcie[RPIndex].Active = TRUE;
       break;
+
     case 0:
     default:
       RC->Pcie[RPIndex].MaxWidth = LNKW_NONE;
@@ -171,6 +175,7 @@ PcieBoardGetLaneAllocation (
         RC->Pcie[RPIndex].MaxGen = SPEED_GEN3;
         RC->Pcie[RPIndex].Active = TRUE;
         break;
+
       case 0:
       default:
         RC->Pcie[RPIndex].MaxWidth = LNKW_NONE;
@@ -194,43 +199,49 @@ PcieBoardSetupDevmap (
 {
   UINT32    Val;
 
-  if (RC->Pcie[PCIE_0].Active &&
-      RC->Pcie[PCIE_1].Active &&
-      RC->Pcie[PCIE_2].Active &&
-      RC->Pcie[PCIE_3].Active) {
+  if (RC->Pcie[PCIE_0].Active
+      && RC->Pcie[PCIE_1].Active
+      && RC->Pcie[PCIE_2].Active
+      && RC->Pcie[PCIE_3].Active)
+  {
     RC->DefaultDevMapLo = 3;
-  } else if (RC->Pcie[PCIE_0].Active &&
-            RC->Pcie[PCIE_2].Active &&
-            RC->Pcie[PCIE_3].Active) {
+  } else if (RC->Pcie[PCIE_0].Active
+             && RC->Pcie[PCIE_2].Active
+             && RC->Pcie[PCIE_3].Active)
+  {
     RC->DefaultDevMapLo = 2;
-  } else if (RC->Pcie[PCIE_0].Active &&
-            RC->Pcie[PCIE_2].Active) {
+  } else if (RC->Pcie[PCIE_0].Active
+             && RC->Pcie[PCIE_2].Active)
+  {
     RC->DefaultDevMapLo = 1;
   } else {
     RC->DefaultDevMapLo = 0;
   }
 
-  if (RC->Pcie[PCIE_4].Active &&
-      RC->Pcie[PCIE_5].Active &&
-      RC->Pcie[PCIE_6].Active &&
-      RC->Pcie[PCIE_7].Active) {
+  if (RC->Pcie[PCIE_4].Active
+      && RC->Pcie[PCIE_5].Active
+      && RC->Pcie[PCIE_6].Active
+      && RC->Pcie[PCIE_7].Active)
+  {
     RC->DefaultDevMapHi = 3;
-  } else if (RC->Pcie[PCIE_4].Active &&
-            RC->Pcie[PCIE_6].Active &&
-            RC->Pcie[PCIE_7].Active) {
+  } else if (RC->Pcie[PCIE_4].Active
+             && RC->Pcie[PCIE_6].Active
+             && RC->Pcie[PCIE_7].Active)
+  {
     RC->DefaultDevMapHi = 2;
-  } else if (RC->Pcie[PCIE_4].Active &&
-            RC->Pcie[PCIE_6].Active) {
+  } else if (RC->Pcie[PCIE_4].Active
+             && RC->Pcie[PCIE_6].Active)
+  {
     RC->DefaultDevMapHi = 1;
   } else {
     RC->DefaultDevMapHi = 0;
   }
 
-  if (!RC->DevMapLo) {
+  if (RC->DevMapLo == 0) {
     RC->DevMapLo = RC->DefaultDevMapLo;
   }
 
-  if (RC->Type == RCB && !RC->DevMapHi) {
+  if (RC->Type == RCB && RC->DevMapHi == 0) {
     RC->DevMapHi = RC->DefaultDevMapHi;
   }
 
@@ -247,8 +258,8 @@ PcieBoardSetupDevmap (
       }
     } else {
       if (!EFI_ERROR (SMProRegRd (RC->Socket, RC->HBAddr + HBRCBPDMR, &Val))) {
-        Val = RCBPCIDEVMAPLO_SET(Val, RC->DevMapLo & 0x7);
-        Val = RCBPCIDEVMAPHI_SET(Val, RC->DevMapHi & 0x7);
+        Val = RCBPCIDEVMAPLO_SET (Val, RC->DevMapLo & 0x7);
+        Val = RCBPCIDEVMAPHI_SET (Val, RC->DevMapHi & 0x7);
         SMProRegWr (RC->Socket, RC->HBAddr + HBRCBPDMR, Val);
       }
     }
@@ -260,12 +271,12 @@ PcieBoardGetSpeed (
   IN   AC01_RC *RC
   )
 {
-  static UINT8 MaxGenTbl[MAX_PCIE_A] = { SPEED_GEN4, SPEED_GEN4, SPEED_GEN4, SPEED_GEN4 };         // Bifurcation 0: RCA x16 / RCB x8
-  static UINT8 MaxGenTblX8X4X4[MAX_PCIE_A] = { SPEED_GEN4, SPEED_GEN4, SPEED_GEN1, SPEED_GEN1 };   // Bifurcation 2: x8 x4 x4 (PCIE_ERRATA_SPEED1)
-  static UINT8 MaxGenTblX4X4X4X4[MAX_PCIE_A] = { SPEED_GEN1, SPEED_GEN1, SPEED_GEN1, SPEED_GEN1 }; // Bifurcation 3: x4 x4 x4 x4 (PCIE_ERRATA_SPEED1)
-  static UINT8 MaxGenTblRCB[MAX_PCIE_A] = { SPEED_GEN1, SPEED_GEN1, SPEED_GEN1, SPEED_GEN1 };      // RCB PCIE_ERRATA_SPEED1
-  INTN          RPIdx;
-  UINT8         *MaxGen;
+  UINT8  MaxGenTbl[MAX_PCIE_A] = { SPEED_GEN4, SPEED_GEN4, SPEED_GEN4, SPEED_GEN4 };         // Bifurcation 0: RCA x16 / RCB x8
+  UINT8  MaxGenTblX8X4X4[MAX_PCIE_A] = { SPEED_GEN4, SPEED_GEN4, SPEED_GEN1, SPEED_GEN1 };   // Bifurcation 2: x8 x4 x4 (PCIE_ERRATA_SPEED1)
+  UINT8  MaxGenTblX4X4X4X4[MAX_PCIE_A] = { SPEED_GEN1, SPEED_GEN1, SPEED_GEN1, SPEED_GEN1 }; // Bifurcation 3: x4 x4 x4 x4 (PCIE_ERRATA_SPEED1)
+  UINT8  MaxGenTblRCB[MAX_PCIE_A] = { SPEED_GEN1, SPEED_GEN1, SPEED_GEN1, SPEED_GEN1 };      // RCB PCIE_ERRATA_SPEED1
+  INTN   RPIdx;
+  UINT8  *MaxGen;
 
   ASSERT (MAX_PCIE_A == 4);
   ASSERT (MAX_PCIE == 8);
@@ -278,18 +289,23 @@ PcieBoardGetSpeed (
   //
   MaxGen = MaxGenTbl;
   if (RC->Type == RCB) {
-    if (RC->Flags & PCIE_ERRATA_SPEED1)
+    if (RC->Flags & PCIE_ERRATA_SPEED1) {
       MaxGen = MaxGenTblRCB;
+    }
   } else {
     switch (RC->DevMapLo) {
-    case 1: /* x8 x8 */
-      break;
     case 2: /* x8 x4 x4 */
       if (RC->Flags & PCIE_ERRATA_SPEED1)
         MaxGen = MaxGenTblX8X4X4;
+      break;
+
     case 3: /* X4 x4 x4 x4 */
       if (RC->Flags & PCIE_ERRATA_SPEED1)
         MaxGen = MaxGenTblX4X4X4X4;
+      break;
+
+    case 1: /* x8 x8 */
+    default:
       break;
     }
   }

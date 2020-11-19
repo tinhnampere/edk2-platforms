@@ -9,7 +9,7 @@ Silicon code is located under Silicon/Ampere/Ampere{SoC Name}Pkg.
 # How to build (Linux Environment)
 
 ## Build machines
-The buid instructions provided in this document are supported on the following operating systems:
+The build instructions provided in this document are supported on the following operating systems:
 - Ubuntu 18.04 (x86)
 - CentOS 8.2 (x86)
 
@@ -114,7 +114,7 @@ build multiple targets sequentially.
 After a successful build, the resulting images can be found in
 `Build/{Platform Name}/{TARGET}_{TOOL_CHAIN_TAG}/FV`.
 
-For exampe,
+For example,
 `Build/Jade/RELEASE_GCC5/FV`
 
 ### Build a platform

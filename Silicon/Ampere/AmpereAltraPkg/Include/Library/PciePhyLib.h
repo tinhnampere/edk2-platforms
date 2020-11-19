@@ -117,8 +117,8 @@ typedef struct {
                                        * BIT7  : Reserved
                                        * BIT8-9: PHY Numbers within RCA/RCB [0 to 3 each controls 4 lane]
                                        *      0: x16, 1: x8 , 2:x4, 3: 0x2
-                                       * BIT10-11 : Gen
-                                       *      0: Gen1, 1: Gen2, 2: Gen3, 3: Gen4 + ESM
+                                       * BIT10-12 : Gen
+                                       *      0: Gen1, 1: Gen2, 2: Gen3, 3: Gen4, 4: ESM 20G, 5: ESM 25G
                                        * BIT13-15 : Setting configuration selection
                                        */
   PHY_SETTING       PhySetting;       /* PHY input setting */

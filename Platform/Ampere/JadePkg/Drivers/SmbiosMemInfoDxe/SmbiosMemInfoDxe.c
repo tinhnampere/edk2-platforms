@@ -42,17 +42,17 @@
 #pragma pack(1)
 typedef struct {
   SMBIOS_TABLE_TYPE16 Base;
-  CHAR8              Strings[sizeof(TYPE16_ADDITIONAL_STRINGS)];
+  CHAR8              Strings[sizeof (TYPE16_ADDITIONAL_STRINGS)];
 } ARM_TYPE16;
 
 typedef struct {
   SMBIOS_TABLE_TYPE17 Base;
-  CHAR8              Strings[sizeof(TYPE17_ADDITIONAL_STRINGS)];
+  CHAR8              Strings[sizeof (TYPE17_ADDITIONAL_STRINGS)];
 } ARM_TYPE17;
 
 typedef struct {
   SMBIOS_TABLE_TYPE19 Base;
-  CHAR8              Strings[sizeof(TYPE19_ADDITIONAL_STRINGS)];
+  CHAR8              Strings[sizeof (TYPE19_ADDITIONAL_STRINGS)];
 } ARM_TYPE19;
 
 #pragma pack()
@@ -127,7 +127,7 @@ typedef struct _JEDEC_MF_ID {
   CHAR8           *ManufacturerString;
 } JEDEC_MF_ID;
 
-JEDEC_MF_ID Bank0Table [] = {
+JEDEC_MF_ID Bank0Table[] = {
   { 0x01, "AMD" },
   { 0x04, "Fujitsu" },
   { 0x07, "Hitachi" },
@@ -156,7 +156,7 @@ JEDEC_MF_ID Bank0Table [] = {
   { 0xff, "Undefined" }
 };
 
-JEDEC_MF_ID Bank1Table [] = {
+JEDEC_MF_ID Bank1Table[] = {
   { 0x98, "Kingston" },
   { 0xba, "PNY" },
   { 0x4f, "Transcend" },
@@ -164,20 +164,20 @@ JEDEC_MF_ID Bank1Table [] = {
   { 0xff, "Undefined" }
 };
 
-JEDEC_MF_ID Bank2Table [] = {
+JEDEC_MF_ID Bank2Table[] = {
   { 0x9e, "Corsair" },
   { 0xfe, "Elpida" },
   { 0xff, "Undefined" }
 };
 
-JEDEC_MF_ID Bank3Table [] = {
+JEDEC_MF_ID Bank3Table[] = {
   { 0x0b, "Nanya" },
   { 0x94, "Mushkin" },
   { 0x25, "Kingmax" },
   { 0xff, "Undefined" }
 };
 
-JEDEC_MF_ID Bank4Table [] = {
+JEDEC_MF_ID Bank4Table[] = {
   { 0xb0, "OCZ" },
   { 0xcb, "A-DATA" },
   { 0xcd, "G Skill" },
@@ -185,7 +185,7 @@ JEDEC_MF_ID Bank4Table [] = {
   { 0xff, "Undefined" }
 };
 
-JEDEC_MF_ID Bank5Table [] = {
+JEDEC_MF_ID Bank5Table[] = {
   { 0x02, "Patriot" },
   { 0x9b, "Crucial" },
   { 0x51, "Qimonda" },
@@ -194,17 +194,17 @@ JEDEC_MF_ID Bank5Table [] = {
   { 0xff, "Undefined" }
 };
 
-JEDEC_MF_ID Bank6Table [] = {
+JEDEC_MF_ID Bank6Table[] = {
   { 0x34, "Super Talent" },
   { 0xd3, "Silicon Power" },
   { 0xff, "Undefined" }
 };
 
-JEDEC_MF_ID Bank7Table [] = {
+JEDEC_MF_ID Bank7Table[] = {
   { 0xff, "Undefined" }
 };
 
-JEDEC_MF_ID *ManufacturerJedecIdBankTable [] = {
+JEDEC_MF_ID *ManufacturerJedecIdBankTable[] = {
   Bank0Table,
   Bank1Table,
   Bank2Table,
@@ -224,12 +224,13 @@ GetStringPackSize (
   UINTN     StrCount;
   CHAR8     *StrStart;
 
-  if (*StringPack == 0 && *(StringPack + 1) == 0 ) {
+  if ((*StringPack == 0) && (*(StringPack + 1) == 0)) {
     return 0;
   }
+
   // String section ends in double-null (0000h)
   for (StrCount = 0, StrStart = StringPack;
-        (*StrStart != 0 || *(StrStart + 1) != 0); StrStart++, StrCount++) {};
+        ((*StrStart != 0) || (*(StrStart + 1) != 0)); StrStart++, StrCount++) {};
 
   return StrCount + 2; // Included the double NULL
 }
@@ -256,7 +257,7 @@ UpdateStringPack (
       StrIndex++;
     }
     // String section ends in double-null (0000h)
-    if (*StrStart == 0 && *(StrStart + 1) == 0) {
+    if ((*StrStart == 0) && (*(StrStart + 1) == 0)) {
       return EFI_NOT_FOUND;
     }
   }
@@ -271,7 +272,7 @@ UpdateStringPack (
 
   // Replace the String if length matched
   // OR this is the last string
-  if (InputStrLen == TargetStrLen || !BufferSize) {
+  if ((InputStrLen == TargetStrLen) || (BufferSize == 0)) {
     CopyMem (StrStart, String, InputStrLen);
   }
   // Otherwise, buffer is needed to apply new string
@@ -316,27 +317,27 @@ UpdateManufacturer (
   MemType = GetMemoryType (SpdData);
 
   switch (MemType) {
-    case 1:
-      for (i = 0; i < 8; i++) {      // DDR2
-        Data8 = SpdData[64 + i];
-        if (Data8 != 0x7f) {
-          break;
-        }
+  case 1:
+    for (i = 0; i < 8; i++) {      // DDR2
+      Data8 = SpdData[64 + i];
+      if (Data8 != 0x7f) {
+        break;
       }
-      break;
+    }
+    break;
 
-    case 2:                          // DDR3
-      i = SpdData[117] & 0x7f; // Remove parity bit
-      Data8 = SpdData[118];
-      break;
+  case 2:                    // DDR3
+    i = SpdData[117] & 0x7f; // Remove parity bit
+    Data8 = SpdData[118];
+    break;
 
-    case 3:                          // DDR4
-      i = SpdData[320] & 0x7f; // Remove parity bit
-      Data8 = SpdData[321];
-      break;
+  case 3:                    // DDR4
+    i = SpdData[320] & 0x7f; // Remove parity bit
+    Data8 = SpdData[321];
+    break;
 
-    default:
-      return EFI_UNSUPPORTED;        // Not supported
+  default:
+    return EFI_UNSUPPORTED;  // Not supported
   }
 
   if (i > 7) i = 7;
@@ -349,10 +350,10 @@ UpdateManufacturer (
 
   if (IdTblPtr->VendorId != 0xff) {
     Status = UpdateStringPack (
-               ((ARM_TYPE17 *)Table)->Strings,
+               ((ARM_TYPE17 *) Table)->Strings,
                IdTblPtr->ManufacturerString,
-               ((ARM_TYPE17 *)Table)->Base.Manufacturer
-             );
+               ((ARM_TYPE17 *) Table)->Base.Manufacturer
+               );
   }
 
   return Status;
@@ -371,37 +372,37 @@ UpdateSerialNumber (
   MemType = GetMemoryType (SpdData);
 
   switch (MemType) {
-    case 1:
-      Offset = 95;
-      break;
+  case 1:
+    Offset = 95;
+    break;
 
-    case 2:                          // DDR3
-      Offset = 122;
-      break;
+  case 2:                          // DDR3
+    Offset = 122;
+    break;
 
-    case 3:                          // DDR4
-      Offset = 325;
-      break;
+  case 3:                          // DDR4
+    Offset = 325;
+    break;
 
-    default:
-      return EFI_UNSUPPORTED;        // Not supported
+  default:
+    return EFI_UNSUPPORTED;        // Not supported
   }
 
   AsciiSPrint (Str, sizeof (Str), "%02X%02X%02X%02X",
                SpdData[Offset], SpdData[Offset + 1],
                SpdData[Offset + 2], SpdData[Offset + 3]);
 
-  return UpdateStringPack (((ARM_TYPE17 *)Table)->Strings, Str,
-                           ((ARM_TYPE17 *)Table)->Base.SerialNumber);
+  return UpdateStringPack (((ARM_TYPE17 *) Table)->Strings, Str,
+                           ((ARM_TYPE17 *) Table)->Base.SerialNumber);
 }
 
 CHAR8
 Printable (
-  IN CHAR8    _char
-)
+  IN CHAR8 Character
+  )
 {
-  if( (_char >= 0x20 && _char <= 0x7E) ) {
-    return _char;
+  if((Character >= 0x20) && (Character <= 0x7E)) {
+    return Character;
   }
 
   return ' ';
@@ -420,20 +421,20 @@ UpdatePartNumber (
   MemType = GetMemoryType (SpdData);
 
   switch (MemType) {
-    case 1:
-      Offset = 73;
-      break;
+  case 1:
+    Offset = 73;
+    break;
 
-    case 2:                          // DDR3
-      Offset = 128;
-      break;
+  case 2:                          // DDR3
+    Offset = 128;
+    break;
 
-    case 3:                          // DDR4
-      Offset = 329;
-      break;
+  case 3:                          // DDR4
+    Offset = 329;
+    break;
 
-    default:
-      return EFI_UNSUPPORTED;        // Not supported
+  default:
+    return EFI_UNSUPPORTED;        // Not supported
   }
 
   AsciiSPrint (Str, sizeof (Str), "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
@@ -447,8 +448,8 @@ UpdatePartNumber (
                Printable (SpdData[Offset + 14]), Printable (SpdData[Offset + 15]),
                Printable (SpdData[Offset + 16]), Printable (SpdData[Offset + 17]));
 
-  return UpdateStringPack (((ARM_TYPE17 *)Table)->Strings, Str,
-                           ((ARM_TYPE17 *)Table)->Base.PartNumber);
+  return UpdateStringPack (((ARM_TYPE17 *) Table)->Strings, Str,
+                           ((ARM_TYPE17 *) Table)->Base.PartNumber);
 }
 
 /**
@@ -475,6 +476,8 @@ InstallMemStructures (
   UINT64               MemorySize = 0;
   CHAR8                Str[64];
 
+  ASSERT (Smbios != NULL);
+
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&PlatformHobGuid);
   ASSERT (Hob != NULL);
@@ -491,22 +494,22 @@ InstallMemStructures (
 
   for ( Index = 0; Index < GetNumberSupportedSockets (); Index++ ) {
     // Copy template to Type 16
-    CopyMem (Table, (VOID *)&mArmDefaultType16, sizeof (ARM_TYPE16));
+    CopyMem (Table, (VOID *) &mArmDefaultType16, sizeof (ARM_TYPE16));
 
-    ((ARM_TYPE16 *)Table)->Base.MaximumCapacity = 0x80000000;
-    ((ARM_TYPE16 *)Table)->Base.ExtendedMaximumCapacity = 0x40000000000ULL; /* 4TB per socket */
-    ((ARM_TYPE16 *)Table)->Base.MemoryErrorCorrection = MemoryErrorCorrectionMultiBitEcc;
+    ((ARM_TYPE16 *) Table)->Base.MaximumCapacity = 0x80000000;
+    ((ARM_TYPE16 *) Table)->Base.ExtendedMaximumCapacity = 0x40000000000ULL; /* 4TB per socket */
+    ((ARM_TYPE16 *) Table)->Base.MemoryErrorCorrection = MemoryErrorCorrectionMultiBitEcc;
 
     // Install Type 16 and hold the handle so that the subsequence type17/19 could use
-    Type16Handle = ((ARM_TYPE16 *)Table)->Base.Hdr.Handle;
+    Type16Handle = ((ARM_TYPE16 *) Table)->Base.Hdr.Handle;
     Status = Smbios->Add (
                        Smbios,
                        NULL,
                        &Type16Handle,
                        (EFI_SMBIOS_TABLE_HEADER*)Table
-                     );
+                       );
     if (EFI_ERROR (Status)) {
-      DEBUG ((EFI_D_ERROR, "adding SMBIOS type 16 socket %d failed\n", Index));
+      DEBUG ((DEBUG_ERROR, "%a: adding SMBIOS type 16 socket %d failed\n", __FUNCTION__, Index));
       FreePool (Table);
       //stop adding rather than continuing
       return Status;
@@ -514,7 +517,7 @@ InstallMemStructures (
 
     for (SlotIndex = 0; SlotIndex < PLATFORM_DIMM_INFO_MAX_SLOT; SlotIndex++) {
       // Copy Tempplate to Type 17
-      CopyMem (Table, (VOID *)&mArmDefaultType17, sizeof(ARM_TYPE17));
+      CopyMem (Table, (VOID *) &mArmDefaultType17, sizeof (ARM_TYPE17));
 
       // Fill up type 17 table's content here
       Dimm = &PlatformHob->DimmList.Dimm[SlotIndex];
@@ -524,57 +527,60 @@ InstallMemStructures (
 
       if (Dimm->Info.DimmStatus == DIMM_INSTALLED) {
 
-        UpdateManufacturer((VOID *)Table, Dimm->SpdData.Data);
-        UpdateSerialNumber((VOID *)Table, Dimm->SpdData.Data);
-        UpdatePartNumber((VOID *)Table, Dimm->SpdData.Data);
+        UpdateManufacturer ((VOID *) Table, Dimm->SpdData.Data);
+        UpdateSerialNumber ((VOID *) Table, Dimm->SpdData.Data);
+        UpdatePartNumber ((VOID *) Table, Dimm->SpdData.Data);
 
         MemorySize = Dimm->Info.DimmSize * 1024;
         if (MemorySize >= 0x7FFF) {
-          ((ARM_TYPE17 *)Table)->Base.Size = 0x7FFF;
-          ((ARM_TYPE17 *)Table)->Base.ExtendedSize = MemorySize;
-        }
-        else {
-          ((ARM_TYPE17 *)Table)->Base.Size = (UINT16) MemorySize;
-          ((ARM_TYPE17 *)Table)->Base.ExtendedSize = 0;
+          ((ARM_TYPE17 *) Table)->Base.Size = 0x7FFF;
+          ((ARM_TYPE17 *) Table)->Base.ExtendedSize = MemorySize;
+        } else {
+          ((ARM_TYPE17 *) Table)->Base.Size = (UINT16) MemorySize;
+          ((ARM_TYPE17 *) Table)->Base.ExtendedSize = 0;
         }
 
-        ((ARM_TYPE17 *)Table)->Base.MemoryType = 0x1A; /* DDR4 */
-        ((ARM_TYPE17 *)Table)->Base.Speed = (UINT16) PlatformHob->DramInfo.MaxSpeed;
-        ((ARM_TYPE17 *)Table)->Base.ConfiguredMemoryClockSpeed = (UINT16) PlatformHob->DramInfo.MaxSpeed;
-        ((ARM_TYPE17 *)Table)->Base.ConfiguredVoltage = 1200;
-        ((ARM_TYPE17 *)Table)->Base.MinimumVoltage = 1140;
-        ((ARM_TYPE17 *)Table)->Base.MaximumVoltage = 1260;
-        ((ARM_TYPE17 *)Table)->Base.DeviceSet = 0; // None
+        ((ARM_TYPE17 *) Table)->Base.MemoryType = 0x1A; /* DDR4 */
+        ((ARM_TYPE17 *) Table)->Base.Speed = (UINT16) PlatformHob->DramInfo.MaxSpeed;
+        ((ARM_TYPE17 *) Table)->Base.ConfiguredMemoryClockSpeed = (UINT16) PlatformHob->DramInfo.MaxSpeed;
+        ((ARM_TYPE17 *) Table)->Base.ConfiguredVoltage = 1200;
+        ((ARM_TYPE17 *) Table)->Base.MinimumVoltage = 1140;
+        ((ARM_TYPE17 *) Table)->Base.MaximumVoltage = 1260;
+        ((ARM_TYPE17 *) Table)->Base.DeviceSet = 0; // None
 
         if (Dimm->Info.DimmType == UDIMM || Dimm->Info.DimmType == SODIMM) {
-          ((ARM_TYPE17 *)Table)->Base.TypeDetail.Unbuffered = 1; /* BIT 14: unregistered */
-        }
-        else if (Dimm->Info.DimmType == RDIMM || Dimm->Info.DimmType == LRDIMM || Dimm->Info.DimmType == RSODIMM) {
-          ((ARM_TYPE17 *)Table)->Base.TypeDetail.Registered = 1; /* BIT 13: registered */
+          ((ARM_TYPE17 *) Table)->Base.TypeDetail.Unbuffered = 1; /* BIT 14: unregistered */
+        } else if (Dimm->Info.DimmType == RDIMM
+                || Dimm->Info.DimmType == LRDIMM
+                || Dimm->Info.DimmType == RSODIMM) {
+          ((ARM_TYPE17 *) Table)->Base.TypeDetail.Registered = 1; /* BIT 13: registered */
         }
         /* FIXME: Determine if need to set technology to NVDIMM-* when supported */
-        ((ARM_TYPE17 *)Table)->Base.MemoryTechnology = 0x3; // DRAM
+        ((ARM_TYPE17 *) Table)->Base.MemoryTechnology = 0x3; // DRAM
       }
       AsciiSPrint (Str, sizeof (Str), "Socket %d DIMM %d", Index, SlotIndex);
-      UpdateStringPack (((ARM_TYPE17 *)Table)->Strings, Str, ((ARM_TYPE17 *)Table)->Base.DeviceLocator);
+      UpdateStringPack (((ARM_TYPE17 *) Table)->Strings, Str, ((ARM_TYPE17 *) Table)->Base.DeviceLocator);
       AsciiSPrint (Str, sizeof (Str), "Bank %d", SlotIndex);
-      UpdateStringPack (((ARM_TYPE17 *)Table)->Strings, Str, ((ARM_TYPE17 *)Table)->Base.BankLocator);
+      UpdateStringPack (((ARM_TYPE17 *) Table)->Strings, Str, ((ARM_TYPE17 *) Table)->Base.BankLocator);
       AsciiSPrint (Str, sizeof (Str), "Array %d Asset Tag %d", Index, SlotIndex);
-      UpdateStringPack (((ARM_TYPE17 *)Table)->Strings, Str, ((ARM_TYPE17 *)Table)->Base.AssetTag);
+      UpdateStringPack (((ARM_TYPE17 *) Table)->Strings, Str, ((ARM_TYPE17 *) Table)->Base.AssetTag);
 
       // Update Type 16 handle
-      ((ARM_TYPE17 *)Table)->Base.MemoryArrayHandle = Type16Handle;
+      ((ARM_TYPE17 *) Table)->Base.MemoryArrayHandle = Type16Handle;
 
       // Install structure
-      SmbiosHandle = ((ARM_TYPE17 *)Table)->Base.Hdr.Handle;
+      SmbiosHandle = ((ARM_TYPE17 *) Table)->Base.Hdr.Handle;
       Status = Smbios->Add (
                          Smbios,
                          NULL,
                          &SmbiosHandle,
                          (EFI_SMBIOS_TABLE_HEADER*)Table
-                       );
+                         );
       if (EFI_ERROR (Status)) {
-        DEBUG ((EFI_D_ERROR, "adding SMBIOS type 17 Socket %d Slot %d failed\n", Index, SlotIndex));
+        DEBUG ((DEBUG_ERROR, "%a: adding SMBIOS type 17 Socket %d Slot %d failed\n",
+                __FUNCTION__,
+                Index,
+                SlotIndex));
         FreePool (Table);
         //stop adding rather than continuing
         return Status;
@@ -583,24 +589,27 @@ InstallMemStructures (
 
     for (MemRegionIndex = 0; MemRegionIndex < PlatformHob->DramInfo.NumRegion; MemRegionIndex++) {
       // Copy Tempplate to Type 19
-      CopyMem (Table, (VOID *)&mArmDefaultType19, sizeof(ARM_TYPE19));
+      CopyMem (Table, (VOID *) &mArmDefaultType19, sizeof (ARM_TYPE19));
 
       if (PlatformHob->DramInfo.Node[MemRegionIndex] != Index) {
         continue;
       }
-      ((ARM_TYPE19 *)Table)->Base.StartingAddress = 0xFFFFFFFF;
-      ((ARM_TYPE19 *)Table)->Base.EndingAddress = 0xFFFFFFFF;
-      ((ARM_TYPE19 *)Table)->Base.ExtendedStartingAddress = PlatformHob->DramInfo.Base[MemRegionIndex];
-      ((ARM_TYPE19 *)Table)->Base.ExtendedEndingAddress = PlatformHob->DramInfo.Base[MemRegionIndex] +
-                                    PlatformHob->DramInfo.Size[MemRegionIndex] - 1;
-      if (MemorySize) {
-        ((ARM_TYPE19 *)Table)->Base.PartitionWidth = (PlatformHob->DramInfo.Size[MemRegionIndex] - 1) / MemorySize + 1;
+
+      ((ARM_TYPE19 *) Table)->Base.StartingAddress = 0xFFFFFFFF;
+      ((ARM_TYPE19 *) Table)->Base.EndingAddress = 0xFFFFFFFF;
+      ((ARM_TYPE19 *) Table)->Base.ExtendedStartingAddress = PlatformHob->DramInfo.Base[MemRegionIndex];
+      ((ARM_TYPE19 *) Table)->Base.ExtendedEndingAddress = PlatformHob->DramInfo.Base[MemRegionIndex] +
+                                                           PlatformHob->DramInfo.Size[MemRegionIndex] - 1;
+
+      if (MemorySize != 0) {
+        ((ARM_TYPE19 *) Table)->Base.PartitionWidth = (PlatformHob->DramInfo.Size[MemRegionIndex] - 1) / MemorySize + 1;
       }
+
       // Update Type 16 handle
-      ((ARM_TYPE19 *)Table)->Base.MemoryArrayHandle = Type16Handle;
+      ((ARM_TYPE19 *) Table)->Base.MemoryArrayHandle = Type16Handle;
 
       // Install structure
-      SmbiosHandle = ((ARM_TYPE19 *)Table)->Base.Hdr.Handle;
+      SmbiosHandle = ((ARM_TYPE19 *) Table)->Base.Hdr.Handle;
       Status = Smbios->Add (
                          Smbios,
                          NULL,
@@ -608,7 +617,9 @@ InstallMemStructures (
                          (EFI_SMBIOS_TABLE_HEADER*)Table
                        );
       if (EFI_ERROR (Status)) {
-        DEBUG ((EFI_D_ERROR, "adding SMBIOS type 19 Socket %d MemRegion %d failed\n", Index, MemRegionIndex));
+        DEBUG ((DEBUG_ERROR, "%a: adding SMBIOS type 19 Socket %d MemRegion %d failed\n",
+                __FUNCTION__,
+                Index, MemRegionIndex));
         FreePool (Table);
         //stop adding rather than continuing
         return Status;
@@ -637,17 +648,17 @@ SmbiosMemInfoDxeEntry (
   Status = gBS->LocateProtocol (
                   &gEfiSmbiosProtocolGuid,
                   NULL,
-                  (VOID**)&Smbios
-                );
+                  (VOID**) &Smbios
+                  );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Unable to locate SMBIOS Protocol"));
-    ASSERT (FALSE);
+    DEBUG ((DEBUG_ERROR, "Unable to locate SMBIOS Protocol"));
+    ASSERT_EFI_ERROR (Status);
     return Status;
   }
 
   Status = InstallMemStructures (Smbios);
-  DEBUG ((EFI_D_ERROR, "SmbiosMemInfoDxe install: %x\n", Status));
+  DEBUG ((DEBUG_ERROR, "SmbiosMemInfoDxe install: %r\n", Status));
 
   return Status;
 }

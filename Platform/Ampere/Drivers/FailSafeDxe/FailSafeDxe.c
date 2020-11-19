@@ -24,10 +24,12 @@ STATIC UINTN                              gWatchdogOSTimeout;
 STATIC BOOLEAN                            gFailSafeOff;
 STATIC EFI_WATCHDOG_TIMER_ARCH_PROTOCOL   *gWatchdogTimer;
 
+EFI_STATUS
 EFIAPI
-EFI_STATUS FailSafeTestBootFailure(VOID);
+FailSafeTestBootFailure (VOID);
 
-STATIC VOID FailSafeTurnOff (VOID)
+STATIC VOID
+FailSafeTurnOff (VOID)
 {
   EFI_STATUS  Status;
 
@@ -58,7 +60,7 @@ VOID
 WdtTimerEnterSetupScreenCallback (
   IN EFI_EVENT  Event,
   IN VOID       *Context
-)
+  )
 {
   /* Make sure FailSafe is turned off */
   FailSafeTurnOff ();
@@ -71,7 +73,7 @@ VOID
 WdtTimerBeforeBootCallback (
   IN EFI_EVENT  Event,
   IN VOID       *Context
-)
+  )
 {
   /*
    * At this point, the system is considered boot successfully to BIOS
@@ -91,12 +93,15 @@ VOID
 WdtTimerExitBootServiceCallback (
   IN EFI_EVENT  Event,
   IN VOID       *Context
-)
+  )
 {
 
   /* Enable Watchdog timer for OS booting */
-  if (gWatchdogOSTimeout) {
-    gWatchdogTimer->SetTimerPeriod (gWatchdogTimer, gWatchdogOSTimeout * TIME_UNITS_PER_SECOND);
+  if (gWatchdogOSTimeout != 0) {
+    gWatchdogTimer->SetTimerPeriod (
+                      gWatchdogTimer,
+                      gWatchdogOSTimeout * TIME_UNITS_PER_SECOND
+                      );
   } else {
     /* Disable Watchdog timer */
     gWatchdogTimer->SetTimerPeriod (gWatchdogTimer, 0);
@@ -112,9 +117,11 @@ WdtTimerExitBootServiceCallback (
 
   @retval VOID
 **/
-VOID LoadNVRAMDefaultConfig (
-  IN VOID *Defaults,
-  IN UINTN Data)
+VOID
+LoadNVRAMDefaultConfig (
+  IN VOID   *Defaults,
+  IN UINTN  Data
+  )
 {
   NVParamClrAll ();
 }
@@ -140,7 +147,7 @@ FailSafeDxeEntryPoint (
 
   gFailSafeOff = FALSE;
 
-  FailSafeTestBootFailure();
+  FailSafeTestBootFailure ();
 
   /* We need to setup non secure Watchdog to ensure that the system will
    * boot to OS successfully.
@@ -162,7 +169,8 @@ FailSafeDxeEntryPoint (
                   TPL_NOTIFY,
                   WdtTimerExitBootServiceCallback,
                   NULL,
-                  &ExitBootServicesEvent);
+                  &ExitBootServicesEvent
+                  );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

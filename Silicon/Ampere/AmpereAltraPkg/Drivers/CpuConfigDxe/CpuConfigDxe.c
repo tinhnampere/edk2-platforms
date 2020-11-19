@@ -6,7 +6,7 @@
 
 **/
 
-#include "CpuConfig.h"
+#include "CpuConfigDxe.h"
 
 //
 // Default settings definitions
@@ -21,7 +21,7 @@ CHAR16  CpuVarstoreDataName[] = L"CpuConfigNVData";
 EFI_HANDLE                   mDriverHandle = NULL;
 CPU_CONFIG_PRIVATE_DATA      *mPrivateData = NULL;
 
-HII_VENDOR_DEVICE_PATH  mCpuConfigHiiVendorDevicePath = {
+HII_VENDOR_DEVICE_PATH mCpuConfigHiiVendorDevicePath = {
   {
     {
       HARDWARE_DEVICE_PATH,
@@ -61,9 +61,9 @@ CpuNvParamGet (
              );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a %d Fail to write NVParam \n", __FUNCTION__, __LINE__));
-    Configuration->CpuSubnumaMode = SUBNUMA_MODE_MONOLITHIC;
+    Configuration->CpuSubNumaMode = SUBNUMA_MODE_MONOLITHIC;
   } else {
-    Configuration->CpuSubnumaMode = Value;
+    Configuration->CpuSubNumaMode = Value;
   }
 
   return EFI_SUCCESS;
@@ -87,12 +87,12 @@ CpuNvParamSet (
              );
   ASSERT_EFI_ERROR (Status);
 
-  if (EFI_ERROR (Status) || Value != Configuration->CpuSubnumaMode) {
+  if (EFI_ERROR (Status) || Value != Configuration->CpuSubNumaMode) {
     Status = NVParamSet (
                NV_SI_SUBNUMA_MODE,
                NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
                NV_PERM_BIOS | NV_PERM_MANU,
-               Configuration->CpuSubnumaMode
+               Configuration->CpuSubNumaMode
                );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "%a %d Fail to access NVParam \n", __FUNCTION__, __LINE__));
@@ -106,9 +106,7 @@ CpuNvParamSet (
 
 STATIC
 EFI_STATUS
-SetupDefaultSettings (
-  VOID
-  )
+SetupDefaultSettings (VOID)
 {
   EFI_STATUS  Status;
   UINT32      Value;
@@ -424,18 +422,10 @@ CpuConfigCallback (
   return EFI_SUCCESS;
 }
 
-/**
-  This function initializes CPU Configuration Menu.
-
-  @retval EFI_SUCCESS            The Results is processed successfully.
-  @retval EFI_INVALID_PARAMETER  Configuration is invalid.
-  @retval EFI_OUT_OF_RESOURCES   Not enough memory to store the results.
-
-**/
 EFI_STATUS
-EFIAPI
-CpuConfigInit (
-  VOID
+CpuConfigDxeEntryPoint (
+  IN EFI_HANDLE         ImageHandle,
+  IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
   EFI_STATUS                      Status;
@@ -481,12 +471,12 @@ CpuConfigInit (
   // Publish our HII data
   //
   HiiHandle = HiiAddPackages (
-                   &gCpuConfigFormSetGuid,
-                   mDriverHandle,
-                   AmpereCpuDxeStrings,
-                   VfrBin,
-                   NULL
-                   );
+                &gCpuConfigFormSetGuid,
+                mDriverHandle,
+                CpuConfigDxeStrings,
+                VfrBin,
+                NULL
+                );
   if (HiiHandle == NULL) {
     gBS->UninstallMultipleProtocolInterfaces (
            mDriverHandle,
@@ -506,7 +496,7 @@ CpuConfigInit (
   // It causes reading from the NVParam is failed.
   // So, the NVParam should be setting with default values if any params is invalid.
   //
-  Status = SetupDefaultSettings();
+  Status = SetupDefaultSettings ();
   if (EFI_ERROR (Status)) {
     return Status;
   }

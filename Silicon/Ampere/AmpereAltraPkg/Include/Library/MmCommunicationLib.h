@@ -6,7 +6,7 @@
 
 **/
 
-#if !defined _MM_COMMUNICATION_LIB_H_
+#ifndef _MM_COMMUNICATION_LIB_H_
 #define _MM_COMMUNICATION_LIB_H_
 
 EFI_STATUS

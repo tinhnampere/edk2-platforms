@@ -35,12 +35,8 @@
   HobLib
   AmpereCpuLib
 
-[Guids]
-
 [Protocols]
   gEfiSmbiosProtocolGuid                     ## CONSUMED
-
-[FixedPcd]
 
 [Depex]
   gEfiSmbiosProtocolGuid

@@ -6,14 +6,14 @@
 
 **/
 
-#ifndef _CPU_NVDATASTRUC_H_
-#define _CPU_NVDATASTRUC_H_
+#ifndef _CPU_NV_DATA_STRUC_H_
+#define _CPU_NV_DATA_STRUC_H_
 
 #pragma pack(1)
 typedef struct {
-  UINT32  CpuSubnumaMode;
+  UINT32  CpuSubNumaMode;
 } CPU_VARSTORE_DATA;
 
 #pragma pack()
 
-#endif /* _CPU_NVDATASTRUC_H_ */
+#endif /* _CPU_NV_DATA_STRUC_H_ */

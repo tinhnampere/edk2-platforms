@@ -1,4 +1,4 @@
- /** @file
+/** @file
 
   Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
 
@@ -136,18 +136,23 @@ typedef struct {
  */
 
 EFI_STATUS
-AcpiApeiLibInit(VOID);
+AcpiApeiLibInit (VOID);
 
 RAS_APEI_BERT_DATA*
-AcpiApeiLibGetBertData(VOID);
+AcpiApeiLibGetBertData (VOID);
 
 RAS_APEI_GHES_DATA*
-AcpiApeiLibGetGhesData(IN UINT32 ErrorSourceIdx);
+AcpiApeiLibGetGhesData (
+  IN UINT32 ErrorSourceIdx
+  );
 
 #define APEI_ERROR_DETECTION_PMPRO        0
 #define APEI_ERROR_DETECTION_ATF          1
 
 EFI_STATUS
-AcpiApeiLibEnable(UINT8 Enable, UINT8 FwErrorDetection);
+AcpiApeiLibEnable (
+  UINT8 Enable,
+  UINT8 FwErrorDetection
+  );
 
 #endif /* _ACPI_APEI_LIB_H_ */

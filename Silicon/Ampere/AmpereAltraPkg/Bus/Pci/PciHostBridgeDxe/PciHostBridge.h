@@ -33,19 +33,19 @@
 #undef PCIE_MMIO_DEBUG
 
 #ifdef PCIE_PLATFORM_DEBUG
-#define PCIE_DEBUG(arg...)       DEBUG((EFI_D_INFO,"PCIHostBridge: "));DEBUG((EFI_D_ERROR,## arg))
+#define PCIE_DEBUG(arg...)       DEBUG((DEBUG_INFO,"PCIHostBridge: "));DEBUG((DEBUG_INFO,## arg))
 #else
 #define PCIE_DEBUG(arg...)
 #endif
 
 #ifdef PCIE_MMIO_DEBUG
-#define PCIE_MMIO_DEBUG(arg...)       DEBUG((EFI_D_INFO,"PCIRootBridge: "));DEBUG((EFI_D_ERROR,## arg))
+#define PCIE_MMIO_DEBUG(arg...)       DEBUG((DEBUG_INFO,"PCIRootBridge: "));DEBUG((DEBUG_INFO,## arg))
 #else
 #define PCIE_MMIO_DEBUG(arg...)
 #endif
 
-#define PCIE_WARN(arg...)        DEBUG((EFI_D_WARN,"PCIHostBridge (WARN): "));DEBUG((EFI_D_WARN,## arg))
-#define PCIE_ERR(arg...)         DEBUG((EFI_D_ERROR,"PCIHostBridge (ERROR): "));DEBUG((EFI_D_ERROR,## arg))
+#define PCIE_WARN(arg...)        DEBUG((DEBUG_WARN,"PCIHostBridge (WARN): "));DEBUG((DEBUG_WARN,## arg))
+#define PCIE_ERR(arg...)         DEBUG((DEBUG_ERROR,"PCIHostBridge (ERROR): "));DEBUG((DEBUG_ERROR,## arg))
 
 #define PCI_HOST_BRIDGE_SIGNATURE  SIGNATURE_32('e', 'h', 's', 't')
 #define PCI_ROOT_BRIDGE_SIGNATURE  SIGNATURE_32('e', '2', 'p', 'b')

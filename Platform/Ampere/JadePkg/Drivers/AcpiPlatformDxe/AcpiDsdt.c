@@ -19,7 +19,7 @@ AcpiPatchCmn600 (VOID)
   UINTN     Index;
 
   for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
-    AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.CMN%1X._STA", Index);
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.CMN%1X._STA", Index);
     if (GetNumberActiveCPMsPerSocket (Index)) {
       AcpiDSDTSetNodeStatusValue (NodePath, 0xf);
     } else {
@@ -39,15 +39,16 @@ AcpiPatchDmc620 (VOID)
   VOID                  *Hob;
 
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (!Hob) {
+  if (Hob == NULL) {
     return;
   }
+
   PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
 
   for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
     McuMask = PlatformHob->DramInfo.McuMask[Index];
     for (Index1 = 0; Index1 < sizeof (McuMask) * 8; Index1++) {
-      AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.MC%1X%1X._STA", Index, Index1);
+      AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.MC%1X%1X._STA", Index, Index1);
       if (McuMask & (0x1 << Index1)) {
         AcpiDSDTSetNodeStatusValue (NodePath, 0xf);
       } else {
@@ -67,9 +68,10 @@ AcpiPatchNvdimm (VOID)
   VOID                  *Hob;
 
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (!Hob) {
+  if (Hob == NULL) {
     return;
   }
+
   PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
 
   NvdRegionNum = 0;
@@ -85,14 +87,14 @@ AcpiPatchNvdimm (VOID)
 
   /* Disable NVDIMM Root Device */
   if (NvdRegionNum == 0) {
-    AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.NVDR._STA");
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR._STA");
     AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
   }
 
   /* Disable NVDIMM Device which is not available */
   Count = NvdRegionNum + 1;
   while (Count <= PLATFORM_MAX_NUM_NVDIMM_DEVICE) {
-    AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.NVDR.NVD%1X._STA", Count);
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD%1X._STA", Count);
     AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
     Count++;
   }
@@ -106,7 +108,7 @@ AcpiPatchHwmon (VOID)
 
   // PCC Hardware Monitor Devices
   for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
-    AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.HM0%1X._STA", Index);
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.HM0%1X._STA", Index);
     if (GetNumberActiveCPMsPerSocket (Index)) {
       AcpiDSDTSetNodeStatusValue (NodePath, 0xf);
     } else {
@@ -116,7 +118,7 @@ AcpiPatchHwmon (VOID)
 
   // Ampere Altra SoC Hardware Monitor Devices
   for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
-    AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.HM0%1X._STA", Index + 2);
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.HM0%1X._STA", Index + 2);
     if (GetNumberActiveCPMsPerSocket (Index)) {
       AcpiDSDTSetNodeStatusValue (NodePath, 0xf);
     } else {
@@ -130,14 +132,6 @@ AcpiPatchDsu (VOID)
 {
   CHAR8                 NodePath[MAX_ACPI_NODE_PATH];
   UINTN                 Index;
-
-  /*
-   * The following code may take very long time in emulator. Just leave all Dsu enabled in
-   * emulation mode as they only associate with enabled core in OS
-   */
-#if Emag2Emulator_SUPPORT
-  return;
-#endif
 
   for (Index = 0; Index < PLATFORM_CPU_MAX_NUM_CORES; Index += PLATFORM_CPU_NUM_CORES_PER_CPM) {
     AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.DU%2X._STA", Index / PLATFORM_CPU_NUM_CORES_PER_CPM);
@@ -160,7 +154,7 @@ PcieGetSubNumaMode (
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (!Hob) {
+  if (Hob == NULL) {
     return SUBNUMA_MODE_MONOLITHIC;
   }
   PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
@@ -186,9 +180,8 @@ AcpiPatchPcieNuma (
                 4, 6, 5, 7, 5, 5, 7, 7 }, // Quadrant Node 4, 5, 6, 7 (S1)
               };
 
-  switch (PcieGetSubNumaMode()) {
+  switch (PcieGetSubNumaMode ()) {
   case SUBNUMA_MODE_MONOLITHIC:
-  default:
     NumaIdx = 0;
     break;
   case SUBNUMA_MODE_HEMISPHERE:
@@ -197,16 +190,19 @@ AcpiPatchPcieNuma (
   case SUBNUMA_MODE_QUADRANT:
     NumaIdx = 2;
     break;
+  default:
+    NumaIdx = 0;
+    break;
   }
 
-  if (GetNumberActiveSockets() > 1) {
+  if (GetNumberActiveSockets () > 1) {
     NumPciePort = 16; // 16 ports total (8 per socket)
   } else {
     NumPciePort = 8;  // 8 ports total
   }
 
   for (Index = 0; Index < NumPciePort; Index++) {
-    AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.PCI%X._PXM", Index);
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.PCI%X._PXM", Index);
     AcpiDSDTSetNodeStatusValue (NodePath, NumaAssignment[NumaIdx][Index]);
   }
 }

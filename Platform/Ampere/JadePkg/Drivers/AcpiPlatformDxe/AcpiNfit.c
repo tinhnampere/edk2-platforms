@@ -88,7 +88,7 @@ AcpiGetNvdRegionNumber (
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (!Hob) {
+  if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;
   }
   PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
@@ -171,7 +171,7 @@ AcpiNfitFillTable (
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (!Hob) {
+  if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;
   }
   PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
@@ -180,7 +180,7 @@ AcpiNfitFillTable (
                    (NfitTablePointer + 1);
   NvdRegionIndex = 0;
   for (Count = 0; Count < PlatformHob->DramInfo.NumRegion; Count++) {
-    if (PlatformHob->DramInfo.NvdRegion[Count]) {
+    if (PlatformHob->DramInfo.NvdRegion[Count] != 0) {
       NvdRegionIndex++;
       NvdRegionBase = PlatformHob->DramInfo.Base[Count];
       NvdRegionSize = PlatformHob->DramInfo.Size[Count];
@@ -216,9 +216,7 @@ AcpiNfitFillTable (
  * Install NFIT table.
  */
 EFI_STATUS
-AcpiInstallNfitTable (
-  VOID
-  )
+AcpiInstallNfitTable (VOID)
 {
   EFI_ACPI_6_3_NVDIMM_FIRMWARE_INTERFACE_TABLE                *NfitTablePointer;
   EFI_ACPI_TABLE_PROTOCOL                                     *AcpiTableProtocol;
@@ -233,7 +231,7 @@ AcpiInstallNfitTable (
     return Status;
   }
 
-  Status = AcpiGetNvdRegionNumber(&NvdRegionNum);
+  Status = AcpiGetNvdRegionNumber (&NvdRegionNum);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -242,8 +240,8 @@ AcpiInstallNfitTable (
          ((sizeof (EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE) +
            sizeof (EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE) +
            sizeof (EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE)) * NvdRegionNum);
-  NfitTablePointer = (EFI_ACPI_6_3_NVDIMM_FIRMWARE_INTERFACE_TABLE *) AllocateZeroPool(Size);
-  if (!NfitTablePointer) {
+  NfitTablePointer = (EFI_ACPI_6_3_NVDIMM_FIRMWARE_INTERFACE_TABLE *) AllocateZeroPool (Size);
+  if (NfitTablePointer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
   CopyMem ((VOID *) NfitTablePointer,
@@ -251,13 +249,13 @@ AcpiInstallNfitTable (
            sizeof (NFITTableHeaderTemplate));
   NfitTablePointer->Header.Length = Size;
 
-  Status = AcpiNfitFillTable(NfitTablePointer);
+  Status = AcpiNfitFillTable (NfitTablePointer);
   if (EFI_ERROR (Status)) {
     FreePool ((VOID *) NfitTablePointer);
     return Status;
   }
 
-  AcpiTableChecksum((UINT8 *)NfitTablePointer, NfitTablePointer->Header.Length);
+  AcpiTableChecksum ((UINT8 *)NfitTablePointer, NfitTablePointer->Header.Length);
   Status = AcpiTableProtocol->InstallAcpiTable (AcpiTableProtocol,
                                                 (VOID *) NfitTablePointer,
                                                 NfitTablePointer->Header.Length,

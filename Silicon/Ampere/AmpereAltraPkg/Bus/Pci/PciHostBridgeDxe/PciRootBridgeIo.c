@@ -102,6 +102,7 @@ UINT8 mOutStride[] = {
                                  and Count is not valid for this PI system.
 **/
 EFI_STATUS
+EFIAPI
 RootBridgeIoCheckParameter (
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
   IN OPERATION_TYPE                         OperationType,
@@ -255,6 +256,7 @@ RootBridgeIoCheckParameter (
 
 **/
 EFI_STATUS
+EFIAPI
 RootBridgeIoMemRW (
   IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
   IN     BOOLEAN                                Write,
@@ -360,6 +362,7 @@ RootBridgeIoMemRW (
 
 **/
 EFI_STATUS
+EFIAPI
 RootBridgeIoIoRW (
   IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
   IN     BOOLEAN                                Write,
@@ -375,7 +378,7 @@ RootBridgeIoIoRW (
   EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  OperationWidth;
   UINT8                                  *Uint8Buffer;
 
-  PCIE_MMIO_DEBUG("%a: W: %d, Width: %d, Addr: 0x%lx, Count: %d\n", __FUNCTION__,
+  PCIE_MMIO_DEBUG ("%a: W: %d, Width: %d, Addr: 0x%lx, Count: %d\n", __FUNCTION__,
       Write, Width, Address, Count);
 
   Status = RootBridgeIoCheckParameter (This, IoOperation, Width, Address, Count, Buffer);
@@ -465,6 +468,7 @@ RootBridgeIoIoRW (
 
 **/
 EFI_STATUS
+EFIAPI
 RootBridgeIoPciRW (
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
   IN BOOLEAN                                Write,
@@ -627,7 +631,7 @@ RootBridgeIoPollMem (
     return EFI_SUCCESS;
   }
 
-  if (!mMetronome) {
+  if (mMetronome == NULL) {
     Status = gBS->LocateProtocol (
         &gEfiMetronomeArchProtocolGuid,
         NULL,
@@ -1167,7 +1171,7 @@ RootBridgeIoUnmap (
     //
     if (MapInfo->Operation == EfiPciOperationBusMasterWrite ||
         MapInfo->Operation == EfiPciOperationBusMasterWrite64) {
-      CopyMem(
+      CopyMem (
         (VOID *) (UINTN) MapInfo->HostAddress,
         (VOID *) (UINTN) MapInfo->MappedHostAddress,
         MapInfo->NumberOfBytes
@@ -1420,9 +1424,9 @@ RootBridgeIoSetAttributes (
   RootBridgeInstance = ROOT_BRIDGE_FROM_THIS (This);
 
   // Then check optional parameters if eligible
-  if (Attributes & (EFI_PCI_ATTRIBUTE_MEMORY_WRITE_COMBINE |
+  if ((Attributes & (EFI_PCI_ATTRIBUTE_MEMORY_WRITE_COMBINE |
                     EFI_PCI_ATTRIBUTE_MEMORY_CACHED |
-                    EFI_PCI_ATTRIBUTE_MEMORY_DISABLE)) {
+                    EFI_PCI_ATTRIBUTE_MEMORY_DISABLE)) != 0) {
     if (ResourceBase == NULL || ResourceLength == NULL) {
       return EFI_INVALID_PARAMETER;
     }

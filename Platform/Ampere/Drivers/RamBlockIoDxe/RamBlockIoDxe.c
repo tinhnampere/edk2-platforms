@@ -7,6 +7,7 @@
 **/
 
 #include <Base.h>
+#include <Uefi/UefiBaseType.h>
 #include <Protocol/DevicePath.h>
 #include <Protocol/BlockIo.h>
 #include <Protocol/DiskIo.h>
@@ -134,7 +135,7 @@ RAMDISK_BLOCKIO_INSTANCE  mRamBlockIoInstanceTemplate = {
       {
         HARDWARE_DEVICE_PATH,
         HW_VENDOR_DP,
-        { (UINT8)sizeof(VENDOR_DEVICE_PATH), (UINT8)((sizeof(VENDOR_DEVICE_PATH)) >> 8) }
+        { (UINT8) sizeof (VENDOR_DEVICE_PATH), (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8) }
       },
       { 0x0, 0x0, 0x0, { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 } }, // GUID ... NEED TO BE FILLED
     },
@@ -177,7 +178,14 @@ RamBlockIoReadBlocks (
   EFI_BLOCK_IO_MEDIA        *Media;
   UINT32                    NumBlocks;
 
-  DEBUG ((DEBUG_BLKIO, "RamBlockIoReadBlocks(MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n", MediaId, Lba, BufferSizeInBytes, BufferSizeInBytes, Buffer));
+  DEBUG ((DEBUG_BLKIO,
+          "%a (MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n",
+          __FUNCTION__,
+          MediaId,
+          Lba,
+          BufferSizeInBytes,
+          BufferSizeInBytes,
+          Buffer));
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -201,16 +209,16 @@ RamBlockIoReadBlocks (
   }
 
   // All blocks must be within the device
-  NumBlocks = ((UINT32)BufferSizeInBytes) / Instance->Media.BlockSize ;
+  NumBlocks = ((UINT32) BufferSizeInBytes) / Instance->Media.BlockSize ;
 
   if ((Lba + NumBlocks) > (Instance->Media.LastBlock + 1)) {
-    DEBUG ((EFI_D_ERROR, "RamBlockIoReadBlocks: ERROR - Read will exceed last block\n"));
+    DEBUG ((EFI_D_ERROR, "%a: Read will exceed last block\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
 
   Media = This->Media;
 
-  if (!Media) {
+  if (Media == NULL) {
     Status = EFI_INVALID_PARAMETER;
   } else if (!Media->MediaPresent) {
     Status = EFI_NO_MEDIA;
@@ -219,7 +227,9 @@ RamBlockIoReadBlocks (
   } else if ((Media->IoAlign > 2) && (((UINTN)Buffer & (Media->IoAlign - 1)) != 0)) {
     Status = EFI_INVALID_PARAMETER;
   } else {
-    DEBUG ((EFI_D_ERROR, "RamBlockIoReadBlocks: Read from address %p\n", (VOID *)(Instance->StartAddress + Lba * Instance->Media.BlockSize)));
+    DEBUG ((EFI_D_ERROR, "%a: Read from address %p\n",
+            __FUNCTION__,
+            (VOID *)(Instance->StartAddress + Lba * Instance->Media.BlockSize)));
     CopyMem (Buffer, (VOID *)(Instance->StartAddress + Lba * Instance->Media.BlockSize), BufferSizeInBytes);
     Status = EFI_SUCCESS;
   }
@@ -250,7 +260,12 @@ RamBlockIoWriteBlocks (
 
   Instance = INSTANCE_FROM_BLKIO_THIS (This);
 
-  DEBUG((DEBUG_BLKIO, "RamBlockIoWriteBlocks: NumBlocks=%d, LastBlock=%ld, Lba=%ld.\n", NumBlocks, Instance->Media.LastBlock, Lba));
+  DEBUG((DEBUG_BLKIO,
+        "%a: NumBlocks=%d, LastBlock=%ld, Lba=%ld.\n",
+        __FUNCTION__,
+        NumBlocks,
+        Instance->Media.LastBlock,
+        Lba));
 
   // The buffer must be valid
   if (Buffer == NULL) {
@@ -262,13 +277,13 @@ RamBlockIoWriteBlocks (
   }
 
   // We must have some bytes to read
-  DEBUG ((DEBUG_BLKIO, "RamBlockIoWriteBlocks: BufferSizeInBytes=0x%x\n", BufferSizeInBytes));
+  DEBUG ((DEBUG_BLKIO, "%a: BufferSizeInBytes=0x%x\n", __FUNCTION__, BufferSizeInBytes));
   if (BufferSizeInBytes == 0) {
     return EFI_BAD_BUFFER_SIZE;
   }
 
   // The size of the buffer must be a multiple of the block size
-  DEBUG ((DEBUG_BLKIO, "RamBlockIoWriteBlocks: BlockSize in bytes =0x%x\n", Instance->Media.BlockSize));
+  DEBUG ((DEBUG_BLKIO, "%a: BlockSize in bytes =0x%x\n", __FUNCTION__, Instance->Media.BlockSize));
   if ((BufferSizeInBytes % Instance->Media.BlockSize) != 0) {
     return EFI_BAD_BUFFER_SIZE;
   }
@@ -277,17 +292,23 @@ RamBlockIoWriteBlocks (
   NumBlocks = ((UINT32)BufferSizeInBytes) / Instance->Media.BlockSize ;
 
   if ((Lba + NumBlocks) > (Instance->Media.LastBlock + 1)) {
-    DEBUG ((EFI_D_ERROR, "RamBlockIoWriteBlocks: ERROR - Write will exceed last block.\n"));
+    DEBUG ((EFI_D_ERROR, "%a: Write will exceed last block.\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_BLKIO, "RamBlockIoWriteBlocks(MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n", MediaId, Lba, BufferSizeInBytes, Buffer));
+  DEBUG ((DEBUG_BLKIO,
+          "%a (MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n",
+          __FUNCTION__,
+          MediaId,
+          Lba,
+          BufferSizeInBytes,
+          Buffer));
 
-  if( !This->Media->MediaPresent ) {
+  if(!This->Media->MediaPresent) {
     Status = EFI_NO_MEDIA;
-  } else if( This->Media->MediaId != MediaId ) {
+  } else if(This->Media->MediaId != MediaId) {
     Status = EFI_MEDIA_CHANGED;
-  } else if( This->Media->ReadOnly ) {
+  } else if(This->Media->ReadOnly) {
     Status = EFI_WRITE_PROTECTED;
   } else {
     CopyMem ((VOID *)(Instance->StartAddress + Lba * Instance->Media.BlockSize), Buffer, BufferSizeInBytes);
@@ -341,7 +362,7 @@ RamBlockIoCreateInstance (
                   &gEfiBlockIoProtocolGuid,  &Instance->BlockIoProtocol,
                   NULL
                   );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     FreePool (Instance);
     return Status;
   }
@@ -359,14 +380,17 @@ RamBlockIoInitialise (
   EFI_STATUS              Status;
 
   Status = RamBlockIoCreateInstance (
-                0,
-                RAM_BLOCKIO_START_ADDRESS,
-                RAM_BLOCKIO_SIZE,
-                RAM_BLOCKIO_BLOCKSIZE,
-                &gRamBlockIoGuid);
+             0,
+             RAM_BLOCKIO_START_ADDRESS,
+             RAM_BLOCKIO_SIZE,
+             RAM_BLOCKIO_BLOCKSIZE,
+             &gRamBlockIoGuid
+             );
 
-  if (EFI_ERROR(Status)) {
-    DEBUG ((EFI_D_ERROR, "RamBlockIoInitialise: Fail to create instance for Ramdisk BlockIo\n"));
+  if (EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_ERROR,
+            "%a: Fail to create instance for Ramdisk BlockIo\n",
+            __FUNCTION__));
   }
 
   return Status;

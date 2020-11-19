@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _DWAPB_GPIO_H_
-#define _DWAPB_GPIO_H_
+#ifndef _DWAPB_GPIO_LIB_H_
+#define _DWAPB_GPIO_LIB_H_
 
 enum SocGpioConfigMode {
   GPIO_CONFIG_OUT_LOW = 0,
@@ -24,7 +24,12 @@ enum SocGpioConfigMode {
  *              Pin : Pin Identification
  *              Val : 1 to Set, 0 to Clear
  */
-VOID DwapbGpioWriteBit(IN UINT32 Pin, IN UINT32 Val);
+VOID
+EFIAPI
+DwapbGpioWriteBit (
+  IN UINT32 Pin,
+  IN UINT32 Val
+  );
 
 /*
  *   DwapbGpioReadBit:
@@ -34,7 +39,11 @@ VOID DwapbGpioWriteBit(IN UINT32 Pin, IN UINT32 Val);
  *              1 : On/High
  *              0 : Off/Low
  */
-UINTN DwapbGpioReadBit(IN UINT32 Pin);
+UINTN
+EFIAPI
+DwapbGpioReadBit (
+  IN UINT32 Pin
+  );
 
 /*
  *  DwapbGPIOModeConfig: Use to configure GPIOs as Input/Output
@@ -43,7 +52,12 @@ UINTN DwapbGpioReadBit(IN UINT32 Pin);
  *              InOut : GPIO_OUT/1 as Output
  *                      GPIO_IN/0  as Input
  */
-EFI_STATUS DwapbGPIOModeConfig(UINT8 Pin, UINTN Mode);
+EFI_STATUS
+EFIAPI
+DwapbGPIOModeConfig (
+  UINT8 Pin,
+  UINTN Mode
+  );
 
 /*
  *  Setup a controller that to be used in runtime service.
@@ -52,8 +66,10 @@ EFI_STATUS DwapbGPIOModeConfig(UINT8 Pin, UINTN Mode);
  *  return:     0 for success.
  *              Otherwise, error code.
  */
-EFIAPI
 EFI_STATUS
-DwapbGPIOSetupRuntime (IN UINT32 Pin);
+EFIAPI
+DwapbGPIOSetupRuntime (
+  IN UINT32 Pin
+  );
 
-#endif /* _DWAPB_GPIO_H_ */
+#endif /* _DWAPB_GPIO_LIB_H_ */

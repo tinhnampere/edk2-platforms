@@ -104,7 +104,7 @@ MmCommunicationCommunicate (
                sizeof (CommunicateHeader->MessageLength);
 
   // If the length of the CommBuffer is 0 then return the expected length.
-  if (CommSize) {
+  if (CommSize != NULL) {
     // This case can be used by the consumer of this driver to find out the
     // max size that can be used for allocating CommBuffer.
     if ((*CommSize == 0) ||

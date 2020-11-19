@@ -8,13 +8,13 @@
 
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/NVParamLib.h>
-#include <NVParamDef.h>
 #include <Library/HobLib.h>
 #include <Library/AmpereCpuLib.h>
-#include "BoardPcieScreen.h"
 #include <Library/PcieBoardLib.h>
 #include <PlatformInfoHob.h>
 #include <Pcie.h>
+#include <NVParamDef.h>
+#include "BoardPcieScreen.h"
 
 #ifndef BIT
 #define BIT(nr) (1 << (nr))
@@ -144,7 +144,7 @@ ExtractConfig (
                          VariableName,
                          PrivateData->DriverHandle
                          );
-    if (!ConfigRequestHdr) {
+    if (ConfigRequestHdr == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
     Size = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
@@ -348,15 +348,6 @@ RouteConfig (
   return Status;
 }
 
-UINT8
-PcieRCDevMapLoDefaultSetting (IN UINTN RCIndex, IN PCIE_SCREEN_PRIVATE_DATA *PrivateData);
-
-UINT8
-PcieRCDevMapHiDefaultSetting (IN UINTN RCIndex, IN PCIE_SCREEN_PRIVATE_DATA *PrivateData);
-
-BOOLEAN
-PcieRCActiveDefaultSetting (IN UINTN RCIndex, IN PCIE_SCREEN_PRIVATE_DATA *PrivateData);
-
 /**
   This function processes the results of changes in configuration.
   @param  This                   Points to the EFI_HII_CONFIG_ACCESS_PROTOCOL.
@@ -407,8 +398,10 @@ DriverCallback (
   switch (Action) {
   case EFI_BROWSER_ACTION_FORM_OPEN:
     break;
+
   case EFI_BROWSER_ACTION_FORM_CLOSE:
     break;
+
   case EFI_BROWSER_ACTION_DEFAULT_STANDARD:
   case EFI_BROWSER_ACTION_DEFAULT_MANUFACTURING:
     if (QuestionId == 0x9000) {
@@ -421,18 +414,22 @@ DriverCallback (
     case 0:
       Value->u8 = PcieRCActiveDefaultSetting ((QuestionId - 0x8002) / MAX_EDITABLE_ELEMENTS, PrivateData);
       break;
+
     case 1:
       Value->u8 = PcieRCDevMapLoDefaultSetting ((QuestionId - 0x8002) / MAX_EDITABLE_ELEMENTS, PrivateData);
       break;
+
     case 2:
       Value->u8 = PcieRCDevMapHiDefaultSetting ((QuestionId - 0x8002) / MAX_EDITABLE_ELEMENTS, PrivateData);
       break;
     }
     break;
+
   case EFI_BROWSER_ACTION_RETRIEVE:
   case EFI_BROWSER_ACTION_CHANGING:
   case EFI_BROWSER_ACTION_SUBMITTED:
     break;
+
   default:
     Status = EFI_UNSUPPORTED;
     break;
@@ -507,7 +504,10 @@ PcieRCDevMapHiDefaultSetting (
 }
 
 BOOLEAN
-PcieRCActiveDefaultSetting (IN UINTN RCIndex, IN PCIE_SCREEN_PRIVATE_DATA *PrivateData)
+PcieRCActiveDefaultSetting (
+  IN UINTN RCIndex,
+  IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
+  )
 {
   CONST EFI_GUID      PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2  *PlatformHob;
@@ -520,7 +520,7 @@ PcieRCActiveDefaultSetting (IN UINTN RCIndex, IN PCIE_SCREEN_PRIVATE_DATA *Priva
   }
 
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (Hob) {
+  if (Hob != NULL) {
     PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
     Efuse = PlatformHob->RcDisableMask[0] | (PlatformHob->RcDisableMask[1] << RCS_PER_SOCKET);
     return (!(Efuse & BIT (RCIndex))) ? TRUE : FALSE;
@@ -618,9 +618,9 @@ PcieRCScreenSetup (
                               sizeof (UINT8) * RCIndex;
 
   QuestionFlags = EFI_IFR_FLAG_RESET_REQUIRED | EFI_IFR_FLAG_CALLBACK;
-  if (IsEmptyRC (RC) ||
-      (GetNumberActiveSockets () == 1 &&
-       RC->Socket == 1)) {
+  if (IsEmptyRC (RC)
+      || (GetNumberActiveSockets () == 1 && RC->Socket == 1))
+  {
     //
     // Do not allow changing if none of Root Port underneath enabled
     // or slave Root Complex on 1P system.
@@ -829,7 +829,9 @@ PcieRCScreenSetup (
   @retval EFI_SUCCESS            The form is set up successfully.
 **/
 EFI_STATUS
-PcieMainScreenSetup (IN PCIE_SCREEN_PRIVATE_DATA *PrivateData)
+PcieMainScreenSetup (
+  IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
+  )
 {
   VOID                            *StartOpCodeHandle;
   EFI_IFR_GUID_LABEL              *StartLabel;
@@ -1047,7 +1049,7 @@ PcieBoardScreenInitialize (
   mPrivateData->HiiHandle = HiiHandle;
 
   // Make a shadow copy all Root Complexes' properties
-  CopyMem ((VOID*) RCList, (VOID*) NewRCList, sizeof(RCList));
+  CopyMem ((VOID *) RCList, (VOID *) NewRCList, sizeof(RCList));
 
   //
   // Initialize efi varstore configuration data
@@ -1058,12 +1060,12 @@ PcieBoardScreenInitialize (
   // Get Buffer Storage data from EFI variable
   BufferSize = sizeof (PCIE_VARSTORE_DATA);
   Status = gRT->GetVariable (
-             VariableName,
-             &gPcieFormSetGuid,
-             NULL,
-             &BufferSize,
-             VarStoreConfig
-             );
+                  VariableName,
+                  &gPcieFormSetGuid,
+                  NULL,
+                  &BufferSize,
+                  VarStoreConfig
+                  );
 
   IsUpdated = FALSE;
 

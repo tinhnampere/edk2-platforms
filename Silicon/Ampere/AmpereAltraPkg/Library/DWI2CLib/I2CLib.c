@@ -25,15 +25,15 @@
 #undef I2C_PRINT
 
 #ifdef I2C_DBG
-#define DBG(arg...) DEBUG ((EFI_D_ERROR, "DW_I2C(DBG): "));DEBUG ((EFI_D_ERROR,## arg))
+#define DBG(arg...) DEBUG ((DEBUG_ERROR, "DW_I2C(DBG): "));DEBUG ((DEBUG_ERROR,## arg))
 #else
 #define DBG(arg...)
 #endif
 
-#define ERROR(arg...) DEBUG ((EFI_D_ERROR, "DW_I2C(ERROR): "));DEBUG ((EFI_D_ERROR,## arg))
+#define ERROR(arg...) DEBUG ((DEBUG_ERROR, "DW_I2C(ERROR): "));DEBUG ((DEBUG_ERROR,## arg))
 
 #ifdef I2C_PRINT
-#define PRINT(arg...) DEBUG ((EFI_D_INFO, "DW_I2C(INFO): "));DEBUG ((EFI_D_ERROR,## arg))
+#define PRINT(arg...) DEBUG ((DEBUG_INFO, "DW_I2C(INFO): "));DEBUG ((DEBUG_INFO,## arg))
 #else
 #define PRINT(arg...)
 #endif
@@ -185,12 +185,19 @@ STATIC EFI_EVENT          mVirtualAddressChangeEvent = NULL;
 #define DW_TRANSFER_DATA_TIMEOUT        10000000 /* Max 10s */
 #define DW_STATUS_WAIT_RETRY            100
 
-STATIC UINT32 Read32 (UINTN Addr)
+UINT32
+Read32 (
+  UINTN Addr
+  )
 {
   return MmioRead32 (Addr);
 }
 
-STATIC VOID Write32 (UINTN Addr, UINT32 Val)
+VOID
+Write32 (
+  UINTN Addr,
+  UINT32 Val
+  )
 {
   MmioWrite32 (Addr, Val);
 }
@@ -198,7 +205,10 @@ STATIC VOID Write32 (UINTN Addr, UINT32 Val)
 /**
  Initialize I2C Bus
  **/
-STATIC VOID I2CHWInit (UINT32 Bus)
+VOID
+I2CHWInit (
+  UINT32 Bus
+  )
 {
   UINT32    Param;
 
@@ -215,10 +225,14 @@ STATIC VOID I2CHWInit (UINT32 Bus)
 /**
  Enable or disable I2C Bus
  */
-STATIC VOID I2CEnable (UINT32 Bus, UINT32 Enable)
+VOID
+I2CEnable (
+  UINT32 Bus,
+  UINT32 Enable
+  )
 {
-  UINT32    I2CStatusCnt    = DW_STATUS_WAIT_RETRY;
-  UINTN     Base            = I2CBusList[Bus].Base;
+  UINT32 I2CStatusCnt = DW_STATUS_WAIT_RETRY;
+  UINTN  Base         = I2CBusList[Bus].Base;
 
   I2CBusList[Bus].Enabled = Enable;
 
@@ -228,7 +242,7 @@ STATIC VOID I2CEnable (UINT32 Bus, UINT32 Enable)
       break;
     }
     MicroSecondDelay (I2CBusList[Bus].PollingTime);
-  } while (I2CStatusCnt--);
+  } while (I2CStatusCnt-- != 0);
 
   if (I2CStatusCnt == 0) {
     ERROR ("Enable/disable timeout\n");
@@ -244,55 +258,66 @@ STATIC VOID I2CEnable (UINT32 Bus, UINT32 Enable)
 /**
  Setup Slave address
  **/
-STATIC VOID I2CSetSlaveAddr (UINT32 Bus, UINT32 SlaveAddr)
+VOID
+I2CSetSlaveAddr (
+  UINT32 Bus,
+  UINT32 SlaveAddr
+  )
 {
-  UINTN     Base = I2CBusList[Bus].Base;
-  UINT32    OldEnableStatus = I2CBusList[Bus].Enabled;
+  UINTN  Base = I2CBusList[Bus].Base;
+  UINT32 OldEnableStatus = I2CBusList[Bus].Enabled;
 
   I2CEnable (Bus, 0);
   Write32 (Base + DW_IC_TAR, SlaveAddr);
-  if (OldEnableStatus) {
+  if (OldEnableStatus != 0) {
     I2CEnable (Bus, 1);
   }
 }
+
 /**
  Check for errors on I2C Bus
  **/
-STATIC UINT32 I2CCheckErrors (UINT32 Bus)
+UINT32
+I2CCheckErrors (
+  UINT32 Bus
+  )
 {
-  UINTN     Base = I2CBusList[Bus].Base;
-  UINT32    Status;
+  UINTN  Base = I2CBusList[Bus].Base;
+  UINT32 ErrorStatus;
 
-  Status = Read32 (Base + DW_IC_RAW_INTR_STAT) & DW_IC_ERR_CONDITION;
-  if (Status) {
-    ERROR ("Errors on i2c bus %d error status %08x\n", Bus, Status);
+  ErrorStatus = Read32 (Base + DW_IC_RAW_INTR_STAT) & DW_IC_ERR_CONDITION;
+  if (ErrorStatus != 0) {
+    ERROR ("Errors on i2c bus %d error status %08x\n", Bus, ErrorStatus);
   }
 
-  if (Status & DW_IC_INTR_RX_UNDER) {
+  if ((ErrorStatus & DW_IC_INTR_RX_UNDER) != 0) {
     Read32 (Base + DW_IC_CLR_RX_UNDER);
   }
 
-  if (Status & DW_IC_INTR_RX_OVER) {
+  if ((ErrorStatus & DW_IC_INTR_RX_OVER) != 0) {
     Read32 (Base + DW_IC_CLR_RX_OVER);
   }
 
-  if (Status & DW_IC_INTR_TX_ABRT) {
+  if ((ErrorStatus & DW_IC_INTR_TX_ABRT) != 0) {
     DBG ("TX_ABORT at source %08x\n", Read32 (Base + DW_IC_TX_ABRT_SOURCE));
     Read32 (Base + DW_IC_CLR_TX_ABRT);
   }
 
-  return Status;
+  return ErrorStatus;
 }
 
 /**
  Waiting for bus to not be busy
  **/
-STATIC BOOLEAN I2CWaitBusNotBusy (UINT32 Bus)
+BOOLEAN
+I2CWaitBusNotBusy (
+  UINT32 Bus
+  )
 {
-  UINTN     Base        = I2CBusList[Bus].Base;
-  UINTN     Timeout     = DW_BUS_WAIT_TIMEOUT_RETRY;
+  UINTN Base    = I2CBusList[Bus].Base;
+  UINTN Timeout = DW_BUS_WAIT_TIMEOUT_RETRY;
 
-  while (Read32 (Base + DW_IC_STATUS) & DW_IC_STATUS_MST_ACTIVITY) {
+  while ((Read32 (Base + DW_IC_STATUS) & DW_IC_STATUS_MST_ACTIVITY) != 0) {
     if (Timeout == 0) {
       DBG ("Timeout while waiting for bus ready\n");
       return FALSE;
@@ -312,10 +337,13 @@ STATIC BOOLEAN I2CWaitBusNotBusy (UINT32 Bus)
 /**
  Waiting for TX FIFO buffer available
  **/
-STATIC EFI_STATUS I2CWaitTxData (UINT32 Bus)
+EFI_STATUS
+I2CWaitTxData (
+  UINT32 Bus
+  )
 {
-  UINTN     Base        = I2CBusList[Bus].Base;
-  UINTN     Timeout     = DW_TRANSFER_DATA_TIMEOUT;
+  UINTN Base    = I2CBusList[Bus].Base;
+  UINTN Timeout = DW_TRANSFER_DATA_TIMEOUT;
 
   while (Read32 (Base + DW_IC_TXFLR) == I2CBusList[Bus].TxFifo) {
     if (Timeout <= 0) {
@@ -332,18 +360,21 @@ STATIC EFI_STATUS I2CWaitTxData (UINT32 Bus)
 /**
  Waiting for RX FIFO buffer available
  **/
-STATIC EFI_STATUS I2CWaitRxData (UINT32 Bus)
+EFI_STATUS
+I2CWaitRxData (
+  UINT32 Bus
+  )
 {
-  UINTN     Base        = I2CBusList[Bus].Base;
-  UINTN     Timeout     = DW_TRANSFER_DATA_TIMEOUT;
+  UINTN Base    = I2CBusList[Bus].Base;
+  UINTN Timeout = DW_TRANSFER_DATA_TIMEOUT;
 
-  while (!(Read32 (Base + DW_IC_STATUS) & DW_IC_STATUS_RFNE)) {
+  while ((Read32 (Base + DW_IC_STATUS) & DW_IC_STATUS_RFNE) == 0) {
       if (Timeout <= 0) {
           ERROR ("Timeout waiting for RX buffer available\n");
           return EFI_TIMEOUT;
       }
 
-      if (I2CCheckErrors(Bus) & DW_IC_INTR_TX_ABRT) {
+      if ((I2CCheckErrors (Bus) & DW_IC_INTR_TX_ABRT) != 0) {
           return EFI_ABORTED;
       }
 
@@ -354,17 +385,22 @@ STATIC EFI_STATUS I2CWaitRxData (UINT32 Bus)
   return EFI_SUCCESS;
 }
 
-STATIC
 UINT32
-I2CSclHcnt (UINT32 IcClk, UINT32 tSYMBOL, UINT32 Tf, UINT32 Spklen,
-            INTN Cond, INTN Offset)
+I2CSclHcnt (
+  UINT32 IcClk,
+  UINT32 tSYMBOL,
+  UINT32 Tf,
+  UINT32 Spklen,
+  INTN   Cond,
+  INTN   Offset
+  )
 {
   /*
    * DesignWare I2C core doesn't seem to have solid strategy to meet
    * the tHD;STA timing spec. Configuring _HCNT. Based on tHIGH spec
    * will result in violation of the tHD;STA spec.
    */
-  if (Cond) {
+  if (Cond != 0) {
     /*
      * Conditional expression:
      *
@@ -399,9 +435,13 @@ I2CSclHcnt (UINT32 IcClk, UINT32 tSYMBOL, UINT32 Tf, UINT32 Spklen,
             Spklen - 6 + Offset);
 }
 
-STATIC
 UINT32
-I2CSclLcnt (UINT32 IcClk, UINT32 tLOW, UINT32 Tf, INTN Offset)
+I2CSclLcnt (
+  UINT32 IcClk,
+  UINT32 tLOW,
+  UINT32 Tf,
+  INTN   Offset
+  )
 {
   /*
    * Conditional expression:
@@ -422,8 +462,12 @@ I2CSclLcnt (UINT32 IcClk, UINT32 tLOW, UINT32 Tf, INTN Offset)
 
  This functions configures scl clock Count for SS, FS, and HS.
  **/
-STATIC
-VOID I2CSclInit (UINT32 Bus, UINT32 I2CClkFreq, UINT32 I2CSpeed)
+VOID
+I2CSclInit (
+  UINT32 Bus,
+  UINT32 I2CClkFreq,
+  UINT32 I2CSpeed
+  )
 {
   UINT32    Hcnt, Lcnt;
   UINT16    IcCon;
@@ -512,9 +556,13 @@ VOID I2CSclInit (UINT32 Bus, UINT32 I2CClkFreq, UINT32 I2CSpeed)
 /**
  Initialize the designware i2c master hardware
  **/
-STATIC EFI_STATUS I2CInit (UINT32 Bus, UINTN BusSpeed)
+EFI_STATUS
+I2CInit (
+  UINT32 Bus,
+  UINTN  BusSpeed
+  )
 {
-  UINTN     Base;
+  UINTN Base;
 
   ASSERT (I2CClock != 0);
 
@@ -526,6 +574,7 @@ STATIC EFI_STATUS I2CInit (UINT32 Bus, UINTN BusSpeed)
   /* Disable the adapter and interrupt */
   I2CEnable (Bus, 0);
   Write32 (Base + DW_IC_INTR_MASK, 0);
+
   /* Set standard and fast speed divider for high/low periods */
   I2CSclInit (Bus, I2CClock, BusSpeed);
   Write32 (Base + DW_IC_SDA_HOLD, 0x4b);
@@ -536,14 +585,17 @@ STATIC EFI_STATUS I2CInit (UINT32 Bus, UINTN BusSpeed)
 /**
  Wait the transaction finished
  **/
-STATIC EFI_STATUS I2CFinish(UINT32 Bus)
+EFI_STATUS
+I2CFinish (
+  UINT32 Bus
+  )
 {
-  UINTN         Base    = I2CBusList[Bus].Base;
-  UINTN         Timeout = DW_TRANSFER_DATA_TIMEOUT;
+  UINTN Base    = I2CBusList[Bus].Base;
+  UINTN Timeout = DW_TRANSFER_DATA_TIMEOUT;
 
   /* Wait for TX FIFO empty */
   do {
-    if ((Read32 (Base + DW_IC_STATUS) & DW_IC_STATUS_TFE)) {
+    if ((Read32 (Base + DW_IC_STATUS) & DW_IC_STATUS_TFE) != 0) {
       break;
     }
     MicroSecondDelay (I2CBusList[Bus].PollingTime);
@@ -558,7 +610,7 @@ STATIC EFI_STATUS I2CFinish(UINT32 Bus)
   /* Wait for STOP signal detected on the bus */
   Timeout = DW_TRANSFER_DATA_TIMEOUT;
   do {
-    if (Read32 (Base + DW_IC_RAW_INTR_STAT) & DW_IC_INTR_STOP_DET) {
+    if ((Read32 (Base + DW_IC_RAW_INTR_STAT) & DW_IC_INTR_STOP_DET) != 0) {
       Read32 (Base + DW_IC_CLR_STOP_DET);
       return EFI_SUCCESS;
     }
@@ -570,19 +622,22 @@ STATIC EFI_STATUS I2CFinish(UINT32 Bus)
   return EFI_TIMEOUT;
 }
 
-STATIC
 EFI_STATUS
-__I2CWrite(UINT32 Bus, UINT8 *Buf, UINT32 *Length)
+InternalI2CWrite (
+  UINT32 Bus,
+  UINT8  *Buf,
+  UINT32 *Length
+  )
 {
-  EFI_STATUS    Status = EFI_SUCCESS;
-  UINTN         WriteCount;
-  UINTN         Base = I2CBusList[Bus].Base;
+  EFI_STATUS Status = EFI_SUCCESS;
+  UINTN      WriteCount;
+  UINTN      Base = I2CBusList[Bus].Base;
 
   DBG ("Write Bus %d Buf %p Length %d\n", Bus, Buf, *Length);
   I2CEnable (Bus, 1);
 
   WriteCount = 0;
-  while (*Length - WriteCount) {
+  while ((*Length - WriteCount) != 0) {
     Status = I2CWaitTxData (Bus);
     if (EFI_ERROR (Status)) {
       Write32 (Base + DW_IC_DATA_CMD, DW_IC_DATA_CMD_STOP);
@@ -611,9 +666,14 @@ Exit:
   return Status;
 }
 
-STATIC
 EFI_STATUS
-__I2CRead (UINT32 Bus, UINT8 *BufCmd, IN UINT32 CmdLength, UINT8 *Buf, UINT32 *Length)
+InternalI2CRead (
+  UINT32      Bus,
+  UINT8       *BufCmd,
+  IN UINT32   CmdLength,
+  UINT8       *Buf,
+  UINT32      *Length
+  )
 {
   UINTN         Base    = I2CBusList[Bus].Base;
   UINT32        CmdSend;
@@ -629,7 +689,7 @@ __I2CRead (UINT32 Bus, UINT8 *BufCmd, IN UINT32 CmdLength, UINT8 *Buf, UINT32 *L
 
   /* Write command data */
   WriteCount = 0;
-  while (CmdLength) {
+  while (CmdLength != 0) {
     TxLimit = I2CBusList[Bus].TxFifo - Read32 (Base + DW_IC_TXFLR);
     Count = CmdLength > TxLimit ? TxLimit : CmdLength;
 
@@ -638,7 +698,7 @@ __I2CRead (UINT32 Bus, UINT8 *BufCmd, IN UINT32 CmdLength, UINT8 *Buf, UINT32 *L
       Write32 (Base + DW_IC_DATA_CMD, CmdSend);
       I2CSync ();
 
-      if (I2CCheckErrors (Bus)) {
+      if (I2CCheckErrors (Bus) != 0) {
         Status = EFI_CRC_ERROR;
         goto Exit;
       }
@@ -655,7 +715,7 @@ __I2CRead (UINT32 Bus, UINT8 *BufCmd, IN UINT32 CmdLength, UINT8 *Buf, UINT32 *L
 
   ReadCount = 0;
   WriteCount = 0;
-  while (*Length - ReadCount) {
+  while ((*Length - ReadCount) != 0) {
     TxLimit = I2CBusList[Bus].TxFifo - Read32 (Base + DW_IC_TXFLR);
     RxLimit = I2CBusList[Bus].RxFifo - Read32 (Base + DW_IC_RXFLR);
     Count = *Length - ReadCount;
@@ -671,7 +731,7 @@ __I2CRead (UINT32 Bus, UINT8 *BufCmd, IN UINT32 CmdLength, UINT8 *Buf, UINT32 *L
       I2CSync ();
       WriteCount++;
 
-      if (I2CCheckErrors (Bus)) {
+      if (I2CCheckErrors (Bus) != 0) {
         DBG ("Sending reading command remaining length %d CRC error\n", *Length);
         Status = EFI_CRC_ERROR;
         goto Exit;
@@ -694,7 +754,7 @@ __I2CRead (UINT32 Bus, UINT8 *BufCmd, IN UINT32 CmdLength, UINT8 *Buf, UINT32 *L
       Buf[ReadCount++] = Read32 (Base + DW_IC_DATA_CMD) & DW_IC_DATA_CMD_DAT_MASK;
       I2CSync ();
 
-      if (I2CCheckErrors (Bus)) {
+      if (I2CCheckErrors (Bus) != 0) {
        DBG ("Reading remaining length %d CRC error\n", *Length);
        Status = EFI_CRC_ERROR;
        goto Exit;
@@ -711,10 +771,14 @@ Exit:
   return Status;
 }
 
-EFIAPI
 EFI_STATUS
-I2CWrite (IN UINT32 Bus, IN UINT32 SlaveAddr,
-          IN OUT UINT8 *Buf, IN OUT UINT32 *WriteLength)
+EFIAPI
+I2CWrite (
+  IN     UINT32 Bus,
+  IN     UINT32 SlaveAddr,
+  IN OUT UINT8  *Buf,
+  IN OUT UINT32 *WriteLength
+  )
 {
   if (Bus >= MAX_PLATFORM_I2C_BUS_NUM) {
     return EFI_INVALID_PARAMETER;
@@ -722,14 +786,19 @@ I2CWrite (IN UINT32 Bus, IN UINT32 SlaveAddr,
 
   I2CSetSlaveAddr (Bus, SlaveAddr);
 
-  return __I2CWrite (Bus, Buf, WriteLength);
+  return InternalI2CWrite (Bus, Buf, WriteLength);
 }
 
-EFIAPI
 EFI_STATUS
-I2CRead(IN UINT32 Bus, IN UINT32 SlaveAddr,
-        IN UINT8 *BufCmd, IN UINT32 CmdLength,
-        IN OUT UINT8 *Buf, IN OUT UINT32 *ReadLength)
+EFIAPI
+I2CRead (
+  IN     UINT32 Bus,
+  IN     UINT32 SlaveAddr,
+  IN     UINT8  *BufCmd,
+  IN     UINT32 CmdLength,
+  IN OUT UINT8  *Buf,
+  IN OUT UINT32 *ReadLength
+  )
 {
   if (Bus >= MAX_PLATFORM_I2C_BUS_NUM) {
     return EFI_INVALID_PARAMETER;
@@ -737,12 +806,15 @@ I2CRead(IN UINT32 Bus, IN UINT32 SlaveAddr,
 
   I2CSetSlaveAddr (Bus, SlaveAddr);
 
-  return __I2CRead (Bus, BufCmd, CmdLength, Buf, ReadLength);
+  return InternalI2CRead (Bus, BufCmd, CmdLength, Buf, ReadLength);
 }
 
-EFIAPI
 EFI_STATUS
-I2CProbe (IN UINT32 Bus, IN UINTN BusSpeed)
+EFIAPI
+I2CProbe (
+  IN UINT32 Bus,
+  IN UINTN BusSpeed
+  )
 {
   if (Bus >= MAX_PLATFORM_I2C_BUS_NUM) {
     return EFI_INVALID_PARAMETER;
@@ -760,10 +832,9 @@ I2CProbe (IN UINT32 Bus, IN UINTN BusSpeed)
  * @param  Event        Event whose notification function is being invoked.
  * @param  Context      Pointer to the notification function's context.
  */
-STATIC
 VOID
 EFIAPI
-VirtualAddressChangeEvent (
+I2cVirtualAddressChangeEvent (
   IN EFI_EVENT                            Event,
   IN VOID                                 *Context
   )
@@ -789,21 +860,23 @@ VirtualAddressChangeEvent (
  @return:   0 for success.
             Otherwise, error code.
  **/
-EFIAPI
 EFI_STATUS
-I2CSetupRuntime (IN UINT32 Bus)
+EFIAPI
+I2CSetupRuntime (
+  IN UINT32 Bus
+  )
 {
   EFI_STATUS                        Status;
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR   Descriptor;
 
-  if (!mVirtualAddressChangeEvent) {
+  if (mVirtualAddressChangeEvent == NULL) {
     /*
-    * Register for the virtual address change event
-    */
+     * Register for the virtual address change event
+     */
     Status = gBS->CreateEventEx (
                     EVT_NOTIFY_SIGNAL,
                     TPL_NOTIFY,
-                    VirtualAddressChangeEvent,
+                    I2cVirtualAddressChangeEvent,
                     NULL,
                     &gEfiEventVirtualAddressChangeGuid,
                     &mVirtualAddressChangeEvent
@@ -811,7 +884,10 @@ I2CSetupRuntime (IN UINT32 Bus)
     ASSERT_EFI_ERROR (Status);
   }
 
-  Status = gDS->GetMemorySpaceDescriptor (I2CBaseArray[Bus] & RUNTIME_ADDRESS_MASK, &Descriptor);
+  Status = gDS->GetMemorySpaceDescriptor (
+                  I2CBaseArray[Bus] & RUNTIME_ADDRESS_MASK,
+                  &Descriptor
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }

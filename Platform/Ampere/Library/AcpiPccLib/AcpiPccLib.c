@@ -21,25 +21,25 @@
 
 #define PCC_NULL_MSG             0x0F000000
 
-STATIC UINT64                    PccSharedMemAddr = 0;
+STATIC UINT64 PccSharedMemAddr = 0;
 
 STATIC EFI_STATUS
-EFIAPI
 AcpiPccGetSharedMemAddr (
   IN UINT32                      Socket,
   IN UINT32                      Subspace,
   OUT VOID                       **AcpiPcct
   )
 {
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET) || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
+  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
+    || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if (!PccSharedMemAddr) {
+  if (PccSharedMemAddr == 0) {
     return EFI_NOT_READY;
   }
 
-  *AcpiPcct = (VOID *)(PccSharedMemAddr + PCC_SUBSPACE_SHARED_MEM_SIZE *
+  *AcpiPcct = (VOID *) (PccSharedMemAddr + PCC_SUBSPACE_SHARED_MEM_SIZE *
                        (Subspace + PCC_MAX_SUBSPACES_PER_SOCKET * Socket));
 
   return EFI_SUCCESS;
@@ -60,11 +60,12 @@ AcpiPccSendMsg (
   EFI_STATUS                     Status;
   UINT32                         PccMsg;
 
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET) || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
+  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
+    || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = AcpiPccGetSharedMemAddr(Socket, Subspace, (VOID **)&AcpiPcct);
+  Status = AcpiPccGetSharedMemAddr (Socket, Subspace, (VOID **) &AcpiPcct);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -72,7 +73,7 @@ AcpiPccSendMsg (
   CommunicationSpacePtr = AcpiPcct + 1;
 
   /* Write Data into Communication Space Region */
-  CopyMem(CommunicationSpacePtr, MsgBuf, Length);
+  CopyMem (CommunicationSpacePtr, MsgBuf, Length);
   /* Flip CMD_COMPLETE bit */
   AcpiPcct->StatusData.StatusT.CommandComplete = 0;
   /* PCC signature */
@@ -80,11 +81,11 @@ AcpiPccSendMsg (
   /* Ring the Doorbell */
   PccMsg = PCC_MSG;
   /* Store the upper address (Bit 40-43) of PCC shared memory */
-  PccMsg |= ((UINT64)AcpiPcct >> 40) & PCP_MSG_UPPER_ADDR_MASK;
+  PccMsg |= ((UINT64) AcpiPcct >> 40) & PCP_MSG_UPPER_ADDR_MASK;
   if (Subspace < PMPRO_MAX_DB) {
-    MmioWrite32(PMPRO_DBx_REG(Socket, Subspace, DB_OUT), PccMsg);
+    MmioWrite32 (PMPRO_DBx_REG (Socket, Subspace, DB_OUT), PccMsg);
   } else {
-    MmioWrite32(SMPRO_DBx_REG(Socket, Subspace - PMPRO_MAX_DB, DB_OUT),
+    MmioWrite32 (SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_OUT),
                 PccMsg);
   }
 
@@ -93,7 +94,7 @@ AcpiPccSendMsg (
     if (--TimeoutCnt <= 0) {
       return EFI_TIMEOUT;
     }
-    MicroSecondDelay(PCC_CMD_POLL_UDELAY);
+    MicroSecondDelay (PCC_CMD_POLL_UDELAY);
   };
 
   return EFI_SUCCESS;
@@ -106,17 +107,22 @@ AcpiPccUnmaskInt (
   IN UINT32                      Subspace
   )
 {
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET) || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
+  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
+    || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
     return EFI_INVALID_PARAMETER;
   }
 
   /* Unmask Interrupt */
   if (Subspace < PMPRO_MAX_DB) {
-    MmioWrite32(PMPRO_DBx_REG(Socket, Subspace, DB_STATUSMASK),
-                ~DB_AVAIL_MASK);
+    MmioWrite32 (
+      PMPRO_DBx_REG (Socket, Subspace, DB_STATUSMASK),
+      ~DB_AVAIL_MASK
+      );
   } else {
-    MmioWrite32(SMPRO_DBx_REG(Socket, Subspace - PMPRO_MAX_DB, DB_STATUSMASK),
-                ~DB_AVAIL_MASK);
+    MmioWrite32 (
+      SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_STATUSMASK),
+      ~DB_AVAIL_MASK
+      );
   }
 
   return EFI_SUCCESS;
@@ -131,7 +137,8 @@ AcpiPccSyncSharedMemAddr (
 {
   UINT32 PccData;
 
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET) || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
+  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
+    || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -141,7 +148,7 @@ AcpiPccSyncSharedMemAddr (
    */
   PccData = PCC_NULL_MSG;
 
-  return AcpiPccSendMsg(Socket, Subspace, &PccData, 4);
+  return AcpiPccSendMsg (Socket, Subspace, &PccData, 4);
 }
 
 EFI_STATUS
@@ -154,27 +161,35 @@ AcpiPccSharedMemInit (
   struct ACPI_PCCT_SHARED_MEMORY *AcpiPcct;
   EFI_STATUS                     Status;
 
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET) || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
+  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
+    || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = AcpiPccGetSharedMemAddr(Socket, Subspace, (VOID **)&AcpiPcct);
+  Status = AcpiPccGetSharedMemAddr (Socket, Subspace, (VOID **) &AcpiPcct);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   /* Set Shared Memory address into DB OUT register */
   if (Subspace < PMPRO_MAX_DB) {
-    MmioWrite32 ((PMPRO_DBx_REG(Socket, Subspace, DB_OUT0)),
-                 (UINT32)((UINT64)AcpiPcct >> 8));
+    MmioWrite32 (
+      PMPRO_DBx_REG (Socket, Subspace, DB_OUT0),
+      (UINT32) ((UINT64) AcpiPcct >> 8)
+      );
   } else {
-    MmioWrite32 ((SMPRO_DBx_REG(Socket, Subspace - PMPRO_MAX_DB, DB_OUT0)),
-                 (UINT32)((UINT64)AcpiPcct >> 8));
+    MmioWrite32 (
+      SMPRO_DBx_REG(Socket, Subspace - PMPRO_MAX_DB, DB_OUT0),
+      (UINT32) ((UINT64) AcpiPcct >> 8)
+      );
   }
 
   /* Init shared memory for each PCC subspaces */
-  SetMem((VOID *)AcpiPcct, sizeof(struct ACPI_PCCT_SHARED_MEMORY)
-         + PCC_MSG_SIZE, 0x0);
+  SetMem (
+    (VOID *) AcpiPcct,
+    sizeof (struct ACPI_PCCT_SHARED_MEMORY) + PCC_MSG_SIZE,
+    0x0
+    );
   AcpiPcct->StatusData.StatusT.CommandComplete = 1;
 
   return EFI_SUCCESS;
@@ -191,34 +206,49 @@ AcpiPccSharedMemInitV2 (
   EFI_STATUS                     Status;
   UINT32                         AlignBit;
 
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET) || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
+  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
+    || (Socket >= PLATFORM_CPU_MAX_SOCKET)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = AcpiPccGetSharedMemAddr(Socket, Subspace, (VOID **)&AcpiPcct);
+  Status = AcpiPccGetSharedMemAddr (Socket, Subspace, (VOID **) &AcpiPcct);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  if (PCC_MSG & PCC_256_ALIGN_ADDR) {
+  if ((PCC_MSG & PCC_256_ALIGN_ADDR) != 0) {
     AlignBit = 8;
   }
+
   /* Set Shared Memory address into DB OUT register */
   if (Subspace < PMPRO_MAX_DB) {
-    MmioWrite32 ((PMPRO_DBx_REG(Socket, Subspace, DB_OUT0)),
-                 (UINT32)((UINT64)AcpiPcct >> AlignBit));
-    MmioWrite32 ((PMPRO_DBx_REG(Socket, Subspace, DB_OUT1)),
-                 (UINT32)((UINT64)AcpiPcct >> (32 + AlignBit)));
+    MmioWrite32 (
+      PMPRO_DBx_REG (Socket, Subspace, DB_OUT0),
+      (UINT32) ((UINT64) AcpiPcct >> AlignBit)
+      );
+
+    MmioWrite32 (
+      (PMPRO_DBx_REG (Socket, Subspace, DB_OUT1)),
+      (UINT32) ((UINT64) AcpiPcct >> (32 + AlignBit))
+      );
   } else {
-    MmioWrite32 ((SMPRO_DBx_REG(Socket, Subspace - PMPRO_MAX_DB, DB_OUT0)),
-                 (UINT32)((UINT64)AcpiPcct >> AlignBit));
-    MmioWrite32 ((SMPRO_DBx_REG(Socket, Subspace - PMPRO_MAX_DB, DB_OUT1)),
-                 (UINT32)((UINT64)AcpiPcct >> (32 + AlignBit)));
+    MmioWrite32 (
+      SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_OUT0),
+      (UINT32) ((UINT64) AcpiPcct >> AlignBit)
+      );
+
+    MmioWrite32 (
+      SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_OUT1),
+      (UINT32) ((UINT64) AcpiPcct >> (32 + AlignBit))
+      );
   }
 
   /* Init shared memory for each PCC subspaces */
-  SetMem((VOID *)AcpiPcct, sizeof(struct ACPI_PCCT_SHARED_MEMORY)
-         + PCC_MSG_SIZE, 0x0);
+  SetMem (
+    (VOID *) AcpiPcct,
+    sizeof (struct ACPI_PCCT_SHARED_MEMORY) + PCC_MSG_SIZE,
+    0x0
+    );
   AcpiPcct->StatusData.StatusT.CommandComplete = 1;
 
   return EFI_SUCCESS;
@@ -233,9 +263,10 @@ AcpiIppPccIsSupported (
   EFI_STATUS                     Status;
 
   /* Send a PCC NULL command to check if IPP supports PCC request */
-  AcpiPccSharedMemInit(0, 0);
-  Status = AcpiPccSyncSharedMemAddr(0, 0);
-  if (EFI_ERROR(Status)) {
+  AcpiPccSharedMemInit (0, 0);
+
+  Status = AcpiPccSyncSharedMemAddr (0, 0);
+  if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -255,12 +286,14 @@ AcpiPccAllocSharedMemory (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = gBS->AllocatePages(AllocateAnyPages,
-                              EfiRuntimeServicesData,
-                              EFI_SIZE_TO_PAGES(PCC_SUBSPACE_SHARED_MEM_SIZE * SubspaceNum),
-                              &PccSharedMemAddr);
+  Status = gBS->AllocatePages (
+                  AllocateAnyPages,
+                  EfiRuntimeServicesData,
+                  EFI_SIZE_TO_PAGES (PCC_SUBSPACE_SHARED_MEM_SIZE * SubspaceNum),
+                  &PccSharedMemAddr
+                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "\nFailed to allocate PCC shared memory\n"));
+    DEBUG ((DEBUG_ERROR, "Failed to allocate PCC shared memory\n"));
     return Status;
   }
 
@@ -280,8 +313,10 @@ AcpiPccFreeSharedMemory (
     return;
   }
 
-  gBS->FreePages(*PccSharedMemPointer,
-                 EFI_SIZE_TO_PAGES(PCC_SUBSPACE_SHARED_MEM_SIZE * SubspaceNum));
+  gBS->FreePages (
+         *PccSharedMemPointer,
+         EFI_SIZE_TO_PAGES (PCC_SUBSPACE_SHARED_MEM_SIZE * SubspaceNum)
+         );
 
   PccSharedMemAddr = 0;
 }

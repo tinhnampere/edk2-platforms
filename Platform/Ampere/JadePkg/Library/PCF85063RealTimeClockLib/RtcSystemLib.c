@@ -21,7 +21,7 @@
 #include <Library/ArmGenericTimerCounterLib.h>
 #include <Library/ArmLib.h>
 #include <Guid/EventGroup.h>
-#include "Common.h"
+#include "PCF85063.h"
 
 #define TICKS_PER_SEC     (ArmGenericTimerGetTimerFreq ())
 
@@ -123,8 +123,10 @@ RtcTimeFieldsValid (
   return EFI_SUCCESS;
 }
 
-
-UINT8 Bin2Bcd (UINT32 Val)
+UINT8
+Bin2Bcd (
+  UINT32 Val
+  )
 {
   return (((Val / 10) << 4) | (Val % 10));
 }
@@ -150,7 +152,7 @@ EfiTimeToEpoch (
 
   JulianDate = Time->Day + ((153*m + 2)/5) + (365*y) + (y/4) - (y/100) + (y/400) - 32045;
 
-  ASSERT(JulianDate > EPOCH_JULIAN_DATE);
+  ASSERT (JulianDate > EPOCH_JULIAN_DATE);
   EpochDays = JulianDate - EPOCH_JULIAN_DATE;
 
   EpochSeconds = (EpochDays * SEC_PER_DAY) + ((UINTN)Time->Hour * SEC_PER_HOUR) + (Time->Minute * SEC_PER_MIN) + Time->Second;
@@ -244,11 +246,11 @@ LibGetTime (
   UINTN         Size;
   UINTN         EpochSeconds;
 
-  if (!Time) {
+  if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if (!mLastSavedTimeEpoch || EfiAtRuntime ()) {
+  if ((mLastSavedTimeEpoch == 0) || EfiAtRuntime ()) {
     /* SMPro requires physical address for message communication */
     Status = PlatformGetTime (Time);
     if (EFI_ERROR (Status)) {
@@ -261,10 +263,10 @@ LibGetTime (
       Time->Year = 2017;
     }
     if (!EfiAtRuntime ()) {
-      mLastSavedTimeEpoch = EfiTimeToEpoch(Time);
+      mLastSavedTimeEpoch = EfiTimeToEpoch (Time);
       mLastSavedSystemCount = ArmGenericTimerGetSystemCount ();
     }
-    EpochSeconds = EfiTimeToEpoch(Time);
+    EpochSeconds = EfiTimeToEpoch (Time);
   } else {
     CurrentSystemCount = ArmGenericTimerGetSystemCount ();
     if (CurrentSystemCount >= mLastSavedSystemCount) {
@@ -285,7 +287,7 @@ LibGetTime (
                   &gEfiCallerIdGuid,
                   NULL,
                   &Size,
-                  (VOID *)&TimeZone
+                  (VOID *) &TimeZone
                   );
   if (EFI_ERROR (Status)) {
     /* The time zone variable does not exist in non-volatile storage, so create it. */
@@ -294,14 +296,17 @@ LibGetTime (
     Status = mRT->SetVariable (
                     (CHAR16 *) mTimeZoneVariableName,
                     &gEfiCallerIdGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE
+                      | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                      | EFI_VARIABLE_RUNTIME_ACCESS,
                     Size,
-                    (VOID *)&(Time->TimeZone)
+                    (VOID *) &(Time->TimeZone)
                     );
     if (EFI_ERROR (Status)) {
       DEBUG ((
-        EFI_D_ERROR,
-        "LibGetTime: Failed to save %s variable to non-volatile storage, Status = %r\n",
+        DEBUG_ERROR,
+        "%a: Failed to save %s variable to non-volatile storage, Status = %r\n",
+        __FUNCTION__,
         mTimeZoneVariableName,
         Status
         ));
@@ -340,14 +345,17 @@ LibGetTime (
     Status = mRT->SetVariable (
                     (CHAR16 *) mDaylightVariableName,
                     &gEfiCallerIdGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE
+                      | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                      | EFI_VARIABLE_RUNTIME_ACCESS,
                     Size,
-                    (VOID *)&(Time->Daylight)
+                    (VOID *) &(Time->Daylight)
                     );
     if (EFI_ERROR (Status)) {
       DEBUG ((
-        EFI_D_ERROR,
-        "LibGetTime: Failed to save %s variable to non-volatile storage, Status = %r\n",
+        DEBUG_ERROR,
+        "%a: Failed to save %s variable to non-volatile storage, Status = %r\n",
+        __FUNCTION__,
         mDaylightVariableName,
         Status
         ));
@@ -363,7 +371,7 @@ LibGetTime (
       EpochSeconds += SEC_PER_HOUR;
     }
   }
-  EpochToEfiTime(EpochSeconds, Time);
+  EpochToEfiTime (EpochSeconds, Time);
 
   return EFI_SUCCESS;
 }
@@ -386,7 +394,7 @@ LibSetTime (
   EFI_STATUS    Status;
   UINTN         EpochSeconds;
 
-  if (!Time || RtcTimeFieldsValid (Time) != EFI_SUCCESS) {
+  if ((Time == NULL) || (RtcTimeFieldsValid (Time) != EFI_SUCCESS)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -414,14 +422,17 @@ LibSetTime (
   Status = mRT->SetVariable (
                   (CHAR16 *) mTimeZoneVariableName,
                   &gEfiCallerIdGuid,
-                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                  EFI_VARIABLE_NON_VOLATILE
+                    | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                    | EFI_VARIABLE_RUNTIME_ACCESS,
                   sizeof (Time->TimeZone),
                   (VOID *)&(Time->TimeZone)
                   );
   if (EFI_ERROR (Status)) {
       DEBUG ((
-        EFI_D_ERROR,
-        "LibSetTime: Failed to save %s variable to non-volatile storage, Status = %r\n",
+        DEBUG_ERROR,
+        "%a: Failed to save %s variable to non-volatile storage, Status = %r\n",
+        __FUNCTION__,
         mTimeZoneVariableName,
         Status
         ));
@@ -432,28 +443,31 @@ LibSetTime (
   Status = mRT->SetVariable (
                   (CHAR16 *) mDaylightVariableName,
                   &gEfiCallerIdGuid,
-                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                  EFI_VARIABLE_NON_VOLATILE
+                    | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                    | EFI_VARIABLE_RUNTIME_ACCESS,
                   sizeof(Time->Daylight),
                   (VOID *)&(Time->Daylight)
                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((
-      EFI_D_ERROR,
-      "LibSetTime: Failed to save %s variable to non-volatile storage, Status = %r\n",
+      DEBUG_ERROR,
+      "%a: Failed to save %s variable to non-volatile storage, Status = %r\n",
+      __FUNCTION__,
       mDaylightVariableName,
       Status
       ));
     return Status;
   }
 
-  EpochToEfiTime(EpochSeconds, Time);
+  EpochToEfiTime (EpochSeconds, Time);
 
   Status = PlatformSetTime (Time);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  EpochToEfiTime(EpochSeconds, Time);
+  EpochToEfiTime (EpochSeconds, Time);
 
   if (!EfiAtRuntime ()) {
     mLastSavedTimeEpoch = EpochSeconds;

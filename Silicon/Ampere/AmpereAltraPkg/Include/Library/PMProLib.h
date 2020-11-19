@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PMPROLIB_H_
-#define _PMPROLIB_H_
+#ifndef _PMPRO_LIB_H_
+#define _PMPRO_LIB_H_
 
 #include <Uefi.h>
 
@@ -22,7 +22,7 @@
 EFI_STATUS
 EFIAPI
 PMProDBWr (
-  UINT8 Db,
+  UINT8  Db,
   UINT32 Data,
   UINT32 Param,
   UINT32 Param1,
@@ -50,7 +50,7 @@ PMProTurboEnable (
 EFI_STATUS
 EFIAPI
 PMProAclAdd (
-  UINT8 Socket,
+  UINT8  Socket,
   UINT32 AdrHi,
   UINT32 AdrLo
   );
@@ -64,9 +64,9 @@ PMProAclAdd (
 EFI_STATUS
 EFIAPI
 PMProSendPSCIAddr (
-  UINT8 Socket,
+  UINT8  Socket,
   UINT32 AdrHi,
   UINT32 AdrLo
   );
 
-#endif /* _PMPROLIB_H_*/
+#endif /* _PMPRO_LIB_H_*/

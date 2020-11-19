@@ -72,19 +72,26 @@ EFI_PCI_ROOT_BRIDGE_DEVICE_PATH mPciDevicePathTemplate =
 };
 
 STATIC
-EFI_PCI_ROOT_BRIDGE_DEVICE_PATH*
-GenerateRootBridgeDevicePath (UINTN HostBridgeIdx, UINTN RootBridgeIdx)
+EFI_PCI_ROOT_BRIDGE_DEVICE_PATH *
+EFIAPI
+GenerateRootBridgeDevicePath (
+  UINTN HostBridgeIdx,
+  UINTN RootBridgeIdx
+  )
 {
 
   EFI_PCI_ROOT_BRIDGE_DEVICE_PATH *RootBridgeDevPath = NULL;
 
-  RootBridgeDevPath = AllocateCopyPool (sizeof (EFI_PCI_ROOT_BRIDGE_DEVICE_PATH), (VOID *) &mPciDevicePathTemplate);
-  if (!RootBridgeDevPath) {
+  RootBridgeDevPath = AllocateCopyPool (
+                        sizeof (EFI_PCI_ROOT_BRIDGE_DEVICE_PATH),
+                        (VOID *) &mPciDevicePathTemplate
+                        );
+  if (RootBridgeDevPath == NULL) {
     return NULL;
   }
 
   /* We don't expect to have more than 65536 root ports on the same root bridge */
-  RootBridgeDevPath->AcpiDevicePath.UID = (UINT32)((HostBridgeIdx << 16) + RootBridgeIdx);
+  RootBridgeDevPath->AcpiDevicePath.UID = (UINT32) ((HostBridgeIdx << 16) + RootBridgeIdx);
 
   return RootBridgeDevPath;
 }
@@ -97,14 +104,19 @@ GenerateRootBridgeDevicePath (UINTN HostBridgeIdx, UINTN RootBridgeIdx)
 
   @retval VOID
 **/
-VOID PciHostBridgeReadyToBootEvent (EFI_EVENT Event, VOID *Context)
+VOID
+EFIAPI
+PciHostBridgeReadyToBootEvent (
+  EFI_EVENT Event,
+  VOID *Context
+  )
 {
   UINTN    Idx1, Idx2, Count = 0;
   CHAR8    NodePath[MAX_ACPI_NODE_PATH];
 
   for (Idx1 = 0; Idx1 < PCI_GET_NUMBER_HOSTBRIDGE (); Idx1++) {
     for (Idx2 = 0; Idx2 < PCI_GET_NUMBER_ROOTBRIDGE (Idx1); Idx2++) {
-      AsciiSPrint (NodePath, sizeof(NodePath), "\\_SB.PCI%X._STA", Count);
+      AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.PCI%X._STA", Count);
       if (PCI_CHECK_ROOT_BRIDGE_DISABLED (Idx1, Idx2)) {
         AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
       } else {
@@ -128,6 +140,7 @@ VOID PciHostBridgeReadyToBootEvent (EFI_EVENT Event, VOID *Context)
 **/
 STATIC
 EFI_STATUS
+EFIAPI
 RootBridgeConstructor (
   IN PCI_ROOT_BRIDGE_INSTANCE           *RootBridgeInstance,
   IN EFI_HANDLE                         HostBridgeHandle,
@@ -218,10 +231,16 @@ InitializePciHostBridge (
   LIST_ENTRY                      *List;
   UINTN                           SegmentNumber;
 
-  if (!PCI_CHECK_ROOT_BRIDGE_DISABLED || !PCI_CORE_SETUP || !PCI_CORE_END ||
-      !PCI_CORE_SETUP_HOST_BRIDGE || !PCI_CORE_SETUP_ROOT_BRIDGE ||
-      !PCI_CORE_IO_PCI_RW || !PCI_GET_NUMBER_HOSTBRIDGE ||
-      !PCI_GET_NUMBER_ROOTBRIDGE || !PCI_GET_ROOTBRIDGE_ATTR) {
+  if (( PCI_CHECK_ROOT_BRIDGE_DISABLED == NULL)
+        || (PCI_CORE_SETUP == NULL)
+        || (PCI_CORE_END == NULL)
+        || (PCI_CORE_SETUP_HOST_BRIDGE == NULL)
+        || (PCI_CORE_SETUP_ROOT_BRIDGE == NULL)
+        || (PCI_CORE_IO_PCI_RW == NULL)
+        || (PCI_GET_NUMBER_HOSTBRIDGE == NULL)
+        || (PCI_GET_NUMBER_ROOTBRIDGE == NULL)
+        || (PCI_GET_ROOTBRIDGE_ATTR == NULL ))
+  {
     PCIE_ERR ("PciHostBridge: Invalid Parameters\n");
     return EFI_INVALID_PARAMETER;
   }
@@ -241,7 +260,10 @@ InitializePciHostBridge (
   // Create Host Bridge Device Handle
   //
   for (Idx1 = 0; Idx1 < PCI_GET_NUMBER_HOSTBRIDGE (); Idx1++) {
-    HostBridgeInstance = AllocateCopyPool (sizeof (PCI_HOST_BRIDGE_INSTANCE), (VOID *) &mPciHostBridgeInstanceTemplate);
+    HostBridgeInstance = AllocateCopyPool (
+                           sizeof (PCI_HOST_BRIDGE_INSTANCE),
+                           (VOID *) &mPciHostBridgeInstanceTemplate
+                           );
     if (HostBridgeInstance == NULL) {
       PCIE_ERR ("  HB%d allocation failed!\n", Idx1);
       return EFI_OUT_OF_RESOURCES;
@@ -260,7 +282,8 @@ InitializePciHostBridge (
 
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &HostBridgeInstance->HostBridgeHandle,
-                    &gEfiPciHostBridgeResourceAllocationProtocolGuid, &HostBridgeInstance->ResAlloc,
+                    &gEfiPciHostBridgeResourceAllocationProtocolGuid,
+                    &HostBridgeInstance->ResAlloc,
                     NULL
                     );
     if (EFI_ERROR (Status)) {
@@ -275,7 +298,7 @@ InitializePciHostBridge (
     // Create Root Bridge Device Handle in this Host Bridge
     //
     for (Idx2 = 0; Idx2 < HostBridgeInstance->RootBridgeNumber; Idx2++, Count++) {
-      RootBridgeInstance = AllocateZeroPool (sizeof(PCI_ROOT_BRIDGE_INSTANCE));
+      RootBridgeInstance = AllocateZeroPool (sizeof (PCI_ROOT_BRIDGE_INSTANCE));
       if (RootBridgeInstance == NULL) {
         gBS->UninstallMultipleProtocolInterfaces (
                HostBridgeInstance->HostBridgeHandle,
@@ -297,7 +320,10 @@ InitializePciHostBridge (
 
       NumberRootPortInstalled++;
 
-      RootBridgeInstance->ConfigBuffer = AllocateZeroPool (rtMaxRes * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+      RootBridgeInstance->ConfigBuffer = AllocateZeroPool (
+                                           rtMaxRes * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
+                                           + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
+                                           );
       if (RootBridgeInstance->ConfigBuffer == NULL) {
         gBS->UninstallMultipleProtocolInterfaces (
                HostBridgeInstance->HostBridgeHandle,
@@ -311,18 +337,19 @@ InitializePciHostBridge (
       }
 
       RootBridgeInstance->Signature = PCI_ROOT_BRIDGE_SIGNATURE;
-      RootBridgeInstance->RootBridge.DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) GenerateRootBridgeDevicePath (Idx1, Idx2);
+      RootBridgeInstance->RootBridge.DevicePath =
+        (EFI_DEVICE_PATH_PROTOCOL *) GenerateRootBridgeDevicePath (Idx1, Idx2);
 
       SegmentNumber = Count;
       if (PCI_GET_ROOTBRIDGE_SEGMENTNUMBER) {
-        SegmentNumber = PCI_GET_ROOTBRIDGE_SEGMENTNUMBER(Idx1, Idx2);
+        SegmentNumber = PCI_GET_ROOTBRIDGE_SEGMENTNUMBER (Idx1, Idx2);
       }
 
       RootBridgeConstructor (
-          RootBridgeInstance,
-          HostBridgeInstance->HostBridgeHandle,
-          PCI_GET_ROOTBRIDGE_ATTR (Idx1),
-          SegmentNumber
+        RootBridgeInstance,
+        HostBridgeInstance->HostBridgeHandle,
+        PCI_GET_ROOTBRIDGE_ATTR (Idx1),
+        SegmentNumber
         );
 
       Status = gBS->InstallMultipleProtocolInterfaces (
@@ -339,24 +366,24 @@ InitializePciHostBridge (
         while (List != &HostBridgeInstance->Head) {
           RootBridgeInstance = ROOT_BRIDGE_FROM_LINK (List);
           gBS->UninstallMultipleProtocolInterfaces (
-              RootBridgeInstance->RootBridgeHandle,
-              &gEfiDevicePathProtocolGuid,
-              RootBridgeInstance->RootBridge.DevicePath,
-              &gEfiPciRootBridgeIoProtocolGuid,
-              &RootBridgeInstance->RbIo,
-              NULL
-            );
+                 RootBridgeInstance->RootBridgeHandle,
+                 &gEfiDevicePathProtocolGuid,
+                 RootBridgeInstance->RootBridge.DevicePath,
+                 &gEfiPciRootBridgeIoProtocolGuid,
+                 &RootBridgeInstance->RbIo,
+                 NULL
+                 );
           FreePool (RootBridgeInstance->ConfigBuffer);
           FreePool (RootBridgeInstance);
           List = List->ForwardLink;
         }
 
         gBS->UninstallMultipleProtocolInterfaces (
-            HostBridgeInstance->HostBridgeHandle,
-            &gEfiPciHostBridgeResourceAllocationProtocolGuid,
-            &HostBridgeInstance->ResAlloc,
-            NULL
-          );
+               HostBridgeInstance->HostBridgeHandle,
+               &gEfiPciHostBridgeResourceAllocationProtocolGuid,
+               &HostBridgeInstance->ResAlloc,
+               NULL
+               );
         FreePool (HostBridgeInstance);
         PCIE_ERR ("    HB%d-RB%d instance installation failed\n", Idx1, Idx2);
         return EFI_DEVICE_ERROR;
@@ -368,10 +395,11 @@ InitializePciHostBridge (
     if (NumberRootPortInstalled == 0) {
       PCIE_WARN ("  No Root Port! Uninstalling HB%d\n", Idx1);
       gBS->UninstallMultipleProtocolInterfaces (
-          HostBridgeInstance->HostBridgeHandle,
-          &gEfiPciHostBridgeResourceAllocationProtocolGuid, &HostBridgeInstance->ResAlloc,
-          NULL
-          );
+             HostBridgeInstance->HostBridgeHandle,
+             &gEfiPciHostBridgeResourceAllocationProtocolGuid,
+             &HostBridgeInstance->ResAlloc,
+             NULL
+             );
       FreePool (HostBridgeInstance);
     }
   }
@@ -601,7 +629,7 @@ NotifyPhase (
           ResNode->Length = 0;
         } else {
           // Get the number of '1' in Alignment.
-          BitsOfAlignment = (UINTN)(HighBitSet64(ResNode->Alignment) + 1);
+          BitsOfAlignment = (UINTN) (HighBitSet64 (ResNode->Alignment) + 1);
 
           Status = gDS->AllocateMemorySpace (
                           EfiGcdAllocateAddress,
@@ -656,7 +684,7 @@ NotifyPhase (
             Status = gDS->FreeMemorySpace (AddrBase, AddrLen);
             if (EFI_ERROR (Status)) {
               ReturnStatus = Status;
-        }
+            }
             break;
 
           default:
@@ -703,7 +731,7 @@ NotifyPhase (
     RootBridgeIdx = DevPath->AcpiDevicePath.UID % (1<<16);
 
     // Notify BSP Driver
-    if (PCI_CORE_HOST_BRIDGE_NOTIFY_PHASE) {
+    if (PCI_CORE_HOST_BRIDGE_NOTIFY_PHASE != NULL) {
       PCI_CORE_HOST_BRIDGE_NOTIFY_PHASE (HostBridgeIdx, RootBridgeIdx, Phase);
     }
 
@@ -1251,8 +1279,10 @@ GetProposedResources (
     return EFI_INVALID_PARAMETER;
   }
 
-  Buffer = AllocateZeroPool ((rtMaxRes - 1) * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) +
-                             sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+  Buffer = AllocateZeroPool (
+             (rtMaxRes - 1) * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) +
+             sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
+             );
   if (Buffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

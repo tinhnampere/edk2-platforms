@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _SMPROLIB_H_
-#define _SMPROLIB_H_
+#ifndef _SMPRO_LIB_H_
+#define _SMPRO_LIB_H_
 
 /*
  * Read the doorbell status into data
@@ -17,7 +17,15 @@
  * Param1       Data to be written from DB IN1
  * MsgReg       Non-secure doorbell base virtual address
  */
-EFI_STATUS EFIAPI SMProDBRd(UINT8 Db, UINT32 *Data, UINT32 *Param, UINT32 *Param1, UINT64 MsgReg);
+EFI_STATUS
+EFIAPI
+SMProDBRd (
+  UINT8  Db,
+  UINT32 *Data,
+  UINT32 *Param,
+  UINT32 *Param1,
+  UINT64 MsgReg
+  );
 
 /*
  * Write the message to the doorbell
@@ -27,37 +35,71 @@ EFI_STATUS EFIAPI SMProDBRd(UINT8 Db, UINT32 *Data, UINT32 *Param, UINT32 *Param
  * Param1       Data to be written to DB OUT1
  * MsgReg       Non-secure doorbell base virtual address
  */
-EFI_STATUS EFIAPI SMProDBWr(UINT8 Db, UINT32 Data, UINT32 Param, UINT32 Param1, UINT64 MsgReg);
+EFI_STATUS
+EFIAPI
+SMProDBWr (
+  UINT8  Db,
+  UINT32 Data,
+  UINT32 Param,
+  UINT32 Param1,
+  UINT64 MsgReg
+  );
 
 /*
- * Send an APEI Check Message to SMpro
+ * Send an APEI Check Message to SMPro
  *
  * UAddress     Upper 32-bit of a 64-bit register for the APEI table pointer
  * LAddress     Lower 32-bit of a 64-bit register for the APEI table pointer
  */
-EFI_STATUS EFIAPI SMProAPEISetupCheck(UINT32 UAddress, UINT32 LAddress);
+EFI_STATUS
+EFIAPI
+SMProAPEISetupCheck (
+  UINT32 UAddress,
+  UINT32 LAddress
+  );
 
 /*
- * Send an APEI Clear Message to SMpro
+ * Send an APEI Clear Message to SMPro
  *
  * UAddress     Upper 32-bit of a 64-bit register for the APEI table pointer
  * LAddress     Lower 32-bit of a 64-bit register for the APEI table pointer
  */
-EFI_STATUS EFIAPI SMProAPEISetupClear(UINT32 UAddress, UINT32 LAddress);
+EFI_STATUS
+EFIAPI
+SMProAPEISetupClear (
+  UINT32 UAddress,
+  UINT32 LAddress
+  );
 
 /*
- * Enable/Disable APEI with SMpro
+ * Enable/Disable APEI with SMPro
  */
-EFI_STATUS EFIAPI SMProAPEIEnable(UINT8 Enable);
+EFI_STATUS
+EFIAPI
+SMProAPEIEnable (
+  UINT8 Enable
+  );
 
 /*
- * Read register from SMpro
+ * Read register from SMPro
  */
-EFI_STATUS EFIAPI SMProRegRd(UINT8 Socket, UINT64 Addr, UINT32 *Value);
+EFI_STATUS
+EFIAPI
+SMProRegRd (
+  UINT8  Socket,
+  UINT64 Addr,
+  UINT32 *Value
+  );
 
 /*
- * Write register to SMpro
+ * Write register to SMPro
  */
-EFI_STATUS EFIAPI SMProRegWr(UINT8 Socket, UINT64 Addr, UINT32 Value);
+EFI_STATUS
+EFIAPI
+SMProRegWr (
+  UINT8  Socket,
+  UINT64 Addr,
+  UINT32 Value
+  );
 
-#endif /* _SLIMPROLIB_H_*/
+#endif /* _SMPRO_LIB_H_*/

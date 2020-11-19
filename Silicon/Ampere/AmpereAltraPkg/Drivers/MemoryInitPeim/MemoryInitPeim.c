@@ -21,7 +21,6 @@
 #include <Library/PcdLib.h>
 #include <PlatformInfoHob.h>
 
-
 EFI_STATUS
 EFIAPI
 MemoryPeim (
@@ -80,16 +79,10 @@ InitializeMemory (
   PlatformInfoHob_V2                    *PlatformHob;
   CONST EFI_GUID                        PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
 
-  DEBUG ((EFI_D_INFO, "Memory Init PEIM Loaded\n"));
-
-  /* TODO MOE: Enable status reporting */
-  /*
-  (*PeiServices)->ReportStatusCode(PeiServices,
-         EFI_PROGRESS_CODE, PEI_MEMORY_INIT, 0, NULL, NULL);
-         */
+  DEBUG ((DEBUG_INFO, "Memory Init PEIM Loaded\n"));
 
   Hob = GetFirstGuidHob (&PlatformHobGuid);
-  if (!Hob) {
+  if (Hob == NULL) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -105,13 +98,7 @@ InitializeMemory (
     }
   }
 
-  /* TODO MOE: Enable status reporting */
-
-  /*
-  (*PeiServices)->ReportStatusCode(PeiServices,
-         EFI_PROGRESS_CODE, PEI_MEMORY_CONFIGURING, 0, NULL, NULL);
-         */
-  DEBUG ((EFI_D_INFO, "PEIM memory configuration.\n"));
+  DEBUG ((DEBUG_INFO, "PEIM memory configuration.\n"));
 
   SystemMemoryBase = (UINTN) FixedPcdGet64 (PcdSystemMemoryBase);
   FdBase = (UINTN) PcdGet64 (PcdFdBaseAddress);
@@ -141,34 +128,17 @@ InitializeMemory (
 
   Status = PeiServicesInstallPeiMemory (UefiMemoryBase, FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
   if (EFI_ERROR (Status)) {
-    /* TODO MOE: Enable status reporting */
-    /*
-    (*PeiServices)->ReportStatusCode(PeiServices,
-          EFI_PROGRESS_CODE, PEI_MEMORY_NOT_INSTALLED, 0, NULL, NULL);
-          */
-    DEBUG ((EFI_D_ERROR, "Error: Failed to install Pei Memory\n"));
+    DEBUG ((DEBUG_ERROR, "Error: Failed to install Pei Memory\n"));
   } else {
-    /* TODO MOE: Enable status reporting */
-    /*
-    (*PeiServices)->ReportStatusCode(PeiServices,
-          EFI_PROGRESS_CODE, PEI_MEMORY_INSTALLED, 0, NULL, NULL);
-          */
-    DEBUG ((EFI_D_INFO, "Info: Installed Pei Memory\n"));
+    DEBUG ((DEBUG_INFO, "Info: Installed Pei Memory\n"));
   }
   ASSERT_EFI_ERROR (Status);
-
 
   // Initialize MMU and Memory HOBs (Resource Descriptor HOBs)
   Status = MemoryPeim (UefiMemoryBase, FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
   if (EFI_ERROR (Status)) {
-    /* TODO MOE: Enable status reporting */
-    /*
-    (*PeiServices)->ReportStatusCode(PeiServices,
-          EFI_PROGRESS_CODE, PEI_MEMORY_ERROR, 0, NULL, NULL);
-          */
-    DEBUG ((EFI_D_ERROR, "Error: Failed to initialize MMU and Memory HOBS\n"));
+    DEBUG ((DEBUG_ERROR, "Error: Failed to initialize MMU and Memory HOBS\n"));
   }
-
   ASSERT_EFI_ERROR (Status);
 
   return Status;

@@ -22,6 +22,11 @@
 
 #define CPU_CACHE_LEVEL_MAX 3
 
+#define MHZ_SCALE_FACTOR 1000000
+
+#define CACHE_SIZE(x)   (UINT16) (0x8000 | (x) >> 16)
+#define CACHE_SIZE_2(x) (0x80000000 | (x) >> 16)
+
 #define TYPE4_ADDITIONAL_STRINGS                                  \
   "SOCKET 0\0"                       /* socket type */            \
   "Ampere Computing\0"               /* manufacturer */           \
@@ -299,7 +304,7 @@ GetCacheConfig (
   BOOLEAN SupportWB;
   BOOLEAN SupportWT;
 
-  Val = Aarch64ReadCCSIDRReg (Level);
+  Val = AArch64ReadCCSIDRReg (Level);
   SupportWT = (Val & (1 << 31)) ? TRUE : FALSE;
   SupportWB = (Val & (1 << 30)) ? TRUE : FALSE;
   if (SupportWT && SupportWB) {
@@ -322,12 +327,13 @@ GetStringPackSize (
   UINTN     StrCount;
   CHAR8     *StrStart;
 
-  if (*StringPack == 0 && *(StringPack + 1) == 0 ) {
+  if ((*StringPack == 0) && (*(StringPack + 1) == 0)) {
     return 0;
   }
+
   // String section ends in double-null (0000h)
   for (StrCount = 0, StrStart = StringPack;
-        (*StrStart != 0 || *(StrStart + 1) != 0); StrStart++, StrCount++) {};
+        ((*StrStart != 0) || (*(StrStart + 1) != 0)); StrStart++, StrCount++) {};
 
   return StrCount + 2; // Included the double NULL
 }
@@ -354,7 +360,7 @@ UpdateStringPack (
       StrIndex++;
     }
     // String section ends in double-null (0000h)
-    if (*StrStart == 0 && *(StrStart + 1) == 0) {
+    if ((*StrStart == 0) && (*(StrStart + 1) == 0)) {
       return EFI_NOT_FOUND;
     }
   }
@@ -369,7 +375,7 @@ UpdateStringPack (
 
   // Replace the String if length matched
   // OR this is the last string
-  if (InputStrLen == TargetStrLen || !BufferSize) {
+  if (InputStrLen == TargetStrLen || (BufferSize == 0)) {
     CopyMem (StrStart, String, InputStrLen);
   }
   // Otherwise, buffer is needed to apply new string
@@ -389,7 +395,6 @@ UpdateStringPack (
   return EFI_SUCCESS;
 }
 
-#define MHZ_SCALE_FACTOR 1000000
 STATIC
 VOID
 UpdateSmbiosType4 (
@@ -401,14 +406,13 @@ UpdateSmbiosType4 (
   CHAR8                       *StringPack;
   SMBIOS_TABLE_TYPE4          *Table;
 
-  ASSERT (PlatformHob);
+  ASSERT (PlatformHob != NULL);
 
   for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
     if (Index == 0) {
       Table = &mArmDefaultType4Sk0.Base;
       StringPack = mArmDefaultType4Sk0.Strings;
-    }
-    else {
+    } else {
       Table = &mArmDefaultType4Sk1.Base;
       StringPack = mArmDefaultType4Sk1.Strings;
     }
@@ -427,17 +431,16 @@ UpdateSmbiosType4 (
       if (PlatformHob->TurboCapability[Index]) {
         Table->MaxSpeed = (UINT16) (PlatformHob->TurboFrequency[Index]);
       }
-    }
-    else {
+    } else {
       Table->CurrentSpeed = 0;
       Table->ExternalClock = 0;
       Table->MaxSpeed = 0;
       Table->Status = 0;
     }
 
-    *((UINT32*)&Table->ProcessorId) = (UINT32) ArmReadMidr ();
-    *((UINT32*)&Table->ProcessorId + 1) = 0;
-    *((UINT8*)&Table->Voltage) = 0x80 | PlatformHob->CoreVoltage[Index] / 100;
+    *((UINT32*) &Table->ProcessorId) = (UINT32) ArmReadMidr ();
+    *((UINT32*) &Table->ProcessorId + 1) = 0;
+    *((UINT8*) &Table->Voltage) = 0x80 | PlatformHob->CoreVoltage[Index] / 100;
 
     /* Type 4 Part number */
     if (Table->EnabledCoreCount) {
@@ -455,9 +458,6 @@ UpdateSmbiosType4 (
   }
 }
 
-#define CACHE_SIZE(x) (UINT16) (0x8000 | (x) >> 16)
-#define CACHE_SIZE_2(x) (0x80000000 | (x) >> 16)
-
 STATIC
 VOID
 UpdateSmbiosType7 (
@@ -467,13 +467,12 @@ UpdateSmbiosType7 (
   UINTN                       Index;
   SMBIOS_TABLE_TYPE7          *Table;
 
-  ASSERT(PlatformHob);
+  ASSERT (PlatformHob != NULL);
 
   for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
     if (Index == 0) {
       Table = &mArmDefaultType7Sk0L1.Base;
-    }
-    else {
+    } else {
       Table = &mArmDefaultType7Sk1L1.Base;
     }
 
@@ -486,8 +485,7 @@ UpdateSmbiosType7 (
 
     if (Index == 0) {
       Table = &mArmDefaultType7Sk0L2.Base;
-    }
-    else {
+    } else {
       Table = &mArmDefaultType7Sk1L2.Base;
     }
 
@@ -500,8 +498,7 @@ UpdateSmbiosType7 (
 
     if (Index == 0) {
       Table = &mArmDefaultType7Sk0L3.Base;
-    }
-    else {
+    } else {
       Table = &mArmDefaultType7Sk1L3.Base;
     }
 
@@ -567,22 +564,25 @@ InstallType7Structures (
     if ( Index == 0) {
       Tables = DefaultType7Sk0Tables;
       Type4Table = &mArmDefaultType4Sk0.Base;
-    }
-    else {
+    } else {
       Tables = DefaultType7Sk1Tables;
       Type4Table = &mArmDefaultType4Sk1.Base;
     }
 
     for (Level = 0; Level < CPU_CACHE_LEVEL_MAX; Level++ ) {
-      SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*)Tables[Level])->Handle;
+      SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*) Tables[Level])->Handle;
       Status = Smbios->Add (
                          Smbios,
                          NULL,
                          &SmbiosHandle,
-                         (EFI_SMBIOS_TABLE_HEADER*)Tables[Level]
-                       );
+                         (EFI_SMBIOS_TABLE_HEADER*) Tables[Level]
+                         );
       if (EFI_ERROR (Status)) {
-        DEBUG ((EFI_D_ERROR, "adding SMBIOS type 7 Socket %d L%d cache failed\n", Index, Level + 1));
+        DEBUG ((DEBUG_ERROR,
+                "%a: adding SMBIOS type 7 Socket %d L%d cache failed\n",
+                __FUNCTION__,
+                Index,
+                Level + 1));
         //stop adding rather than continuing
         return Status;
       }
@@ -590,11 +590,9 @@ InstallType7Structures (
       // Save handle to Type 4
       if (Level == 0) { //L1 cache
         Type4Table->L1CacheHandle = SmbiosHandle;
-      }
-      else if (Level == 1) { //L2 cache
+      } else if (Level == 1) { //L2 cache
         Type4Table->L2CacheHandle = SmbiosHandle;
-      }
-      else if (Level == 2) { //L3 cache
+      } else if (Level == 2) { //L3 cache
         Type4Table->L3CacheHandle = SmbiosHandle;
       }
     }
@@ -620,15 +618,15 @@ InstallStructures (
   UINTN               Index;
 
   for (Index = 0; Index < GetNumberSupportedSockets () && DefaultTables[Index] != NULL; Index++) {
-    SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*)DefaultTables[Index])->Handle;
+    SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*) DefaultTables[Index])->Handle;
     Status = Smbios->Add (
                        Smbios,
                        NULL,
                        &SmbiosHandle,
-                       (EFI_SMBIOS_TABLE_HEADER*)DefaultTables[Index]
-                     );
+                       (EFI_SMBIOS_TABLE_HEADER*) DefaultTables[Index]
+                       );
     if (EFI_ERROR (Status)) {
-      DEBUG ((EFI_D_ERROR, "adding %d failed\n", Index));
+      DEBUG ((DEBUG_ERROR, "%a: adding %d failed\n", __FUNCTION__, Index));
 
       //stop adding rather than continuing
       return Status;
@@ -649,7 +647,7 @@ InstallAllStructures (
   IN EFI_SMBIOS_PROTOCOL  *Smbios
   )
 {
-  EFI_STATUS                            Status        = EFI_SUCCESS;
+  EFI_STATUS Status = EFI_SUCCESS;
 
   UpdateSmbiosInfo ();
 
@@ -680,17 +678,17 @@ SmbiosCpuDxeEntry (
   Status = gBS->LocateProtocol (
                   &gEfiSmbiosProtocolGuid,
                   NULL,
-                  (VOID**)&Smbios
-                );
+                  (VOID**) &Smbios
+                  );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Unable to locate SMBIOS Protocol"));
-    ASSERT(FALSE);
+    DEBUG ((DEBUG_ERROR, "Unable to locate SMBIOS Protocol"));
+    ASSERT_EFI_ERROR (Status);
     return Status;
   }
 
   Status = InstallAllStructures (Smbios);
-  DEBUG ((EFI_D_ERROR, "SmbiosCpu install: %x\n", Status));
+  DEBUG ((DEBUG_ERROR, "SmbiosCpu install: %r\n", Status));
 
   return Status;
 }

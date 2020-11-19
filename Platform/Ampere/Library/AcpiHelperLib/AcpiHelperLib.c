@@ -86,7 +86,7 @@ AcpiDSDTUpdateChecksum (
     DsdtHdr = (EFI_ACPI_SDT_HEADER *) FadtPtr->XDsdt;
   }
 
-  if (DsdtHdr) {
+  if (DsdtHdr != NULL) {
     AcpiTableChecksum ((UINT8 *) DsdtHdr, DsdtHdr->Length);
   }
 }
@@ -133,7 +133,7 @@ AcpiDSDTSetNodeStatusValue (
 
   Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID**) &AcpiTableProtocol);
   if (EFI_ERROR(Status)) {
-    DEBUG ((EFI_D_ERROR, "Unable to locate ACPI table protocol\n"));
+    DEBUG ((DEBUG_ERROR, "Unable to locate ACPI table protocol\n"));
     return Status;
   }
 

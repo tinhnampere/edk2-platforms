@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _GENERIC_WATCHDOG_H
-#define _GENERIC_WATCHDOG_H
+#ifndef _GENERIC_WATCHDOG_H_
+#define _GENERIC_WATCHDOG_H_
 
 #include <Protocol/WatchdogTimer.h>
 
@@ -18,10 +18,12 @@
 /**
   The function to install Watchdog timer protocol to the system
 
-  @retval  Return         EFI_SUCCESS if install Watchdog timer protoco successfully.
+  @retval  Return         EFI_SUCCESS if install Watchdog timer protocol successfully.
  **/
 EFI_STATUS
 EFIAPI
-WatchdogTimerInstallProtocol (EFI_WATCHDOG_TIMER_ARCH_PROTOCOL **);
+WatchdogTimerInstallProtocol (
+  EFI_WATCHDOG_TIMER_ARCH_PROTOCOL **WatchdogTimerProtocol
+  );
 
-#endif /* _GENERIC_WATCHDOG_H */
+#endif /* _GENERIC_WATCHDOG_H_ */

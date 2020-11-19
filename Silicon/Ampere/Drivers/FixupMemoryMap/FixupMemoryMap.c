@@ -38,17 +38,17 @@ OnExitBootServices(
   EFI_MEMORY_DESCRIPTOR         *Desc;
   UINTN                         Index;
 
-  DEBUG ((EFI_D_INFO, "%a:%d +\n", __FUNCTION__, __LINE__));
+  DEBUG ((DEBUG_INFO, "%a:%d +\n", __FUNCTION__, __LINE__));
 
   Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_INFO, "%a:%d -\n", __FUNCTION__, __LINE__));
+    DEBUG ((DEBUG_INFO, "%a:%d -\n", __FUNCTION__, __LINE__));
     return;
   }
 
   Status = EfiGetSystemConfigurationTable (&gEfiMemoryAttributesTableGuid, (VOID **) &MemoryAttributesTable);
   if (EFI_ERROR (Status) || MemoryAttributesTable == NULL) {
-    DEBUG ((EFI_D_INFO, "%a:%d -\n", __FUNCTION__, __LINE__));
+    DEBUG ((DEBUG_INFO, "%a:%d -\n", __FUNCTION__, __LINE__));
     return;
   }
 
@@ -62,13 +62,13 @@ OnExitBootServices(
     if (!(Desc->Attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))) {
       Desc->Attribute |= EFI_MEMORY_XP;
       mCpu->SetMemoryAttributes (mCpu, Desc->PhysicalStart, EFI_PAGES_TO_SIZE (Desc->NumberOfPages), Desc->Attribute);
-      DEBUG ((EFI_D_INFO, "%a: Set memory attribute, Desc->PhysicalStart=0x%X, size=%d, Attributes=0x%X\n",
+      DEBUG ((DEBUG_INFO, "%a: Set memory attribute, Desc->PhysicalStart=0x%X, size=%d, Attributes=0x%X\n",
                           __FUNCTION__, Desc->PhysicalStart, EFI_PAGES_TO_SIZE (Desc->NumberOfPages), Desc->Attribute));
     }
     Desc = (EFI_MEMORY_DESCRIPTOR *)((UINT64) Desc + MemoryAttributesTable->DescriptorSize);
   }
 
-  DEBUG ((EFI_D_INFO, "%a:%d -\n", __FUNCTION__, __LINE__));
+  DEBUG ((DEBUG_INFO, "%a:%d -\n", __FUNCTION__, __LINE__));
 }
 
 EFI_STATUS

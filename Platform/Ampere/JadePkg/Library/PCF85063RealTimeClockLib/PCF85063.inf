@@ -17,7 +17,7 @@
 [Sources.common]
   PCF85063.c
   RtcSystemLib.c
-  Common.h
+  PCF85063.h
 
 [Packages]
   ArmPkg/ArmPkg.dec

@@ -102,7 +102,8 @@ typedef struct {
 
 } PCIE_IFR_INFO;
 
-#define PCIE_SCREEN_PRIVATE_FROM_THIS(a)  CR (a, PCIE_SCREEN_PRIVATE_DATA, ConfigAccess, PCIE_SCREEN_PRIVATE_DATA_SIGNATURE)
+#define PCIE_SCREEN_PRIVATE_FROM_THIS(a)  \
+  CR (a, PCIE_SCREEN_PRIVATE_DATA, ConfigAccess, PCIE_SCREEN_PRIVATE_DATA_SIGNATURE)
 
 #pragma pack(1)
 
@@ -115,5 +116,23 @@ typedef struct {
 } HII_VENDOR_DEVICE_PATH;
 
 #pragma pack()
+
+UINT8
+PcieRCDevMapLoDefaultSetting (
+  IN UINTN RCIndex,
+  IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
+  );
+
+UINT8
+PcieRCDevMapHiDefaultSetting (
+  IN UINTN RCIndex,
+  IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
+  );
+
+BOOLEAN
+PcieRCActiveDefaultSetting (
+  IN UINTN RCIndex,
+  IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
+  );
 
 #endif /* _PCIE_SCREEN_H_ */

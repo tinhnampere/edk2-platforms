@@ -20,7 +20,7 @@
   SUPPORTED_ARCHITECTURES        = AARCH64
   BUILD_TARGETS                  = DEBUG|RELEASE
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = Platform/Ampere/JadePkg/JadeLinuxboot.fdf
+  FLASH_DEFINITION               = Platform/Ampere/JadePkg/JadeLinuxBoot.fdf
 
   #
   # Defines for default states.  These can be changed on the command line.
@@ -31,7 +31,7 @@
   DEFINE EDK2_SKIP_PEICORE       = TRUE
 
 # Include default Ampere Platform DSC file
-!include Silicon/Ampere/AmpereAltraPkg/Ac01LinuxbootPkg.dsc.inc
+!include Silicon/Ampere/AmpereAltraPkg/Ac01LinuxBootPkg.dsc.inc
 
 #
 # Specific Platform Library

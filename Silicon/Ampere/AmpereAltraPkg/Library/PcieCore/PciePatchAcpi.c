@@ -66,12 +66,12 @@ typedef struct ResourceEntry {
 } RESOURCE;
 
 STATIC QWordMemory Qmem[] = {
-  {AC01_PCIE_RCA2_QMEM},
-  {AC01_PCIE_RCA3_QMEM},
-  {AC01_PCIE_RCB0_QMEM},
-  {AC01_PCIE_RCB1_QMEM},
-  {AC01_PCIE_RCB2_QMEM},
-  {AC01_PCIE_RCB3_QMEM}
+  { AC01_PCIE_RCA2_QMEM },
+  { AC01_PCIE_RCA3_QMEM },
+  { AC01_PCIE_RCB0_QMEM },
+  { AC01_PCIE_RCB1_QMEM },
+  { AC01_PCIE_RCB2_QMEM },
+  { AC01_PCIE_RCB3_QMEM }
 };
 
 typedef struct {
@@ -108,23 +108,25 @@ typedef struct {
 
 typedef struct {
   EFI_ACPI_6_0_IO_REMAPPING_TABLE           Iort;
-  AC01_ITS_NODE                            ItsNode[2];
-  AC01_RC_NODE                             RcNode[2];
-  AC01_SMMU_NODE                           SmmuNode[2];
+  AC01_ITS_NODE                             ItsNode[2];
+  AC01_RC_NODE                              RcNode[2];
+  AC01_SMMU_NODE                            SmmuNode[2];
 } AC01_IO_REMAPPING_STRUCTURE;
 
-#define FIELD_OFFSET(type, name)            __builtin_offsetof(type, name)
+#define FIELD_OFFSET(type, name)            __builtin_offsetof (type, name)
 #define __AC01_ID_MAPPING(In, Num, Out, Ref, Flags)    \
-  {                                                     \
-    In,                                                 \
-    Num,                                                \
-    Out,                                                \
-    FIELD_OFFSET(AC01_IO_REMAPPING_STRUCTURE, Ref),    \
-    Flags                                               \
+  {                                                    \
+    In,                                                \
+    Num,                                               \
+    Out,                                               \
+    FIELD_OFFSET (AC01_IO_REMAPPING_STRUCTURE, Ref),   \
+    Flags                                              \
   }
 
 EFI_STATUS
-EFIAPI AcpiPatchPciMem32 (INT8 *PciSegEnabled
+EFIAPI
+AcpiPatchPciMem32 (
+  INT8 *PciSegEnabled
   )
 {
   EFI_ACPI_SDT_PROTOCOL             *AcpiTableProtocol;
@@ -161,7 +163,7 @@ EFIAPI AcpiPatchPciMem32 (INT8 *PciSegEnabled
     }
 
     /* DSDT PCI devices to use Physical segment */
-    AsciiSPrint (Buffer, sizeof(Buffer), "\\_SB.PCI%x._CRS.RBUF", PciSegEnabled[Idx]);
+    AsciiSPrint (Buffer, sizeof (Buffer), "\\_SB.PCI%x._CRS.RBUF", PciSegEnabled[Idx]);
     Status = AcpiTableProtocol->FindPath (TableHandle, (VOID *) Buffer, &SegHandle);
     if (EFI_ERROR (Status)) {
       continue;
@@ -191,7 +193,7 @@ EFIAPI AcpiPatchPciMem32 (INT8 *PciSegEnabled
         KB += 5; /* Point to Resource type */
         Rs = (RESOURCE *) KB;
         Mem32 = 0;
-        while (!Mem32 && ((KB - B) < DataSize)) {
+        while ((Mem32 == 0) && ((KB - B) < DataSize)) {
           if (Rs->ResourceType == ACPI_RESOURCE_NAME_ADDRESS16) {
             KB += (Rs->ResourceSize + 3); /* Type + Size */
             Rs = (RESOURCE *) KB;
@@ -207,7 +209,7 @@ EFIAPI AcpiPatchPciMem32 (INT8 *PciSegEnabled
             Rs = (RESOURCE *) KB;
           }
         }
-        if (Mem32) {
+        if (Mem32 != 0) {
           Status = AcpiTableProtocol->SetOption (SegHandle,
                                 Ix, (VOID *) B, DataSize);
         }
@@ -221,7 +223,11 @@ EFIAPI AcpiPatchPciMem32 (INT8 *PciSegEnabled
   return Status;
 }
 
-VOID ConstructMcfg (VOID *McfgPtr, INT8 *PciSegEnabled, UINT32 McfgCount
+VOID
+ConstructMcfg (
+  VOID *McfgPtr,
+  INT8 *PciSegEnabled,
+  UINT32 McfgCount
   )
 {
   EFI_MCFG_TABLE_CONFIG            McfgHeader = {
@@ -249,20 +255,22 @@ VOID ConstructMcfg (VOID *McfgPtr, INT8 *PciSegEnabled, UINT32 McfgCount
   VOID                             *TMcfgPtr = McfgPtr;
   AC01_RC                          *Rc;
 
-  memcpy (TMcfgPtr, &McfgHeader, sizeof(EFI_MCFG_TABLE_CONFIG));
-  TMcfgPtr += sizeof(EFI_MCFG_TABLE_CONFIG);
+  memcpy (TMcfgPtr, &McfgHeader, sizeof (EFI_MCFG_TABLE_CONFIG));
+  TMcfgPtr += sizeof (EFI_MCFG_TABLE_CONFIG);
   for (Idx = 0; PciSegEnabled[Idx] != -1; Idx++) {
     Rc = GetRCList (PciSegEnabled[Idx]); /* Logical */
     TMcfg.ullBaseAddress = Rc->MmcfgAddr;
     TMcfg.usSegGroupNum = Rc->Logical;
-    memcpy (TMcfgPtr, &TMcfg, sizeof(EFI_MCFG_CONFIG_STRUCTURE));
-    TMcfgPtr += sizeof(EFI_MCFG_CONFIG_STRUCTURE);
+    memcpy (TMcfgPtr, &TMcfg, sizeof (EFI_MCFG_CONFIG_STRUCTURE));
+    TMcfgPtr += sizeof (EFI_MCFG_CONFIG_STRUCTURE);
   }
 }
 
 EFI_STATUS
-EFIAPI AcpiInstallMcfg (
-  INT8 *PciSegEnabled)
+EFIAPI
+AcpiInstallMcfg (
+  INT8 *PciSegEnabled
+  )
 {
   UINT32                            RcCount, McfgCount;
   EFI_ACPI_TABLE_PROTOCOL           *AcpiTableProtocol;
@@ -271,26 +279,33 @@ EFIAPI AcpiInstallMcfg (
   VOID                              *McfgPtr;
 
   if (IsAcpiInstalled (EFI_ACPI_6_1_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE)) {
-    DEBUG ((EFI_D_INFO, "MCFG table is already installed.  Skipping...\n"));
+    DEBUG ((DEBUG_INFO, "MCFG table is already installed.  Skipping...\n"));
     return EFI_ABORTED;
   }
 
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid,
-                  NULL, (VOID **) &AcpiTableProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiTableProtocolGuid,
+                  NULL,
+                  (VOID **) &AcpiTableProtocol
+                  );
   if (EFI_ERROR (Status)) {
     PCIE_ERR ("MCFG: Unable to locate ACPI table entry\n");
     return Status;
   }
   for (RcCount = 0; PciSegEnabled[RcCount] != -1; RcCount++)
     ;
-  McfgCount = sizeof(EFI_MCFG_TABLE_CONFIG) + sizeof(EFI_MCFG_CONFIG_STRUCTURE) * RcCount;
+  McfgCount = sizeof (EFI_MCFG_TABLE_CONFIG) + sizeof (EFI_MCFG_CONFIG_STRUCTURE) * RcCount;
   McfgPtr = AllocateZeroPool (McfgCount);
   if (McfgPtr == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
   ConstructMcfg (McfgPtr, PciSegEnabled, McfgCount);
   Status = AcpiTableProtocol->InstallAcpiTable (
-                  AcpiTableProtocol, McfgPtr, McfgCount, &TableKey);
+                                AcpiTableProtocol,
+                                McfgPtr,
+                                McfgCount,
+                                &TableKey
+                                );
   if (EFI_ERROR (Status)) {
     PCIE_ERR ("MCFG: Unable to install MCFG table entry\n");
   }
@@ -298,23 +313,29 @@ EFIAPI AcpiInstallMcfg (
   return Status;
 }
 
-STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
-      UINT32 SmmuPmuAgentCount, UINT32 HeaderCount, INT8 *PciSegEnabled
+STATIC
+VOID
+ConstructIort (
+  VOID *IortPtr,
+  UINT32 RcCount,
+  UINT32 SmmuPmuAgentCount,
+  UINT32 HeaderCount,
+  INT8 *PciSegEnabled
   )
 {
   EFI_ACPI_6_0_IO_REMAPPING_TABLE   TIort = {
-    .Header = __ACPI_HEADER(EFI_ACPI_6_0_IO_REMAPPING_TABLE_SIGNATURE,
+    .Header = __ACPI_HEADER (EFI_ACPI_6_0_IO_REMAPPING_TABLE_SIGNATURE,
                AC01_IO_REMAPPING_STRUCTURE,
                EFI_ACPI_IO_REMAPPING_TABLE_REVISION),
     .NumNodes = (3 * RcCount) + SmmuPmuAgentCount,
-    .NodeOffset = sizeof(EFI_ACPI_6_0_IO_REMAPPING_TABLE),
+    .NodeOffset = sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE),
     0
   };
 
   AC01_ITS_NODE                    TItsNode = {
     .Node = {
           EFI_ACPI_IORT_TYPE_ITS_GROUP,
-          sizeof(EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE) + 4,
+          sizeof (EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE) + 4,
           0x0,
           0x0,
           0x0,
@@ -328,11 +349,11 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
     {
       {
         EFI_ACPI_IORT_TYPE_ROOT_COMPLEX,
-        sizeof(AC01_RC_NODE),
+        sizeof (AC01_RC_NODE),
         0x1,
         0x0,
         0x1,
-        FIELD_OFFSET(AC01_RC_NODE, RcIdMapping),
+        FIELD_OFFSET (AC01_RC_NODE, RcIdMapping),
       },
       EFI_ACPI_IORT_MEM_ACCESS_PROP_CCA,
       0x0,
@@ -342,18 +363,18 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
       EFI_ACPI_IORT_ROOT_COMPLEX_ATS_UNSUPPORTED,
       .PciSegmentNumber = 0,
     },
-    __AC01_ID_MAPPING(0x0, 0xffff, 0x0, SmmuNode, 0),
+    __AC01_ID_MAPPING (0x0, 0xffff, 0x0, SmmuNode, 0),
   };
 
   AC01_SMMU_NODE                   TSmmuNode = {
     {
        {
           EFI_ACPI_IORT_TYPE_SMMUv3,
-          sizeof(AC01_SMMU_NODE),
+          sizeof (AC01_SMMU_NODE),
           0x2,  /* Revision */
           0x0,
           0x2,  /* Mapping Count */
-          FIELD_OFFSET(AC01_SMMU_NODE, InterruptMsiMapping),
+          FIELD_OFFSET (AC01_SMMU_NODE, InterruptMsiMapping),
        },
        .Base = 0,
        EFI_ACPI_IORT_SMMUv3_FLAG_COHAC_OVERRIDE,
@@ -367,13 +388,14 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
        0,
        .DeviceIdMapping = 1,
     },
-    __AC01_ID_MAPPING(0x0, 0xffff, 0, SmmuNode, 0),
-    __AC01_ID_MAPPING(0x0, 0x1, 0, SmmuNode, 1),
+    __AC01_ID_MAPPING (0x0, 0xffff, 0, SmmuNode, 0),
+    __AC01_ID_MAPPING (0x0, 0x1, 0, SmmuNode, 1),
   };
+
   EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE   TPmcgNode = {
     {
       EFI_ACPI_IORT_TYPE_PMCG,
-      sizeof(EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE),
+      sizeof (EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE),
       0x1,
       0x0,
       0x0,
@@ -384,6 +406,7 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
     0, /* Node reference. Need to be filled */
     0, /* Page 1 Base. Need to be filled. */
   };
+
   UINT32                            Idx, Idx1, SmmuNodeOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
   VOID                              *TIortPtr = IortPtr, *SmmuPtr, *PmcgPtr;
   UINT32                            ItsOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
@@ -391,17 +414,17 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
   UINTN                             NumTbuPmu;
 
   TIort.Header.Length = HeaderCount;
-  memcpy (TIortPtr, &TIort, sizeof(EFI_ACPI_6_0_IO_REMAPPING_TABLE));
-  TIortPtr += sizeof(EFI_ACPI_6_0_IO_REMAPPING_TABLE);
+  memcpy (TIortPtr, &TIort, sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE));
+  TIortPtr += sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE);
   for (Idx = 0; Idx < RcCount; Idx++) {
     ItsOffset[Idx] = TIortPtr - IortPtr;
     TItsNode.ItsIdentifier = PciSegEnabled[Idx]; /* Physical */
-    memcpy (TIortPtr, &TItsNode, sizeof(AC01_ITS_NODE));
-    TIortPtr += sizeof(AC01_ITS_NODE);
+    memcpy (TIortPtr, &TItsNode, sizeof (AC01_ITS_NODE));
+    TIortPtr += sizeof (AC01_ITS_NODE);
   }
 
-  SmmuPtr = TIortPtr + RcCount * sizeof(AC01_RC_NODE);
-  PmcgPtr = SmmuPtr + RcCount * sizeof(AC01_SMMU_NODE);
+  SmmuPtr = TIortPtr + RcCount * sizeof (AC01_RC_NODE);
+  PmcgPtr = SmmuPtr + RcCount * sizeof (AC01_SMMU_NODE);
   for (Idx = 0; Idx < RcCount; Idx++) {
     SmmuNodeOffset[Idx] = SmmuPtr - IortPtr;
     Rc = GetRCList (PciSegEnabled[Idx]); /* Physical RC */
@@ -410,8 +433,8 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
     TSmmuNode.InterruptMsiMapping.OutputReference = ItsOffset[Idx];
     TSmmuNode.InterruptMsiMappingSingle.OutputBase = PciSegEnabled[Idx] << 16;
     TSmmuNode.InterruptMsiMappingSingle.OutputReference = ItsOffset[Idx];
-    memcpy (SmmuPtr, &TSmmuNode, sizeof(AC01_SMMU_NODE));
-    SmmuPtr += sizeof(AC01_SMMU_NODE);
+    memcpy (SmmuPtr, &TSmmuNode, sizeof (AC01_SMMU_NODE));
+    SmmuPtr += sizeof (AC01_SMMU_NODE);
 
     if (!SmmuPmuAgentCount) {
       continue;
@@ -430,18 +453,23 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
         case 0:
           TPmcgNode.Base += 0x40000;
           break;
+
         case 1:
           TPmcgNode.Base += 0x60000;
           break;
+
         case 2:
           TPmcgNode.Base += 0xA0000;
           break;
+
         case 3:
           TPmcgNode.Base += 0xE0000;
           break;
+
         case 4:
           TPmcgNode.Base += 0x100000;
           break;
+
         case 5:
           TPmcgNode.Base += 0x140000;
           break;
@@ -451,30 +479,39 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
         case 0:
           TPmcgNode.Base += 0x40000;
           break;
+
         case 1:
           TPmcgNode.Base += 0x60000;
           break;
+
         case 2:
           TPmcgNode.Base += 0xA0000;
           break;
+
         case 3:
           TPmcgNode.Base += 0xE0000;
           break;
+
         case 4:
           TPmcgNode.Base += 0x120000;
           break;
+
         case 5:
           TPmcgNode.Base += 0x160000;
           break;
+
         case 6:
           TPmcgNode.Base += 0x180000;
           break;
+
         case 7:
           TPmcgNode.Base += 0x1C0000;
           break;
+
         case 8:
           TPmcgNode.Base += 0x200000;
           break;
+
         case 9:
           TPmcgNode.Base += 0x240000;
           break;
@@ -494,20 +531,22 @@ STATIC VOID ConstructIort (VOID *IortPtr, UINT32 RcCount,
     TPmcgNode.Page1Base = Rc->TcuAddr + 0x12000;
     TPmcgNode.NodeReference = SmmuNodeOffset[Idx];
     TPmcgNode.OverflowInterruptGsiv = gTcuPmuIrqArray[PciSegEnabled[Idx]];
-    memcpy (PmcgPtr, &TPmcgNode, sizeof(TPmcgNode));
+    memcpy (PmcgPtr, &TPmcgNode, sizeof (TPmcgNode));
     PmcgPtr += sizeof (TPmcgNode);
   }
 
   for (Idx = 0; Idx < RcCount; Idx++) {
     TRcNode.Node.PciSegmentNumber = GetRCList (PciSegEnabled[Idx])->Logical; /* Logical */
     TRcNode.RcIdMapping.OutputReference = SmmuNodeOffset[Idx];
-    memcpy (TIortPtr, &TRcNode, sizeof(AC01_RC_NODE));
-    TIortPtr += sizeof(AC01_RC_NODE);
+    memcpy (TIortPtr, &TRcNode, sizeof (AC01_RC_NODE));
+    TIortPtr += sizeof (AC01_RC_NODE);
   }
 }
 
 EFI_STATUS
-EFIAPI AcpiInstallIort (INT8 *PciSegEnabled
+EFIAPI
+AcpiInstallIort (
+  INT8 *PciSegEnabled
   )
 {
   UINT32                            RcCount, SmmuPmuAgentCount, TotalCount;
@@ -517,12 +556,15 @@ EFIAPI AcpiInstallIort (INT8 *PciSegEnabled
   EFI_ACPI_TABLE_PROTOCOL           *AcpiTableProtocol;
 
   if (IsAcpiInstalled (EFI_ACPI_6_0_IO_REMAPPING_TABLE_SIGNATURE)) {
-    DEBUG ((EFI_D_INFO, "IORT table is already installed.  Skipping...\n"));
+    DEBUG ((DEBUG_INFO, "IORT table is already installed.  Skipping...\n"));
     return EFI_ABORTED;
   }
 
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid,
-                  NULL, (VOID **) &AcpiTableProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiTableProtocolGuid,
+                  NULL,
+                  (VOID **) &AcpiTableProtocol
+                  );
   if (EFI_ERROR (Status)) {
     PCIE_ERR ("IORT: Unable to locate ACPI table entry\n");
     return Status;
@@ -541,8 +583,8 @@ EFIAPI AcpiInstallIort (INT8 *PciSegEnabled
     SmmuPmuAgentCount = 0;
   }
 
-  TotalCount = sizeof(EFI_ACPI_6_0_IO_REMAPPING_TABLE) +
-        RcCount * (sizeof(AC01_ITS_NODE) + sizeof(AC01_RC_NODE) + sizeof(AC01_SMMU_NODE)) +
+  TotalCount = sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE) +
+        RcCount * (sizeof (AC01_ITS_NODE) + sizeof (AC01_RC_NODE) + sizeof (AC01_SMMU_NODE)) +
         SmmuPmuAgentCount * sizeof (EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE);
 
   IortPtr = AllocateZeroPool (TotalCount);
@@ -552,7 +594,11 @@ EFIAPI AcpiInstallIort (INT8 *PciSegEnabled
   ConstructIort (IortPtr, RcCount, SmmuPmuAgentCount, TotalCount, PciSegEnabled);
 
   Status = AcpiTableProtocol->InstallAcpiTable (
-                  AcpiTableProtocol, IortPtr, TotalCount, &TableKey);
+                                AcpiTableProtocol,
+                                IortPtr,
+                                TotalCount,
+                                &TableKey
+                                );
   if (EFI_ERROR (Status)) {
     PCIE_ERR ("IORT: Unable to install IORT table entry\n");
   }
