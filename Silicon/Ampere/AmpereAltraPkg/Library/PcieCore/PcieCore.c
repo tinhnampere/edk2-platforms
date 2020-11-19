@@ -8,10 +8,10 @@
 
 #include <string.h>
 #include <Library/HobLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/PciePhyLib.h>
 #include <Library/PcieBoardLib.h>
 #include <Library/SMProLib.h>
+#include <PlatformInfoHob.h>
 #include "PcieCore.h"
 #include "Pcie.h"
 

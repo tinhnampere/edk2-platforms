@@ -10,10 +10,10 @@
 #include <Library/NVParamLib.h>
 #include <NVParamDef.h>
 #include <Library/HobLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/AmpereCpuLib.h>
 #include "BoardPcieScreen.h"
 #include <Library/PcieBoardLib.h>
+#include <PlatformInfoHob.h>
 #include <Pcie.h>
 
 #ifndef BIT

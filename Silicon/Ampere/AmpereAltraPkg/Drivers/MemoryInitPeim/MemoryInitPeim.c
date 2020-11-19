@@ -19,7 +19,7 @@
 #include <Library/PeimEntryPoint.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/PcdLib.h>
-#include <Library/PlatformInfo.h>
+#include <PlatformInfoHob.h>
 
 
 EFI_STATUS

@@ -19,7 +19,7 @@
 #include <Library/IoLib.h>
 #include <Library/I2CLib.h>
 #include <Library/HobLib.h>
-#include <Library/PlatformInfo.h>
+#include <PlatformInfoHob.h>
 
 #undef I2C_DBG
 #undef I2C_PRINT

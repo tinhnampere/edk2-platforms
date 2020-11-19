@@ -19,9 +19,9 @@
 #include <Library/HiiLib.h>
 #include <Library/DevicePathLib.h>
 #include <Library/HobLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/IoLib.h>
 #include <Library/AmpereCpuLib.h>
+#include <PlatformInfoHob.h>
 #include <Pcie.h>
 
 #include "PlatformInfoHii.h"

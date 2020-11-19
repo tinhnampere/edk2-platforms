@@ -6,13 +6,20 @@
 
 **/
 
-#ifndef _LIB_PLATFORMINFO_H_
-#define _LIB_PLATFORMINFO_H_
+#ifndef _PLATFORM_INFO_HOB_H_
+#define _PLATFORM_INFO_HOB_H_
 
 #include <Platform/Ac01.h>
 
-#define PLATFORM_INFO_HOB_GUID {0xa39d5143, 0x964a, 0x4ebe, {0xb1, 0xa0, 0xcd, 0xd4, 0xa6, 0xf2, 0x18, 0x3a}}
-#define PLATFORM_INFO_HOB_GUID_V2 {0x7f73e372, 0x7183, 0x4022, {0xb3, 0x76, 0x78, 0x30, 0x32, 0x6d, 0x79, 0xb4}}
+#define PLATFORM_INFO_HOB_GUID \
+  { \
+    0xa39d5143, 0x964a, 0x4ebe, { 0xb1, 0xa0, 0xcd, 0xd4, 0xa6, 0xf2, 0x18, 0x3a } \
+  }
+
+#define PLATFORM_INFO_HOB_GUID_V2 \
+  { \
+    0x7f73e372, 0x7183, 0x4022, { 0xb3, 0x76, 0x78, 0x30, 0x32, 0x6d, 0x79, 0xb4} \
+  }
 
 /* DIMM type */
 enum {
@@ -183,56 +190,4 @@ typedef struct {
   UINT32              AHBCId[2];
 } PlatformInfoHob_V2;
 
-/**
-  Get an ASCII string of iPP version
-**/
-VOID
-GetIPPVersion (
-  UINT8 *Buf,
-  UINT32 Length
-  );
-
-/**
-  Set SMpro run-time configuration parameter
-**/
-UINT64
-SMproSetCfg (
-  UINT8 CfgType,
-  UINT32 Param,
-  UINT32 Data
-  );
-
-/**
-  Return Turbo frequency if Turbo is supported
-**/
-UINT64
-GetTurboFreq (
-  VOID
-  );
-
-/**
-  Return TRUE if chip supports Turbo mode
-**/
-BOOLEAN
-GetTurboSupport (
-  VOID
-  );
-
-/**
-  Return TRUE if DVFS is supported
-**/
-BOOLEAN
-GetDVFSSupport (
-  VOID
-  );
-
-/**
-  Return SMPro BMC register value
-**/
-EFI_STATUS
-GetSMProBMCReg (
-  IN UINT8 BmcReg,
-  OUT UINT32 *Value
-  );
-
-#endif /* _LIB_PLATFORMINFO_H_ */
+#endif /* _PLATFORM_INFO_HOB_H_ */

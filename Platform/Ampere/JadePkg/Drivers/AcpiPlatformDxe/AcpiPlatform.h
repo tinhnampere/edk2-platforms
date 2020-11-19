@@ -26,10 +26,9 @@
 #include <Library/HobLib.h>
 
 #include <Library/AcpiHelperLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/AmpereCpuLib.h>
-#include <Library/CpuCommonLib.h>
 #include <Platform/Ac01.h>
+#include <PlatformInfoHob.h>
 #include <AcpiHeader.h>
 
 EFI_STATUS

@@ -29,8 +29,8 @@
 #include <Library/PrintLib.h>
 #include <Library/UefiLib.h>
 #include <Library/HobLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/AmpereCpuLib.h>
+#include <PlatformInfoHob.h>
 
 #include "NVDataStruc.h"
 

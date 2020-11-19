@@ -24,7 +24,6 @@
   ArmLib
   ArmSmcLib
   MemoryAllocationLib
-  PlatformInfoLib
   PL011UartLib
   SerialPortLib
   PcdLib

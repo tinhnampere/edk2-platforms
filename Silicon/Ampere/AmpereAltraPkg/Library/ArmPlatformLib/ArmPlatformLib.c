@@ -18,7 +18,7 @@
 #include <Ppi/TemporaryRamSupport.h>
 #include <Library/PL011UartLib.h>
 #include <Library/SerialPortLib.h>
-#include <Library/PlatformInfo.h>
+#include <PlatformInfoHob.h>
 #include <Platform/Ac01.h>
 
 ARM_CORE_INFO mArmPlatformMpCoreInfoTable[PLATFORM_CPU_MAX_NUM_CORES];

@@ -78,12 +78,10 @@
   PlatformPeiLib|Silicon/Ampere/AmpereAltraPkg/Library/PlatformPeiLib/PlatformPeiLib.inf
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Library/NVParamLib/NVParamLib.inf
   SMProLib|Silicon/Ampere/AmpereAltraPkg/Library/SMProLib/SMProLib.inf
-  PlatformInfoLib|Silicon/Ampere/AmpereAltraPkg/Library/PlatformInfoLib/PlatformInfo.inf
   PciePhyLib|Silicon/Ampere/AmpereAltraPkg/Library/PciePhyLib/PciePhyLib.inf
   SMProLib|Silicon/Ampere/AmpereAltraPkg/Library/SMProLib/SMProLib.inf
   PcieCoreLib|Silicon/Ampere/AmpereAltraPkg/Library/PcieCore/PcieCoreLib.inf
-  AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/CpuLib.inf
-  CpuCommonLib|Silicon/Ampere/AmpereAltraPkg/Library/CpuCommonLib/CpuCommonLib.inf
+  AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/AmpereCpuLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
   DwapbGpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwapbGpioLib/DwapbGpioLib.inf
   PcieBoardLib|Platform/Ampere/JadePkg/Library/Pcie/BoardPcie.inf

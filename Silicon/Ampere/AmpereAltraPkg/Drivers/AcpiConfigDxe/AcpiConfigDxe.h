@@ -29,9 +29,9 @@
 #include <Protocol/AcpiSystemDescriptionTable.h>
 #include <Guid/AcpiConfigFormSet.h>
 #include <Library/AcpiHelperLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/PMProLib.h>
 #include <Library/AcpiHelperLib.h>
+#include <PlatformInfoHob.h>
 #include <AcpiNVDataStruc.h>
 
 //

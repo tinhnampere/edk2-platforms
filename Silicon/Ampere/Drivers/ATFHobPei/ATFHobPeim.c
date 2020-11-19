@@ -14,7 +14,7 @@
 #include <Library/PeimEntryPoint.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/PcdLib.h>
-#include <Library/PlatformInfo.h>
+#include <PlatformInfoHob.h>
 
 STATIC CONST EFI_GUID PlatformInfoHobGUID = PLATFORM_INFO_HOB_GUID;
 STATIC CONST EFI_GUID PlatformInfoHobGUID_V2 = PLATFORM_INFO_HOB_GUID_V2;

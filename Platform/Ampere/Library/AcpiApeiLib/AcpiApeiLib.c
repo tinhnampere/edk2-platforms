@@ -12,7 +12,6 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/UefiLib.h>
 #include <Library/AcpiApeiLib.h>
 #include <Library/IoLib.h>

@@ -16,10 +16,9 @@
 #include <Library/ArmLib.h>
 #include <Library/HobLib.h>
 #include <Library/AmpereCpuLib.h>
-#include <Library/CpuCommonLib.h>
-#include <Library/PlatformInfo.h>
 #include <Guid/SmBios.h>
 #include <Protocol/Smbios.h>
+#include <PlatformInfoHob.h>
 
 #define CPU_CACHE_LEVEL_MAX 3
 

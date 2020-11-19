@@ -47,7 +47,6 @@
   AcpiPccLib
   AcpiHelperLib
   AmpereCpuLib
-  CpuCommonLib
 
 [Pcd]
   gArmPlatformTokenSpaceGuid.PcdCoreCount

@@ -51,7 +51,6 @@
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/TimerLib.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
@@ -61,6 +60,7 @@
 #include <NVParamDef.h>
 #include <NVDataStruc.h>
 #include <Library/PcieBoardLib.h>
+#include <PlatformInfoHob.h>
 #include <Pcie.h>
 
 #ifndef BIT

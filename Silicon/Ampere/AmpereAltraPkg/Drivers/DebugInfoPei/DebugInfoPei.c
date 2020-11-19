@@ -17,12 +17,12 @@
 #include <Library/PeiServicesLib.h>
 #include <Library/PeiServicesTablePointerLib.h>
 #include <Library/PrintLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/SerialPortLib.h>
 #include <Library/HobLib.h>
 #include <Library/NVParamLib.h>
 #include <Library/SMProLib.h>
 #include <Library/AmpereCpuLib.h>
+#include <PlatformInfoHob.h>
 #include <NVParamDef.h>
 #include <Pcie.h>
 

@@ -13,9 +13,9 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Guid/SmBios.h>
-#include <Library/PlatformInfo.h>
 #include <Library/HobLib.h>
 #include <Protocol/Smbios.h>
+#include <PlatformInfoHob.h>
 
 // Type0 Data
 #define VENDOR_TEMPLATE       "Ampere Computing\0"

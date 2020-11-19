@@ -15,10 +15,10 @@
 #include <Library/PcdLib.h>
 #include <Library/HobLib.h>
 #include <Library/FailSafeLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/NVParamLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Protocol/MmCommunication.h>
+#include <Platform/Ac01.h>
 
 #define EFI_MM_MAX_PAYLOAD_U64_E  10
 #define EFI_MM_MAX_PAYLOAD_SIZE   (EFI_MM_MAX_PAYLOAD_U64_E * sizeof(UINT64))

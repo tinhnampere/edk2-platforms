@@ -22,9 +22,6 @@
   ##  @libraryclass  Defines a set of methods to get/set NVParam.
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/NVParamLib.h
 
-  ##  @libraryclass  Defines a set of methods to retrieve platform info.
-  PlatformInfoLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PlatformInfo.h
-
   ##  @libraryclass  Defines a set of methods to communicate with SMPro.
   SMProLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/SMProLib.h
 
@@ -36,9 +33,6 @@
 
   ##  @libraryclass  Defines a set of methods to communicate with secure parition over MM interface.
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/MmCommunicationLib.h
-
-  ##  @libraryclass  Provides functions to retrieve CPU info.
-  CpuCommonLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/CpuCommonLib.h
 
   ##  @libraryclass  Defines a set of methods to initialize PHY
   PHYLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PciePhyLib.h

@@ -23,12 +23,12 @@
 #include <Library/HiiLib.h>
 #include <Library/DevicePathLib.h>
 #include <Library/HobLib.h>
-#include <Library/PlatformInfo.h>
 #include <Library/NVParamLib.h>
 #include <Library/AmpereCpuLib.h>
-#include <NVParamDef.h>
 #include <Protocol/HiiConfigAccess.h>
 #include <Protocol/HiiConfigRouting.h>
+#include <PlatformInfoHob.h>
+#include <NVParamDef.h>
 
 #include "NVDataStruc.h"
 

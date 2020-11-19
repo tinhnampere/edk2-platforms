@@ -34,7 +34,6 @@
   BaseMemoryLib
   HobLib
   AmpereCpuLib
-  CpuCommonLib
 
 [Guids]
 
