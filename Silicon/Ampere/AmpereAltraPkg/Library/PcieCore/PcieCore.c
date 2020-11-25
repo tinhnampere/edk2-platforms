@@ -52,37 +52,64 @@ STATIC INT32 Ac01PcieCsrIn32Serdes (VOID *Addr, UINT32 *Val)
   return 0;
 }
 
-void Ac01PcieMmioRd (unsigned long int addr, unsigned int *val)
+VOID
+Ac01PcieMmioRd (
+  UINT64 Addr,
+  UINT32 *Val
+  )
 {
-  Ac01PcieCsrIn32Serdes((VOID *) addr, (UINT32 *) val);
+  Ac01PcieCsrIn32Serdes ((VOID *) Addr, (UINT32 *) Val);
 }
 
-void Ac01PcieMmioWr (unsigned long int addr, unsigned int val)
+VOID
+Ac01PcieMmioWr (
+  UINT64 Addr,
+  UINT32 Val
+  )
 {
-  Ac01PcieCsrOut32Serdes( (VOID *)addr, (UINT32) val);
+  Ac01PcieCsrOut32Serdes ((VOID *) Addr, (UINT32) Val);
 }
-void Ac01PciePuts_cb(const char *msg)
-{
-  PCIE_PHY_DEBUG ("%a\n", __func__);
-}
-void Ac01PciePutint_cb(unsigned int val)
-{
 
-  PCIE_PHY_DEBUG ("%a\n", __func__);
-}
-void Ac01Pcieputhex_cb(unsigned long val)
+VOID
+Ac01PciePuts(
+  CONST CHAR8 *Msg
+  )
 {
-  PCIE_PHY_DEBUG ("%a\n", __func__);
+  PCIE_PHY_DEBUG ("%a\n", __FUNCTION__);
 }
-int Ac01Pciedebug_print_cb(const char *fmt, ...)
+
+VOID
+Ac01PciePutInt (
+  UINT32 val
+  )
 {
-  PCIE_PHY_DEBUG ("%a\n", __func__);
+  PCIE_PHY_DEBUG ("%a\n", __FUNCTION__);
+}
+
+VOID
+Ac01PciePutHex (
+  UINT64 val
+  )
+{
+  PCIE_PHY_DEBUG ("%a\n", __FUNCTION__);
+}
+
+INT32
+Ac01PcieDebugPrint (
+  CONST CHAR8 *fmt,
+  ...
+  )
+{
+  PCIE_PHY_DEBUG ("%a\n", __FUNCTION__);
   return 0;
 }
 
-void Ac01PcieDelay (unsigned int val)
+VOID
+Ac01PcieDelay (
+  UINT32 Val
+  )
 {
-  MicroSecondDelay(val);
+  MicroSecondDelay (Val);
 }
 
 /**
@@ -627,8 +654,8 @@ INT32 Ac01PcieCoreSetupRC (
   INTN          PcieIndex;
   INTN          TimeOut;
   UINT32        Val;
-  phy_context_t PHYCtx = { 0 };
-  phy_plat_resource_t phy_plat_resource = { 0 };
+  PHY_CONTEXT   PhyCtx = { 0 };
+  PHY_PLAT_RESOURCE PhyPlatResource = { 0 };
   INTN          Ret;
   UINT16        NextExtendedCapabilityOff;
   UINT32        VsecVal;
@@ -637,22 +664,22 @@ INT32 Ac01PcieCoreSetupRC (
 
   if (ReInit == 0) {
     // Initialize SERDES
-    memset(&PHYCtx, sizeof(PHYCtx), 0);
-    PHYCtx.sds_addr = RC->SerdesAddr;
-    PHYCtx.pcie_ctrl_info |= ((RC->Socket & 0x1) << 2);
-    PHYCtx.pcie_ctrl_info |= ((RC->ID & 0x7) << 4);
-    PHYCtx.pcie_ctrl_info |= 0xF << 8;
-    phy_plat_resource.mmio_rd_cb = Ac01PcieMmioRd;
-    phy_plat_resource.mmio_wr_cb = Ac01PcieMmioWr;
-    phy_plat_resource.uDelay_cb = Ac01PcieDelay;
-    phy_plat_resource.puts_cb = Ac01PciePuts_cb;
-    phy_plat_resource.putint_cb = Ac01PciePutint_cb;
-    phy_plat_resource.puthex_cb = Ac01PciePutint_cb;
-    phy_plat_resource.puthex64_cb = Ac01Pcieputhex_cb;
-    phy_plat_resource.debug_print_cb = Ac01Pciedebug_print_cb;
-    PHYCtx.phy_plat_resource = &phy_plat_resource;
+    memset(&PhyCtx, sizeof(PhyCtx), 0);
+    PhyCtx.SdsAddr = RC->SerdesAddr;
+    PhyCtx.PcieCtrlInfo |= ((RC->Socket & 0x1) << 2);
+    PhyCtx.PcieCtrlInfo |= ((RC->ID & 0x7) << 4);
+    PhyCtx.PcieCtrlInfo |= 0xF << 8;
+    PhyPlatResource.MmioRd = Ac01PcieMmioRd;
+    PhyPlatResource.MmioWr = Ac01PcieMmioWr;
+    PhyPlatResource.UsDelay = Ac01PcieDelay;
+    PhyPlatResource.Puts = Ac01PciePuts;
+    PhyPlatResource.PutInt = Ac01PciePutInt;
+    PhyPlatResource.PutHex = Ac01PciePutInt;
+    PhyPlatResource.PutHex64 = Ac01PciePutHex;
+    PhyPlatResource.DebugPrint = Ac01PcieDebugPrint;
+    PhyCtx.PhyPlatResource = &PhyPlatResource;
 
-    Ret = serdes_init_clkrst (&PHYCtx);
+    Ret = SerdesInitClkrst (&PhyCtx);
     if (Ret != PHY_INIT_PASS)
       return -1;
   }

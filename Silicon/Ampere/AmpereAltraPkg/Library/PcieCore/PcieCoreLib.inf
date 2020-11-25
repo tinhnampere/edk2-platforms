@@ -47,7 +47,7 @@
   PcieBoardLib
   UefiBootServicesTableLib
   UefiRuntimeServicesTableLib
-  PHYLib
+  PciePhyLib
   SMProLib
 
 [Pcd]
