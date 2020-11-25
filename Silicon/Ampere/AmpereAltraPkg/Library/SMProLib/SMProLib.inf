@@ -1,0 +1,41 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = SMPro
+  FILE_GUID                      = 844B9D12-984F-4138-BDF1-412A638AAC89
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SMProLib
+
+[Sources.common]
+  SMPro.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  ArmLib
+  ArmPlatformLib
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  TimerLib
+
+[FixedPcd]
+  gAmpereTokenSpaceGuid.PcdSmproDb
+  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
+  gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0
+  gAmpereTokenSpaceGuid.PcdSmproI2cBmcBusAddr
+  gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex

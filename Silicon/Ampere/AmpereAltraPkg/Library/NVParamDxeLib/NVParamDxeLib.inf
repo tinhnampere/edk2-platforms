@@ -1,0 +1,35 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                   = 0x0001001B
+  BASE_NAME                     = NVParamDxeLib
+  FILE_GUID                     = 501DF419-0DC0-43E5-841A-98F645F15ECA
+  MODULE_TYPE                   = DXE_DRIVER
+  VERSION_STRING                = 0.1
+  LIBRARY_CLASS                 = NVParamDxeLib
+  CONSTRUCTOR                   = NVParamLibConstructor
+
+[Sources.common]
+  NVParamDxeLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+
+[Guids]
+  gNVParamMmGuid
+
+[Protocols]
+  gEfiMmCommunicationProtocolGuid

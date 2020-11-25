@@ -1,0 +1,279 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+################################################################################
+#
+# FD Section
+# The [FD] Section is made up of the definition statements and a
+# description of what goes into  the Flash Device Image.  Each FD section
+# defines one flash "device" image.  A flash device image may be one of
+# the following: Removable media bootable image (like a boot floppy
+# image,) an Option ROM image (that would be "flashed" into an add-in
+# card,) a System "Flash"  image (that would be burned into a system's
+# flash) or an Update ("Capsule") image that will be used to update and
+# existing system flash.
+#
+################################################################################
+
+[FD.BL33_JADE_UEFI]
+BaseAddress   = 0x92000000|gArmTokenSpaceGuid.PcdFdBaseAddress  # The base address of the Firmware in NOR Flash.
+Size          = 0x007C0000|gArmTokenSpaceGuid.PcdFdSize         # The size in bytes of the FLASH Device
+ErasePolarity = 1
+
+# This one is tricky, it must be: BlockSize * NumBlocks = Size
+BlockSize     = 0x40000
+NumBlocks     = 0x1F
+
+################################################################################
+#
+# Following are lists of FD Region layout which correspond to the locations of different
+# images within the flash device.
+#
+# Regions must be defined in ascending order and may not overlap.
+#
+# A Layout Region start with a eight digit hex offset (leading "0x" required) followed by
+# the pipe "|" character, followed by the size of the region, also in hex with the leading
+# "0x" characters. Like:
+# Offset|Size
+# PcdOffsetCName|PcdSizeCName
+# RegionType <FV, DATA, or FILE>
+#
+################################################################################
+
+#
+# FV_PEI
+# Offset: 0x00000000
+# Size:   0x000C0000
+#
+0x00000000|0x000C0000
+gAmpereTokenSpaceGuid.PcdFvPeiBaseAddress|gAmpereTokenSpaceGuid.PcdFvPeiSize
+FV = FV_PEI
+
+#
+# NV Variables
+# Offset: 0x000C0000
+# Size:   0x00080000
+# T.B.D
+#
+
+#
+# NVRAM Backup
+# Offset: 0x00140000
+# Size:   0x00080000
+# T.B.D
+#
+
+#
+# FV_MAIN
+# Offset: 0x001C0000
+# Size:   0x00600000
+#
+0x001C0000|0x00600000
+gAmpereTokenSpaceGuid.PcdFvMainCoreBaseAddress|gAmpereTokenSpaceGuid.PcdFvMainCoreSize
+FV = FvMain
+
+################################################################################
+#
+# FV Section
+#
+# [FV] section is used to define what components or modules are placed within a flash
+# device file.  This section also defines order the components and modules are positioned
+# within the image.  The [FV] section consists of define statements, set statements and
+# module statements.
+#
+################################################################################
+
+[FV.FV_PEI]
+BlockSize          = 0x40000
+NumBlocks          = 0x3
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 61C0F511-A691-4F54-974F-B9A42172CE53
+
+APRIORI PEI {
+  INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+  INF MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
+  INF MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
+
+}
+
+  INF ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
+  INF MdeModulePkg/Core/Pei/PeiMain.inf
+  INF UefiCpuPkg/CpuIoPei/CpuIoPei.inf
+  INF ArmPlatformPkg/PlatformPei/PlatformPeim.inf
+  INF Silicon/Ampere/Drivers/ATFHobPei/ATFHobPeim.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MemoryInitPeim/MemoryInitPeim.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationPei/MmCommunicationPei.inf
+  INF ArmPkg/Drivers/CpuPei/CpuPei.inf
+  INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+  INF MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
+  INF MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
+  INF MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
+
+  INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
+
+[FV.FvMain]
+BlockSize          = 0x40000
+NumBlocks          = 0x18
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 5C60F367-A505-419A-859E-2A4FF6CA6FE5
+
+APRIORI DXE {
+  INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
+  INF MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
+  INF MdeModulePkg/Universal/StatusCodeHandler/RuntimeDxe/StatusCodeHandlerRuntimeDxe.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
+}
+
+  INF MdeModulePkg/Core/Dxe/DxeMain.inf
+  INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
+  INF MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
+  INF MdeModulePkg/Universal/StatusCodeHandler/RuntimeDxe/StatusCodeHandlerRuntimeDxe.inf
+
+  #
+  # PI DXE Drivers producing Architectural Protocols (EFI Services)
+  #
+  INF ArmPkg/Drivers/CpuDxe/CpuDxe.inf
+  INF MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+  INF MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
+  INF MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
+!if $(SECURE_BOOT_ENABLE) == TRUE
+  INF SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
+!endif
+  INF MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
+  INF EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
+  INF EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
+  INF EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
+  INF MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
+
+  #
+  # Environment Variables Protocol
+  #
+  INF MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
+
+  #
+  # Multiple Console IO support
+  #
+  INF MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
+  INF MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+  INF MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  INF MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+  INF MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+
+  #
+  # Timer
+  #
+  INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
+  INF MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
+
+  #
+  # ARM GIC Dxe
+  #
+  INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+
+  INF UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+
+  #
+  # FAT filesystem + GPT/MBR partitioning
+  #
+  INF MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
+  INF MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+  INF FatPkg/EnhancedFatDxe/Fat.inf
+  INF MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
+
+  #
+  # SCSI Bus and Disk Driver
+  #
+  INF MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  INF MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+
+  #
+  # SATA Support
+  #
+  INF MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  INF MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  INF MdeModulePkg/Bus/Pci/SataControllerDxe/SataControllerDxe.inf
+  INF MdeModulePkg/Bus/Pci/NonDiscoverablePciDeviceDxe/NonDiscoverablePciDeviceDxe.inf
+
+  #
+  # NVME Support
+  #
+  INF MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
+
+  #
+  # USB Support
+  #
+  INF MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+  INF MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+  INF MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+  INF MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+
+  #
+  # PCIe Support
+  #
+  INF MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+
+  #
+  # UEFI application (Shell Embedded Boot Loader)
+  #
+  INF ShellPkg/Application/Shell/Shell.inf
+!if $(INCLUDE_TFTP_COMMAND) == TRUE
+  INF ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+!endif
+
+  #
+  # Bds
+  #
+  INF MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
+  INF MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
+  INF MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
+  INF MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
+  INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
+  INF MdeModulePkg/Application/UiApp/UiApp.inf
+
+  #
+  # Networking stack
+  #
+!include NetworkPkg/Network.fdf.inc
+
+  #
+  # EFI Byte Code
+  #
+  INF MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
+
+!include Platform/Ampere/FvRules.fdf.inc
