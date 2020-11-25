@@ -88,6 +88,7 @@
   SMProLib|Silicon/Ampere/AmpereAltraPkg/Library/SMProLib/SMProLib.inf
   PMProLib|Silicon/Ampere/AmpereAltraPkg/Library/PMProLib/PMProLib.inf
   PciePhyLib|Silicon/Ampere/AmpereAltraBinPkg/Library/PciePhyLib/PciePhyLib.inf
+  PcieCoreLib|Silicon/Ampere/AmpereAltraPkg/Library/PcieCore/PcieCoreLib.inf
   AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/AmpereCpuLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
   I2CLib|Silicon/Ampere/AmpereAltraPkg/Library/DWI2CLib/I2CLib.inf
@@ -662,6 +663,7 @@
   # PCIe Support
   #
   MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
 
   #
   # Bds
