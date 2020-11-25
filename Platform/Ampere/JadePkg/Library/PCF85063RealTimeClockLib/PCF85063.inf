@@ -1,0 +1,55 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                      = 0x0001001B
+  MODULE_TYPE                      = BASE
+  BASE_NAME                        = RealTimeClockLib
+  FILE_GUID                        = 271569F6-5522-4006-9FF5-F07A59473AAC
+  LIBRARY_CLASS                    = RealTimeClockLib
+  VERSION_STRING                   = 1.0
+
+[Sources.common]
+  PCF85063.c
+  RtcSystemLib.c
+  PCF85063.h
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  MdePkg/MdePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiRuntimeLib
+  UefiLib
+  DebugLib
+  TimerLib
+  DxeServicesTableLib
+  ArmLib
+  SMProLib
+  ArmGenericTimerCounterLib
+  I2CLib
+  DwapbGpioLib
+
+[Guids]
+  gEfiEventVirtualAddressChangeGuid
+
+[FixedPcd]
+  gArmPlatformTokenSpaceGuid.PcdCoreCount
+  gArmPlatformTokenSpaceGuid.PcdClusterCount
+
+  gAmpereTokenSpaceGuid.PcdTurboDefaultFreq
+  gAmpereTokenSpaceGuid.PcdSmproDb
+  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
+  gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0
+  gAmpereTokenSpaceGuid.PcdSmproI2cBmcBusAddr
+  gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex
