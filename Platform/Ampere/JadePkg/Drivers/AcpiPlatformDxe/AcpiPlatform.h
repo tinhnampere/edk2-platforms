@@ -22,5 +22,53 @@
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/PrintLib.h>
 #include <Library/DebugLib.h>
+#include <Library/PcdLib.h>
+#include <Library/HobLib.h>
+
+#include <Library/AcpiHelperLib.h>
+#include <Library/AmpereCpuLib.h>
+#include <Platform/Ac01.h>
+#include <PlatformInfoHob.h>
+#include <AcpiHeader.h>
+
+EFI_STATUS
+AcpiPatchDsdtTable (
+  VOID
+  );
+
+EFI_STATUS
+AcpiInstallMadtTable (
+  VOID
+  );
+
+EFI_STATUS
+AcpiInstallNfitTable (
+  VOID
+  );
+
+EFI_STATUS
+AcpiPcctInit (
+  VOID
+  );
+
+EFI_STATUS
+AcpiInstallPcctTable (
+  VOID
+  );
+
+EFI_STATUS
+AcpiInstallPpttTable (
+  VOID
+  );
+
+EFI_STATUS
+AcpiInstallSlitTable (
+  VOID
+  );
+
+EFI_STATUS
+AcpiInstallSratTable (
+  VOID
+  );
 
 #endif /* _ACPI_PLATFORM_H_ */
