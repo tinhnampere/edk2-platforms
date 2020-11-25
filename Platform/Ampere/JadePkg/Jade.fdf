@@ -181,6 +181,11 @@ APRIORI PEI {
   INF MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
   INF MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
 
+  #
+  # Print platform information before passing control into the Driver Execution Environment (DXE) phase
+  #
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/DebugInfoPei/DebugInfoPei.inf
+
   INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
 
 [FV.FvMain]
