@@ -1,0 +1,63 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PcieCore
+  FILE_GUID                      = 8ABFA0FC-313E-11E8-B467-0ED5F89F718B
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PcieCoreLib
+
+[Sources]
+  PcieCore.c
+  PcieCoreLib.c
+  PciePatchAcpi.c
+  PciePatchAcpi.h
+  PcieCore.h
+  PcieCoreCapCfg.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+  Silicon/Ampere/AmpereAltraBinPkg/Ac01BinPkg.dec
+
+[BuildOptions]
+  *_*_*_CC_FLAGS = -Wno-error=switch -Wno-missing-braces
+
+[LibraryClasses]
+  UefiLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  BaseLib
+  DebugLib
+  DwapbGpioLib
+  TimerLib
+  ArmLib
+  IoLib
+  PcdLib
+  PcieBoardLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  PciePhyLib
+  SMProLib
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid # PROTOCOL ALWAYS_CONSUMED
+  gEfiAcpiSdtProtocolGuid # PROTOCOL ALWAYS_CONSUMED
+
+[Depex]
+    gEfiAcpiTableProtocolGuid AND gEfiAcpiSdtProtocolGuid

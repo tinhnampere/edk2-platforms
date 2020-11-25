@@ -87,6 +87,7 @@
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Library/NVParamLib/NVParamLib.inf
   SMProLib|Silicon/Ampere/AmpereAltraPkg/Library/SMProLib/SMProLib.inf
   PMProLib|Silicon/Ampere/AmpereAltraPkg/Library/PMProLib/PMProLib.inf
+  PciePhyLib|Silicon/Ampere/AmpereAltraBinPkg/Library/PciePhyLib/PciePhyLib.inf
   AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/AmpereCpuLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
   I2CLib|Silicon/Ampere/AmpereAltraPkg/Library/DWI2CLib/I2CLib.inf

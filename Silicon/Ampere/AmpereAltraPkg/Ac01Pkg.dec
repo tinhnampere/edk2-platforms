@@ -34,6 +34,9 @@
   ##  @libraryclass  Defines a set of methods to communicate with secure parition over MM interface.
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/MmCommunicationLib.h
 
+  ##  @libraryclass  Defines a set of miscellaneous PCIe functions
+  PcieBoardLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PcieBoardLib.h
+
   ##  @libraryclass  Defines a set of methods to communicate with PMPro.
   PMProLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PMProLib.h
 
