@@ -1,0 +1,59 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = SmbiosPlatformDxe
+  FILE_GUID                      = F0CC7D0B-CD83-4DDA-A5D4-613AB02D4E52
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = SmbiosPlatformDxeEntry
+
+[Sources]
+  SmbiosPlatformDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  DebugLib
+  BaseLib
+  UefiLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  HobLib
+
+[Protocols]
+  gEfiSmbiosProtocolGuid                     ## CONSUMED
+
+[Pcd]
+  # Type 0
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVendor
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVersion
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString
+  gArmTokenSpaceGuid.PcdFdSize
+
+  # Type 1
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemManufacturer
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemProductName
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemVersion
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSerialNumber
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1Uuid
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSkuNumber
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion
+
+[Depex]
+  gEfiSmbiosProtocolGuid

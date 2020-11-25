@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = SmbiosCpuDxe
+  FILE_GUID                      = 4DD7C2E4-E6A6-11EA-8736-D3C56ABBB5C4
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = SmbiosCpuDxeEntry
+
+[Sources]
+  SmbiosCpuDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  DebugLib
+  BaseLib
+  UefiLib
+  ArmLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  HobLib
+  AmpereCpuLib
+
+[Protocols]
+  gEfiSmbiosProtocolGuid                     ## CONSUMED
+
+[Depex]
+  gEfiSmbiosProtocolGuid
