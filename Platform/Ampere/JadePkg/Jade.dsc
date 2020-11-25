@@ -49,6 +49,10 @@
 #
 ################################################################################
 [LibraryClasses]
+  #
+  # Library for FailSafe support
+  #
+  FailSafeLib|Platform/Ampere/Library/FailSafeLib/FailSafeLib.inf
 
 ################################################################################
 #
@@ -83,3 +87,7 @@
 #
 ################################################################################
 [Components.common]
+  #
+  # FailSafe and Watchdog Timer
+  #
+  Platform/Ampere/Drivers/FailSafeDxe/FailSafeDxe.inf
