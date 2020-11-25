@@ -1,0 +1,47 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = AcpiPlatformDxe
+  FILE_GUID                      = CDA4ED56-6960-4092-885D-FEF37D29093E
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = AcpiPlatformDxeInitialize
+
+[Sources.common]
+  AcpiPlatform.h
+  AcpiPlatformDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  DebugLib
+  BaseLib
+  UefiLib
+  AcpiLib
+
+[Guids]
+  gArmMpCoreInfoGuid
+  gEfiAcpiTableGuid
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid                     ## ALWAYS_CONSUMED
+
+[Depex]
+  gEfiAcpiTableProtocolGuid

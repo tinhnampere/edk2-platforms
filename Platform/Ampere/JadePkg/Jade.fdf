@@ -280,4 +280,11 @@ APRIORI DXE {
   #
   INF MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 
+  #
+  # ACPI
+  #
+  INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  INF Platform/Ampere/JadePkg/Drivers/AcpiPlatformDxe/AcpiPlatformDxe.inf
+  INF RuleOverride=ACPITABLE Platform/Ampere/JadePkg/AcpiTables/AcpiTables.inf
+
 !include Platform/Ampere/FvRules.fdf.inc
