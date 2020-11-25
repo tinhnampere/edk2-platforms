@@ -37,6 +37,9 @@
   ##  @libraryclass  Defines a set of methods to communicate with PMPro.
   PMProLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PMProLib.h
 
+  ##  @libraryclass  Defines a set of methods to access flash memory.
+  FlashLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/FlashLib.h
+
 [Guids]
 
   ## SPI NOR Proxy MM GUID
