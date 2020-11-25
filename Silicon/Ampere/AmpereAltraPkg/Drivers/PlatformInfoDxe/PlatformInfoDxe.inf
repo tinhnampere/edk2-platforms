@@ -1,0 +1,51 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PlatformInfoDxe
+  FILE_GUID                      = 6FDFB3E8-105E-48C4-94AA-3D7646F9B50D
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = PlatformInfoEntryPoint
+
+[Sources.common]
+  PlatformInfoDxe.c
+  PlatformInfoHii.h
+  Vfr.vfr
+  VfrStrings.uni
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  BaseLib
+  UefiLib
+  DevicePathLib
+  DebugLib
+  HiiLib
+  DevicePathLib
+  HobLib
+  AmpereCpuLib
+  IoLib
+
+[Guids]
+  gPlatformManagerFormsetGuid
+  gEfiIfrTianoGuid
+
+[Protocols]
+
+[Depex]
+  TRUE
