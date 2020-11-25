@@ -235,6 +235,11 @@ APRIORI DXE {
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
 
   #
+  # Fixup memory map
+  #
+  INF Silicon/Ampere/Drivers/FixupMemoryMap/FixupMemoryMap.inf
+
+  #
   # Environment Variables Protocol
   #
   INF MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf

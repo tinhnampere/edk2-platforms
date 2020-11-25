@@ -575,6 +575,11 @@
   Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
 
   #
+  # Fix Memory Map
+  #
+  Silicon/Ampere/Drivers/FixupMemoryMap/FixupMemoryMap.inf
+
+  #
   # Environment Variables Protocol
   #
   Silicon/Ampere/AmpereAltraPkg/Drivers/FlashFvbDxe/FlashFvbDxe.inf

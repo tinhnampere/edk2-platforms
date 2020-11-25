@@ -1,0 +1,41 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = FixupMemoryMap
+  FILE_GUID                      = 183CEBEC-1229-4F59-B4F9-3BA1EC27B168
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = FixupMemoryMapInitialize
+
+[Sources.common]
+  FixupMemoryMap.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  DxeServicesTableLib
+
+[Guids]
+  gEfiMemoryAttributesTableGuid  ## CONSUMES ## SystemTable
+
+[Protocols]
+  gEfiCpuArchProtocolGuid
+
+[Depex]
+  TRUE
