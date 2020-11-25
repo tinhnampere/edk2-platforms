@@ -1,0 +1,58 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = MemInfoDxe
+  MODULE_UNI_FILE                = MemInfoDxe.uni
+  FILE_GUID                      = D9EFCEFE-189B-4599-BB07-04F0A8DF5C2F
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = MemInfoScreenInitialize
+
+[Sources]
+  MemInfoScreen.c
+  MemInfoNvramLib.c
+  MemInfoScreenStrings.uni
+  Vfr.vfr
+  MemInfoScreen.h
+  NVDataStruc.h
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  HobLib
+  UefiLib
+  DevicePathLib
+  MemoryAllocationLib
+  BaseLib
+  HiiLib
+  AmpereCpuLib
+  NVParamLib
+
+[Guids]
+  gEfiIfrTianoGuid                              ## PRODUCES ## UNDEFINED
+  gPlatformManagerFormsetGuid
+
+[Protocols]
+  gEfiDevicePathProtocolGuid                    ## CONSUMES
+  gEfiHiiConfigRoutingProtocolGuid              ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
+
+[Depex]
+  TRUE
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  MemInfoDxeExtra.uni
