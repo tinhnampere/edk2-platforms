@@ -1,0 +1,32 @@
+## @file
+#
+# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = DwGpioLib
+  FILE_GUID                      = E7D9CAE1-6930-46E3-BDF9-0027446E7DF2
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = DwGpioSocLib
+
+[Sources.common]
+  DwapbGpioLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  IoLib
+  BaseLib
+  BaseMemoryLib
+
+[Guids]
+  gEfiEventVirtualAddressChangeGuid
