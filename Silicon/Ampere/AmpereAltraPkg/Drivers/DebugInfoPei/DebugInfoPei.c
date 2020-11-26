@@ -113,56 +113,30 @@ PrintNVRAM (
 }
 
 STATIC
-UINT32
-GetCCIXLinkWidth (
-  IN UINTN Socket
-  )
-{
-  UINT64    PcieTcuBase[] = { AC01_PCIE_REGISTER_BASE };
-  UINT64    LinkStsReg = ((Socket == 0) ? PcieTcuBase[0] : PcieTcuBase[1]) + 0x10008080;
-
-  return ((MmioRead32 (LinkStsReg) >> 20) & 0x3F);
-}
-
-STATIC
-CHAR8*
+CHAR8 *
 GetCCIXLinkSpeed (
-  IN UINTN Socket
+  IN UINTN Speed
   )
 {
-  UINT64    PcieTcuBase[] = { AC01_PCIE_REGISTER_BASE };
-  UINT64    LinkStsReg = ((Socket == 0) ? PcieTcuBase[0] : PcieTcuBase[1]) + 0x10008080;
-  UINT64    EsmStatReg = ((Socket == 0) ? PcieTcuBase[0] : PcieTcuBase[1]) + 0x100083a0;
+  switch (Speed) {
+  case 1:
+    return "2.5 GT/s";
 
-  if ((MmioRead32 (EsmStatReg) & 0x80) != 0) {
-    /* ESM_CALIB_CMPLT is set */
-    switch (MmioRead32 (EsmStatReg) & 0x7f) {
-    case 1:
-      return "2.5 GT/s";
-    case 2:
-      return "5 GT/s";
-    case 3:
-      return "8 GT/s";
-    case 6:
-      return "16 GT/s";
-    case 0xa:
-      return "20 GT/s";
-    case 0xf:
-      return "25 GT/s";
-    }
-  } else {
-    switch ((MmioRead32 (LinkStsReg) >> 16) & 0xF) {
-    case 1:
-      return "2.5 GT/s";
-    case 2:
-      return "5 GT/s";
-    case 3:
-      return "8 GT/s";
-    case 4:
-      return "16 GT/s";
-    case 5:
-      return "32 GT/s";
-    }
+  case 2:
+    return "5 GT/s";
+
+  case 3:
+    return "8 GT/s";
+
+  case 4:
+  case 6:
+    return "16 GT/s";
+
+  case 0xa:
+    return "20 GT/s";
+
+  case 0xf:
+    return "25 GT/s";
   }
 
   return "Unknown";
@@ -200,9 +174,9 @@ PrintSystemInfo (
   SerialPrint ("    Number of active cores      : %d\n", GetNumberActiveCores ());
   if (GetNumberActiveSockets () > 1) {
     SerialPrint ("    Inter Socket Connection 0   : Width: x%d / Speed %a\n",
-            GetCCIXLinkWidth (0), GetCCIXLinkSpeed (0));
+            PlatformHob->Link2PWidth[0], GetCCIXLinkSpeed (PlatformHob->Link2PSpeed[0]));
     SerialPrint ("    Inter Socket Connection 1   : Width: x%d / Speed %a\n",
-            GetCCIXLinkWidth (1), GetCCIXLinkSpeed (1));
+            PlatformHob->Link2PWidth[1], GetCCIXLinkSpeed (PlatformHob->Link2PSpeed[1]));
   }
   for (Idx = 0; Idx < GetNumberActiveSockets (); Idx ++) {
     SerialPrint ("    Socket[%d]: Core voltage     : %d\n", Idx, PlatformHob->CoreVoltage[Idx]);

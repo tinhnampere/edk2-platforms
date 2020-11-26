@@ -188,6 +188,14 @@ typedef struct {
   UINT8               SkuMaxTurbo[2];
   UINT8               SkuMaxCore[2];
   UINT32              AHBCId[2];
+
+  /* TPM2 Info */
+  UINT8               TpmHob[60];
+
+  /* 2P link info for RCA0/RCA1 */
+  UINT8               Link2PSpeed[2];
+  UINT8               Link2PWidth[2];
+
 } PlatformInfoHob_V2;
 
 #endif /* _PLATFORM_INFO_HOB_H_ */
