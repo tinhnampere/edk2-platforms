@@ -7,6 +7,7 @@
 **/
 
 #include "AcpiPlatform.h"
+#include "AcpiApei.h"
 
 STATIC EFI_EVENT mAcpiRegistration = NULL;
 
@@ -99,6 +100,12 @@ UpdateAcpiOnExitBootServices(
   Status = AcpiPatchDsdtTable ();
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "DSDT Table updated!\n"));
+  }
+
+  // Configure ACPI Platform Error Interfaces
+  Status = AcpiApeiUpdate ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "APEI Table updated!\n"));
   }
 
   // Configure PCC mailbox base address and unmask interrupt

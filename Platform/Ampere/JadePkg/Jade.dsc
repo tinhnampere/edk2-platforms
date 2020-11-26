@@ -77,6 +77,7 @@
   AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf
   AcpiHelperLib|Platform/Ampere/Library/AcpiHelperLib/AcpiHelperLib.inf
   AcpiPccLib|Platform/Ampere/Library/AcpiPccLib/AcpiPccLib.inf
+  AcpiApeiLib|Platform/Ampere/Library/AcpiApeiLib/AcpiApeiLib.inf
 
   #
   # Pcie Board
@@ -193,3 +194,4 @@
   Silicon/Ampere/AmpereAltraPkg/Drivers/MemInfo/MemInfoDxe.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/CpuConfigDxe/CpuConfigDxe.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/AcpiConfigDxe/AcpiConfigDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/RasConfigDxe/RasConfigDxe.inf
