@@ -14,23 +14,48 @@
 #include <Library/PlatformFlashAccessLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include <Library/ArmSmcLib.h>
+#include <Protocol/MmCommunication.h>
 
-/*
- * SMC Function ID for Firmware Update service
- */
-#define SMC_FWU_SERVICE               0xC300FF09
+EFI_MM_COMMUNICATION_PROTOCOL *mMmCommunication = NULL;
 
-/*
- * SMC return codes
- */
-#define SMC_OK                        (0)
-#define SMC_ACCESS_DENIED             (-1)
-#define SMC_NOT_SET                   (-2)
-#define SMC_IO_ERROR                  (-5)
-#define SMC_INSUFFICIENT_RES          (-28)
-#define SMC_AUTH_ERROR                (-80)
-#define SMC_FWU_IN_PROGRESS           (-36)
+#define EFI_MM_MAX_PAYLOAD_U64_E 10
+#define EFI_MM_MAX_PAYLOAD_SIZE  (EFI_MM_MAX_PAYLOAD_U64_E * sizeof (UINT64))
+
+/* FWU MM GUID */
+STATIC CONST EFI_GUID mFwuMmGuid = { 0x452240CD, 0xB3B3, 0x4695, { 0x9A, 0x63, 0xDF, 0xEC, 0x50, 0x82, 0xE7, 0x7A } };
+
+typedef struct {
+  /* Allows for disambiguation of the message format */
+  EFI_GUID HeaderGuid;
+  /*
+   * Describes the size of Data (in bytes) and does not include the size
+   * of the header
+   */
+  UINTN MsgLength;
+} EFI_MM_COMM_HEADER_NOPAYLOAD;
+
+typedef struct {
+  UINT64 Data[EFI_MM_MAX_PAYLOAD_U64_E];
+} EFI_MM_COMM_FWU_PAYLOAD;
+
+typedef struct {
+  EFI_MM_COMM_HEADER_NOPAYLOAD  EfiMmHdr;
+  EFI_MM_COMM_FWU_PAYLOAD       PayLoad;
+} EFI_MM_COMM_REQUEST;
+
+EFI_MM_COMM_REQUEST mEfiMmSysFwuReq;
+
+typedef struct {
+  UINT64 Status;
+  UINT64 Progress;
+} EFI_MM_COMMUNICATE_FWU_RES;
+
+#define FWU_MM_RES_SUCCESS              0xAABBCC00
+#define FWU_MM_RES_IN_PROGRESS          0xAABBCC01
+#define FWU_MM_RES_SECURITY_VIOLATION   0xAABBCC02
+#define FWU_MM_RES_OUT_OF_RESOURCES     0xAABBCC03
+#define FWU_MM_RES_IO_ERROR             0xAABBCC04
+#define FWU_MM_RES_FAIL                 0xAABBCCFF
 
 /*
  * The ARM Trusted Firmware (ATF) defined image types to support updating
@@ -55,9 +80,25 @@
  */
 #define FIRMWARE_DESCRIPTOR_SIZE 0x10000
 
-STATIC
+VOID
+UefiMmCreateSysFwuReq (
+  VOID    *Data,
+  UINT64  Size
+  )
+{
+  CopyGuid (&mEfiMmSysFwuReq.EfiMmHdr.HeaderGuid, &mFwuMmGuid);
+  mEfiMmSysFwuReq.EfiMmHdr.MsgLength = Size;
+
+  if (Size != 0) {
+    ASSERT (Data != NULL);
+    ASSERT (Size <= EFI_MM_MAX_PAYLOAD_SIZE);
+
+    CopyMem (&mEfiMmSysFwuReq.PayLoad.Data, Data, Size);
+  }
+}
+
 EFI_STATUS
-SmcFlashUpdate (
+MmFlashUpdate (
   IN UINT32                                         ImageType,
   IN VOID                                           *FirmwareImage,
   IN UINT64                                         ImageSize,
@@ -66,67 +107,97 @@ SmcFlashUpdate (
   IN UINTN                                          EndPercentage
   )
 {
-  EFI_STATUS Status;
-  UINTN ProgressUpdate = StartPercentage;
-  ARM_SMC_ARGS SMCArgs = { 0 };
+  EFI_MM_COMMUNICATE_FWU_RES  *MmFwuStatus;
+  UINTN                       ProgressUpdate = StartPercentage;
+  UINTN                       Size;
+  UINT64                      MmData[5];
+  EFI_STATUS                  Status;
 
-  DEBUG ((DEBUG_INFO, "%a: Image: %p Size 0x%lx\n",
-          __FUNCTION__,
-          FirmwareImage,
-          ImageSize));
+  if (FirmwareImage == NULL) {
+    DEBUG ((DEBUG_ERROR, "%a:%d Invalid inputs.\n", __FUNCTION__, __LINE__));
+    return EFI_INVALID_PARAMETER;
+  }
+
+  DEBUG ((DEBUG_INFO, "%a:%d Image: %p Size 0x%lx\n",
+          __FUNCTION__, __LINE__, FirmwareImage, ImageSize));
+
+  if (mMmCommunication == NULL) {
+    Status = gBS->LocateProtocol(
+                    &gEfiMmCommunicationProtocolGuid,
+                    NULL,
+                    (VOID **) &mMmCommunication);
+
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a: Can't locate gEfiMmCommunicationProtocolGuid.\n", __FUNCTION__));
+      return Status;
+    }
+  }
+
+  MmData[0] = ImageType;
+  MmData[1] = ImageSize;
+  MmData[2] = (UINT64) FirmwareImage;
+  MmData[3] = 1; // MM yield for progress reporting.
 
   while (TRUE) {
-    SMCArgs.Arg0 = SMC_FWU_SERVICE;
-    SMCArgs.Arg1 = ImageType;
-    SMCArgs.Arg2 = (UINT64) FirmwareImage;
-    SMCArgs.Arg3 = ImageSize;
-    SMCArgs.Arg4 = 1; // SMC yield for progress reporting.
+    UefiMmCreateSysFwuReq ((VOID *) &MmData, sizeof (MmData));
 
-    ArmCallSmc(&SMCArgs);
-    if (SMCArgs.Arg0 == SMC_FWU_IN_PROGRESS) {
+    Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
+    Status = mMmCommunication->Communicate (
+                                 mMmCommunication,
+                                 (VOID *) &mEfiMmSysFwuReq,
+                                 &Size
+                                 );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a:%d MM communication error - %r\n",
+              __FUNCTION__, __LINE__, Status));
+      return EFI_DEVICE_ERROR;
+    }
+
+    /* Return data in the first double word of payload */
+    MmFwuStatus = (EFI_MM_COMMUNICATE_FWU_RES *) mEfiMmSysFwuReq.PayLoad.Data;
+    if (MmFwuStatus->Status == FWU_MM_RES_IN_PROGRESS) {
       if (NULL != Progress) {
-        Progress(ProgressUpdate);
+        Progress (ProgressUpdate);
       }
 
       ProgressUpdate = StartPercentage +
-          (((EndPercentage - StartPercentage) * (SMCArgs.Arg1))/100);
+          (((EndPercentage - StartPercentage) * (MmFwuStatus->Progress)) / 100);
       continue;
     }
     break;
   }
 
-  switch (SMCArgs.Arg0) {
-    case SMC_OK:
-      if (NULL != Progress) {
-        Progress(EndPercentage);
-      }
-      Status = EFI_SUCCESS;
-      break;
+  switch (MmFwuStatus->Status) {
+  case FWU_MM_RES_SUCCESS:
+    if (NULL != Progress) {
+      Progress (EndPercentage);
+    }
+    Status = EFI_SUCCESS;
+    break;
 
-    case SMC_ACCESS_DENIED:
-    case SMC_AUTH_ERROR:
-      DEBUG ((DEBUG_ERROR, "%a %d Failed update. Security Violation.\n",
-              __FUNCTION__, __LINE__));
-      Status = EFI_SECURITY_VIOLATION;
-      break;
+  case FWU_MM_RES_SECURITY_VIOLATION:
+    DEBUG ((DEBUG_ERROR, "%a:%d Failed to update - Security Violation!\n",
+            __FUNCTION__, __LINE__));
+    Status = EFI_SECURITY_VIOLATION;
+    break;
 
-    case SMC_INSUFFICIENT_RES:
-      DEBUG ((DEBUG_ERROR, "%a %d Failed update. Insufficient resources.\n",
-              __FUNCTION__, __LINE__));
-      Status = EFI_OUT_OF_RESOURCES;
-      break;
+  case FWU_MM_RES_OUT_OF_RESOURCES:
+    DEBUG ((DEBUG_ERROR, "%a:%d Failed to update - Insufficient resources!\n",
+            __FUNCTION__, __LINE__));
+    Status = EFI_OUT_OF_RESOURCES;
+    break;
 
-    case SMC_IO_ERROR:
-      DEBUG ((DEBUG_ERROR, "%a %d Failed update. IO Error.\n",
-              __FUNCTION__, __LINE__));
-      Status = EFI_DEVICE_ERROR;
-      break;
+  case FWU_MM_RES_IO_ERROR:
+    DEBUG ((DEBUG_ERROR, "%a:%d Failed to update - IO Error!\n",
+            __FUNCTION__, __LINE__));
+    Status = EFI_DEVICE_ERROR;
+    break;
 
-    default:
-      DEBUG ((DEBUG_ERROR, "%a %d Failed update. Unknown Error %d.\n",
-              __FUNCTION__, __LINE__, SMCArgs.Arg0));
-      Status = EFI_INVALID_PARAMETER;
-      break;
+  default:
+    DEBUG ((DEBUG_ERROR, "%a:%d Failed to update - Unknown Error!\n",
+            __FUNCTION__, __LINE__));
+    Status = EFI_INVALID_PARAMETER;
+    break;
   }
 
   return Status;
@@ -200,7 +271,7 @@ PerformFlashWriteWithProgress (
     return EFI_INVALID_PARAMETER;
   }
 
-  return SmcFlashUpdate (
+  return MmFlashUpdate (
            ImageType,
            Buffer,
            Length,

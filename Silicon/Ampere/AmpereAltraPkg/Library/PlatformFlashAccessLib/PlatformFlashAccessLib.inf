@@ -10,14 +10,14 @@
 
 [Defines]
   INF_VERSION                    = 0x0001001B
-  BASE_NAME                      = PlatformFlashAccessLibSmc
-  FILE_GUID                      = C05889AA-4714-40A6-A355-AB48E3DBAAA1
+  BASE_NAME                      = PlatformFlashAccessLib
+  FILE_GUID                      = C2821AC7-331A-48FC-90C2-6660ED40EB25
   MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
   LIBRARY_CLASS                  = PlatformFlashAccessLib|DXE_DRIVER
 
 [Sources]
-  PlatformFlashAccessLibSmc.c
+  PlatformFlashAccessLib.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -29,9 +29,9 @@
   BaseMemoryLib
   DebugLib
   UefiBootServicesTableLib
-  ArmSmcLib
 
 [Protocols]
+  gEfiMmCommunicationProtocolGuid
 
 [Depex]
   TRUE
