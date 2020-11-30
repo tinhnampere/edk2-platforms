@@ -33,8 +33,9 @@ enum {
 /* DIMM status */
 enum {
   DIMM_NOT_INSTALLED = 0,
-  DIMM_INSTALLED, /* installed and operational */
-  DIMM_FAILED_DISABLED
+  DIMM_INSTALLED_OPERATIONAL,    /* installed and operational     */
+  DIMM_INSTALLED_NONOPERATIONAL, /* installed and non-operational */
+  DIMM_INSTALLED_FAILED          /* installed and failed          */
 };
 
 typedef struct {

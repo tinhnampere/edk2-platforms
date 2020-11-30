@@ -525,7 +525,7 @@ InstallMemStructures (
         continue;
       }
 
-      if (Dimm->Info.DimmStatus == DIMM_INSTALLED) {
+      if (Dimm->Info.DimmStatus == DIMM_INSTALLED_OPERATIONAL) {
 
         UpdateManufacturer ((VOID *) Table, Dimm->SpdData.Data);
         UpdateSerialNumber ((VOID *) Table, Dimm->SpdData.Data);
