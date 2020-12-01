@@ -125,3 +125,8 @@
   }
   Platform/Ampere/JadePkg/Drivers/AcpiPlatformDxe/AcpiPlatformDxe.inf
   Platform/Ampere/JadePkg/AcpiTables/AcpiTables.inf
+
+  #
+  # VGA ASpeed
+  #
+  Drivers/ASpeed/ASpeedGopBinPkg/ASpeedAst2500GopDxe.inf
