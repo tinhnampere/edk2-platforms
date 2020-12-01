@@ -29,7 +29,7 @@ ErasePolarity = 1
 FILE = $(WORKSPACE)/$(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/SYSTEMFIRMWAREDESCRIPTOR.Fv
 
 0x00010000|0x00D00000
-FILE = $(WORKSPACE)/$(OUTPUT_DIRECTORY)/jade_atfedk2.img.signed
+FILE = $(UEFI_ATF_IMAGE)
 
 ################################################################################
 #
