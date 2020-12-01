@@ -7,6 +7,7 @@
 **/
 
 #include <string.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/HobLib.h>
 #include <Library/PciePhyLib.h>
 #include <Library/PcieBoardLib.h>
@@ -761,7 +762,7 @@ Ac01PcieCoreSetupRC (
 
   if (ReInit == 0) {
     // Initialize SERDES
-    memset(&PhyCtx, sizeof(PhyCtx), 0);
+    ZeroMem (&PhyCtx, sizeof(PhyCtx));
     PhyCtx.SdsAddr = RC->SerdesAddr;
     PhyCtx.PcieCtrlInfo |= ((RC->Socket & 0x1) << 2);
     PhyCtx.PcieCtrlInfo |= ((RC->ID & 0x7) << 4);

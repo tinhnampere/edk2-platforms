@@ -255,13 +255,13 @@ ConstructMcfg (
   VOID                             *TMcfgPtr = McfgPtr;
   AC01_RC                          *Rc;
 
-  memcpy (TMcfgPtr, &McfgHeader, sizeof (EFI_MCFG_TABLE_CONFIG));
+  CopyMem (TMcfgPtr, &McfgHeader, sizeof (EFI_MCFG_TABLE_CONFIG));
   TMcfgPtr += sizeof (EFI_MCFG_TABLE_CONFIG);
   for (Idx = 0; PciSegEnabled[Idx] != -1; Idx++) {
     Rc = GetRCList (PciSegEnabled[Idx]); /* Logical */
     TMcfg.ullBaseAddress = Rc->MmcfgAddr;
     TMcfg.usSegGroupNum = Rc->Logical;
-    memcpy (TMcfgPtr, &TMcfg, sizeof (EFI_MCFG_CONFIG_STRUCTURE));
+    CopyMem (TMcfgPtr, &TMcfg, sizeof (EFI_MCFG_CONFIG_STRUCTURE));
     TMcfgPtr += sizeof (EFI_MCFG_CONFIG_STRUCTURE);
   }
 }
@@ -414,12 +414,12 @@ ConstructIort (
   UINTN                             NumTbuPmu;
 
   TIort.Header.Length = HeaderCount;
-  memcpy (TIortPtr, &TIort, sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE));
+  CopyMem (TIortPtr, &TIort, sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE));
   TIortPtr += sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE);
   for (Idx = 0; Idx < RcCount; Idx++) {
     ItsOffset[Idx] = TIortPtr - IortPtr;
     TItsNode.ItsIdentifier = PciSegEnabled[Idx]; /* Physical */
-    memcpy (TIortPtr, &TItsNode, sizeof (AC01_ITS_NODE));
+    CopyMem (TIortPtr, &TItsNode, sizeof (AC01_ITS_NODE));
     TIortPtr += sizeof (AC01_ITS_NODE);
   }
 
@@ -433,7 +433,7 @@ ConstructIort (
     TSmmuNode.InterruptMsiMapping.OutputReference = ItsOffset[Idx];
     TSmmuNode.InterruptMsiMappingSingle.OutputBase = PciSegEnabled[Idx] << 16;
     TSmmuNode.InterruptMsiMappingSingle.OutputReference = ItsOffset[Idx];
-    memcpy (SmmuPtr, &TSmmuNode, sizeof (AC01_SMMU_NODE));
+    CopyMem (SmmuPtr, &TSmmuNode, sizeof (AC01_SMMU_NODE));
     SmmuPtr += sizeof (AC01_SMMU_NODE);
 
     if (!SmmuPmuAgentCount) {
@@ -521,7 +521,7 @@ ConstructIort (
       TPmcgNode.Base += 0x2000;
       TPmcgNode.NodeReference = SmmuNodeOffset[Idx];
       TPmcgNode.OverflowInterruptGsiv = gTbuPmuIrqArray[PciSegEnabled[Idx]] + Idx1;
-      memcpy (PmcgPtr, &TPmcgNode, sizeof (TPmcgNode));
+      CopyMem (PmcgPtr, &TPmcgNode, sizeof (TPmcgNode));
       PmcgPtr += sizeof (TPmcgNode);
     }
 
@@ -531,14 +531,14 @@ ConstructIort (
     TPmcgNode.Page1Base = Rc->TcuAddr + 0x12000;
     TPmcgNode.NodeReference = SmmuNodeOffset[Idx];
     TPmcgNode.OverflowInterruptGsiv = gTcuPmuIrqArray[PciSegEnabled[Idx]];
-    memcpy (PmcgPtr, &TPmcgNode, sizeof (TPmcgNode));
+    CopyMem (PmcgPtr, &TPmcgNode, sizeof (TPmcgNode));
     PmcgPtr += sizeof (TPmcgNode);
   }
 
   for (Idx = 0; Idx < RcCount; Idx++) {
     TRcNode.Node.PciSegmentNumber = GetRCList (PciSegEnabled[Idx])->Logical; /* Logical */
     TRcNode.RcIdMapping.OutputReference = SmmuNodeOffset[Idx];
-    memcpy (TIortPtr, &TRcNode, sizeof (AC01_RC_NODE));
+    CopyMem (TIortPtr, &TRcNode, sizeof (AC01_RC_NODE));
     TIortPtr += sizeof (AC01_RC_NODE);
   }
 }

@@ -91,11 +91,11 @@ Ac01PcieSetup (
   AC01_RC       *RC;
   INTN          RCIndex;
 
-  memset (&RCList, sizeof (AC01_RC) * MAX_AC01_PCIE_ROOT_COMPLEX, 0);
+  ZeroMem (&RCList, sizeof (AC01_RC) * MAX_AC01_PCIE_ROOT_COMPLEX);
 
   // Adjust MMIO32 base address 1P vs 2P
   if (!PlatSlaveSocketPresent ()) {
-    memcpy ((VOID *) &RCMmio32Base, (VOID *) &RCMmio32Base1P, sizeof (UINT64) * MAX_AC01_PCIE_ROOT_COMPLEX);
+    CopyMem ((VOID *) &RCMmio32Base, (VOID *) &RCMmio32Base1P, sizeof (UINT64) * MAX_AC01_PCIE_ROOT_COMPLEX);
   }
 
   for (RCIndex = 0; RCIndex < MAX_AC01_PCIE_ROOT_COMPLEX; RCIndex++) {
