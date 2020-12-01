@@ -313,6 +313,11 @@
 #define PCIE_CAP_MAX_LINK_SPEED_GET(val) ((val & 0xF))
 #define PCIE_CAP_MAX_LINK_SPEED_SET(dst, src) (((dst) & ~0xF) | (((UINT32) (src)) & 0xF))
 #define PCIE_CAP_SLOT_CLK_CONFIG_SET(dst, src) (((dst) & ~0x10000000) | (((UINT32) (src) << 28) & 0x10000000))
+#define NO_ASPM_SUPPORTED                       0x0
+#define L0S_SUPPORTED                           0x1
+#define L1_SUPPORTED                            0x2
+#define L0S_L1_SUPPORTED                        0x3
+#define PCIE_CAP_ACTIVE_STATE_LINK_PM_SUPPORT_SET(dst, src) (((dst) & ~0xC00) | (((UINT32)(src) << 10) & 0xC00))
 
 // LINK_CONTROL_LINK_STATUS_REG
 #define PCIE_CAP_DLL_ACTIVE_GET(val) ((val & 0x20000000) >> 29)

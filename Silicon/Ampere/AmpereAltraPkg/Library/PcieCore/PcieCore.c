@@ -1011,6 +1011,8 @@ Ac01PcieCoreSetupRC (
       Val = PCIE_CAP_MAX_LINK_SPEED_SET (Val, MAX_LINK_SPEED_160);
       break;
     };
+    /* Enable ASPM Capability */
+    Val = PCIE_CAP_ACTIVE_STATE_LINK_PM_SUPPORT_SET(Val, L0S_L1_SUPPORTED);
     Ac01PcieCsrOut32 (CfgAddr + LINK_CAPABILITIES_REG, Val);
 
     Ac01PcieCsrIn32 (CfgAddr + LINK_CONTROL2_LINK_STATUS2_REG, &Val);
