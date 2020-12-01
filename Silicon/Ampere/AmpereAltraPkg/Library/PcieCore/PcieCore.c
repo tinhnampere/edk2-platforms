@@ -1085,7 +1085,11 @@ Ac01PcieCoreSetupRC (
     // Program VendorID and DeviceID
     Ac01PcieCsrIn32 (CfgAddr + TYPE1_DEV_ID_VEND_ID_REG, &Val);
     Val = VENDOR_ID_SET (Val, AMPERE_PCIE_VENDORID);
-    Val = DEVICE_ID_SET (Val, AC01_PCIE_BRIDGE_DEVICEID);
+    if (RCA == RC->Type) {
+      Val = DEVICE_ID_SET (Val, AC01_PCIE_BRIDGE_DEVICEID_RCA + PcieIndex);
+    } else {
+      Val = DEVICE_ID_SET (Val, AC01_PCIE_BRIDGE_DEVICEID_RCB + PcieIndex);
+    }
     Ac01PcieCsrOut32 (CfgAddr + TYPE1_DEV_ID_VEND_ID_REG, Val);
 
     // Enable common clock for downstream
@@ -1123,7 +1127,11 @@ Ac01PcieCoreSetupRC (
   // Program VendorID and DeviceId
   if (!EFI_ERROR (SMProRegRd (RC->Socket, RC->HBAddr  + HBPDVIDR, &Val))) {
     Val = PCIVENDID_SET (Val, AMPERE_PCIE_VENDORID);
-    Val = PCIDEVID_SET (Val, AMPERE_PCIE_DEVICEID);
+    if (RCA == RC->Type) {
+      Val = PCIDEVID_SET (Val, AC01_HOST_BRIDGE_DEVICEID_RCA);
+    } else {
+      Val = PCIDEVID_SET (Val, AC01_HOST_BRIDGE_DEVICEID_RCB);
+    }
     SMProRegWr (RC->Socket, RC->HBAddr  + HBPDVIDR, Val);
   }
 
