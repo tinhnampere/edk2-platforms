@@ -70,8 +70,8 @@
   #
   # SMBIOS Type 1 Pcd
   #
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|0|UINT8|0xB0000009
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|0|UINT8|0xB000000A
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|0|UINT8|0x00000009
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|0|UINT8|0x0000000A
 
 [PcdsFixedAtBuild, PcdsDynamic]
   #
@@ -99,3 +99,6 @@
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSerialNumber|"1234-5678-9ABC-DEFF"|VOID*|0xB0000006
   gAmpereTokenSpaceGuid.PcdSmbiosTables1Uuid|"FEDCBA9876543210"|VOID*|0xB0000007
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSkuNumber|"12345678"|VOID*|0xB0000008
+
+  # NVRam Pcds
+  gAmpereTokenSpaceGuid.PcdNvramErased|FALSE|BOOLEAN|0xB0000009

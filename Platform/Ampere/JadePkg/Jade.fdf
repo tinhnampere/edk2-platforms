@@ -400,6 +400,11 @@ APRIORI DXE {
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/AcpiConfigDxe/AcpiConfigDxe.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/RasConfigDxe/RasConfigDxe.inf
 
+  #
+  # Misc
+  #
+  INF Platform/Ampere/JadePkg/Drivers/BootOptionsRecoveryDxe/BootOptionsRecoveryDxe.inf
+
 [FV.SystemFirmwareDescriptor]
 FvAlignment        = 8
 ERASE_POLARITY     = 1

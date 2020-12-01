@@ -11,6 +11,7 @@
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/PcdLib.h>
 #include <Library/PeimEntryPoint.h>
 #include <Library/MmCommunicationLib.h>
 #include <MmLib.h>
@@ -205,6 +206,9 @@ FlashPeiEntryPoint (
       return Status;
     }
     DEBUG((DEBUG_INFO, "UUID Changed, Update Storage with FV NVRAM\n"));
+
+    /* Indicate that NVRAM was cleared */
+    PcdSetBoolS (PcdNvramErased, TRUE);
   } else {
     /* Copy the stored NVRAM to RAM */
     ZeroMem ((VOID *)MmData, sizeof (MmData));

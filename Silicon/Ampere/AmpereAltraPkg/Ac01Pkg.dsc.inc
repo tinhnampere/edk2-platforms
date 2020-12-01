@@ -504,6 +504,8 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64|0x0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64|0x0
 
+  gAmpereTokenSpaceGuid.PcdNvramErased|FALSE
+
 ################################################################################
 #
 # Component Section - list of all EDK II Component Entries defined by this Platform

@@ -30,6 +30,7 @@
   DebugLib
   MmCommunicationLib
   PeimEntryPoint
+  PcdLib
 
 [Guids]
   gSpiNorMmGuid
@@ -43,6 +44,8 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64
+
+  gAmpereTokenSpaceGuid.PcdNvramErased
 
 [Depex]
   TRUE
