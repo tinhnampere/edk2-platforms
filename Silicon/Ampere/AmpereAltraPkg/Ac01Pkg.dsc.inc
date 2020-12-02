@@ -60,6 +60,7 @@
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
   IntrinsicLib|CryptoPkg/Library/IntrinsicLib/IntrinsicLib.inf
   OpensslLib|CryptoPkg/Library/OpensslLib/OpensslLib.inf
+  RngLib|MdePkg/Library/DxeRngLib/DxeRngLib.inf
 
   # ARM Libraries
   ArmLib|ArmPkg/Library/ArmLib/ArmBaseLib.inf
