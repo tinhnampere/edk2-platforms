@@ -269,9 +269,9 @@ Ac01PcieSetupRootBridge (
   RootBridge->Io.Base = RC->IoAddr;
   RootBridge->Io.Limit = RC->IoAddr + IO_SPACE - 1;
   RootBridge->Mem.Base = RC->Mmio32Addr;
-  RootBridge->Mem.Limit = RootBridge->Mem.Base + (MMIO32_SPACE / 2) - 1;
-  RootBridge->PMem.Base = RootBridge->Mem.Limit + 1;
-  RootBridge->PMem.Limit = RootBridge->PMem.Base + MMIO32_SPACE - 1;
+  RootBridge->Mem.Limit = RootBridge->Mem.Base + MMIO32_SPACE - 1;
+  RootBridge->PMem.Base = RootBridge->Mem.Base;
+  RootBridge->PMem.Limit = RootBridge->Mem.Limit;
   RootBridge->MemAbove4G.Base = 0x0;
   RootBridge->MemAbove4G.Limit = 0x0;
   RootBridge->PMemAbove4G.Base = RC->MmioAddr;
