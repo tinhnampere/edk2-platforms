@@ -31,6 +31,7 @@ typedef struct {
   UINT32      DemandScrub;
   UINT32      WriteCrc;
   UINT32      FGRMode;
+  UINT32      Refresh2x;
 } MEM_INFO_VARSTORE_DATA;
 
 //

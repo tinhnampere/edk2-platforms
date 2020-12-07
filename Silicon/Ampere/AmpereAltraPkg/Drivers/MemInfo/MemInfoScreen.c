@@ -371,6 +371,9 @@ DriverCallback (
       case MEM_INFO_FGR_MODE_QUESTION_ID:
         Value->u32 = DDR_DEFAULT_FGR_MODE;
         break;
+      case MEM_INFO_REFRESH2X_MODE_QUESTION_ID:
+        Value->u32 = DDR_DEFAULT_REFRESH2X_MODE;
+        break;
       }
     }
     break;
@@ -884,6 +887,21 @@ MemInfoMainPerformanceScreen (
     (UINT16) MEM_INFO_DDR_WRITE_CRC_OFFSET,        // Offset in Buffer Storage
     STRING_TOKEN (STR_MEM_INFO_ENABLE_WRITE_CRC_PROMPT), // Question prompt text
     STRING_TOKEN (STR_MEM_INFO_ENABLE_WRITE_CRC_HELP),   // Question help text
+    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
+    0,
+    NULL
+    );
+
+  /*
+   * Display CVE-2020-10255 options
+   */
+  HiiCreateCheckBoxOpCode (
+    StartOpCodeHandle,                             // Container for dynamic created opcodes
+    MEM_INFO_REFRESH2X_MODE_QUESTION_ID,           // Question ID
+    MEM_INFO_VARSTORE_ID,                          // VarStore ID
+    (UINT16) MEM_INFO_REFRESH2X_MODE_OFFSET,       // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_REFRESH2X_MODE_PROMPT), // Question prompt text
+    STRING_TOKEN (STR_MEM_INFO_REFRESH2X_MODE_HELP),   // Question help text
     EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
     0,
     NULL
