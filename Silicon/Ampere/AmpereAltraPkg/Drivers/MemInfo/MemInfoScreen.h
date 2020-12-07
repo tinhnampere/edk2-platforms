@@ -72,6 +72,7 @@ enum DDR_ERROR_CTRL_MODE_FI {
 #define MEM_INFO_DDR_SCRUB_OFFSET                         OFFSET_OF (MEM_INFO_VARSTORE_DATA, ScrubPatrol)
 #define MEM_INFO_DDR_DEMAND_SCRUB_OFFSET                  OFFSET_OF (MEM_INFO_VARSTORE_DATA, DemandScrub)
 #define MEM_INFO_DDR_WRITE_CRC_OFFSET                     OFFSET_OF (MEM_INFO_VARSTORE_DATA, WriteCrc)
+#define MEM_INFO_FGR_MODE_OFFSET                          OFFSET_OF (MEM_INFO_VARSTORE_DATA, FGRMode)
 
 #define MEM_INFO_SCREEN_PRIVATE_DATA_SIGNATURE            SIGNATURE_32 ('M', 'E', 'M', 'i')
 
@@ -84,10 +85,15 @@ enum DDR_ERROR_CTRL_MODE_FI {
 #define MEM_INFO_DDR_SCRUB_PATROL_QUESTION_ID                    0x8007
 #define MEM_INFO_DDR_DEMAND_SCRUB_QUESTION_ID                    0x8008
 #define MEM_INFO_DDR_WRITE_CRC_QUESTION_ID                       0x8009
+#define MEM_INFO_FGR_MODE_QUESTION_ID                            0x800A
 
 #define DDR_DEFAULT_SCRUB_PATROL_DURATION 24
 #define DDR_DEFAULT_DEMAND_SCRUB          1
 #define DDR_DEFAULT_WRITE_CRC             0
+#define DDR_DEFAULT_FGR_MODE              0
+
+#define DDR_FGR_MODE_GET(Value)           ((Value) & 0x3)  /* Bit 0, 1 */
+#define DDR_FGR_MODE_SET(Dst, Src)        do { Dst = (((Dst) & ~0x3) | ((Src) & 0x3)); } while (0)
 
 typedef struct {
   UINTN                                 Signature;

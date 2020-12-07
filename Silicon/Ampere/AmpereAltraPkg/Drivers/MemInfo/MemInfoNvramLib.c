@@ -115,6 +115,17 @@ MemInfoNvparamGet (
     VarStoreConfig->WriteCrc = Value;
   }
 
+  Status = NVParamGet (
+             NV_SI_DDR_REFRESH_GRANULARITY,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &Value
+             );
+  if (EFI_ERROR (Status)) {
+    VarStoreConfig->FGRMode = DDR_DEFAULT_FGR_MODE;
+  } else {
+    VarStoreConfig->FGRMode = DDR_FGR_MODE_GET (Value);
+  }
+
   return EFI_SUCCESS;
 }
 
@@ -293,6 +304,30 @@ MemInfoNvparamSet(
                  TmpValue
                  );
     }
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+  }
+
+  /* Write FGR */
+  Value = 0;
+  TmpValue = VarStoreConfig->FGRMode;
+  Status = NVParamGet (
+             NV_SI_DDR_REFRESH_GRANULARITY,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &Value
+             );
+  Value = DDR_FGR_MODE_GET (Value);
+  if ((EFI_ERROR (Status) && TmpValue != DDR_DEFAULT_FGR_MODE)
+       || Value != TmpValue)
+  {
+    DDR_FGR_MODE_SET (Value, TmpValue);
+    Status = NVParamSet (
+               NV_SI_DDR_REFRESH_GRANULARITY,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               Value
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }

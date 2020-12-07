@@ -42,4 +42,8 @@
 
 #string STR_MEM_INFO_ENABLE_32GB_SLAVE_PROMPT      #language en-US "Enable Slave 32bit memory region"
 #string STR_MEM_INFO_ENABLE_32GB_SLAVE_HELP        #language en-US "Enables 32bit memory region (2GB) for slave socket"
-
+#string STR_MEM_INFO_FGR_MODE_PROMPT               #language en-US "Fine Granularity Refresh (FGR)"
+#string STR_MEM_INFO_FGR_MODE_VALUE0               #language en-US "1x"
+#string STR_MEM_INFO_FGR_MODE_VALUE1               #language en-US "2x"
+#string STR_MEM_INFO_FGR_MODE_VALUE2               #language en-US "4x"
+#string STR_MEM_INFO_FGR_MODE_HELP                 #language en-US "Select DDR Fine Granularity Refresh (FGR) mode 1x/2x/4x"

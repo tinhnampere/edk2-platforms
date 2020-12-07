@@ -30,6 +30,7 @@ typedef struct {
   UINT32      ScrubPatrol;
   UINT32      DemandScrub;
   UINT32      WriteCrc;
+  UINT32      FGRMode;
 } MEM_INFO_VARSTORE_DATA;
 
 //

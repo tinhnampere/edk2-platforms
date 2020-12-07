@@ -368,6 +368,9 @@ DriverCallback (
       case MEM_INFO_DDR_WRITE_CRC_QUESTION_ID:
         Value->u32 = DDR_DEFAULT_WRITE_CRC;
         break;
+      case MEM_INFO_FGR_MODE_QUESTION_ID:
+        Value->u32 = DDR_DEFAULT_FGR_MODE;
+        break;
       }
     }
     break;
@@ -392,6 +395,7 @@ MemInfoMainScreen (
   EFI_STATUS                      Status;
   VOID                            *StartOpCodeHandle;
   VOID                            *OptionsOpCodeHandle;
+  VOID                            *OptionsOpCodeHandle1;
   EFI_IFR_GUID_LABEL              *StartLabel;
   EFI_STRING_ID                   StringId;
   VOID                            *EndOpCodeHandle;
@@ -452,6 +456,12 @@ MemInfoMainScreen (
   //
   OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
   ASSERT (OptionsOpCodeHandle != NULL);
+
+  //
+  // Create Option OpCode to display FGR mode configuration
+  //
+  OptionsOpCodeHandle1 = HiiAllocateOpCodeHandle ();
+  ASSERT (OptionsOpCodeHandle1 != NULL);
 
   //
   // Create Hii Extend Label OpCode as the start opcode
@@ -572,6 +582,43 @@ MemInfoMainScreen (
       NULL
       );
   }
+
+  HiiCreateOneOfOptionOpCode (
+    OptionsOpCodeHandle1,
+    STRING_TOKEN (STR_MEM_INFO_FGR_MODE_VALUE0),
+    0,
+    EFI_IFR_NUMERIC_SIZE_4,
+    0
+    );
+
+  HiiCreateOneOfOptionOpCode (
+    OptionsOpCodeHandle1,
+    STRING_TOKEN (STR_MEM_INFO_FGR_MODE_VALUE1),
+    0,
+    EFI_IFR_NUMERIC_SIZE_4,
+    1
+    );
+
+  HiiCreateOneOfOptionOpCode (
+    OptionsOpCodeHandle1,
+    STRING_TOKEN (STR_MEM_INFO_FGR_MODE_VALUE2),
+    0,
+    EFI_IFR_NUMERIC_SIZE_4,
+    2
+    );
+
+  HiiCreateOneOfOpCode (
+    StartOpCodeHandle,                               // Container for dynamic created opcodes
+    MEM_INFO_FGR_MODE_QUESTION_ID,                   // Question ID (or call it "key")
+    MEM_INFO_VARSTORE_ID,                            // VarStore ID
+    (UINT16) MEM_INFO_FGR_MODE_OFFSET,               // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_FGR_MODE_PROMPT),     // Question prompt text
+    STRING_TOKEN (STR_MEM_INFO_FGR_MODE_HELP),       // Question help text
+    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,   // Question flag
+    EFI_IFR_NUMERIC_SIZE_4,                          // Data type of Question Value
+    OptionsOpCodeHandle1,                            // Option Opcode list
+    NULL                                             // Default Opcode is NULl
+    );
 
   //
   // Create a Goto OpCode to ras memory configuration
