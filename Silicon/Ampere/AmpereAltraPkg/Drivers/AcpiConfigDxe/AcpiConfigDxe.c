@@ -321,31 +321,30 @@ AcpiNVDataUpdate (
 {
   EFI_STATUS              Status;
   PlatformInfoHob_V2      *PlatformHob;
-  UINT32                  AcpiTurboSupport;
+  UINT32                  TurboSupport;
 
   ASSERT (PrivateData != NULL);
 
   PlatformHob = PrivateData->PlatformHob;
-  AcpiTurboSupport = PlatformHob->TurboCapability[0] + PlatformHob->TurboCapability[1];
+  TurboSupport = PlatformHob->TurboCapability[0] + PlatformHob->TurboCapability[1];
 
-  if (AcpiTurboSupport != PrivateData->Configuration.AcpiTurboSupport) {
-    if (AcpiTurboSupport == 0) {
-      PrivateData->Configuration.AcpiTurboMode = 2; // Unsupported mode
-    }
+  if (TurboSupport == 0) {
+    PrivateData->Configuration.AcpiTurboMode = 2; // Unsupported mode
+    PrivateData->Configuration.AcpiTurboSupport = 0;
+  } else {
+    PrivateData->Configuration.AcpiTurboSupport = 1;
+  }
 
-    PrivateData->Configuration.AcpiTurboSupport = AcpiTurboSupport;
-
-    Status = gRT->SetVariable (
-                    AcpiVarstoreDataName,
-                    &gAcpiConfigFormSetGuid,
-                    ACPI_VARSTORE_ATTRIBUTES,
-                    sizeof (ACPI_CONFIG_VARSTORE_DATA),
-                    &PrivateData->Configuration
-                    );
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a %d gRT->SetVariable() failed \n", __FUNCTION__, __LINE__));
-      return Status;
-    }
+  Status = gRT->SetVariable (
+                  AcpiVarstoreDataName,
+                  &gAcpiConfigFormSetGuid,
+                  ACPI_VARSTORE_ATTRIBUTES,
+                  sizeof (ACPI_CONFIG_VARSTORE_DATA),
+                  &PrivateData->Configuration
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a %d gRT->SetVariable() failed \n", __FUNCTION__, __LINE__));
+    return Status;
   }
 
   return EFI_SUCCESS;
@@ -365,21 +364,21 @@ UpdateTurboModeConfig (
   if (PrivateData->Configuration.AcpiTurboSupport != 0) {
     PlatformHob = PrivateData->PlatformHob;
 
-    if (PlatformHob->TurboCapability[0]) {
+    if (PlatformHob->TurboCapability[0] != 0) {
       Status = PMProTurboEnable (0, PrivateData->Configuration.AcpiTurboMode);
       if (EFI_ERROR (Status)) {
         return Status;
       }
     }
 
-    if (PlatformHob->TurboCapability[1]) {
+    if (PlatformHob->TurboCapability[1] != 0) {
       Status = PMProTurboEnable (1, PrivateData->Configuration.AcpiTurboMode);
       if (EFI_ERROR (Status)) {
         return Status;
       }
     }
   } else {
-    DEBUG ((DEBUG_WARN, "%a: Turbo mode is unsupported! \n", __FUNCTION__));
+    DEBUG ((DEBUG_INFO, "%a: Turbo mode is unsupported! \n", __FUNCTION__));
   }
 
   return EFI_SUCCESS;
