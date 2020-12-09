@@ -367,31 +367,28 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
       }
     }
 
-    Device(TPM0) {
-        Name (_CID, "MSFT0101")
-        Name (_UID, 0)
-        Method (_CRS, 0x0, Serialized) {
-          Name (RBUF, ResourceTemplate ()
-            {
-               //QWORDMemory(ResourceConsumer, , MinFixed, MaxFixed, NonCacheable, ReadWrite, 0x00000000, 0x80300000, 0x80300FFF, 0x0, 0x1000,, ,)
-                Memory32Fixed (ReadWrite, 0x88500000, 0x1000, PCRE)
-              })
-          Return (RBUF)
-        }
+    Device (TPM0) {
+      Name (_HID, "MSFT0101")
+      Name (_CID, "MSFT0101")
+      Name (_UID, 0)
+      Method (_CRS, 0x0, Serialized) {
+        Name (RBUF, ResourceTemplate () {
+          //QWORDMemory(ResourceConsumer, , MinFixed, MaxFixed, NonCacheable, ReadWrite, 0x00000000, 0x80300000, 0x80300FFF, 0x0, 0x1000,, ,)
+          Memory32Fixed (ReadWrite, 0x88500000, 0x1000, PCRE)
+        })
+        Return (RBUF)
+      }
 
-        Method(_STR,0)
-        {
-          Return (Unicode ("TPM 2.0 Device"))
-        }
+      Method (_STR,0) {
+        Return (Unicode ("TPM 2.0 Device"))
+      }
 
-        Method (_STA, 0)
-        {
-          if(TPMF)
-          {
-            Return (0x0f)  //Enable resources
-          }
-          Return (0x0)
+      Method (_STA, 0) {
+        if (TPMF) {
+          Return (0x0f)  //Enable resources
         }
+        Return (0x0)
+      }
     }
 
     Include ("PCI-S0.Rca01.asi")
