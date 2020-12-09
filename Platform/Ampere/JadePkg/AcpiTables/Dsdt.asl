@@ -6,7 +6,7 @@
 
 **/
 
-DefinitionBlock("Dsdt.aml", "DSDT", 0x05, "Ampere", "Jade", 1) {
+DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
   //
   // Board Model
   Name(\BDMD, "Jade Board")
