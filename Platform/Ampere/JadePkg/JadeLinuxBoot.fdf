@@ -45,23 +45,9 @@ NumBlocks     = 0xAC
 #
 ################################################################################
 
-#
-# FV_PEI
-# Offset: 0x00000000
-# Size:   0x00050000
-#
-0x00000000|0x00050000
-gAmpereTokenSpaceGuid.PcdFvPeiBaseAddress|gAmpereTokenSpaceGuid.PcdFvPeiSize
-FV = FV_PEI
-
-#
-# FV_MAIN
-# Offset: 0x00050000
-# Size:   0x00A70000
-#
-0x00050000|0x00A70000
+0x00000000|0x00AC0000
 gAmpereTokenSpaceGuid.PcdFvMainCoreBaseAddress|gAmpereTokenSpaceGuid.PcdFvMainCoreSize
-FV = FvMain
+FV = FVMAIN_COMPACT
 
 ################################################################################
 #
@@ -74,47 +60,10 @@ FV = FvMain
 #
 ################################################################################
 
-[FV.FV_PEI]
-BlockSize          = 0x10000
-NumBlocks          = 0x5
-FvAlignment        = 16
-ERASE_POLARITY     = 1
-MEMORY_MAPPED      = TRUE
-STICKY_WRITE       = TRUE
-LOCK_CAP           = TRUE
-LOCK_STATUS        = TRUE
-WRITE_DISABLED_CAP = TRUE
-WRITE_ENABLED_CAP  = TRUE
-WRITE_STATUS       = TRUE
-WRITE_LOCK_CAP     = TRUE
-WRITE_LOCK_STATUS  = TRUE
-READ_DISABLED_CAP  = TRUE
-READ_ENABLED_CAP   = TRUE
-READ_STATUS        = TRUE
-READ_LOCK_CAP      = TRUE
-READ_LOCK_STATUS   = TRUE
-FvNameGuid         = 61C0F511-A691-4F54-974F-B9A42172CE53
-
-APRIORI PEI {
-  INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
-}
-
-  INF ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-  INF MdeModulePkg/Core/Pei/PeiMain.inf
-  INF UefiCpuPkg/CpuIoPei/CpuIoPei.inf
-  INF ArmPlatformPkg/PlatformPei/PlatformPeim.inf
-  INF Silicon/Ampere/Drivers/ATFHobPei/ATFHobPeim.inf
-  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MemoryInitPeim/MemoryInitPeim.inf
-  INF ArmPkg/Drivers/CpuPei/CpuPei.inf
-  INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
-  INF MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
-
-  INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
-
 [FV.FvMain]
 BlockSize          = 0x10000
-NumBlocks          = 0xA7
-FvAlignment        = 16
+NumBlocks          = 0         # This FV gets compressed so make it just big enough
+FvAlignment        = 16        # FV alignment and FV attributes setting.
 ERASE_POLARITY     = 1
 MEMORY_MAPPED      = TRUE
 STICKY_WRITE       = TRUE
@@ -207,5 +156,45 @@ APRIORI DXE {
   INF Platform/Ampere/JadePkg/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.inf
   INF Platform/Ampere/JadePkg/Drivers/SmbiosCpuDxe/SmbiosCpuDxe.inf
   INF Platform/Ampere/JadePkg/Drivers/SmbiosMemInfoDxe/SmbiosMemInfoDxe.inf
+
+[FV.FVMAIN_COMPACT]
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+
+APRIORI PEI {
+  INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+}
+
+  INF ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
+  INF MdeModulePkg/Core/Pei/PeiMain.inf
+  INF UefiCpuPkg/CpuIoPei/CpuIoPei.inf
+  INF ArmPlatformPkg/PlatformPei/PlatformPeim.inf
+  INF Silicon/Ampere/Drivers/ATFHobPei/ATFHobPeim.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MemoryInitPeim/MemoryInitPeim.inf
+  INF ArmPkg/Drivers/CpuPei/CpuPei.inf
+  INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+  INF MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
+
+  INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
+
+  FILE FV_IMAGE = 9E21FD93-9C72-4c15-8C4B-E77F1DB2D792 {
+    SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+      SECTION FV_IMAGE = FVMAIN
+    }
+  }
 
 !include Platform/Ampere/FvRules.fdf.inc
