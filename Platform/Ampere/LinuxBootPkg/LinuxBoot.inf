@@ -9,9 +9,9 @@
 [Defines]
   INF_VERSION                   = 0x0001001B
   BASE_NAME                     = LinuxBoot
-  FILE_GUID                     = 7C04A583-9E3E-4f1c-AD65-E05268D0B4D1
+  FILE_GUID                     = D834A5AD-459C-4AED-B0D0-8CBCB28838D7
   MODULE_TYPE                   = UEFI_APPLICATION
   VERSION_STRING                = 1.0
 
 [Binaries.AArch64]
-    PE32|AArch64/flashkernel|*
+  PE32|AArch64/flashkernel|*

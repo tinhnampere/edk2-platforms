@@ -25,6 +25,10 @@
 #include <Protocol/LoadedImage.h>
 #include <Guid/EventGroup.h>
 
+// This GUID must match the FILE_GUID in the LinuxBootPkg/LinuxBoot.inf file.
+// GUID: D834A5AD-459C-4AED-B0D0-8CBCB28838D7
+EFI_GUID mLinuxBootFileGuid = { 0xD834A5AD, 0x459C, 0x4AED, { 0xB0, 0xD0, 0x8C, 0xBC, 0xB2, 0x88, 0x38, 0xD7 } };
+
 STATIC
 VOID
 RegisterFvBootOption (
@@ -124,10 +128,10 @@ PlatformBootManagerAfterConsole (
   )
 {
   //
-  // Register UEFI Shell
+  // Register LinuxBoot
   //
   RegisterFvBootOption (
-    &gUefiShellFileGuid, L"UEFI Shell", LOAD_OPTION_ACTIVE
+    &mLinuxBootFileGuid, L"LinuxBoot", LOAD_OPTION_ACTIVE
     );
 }
 
