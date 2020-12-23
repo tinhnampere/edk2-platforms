@@ -163,7 +163,7 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
         })
       }
       Name(SSCN, Package() { 427, 499, 0 })
-      Name(FMCN, Package() { 87, 159, 0 })
+      Name(FMCN, Package() { 164, 319, 0 })
     }
 
     //
