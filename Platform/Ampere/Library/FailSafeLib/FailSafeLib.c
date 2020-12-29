@@ -56,7 +56,9 @@ typedef struct {
 
 EFI_MM_COMM_REQUEST mEfiMmSpiNorReq;
 
-typedef struct  {
+typedef struct {
+  UINT8     ImgMajorVer;
+  UINT8     ImgMinorVer;
   UINT32    NumRetry1;
   UINT32    NumRetry2;
   UINT32    MaxRetry;
@@ -69,7 +71,7 @@ typedef struct  {
    */
   UINT32    MCUFailsMask;
   UINT16    CRC16;
-} __attribute__((packed, aligned(4))) FailsafeCtx_t;
+} __attribute__((packed, aligned(4))) FailSafeCtx_t;
 
 STATIC
 EFI_STATUS
@@ -89,6 +91,65 @@ UefiMmCreateSpiNorReq (
   }
 
   return EFI_SUCCESS;
+}
+
+STATIC
+INTN
+CheckCrc16 (
+  UINT8 *Pointer,
+  INTN  Count
+  )
+{
+  INTN Crc = 0;
+  INTN Index;
+
+  while (--Count >= 0) {
+    Crc = Crc ^ (INTN) *Pointer++ << 8;
+    for (Index = 0; Index < 8; ++Index) {
+      if ((Crc & 0x8000) != 0) {
+        Crc = Crc << 1 ^ 0x1021;
+      }
+      else {
+        Crc = Crc << 1;
+      }
+    }
+  }
+
+  return Crc & 0xFFFF;
+}
+
+BOOLEAN
+FailSafeValidCRC (
+  FailSafeCtx_t *FailSafeBuf
+  )
+{
+  UINT8 Valid;
+  UINT16 Crc;
+  UINT32 Len;
+
+  Len = sizeof (FailSafeCtx_t);
+  Crc = FailSafeBuf->CRC16;
+  FailSafeBuf->CRC16 = 0;
+
+  Valid = (Crc == CheckCrc16 ((UINT8 *) FailSafeBuf, Len));
+  FailSafeBuf->CRC16 = Crc;
+
+  return Valid;
+}
+
+BOOLEAN
+FailSafeFailureStatus (
+  UINT8 Status
+  )
+{
+  if ((Status == FAILSAFE_BOOT_LAST_KNOWN_SETTINGS) ||
+      (Status == FAILSAFE_BOOT_DEFAULT_SETTINGS) ||
+      (Status == FAILSAFE_BOOT_DDR_DOWNGRADE))
+  {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 EFI_STATUS
@@ -128,7 +189,7 @@ FailSafeGetRegionInfo (
 
   MmSpiNorFailSafeInfoRes = (EFI_MM_COMMUNICATE_SPINOR_FAILSAFE_INFO_RES *) &mEfiMmSpiNorReq.PayLoad;
   if (MmSpiNorFailSafeInfoRes->Status != MM_SPINOR_RES_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "%a: Get flash information failed: %d\n",
+    DEBUG ((DEBUG_ERROR, "%a: Get flash information failed: 0x%llx\n",
             __FUNCTION__,
             MmSpiNorFailSafeInfoRes->Status));
     return EFI_DEVICE_ERROR;
@@ -150,6 +211,7 @@ FailSafeBootSuccessfully (VOID)
   EFI_STATUS                                  Status;
   UINT64                                      FailSafeStartOffset;
   UINT64                                      FailSafeSize;
+  FailSafeCtx_t                               FailSafeBuf;
 
   Status = FailSafeGetRegionInfo (&FailSafeStartOffset, &FailSafeSize);
   if (EFI_ERROR (Status)) {
@@ -157,7 +219,44 @@ FailSafeBootSuccessfully (VOID)
     return EFI_DEVICE_ERROR;
   }
 
-  ASSERT (mFlashLibMmCommProtocol != NULL);
+  MmData[0] = MM_SPINOR_FUNC_READ;
+  MmData[1] = FailSafeStartOffset;
+  MmData[2] = (UINT64) sizeof (FailSafeCtx_t);
+  MmData[3] = (UINT64) &FailSafeBuf;
+  UefiMmCreateSpiNorReq ((VOID *) &MmData, sizeof (MmData));
+
+  Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
+  Status = mFlashLibMmCommProtocol->Communicate (
+                                      mFlashLibMmCommProtocol,
+                                      (VOID *) &mEfiMmSpiNorReq,
+                                      &Size
+                                      );
+  ASSERT_EFI_ERROR (Status);
+
+  MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *) &mEfiMmSpiNorReq.PayLoad;
+  if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
+    DEBUG ((DEBUG_ERROR, "%a: Read context failed: 0x%llx\n",
+            __FUNCTION__,
+            MmSpiNorRes->Status));
+    return EFI_DEVICE_ERROR;
+  }
+
+  /*
+   * If failsafe context is invalid, it is already indicate a successful boot
+   * and don't need to be cleared
+   */
+  if (!FailSafeValidCRC (&FailSafeBuf)) {
+    return EFI_SUCCESS;
+  }
+
+  /*
+   * If failsafe context is valid, and:
+   *    - The status indicate non-failure, then don't clear it
+   *    - The status indicate a failure, then go and clear it
+   */
+  if (!FailSafeFailureStatus (FailSafeBuf.Status)) {
+    return EFI_SUCCESS;
+  }
 
   MmData[0] = MM_SPINOR_FUNC_ERASE;
   MmData[1] = FailSafeStartOffset;
@@ -174,77 +273,13 @@ FailSafeBootSuccessfully (VOID)
 
   MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *) &mEfiMmSpiNorReq.PayLoad;
   if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "%a: erase context failed: %d\n",
+    DEBUG ((DEBUG_ERROR, "%a: Erase context failed: 0x%llx\n",
             __FUNCTION__,
             MmSpiNorRes->Status));
     return EFI_DEVICE_ERROR;
   }
 
   return EFI_SUCCESS;
-}
-
-UINT8
-FailSafeValidStatus (
-  IN UINT8 Status
-  )
-{
-  if ((Status == FAILSAFE_BOOT_NORMAL) ||
-      (Status == FAILSAFE_BOOT_LAST_KNOWN_SETTINGS) ||
-      (Status == FAILSAFE_BOOT_DEFAULT_SETTINGS) ||
-      (Status == FAILSAFE_BOOT_SUCCESSFUL)) {
-    return 1;
-  }
-
-  return 0;
-}
-
-UINT64
-EFIAPI
-FailSafeGetStatus (VOID)
-{
-  EFI_MM_COMMUNICATE_SPINOR_RES       *MmSpiNorRes;
-  UINT64                              MmData[5];
-  UINTN                               Size;
-  EFI_STATUS                          Status;
-  UINT64                              FailSafeStartOffset;
-  UINT64                              FailSafeSize;
-  FailsafeCtx_t                       FailsafeBuf;
-
-  Status = FailSafeGetRegionInfo (&FailSafeStartOffset, &FailSafeSize);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to get region information\n", __FUNCTION__));
-    return EFI_DEVICE_ERROR;
-  }
-
-  ASSERT (mFlashLibMmCommProtocol != NULL);
-
-  MmData[0] = MM_SPINOR_FUNC_READ;
-  MmData[1] = FailSafeStartOffset;
-  MmData[2] = (UINT64) sizeof (FailsafeCtx_t);
-  MmData[3] = (UINT64) &FailsafeBuf;
-  UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
-
-  Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
-  Status = mFlashLibMmCommProtocol->Communicate (
-                                      mFlashLibMmCommProtocol,
-                                      (VOID *) &mEfiMmSpiNorReq,
-                                      &Size
-                                      );
-  ASSERT_EFI_ERROR (Status);
-
-  MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *) &mEfiMmSpiNorReq.PayLoad;
-  if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "%a: read context failed: %d\n",
-            __FUNCTION__,
-            MmSpiNorRes->Status));
-    return EFI_DEVICE_ERROR;
-  }
-
-  if (FailSafeValidStatus (FailsafeBuf.Status) == 0) {
-    FailsafeBuf.Status = FAILSAFE_BOOT_NORMAL;
-  }
-
-  return FailsafeBuf.Status;
 }
 
 EFI_STATUS

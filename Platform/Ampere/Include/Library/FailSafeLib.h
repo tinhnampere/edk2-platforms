@@ -26,6 +26,7 @@ enum {
   FAILSAFE_BOOT_NORMAL = 0,
   FAILSAFE_BOOT_LAST_KNOWN_SETTINGS,
   FAILSAFE_BOOT_DEFAULT_SETTINGS,
+  FAILSAFE_BOOT_DDR_DOWNGRADE,
   FAILSAFE_BOOT_SUCCESSFUL
 };
 
@@ -38,13 +39,6 @@ FailSafeGetRegionInfo (
   UINT64 *Offset,
   UINT64 *Size
   );
-
-/**
-  Get the current FailSafe status.
-**/
-UINT64
-EFIAPI
-FailSafeGetStatus (VOID);
 
 /**
   Inform to FailSafe monitor that the system boots successfully.
