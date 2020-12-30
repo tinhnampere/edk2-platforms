@@ -59,7 +59,7 @@ typedef enum {
   NV_SI_DDR_BANK_HASH_EN                    = (11 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_RESERVED3                       = (12 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_RCD_PARITY_EN                   = (13 * 8) + NV_PREBOOT_PARAM_START,
-  NV_SI_DDR_RESERVED4                       = (14 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_DDR_WRPATH_CLK_GATE_EN              = (14 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_IOCAL_MARGIN                    = (15 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_RTR_S_MARGIN                    = (16 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_RTR_L_MARGIN                    = (17 * 8) + NV_PREBOOT_PARAM_START,
@@ -92,8 +92,6 @@ typedef enum {
   NV_SI_ESM_WIDTH                           = (44 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_TM2_DISABLE                         = (45 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_CPUPLL_FREQ_MHZ                     = (46 * 8) + NV_PREBOOT_PARAM_START,
-  NV_PMPRO_REGION1_LOAD_START               = NV_SI_CCIX_DISABLE,
-  NV_PMPRO_REGION1_LOAD_END                 = NV_SI_CPUPLL_FREQ_MHZ,
   NV_SI_DDR_ERR_INJECT_MASK_SK0             = (47 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_ERR_INJECT_MASK_SK1             = (48 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_CXG_DISABLE_EARLY_COMPACK           = (49 * 8) + NV_PREBOOT_PARAM_START,
@@ -122,8 +120,14 @@ typedef enum {
   NV_SI_PCIE_PHY_SETTING                    = (72 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_PHY_CAL_THRESHOLD               = (73 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_PHY_CAL_INTERVAL_CNT            = (74 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_RESERVED                            = (75 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_S0_RHS_RCA_EN                       = (76 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_S1_RHS_RCA_EN                       = (77 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_2P_DPLL                             = (78 * 8) + NV_PREBOOT_PARAM_START,
+  NV_PMPRO_REGION1_LOAD_START               = NV_SI_SLC_DISABLE,
+  NV_PMPRO_REGION1_LOAD_END                 = NV_SI_2P_DPLL,
   /* NOTE: Add before NV_PREBOOT_PARAM_MAX and increase its value */
-  NV_PREBOOT_PARAM_MAX                      = (74 * 8) + NV_PREBOOT_PARAM_START,
+  NV_PREBOOT_PARAM_MAX                      = (78 * 8) + NV_PREBOOT_PARAM_START,
 
   /*
    * Manufactory non-volatile memory
@@ -147,9 +151,9 @@ typedef enum {
   NV_SI_VPP_VMARGIN                         = (12 * 8) + NV_MANU_PARAM_START,
   NV_SI_PMPRO_FAILURE_FAILSAFE              = (13 * 8) + NV_MANU_PARAM_START,
   NV_SI_FAILSAFE_DISABLE                    = (14 * 8) + NV_MANU_PARAM_START,
-  NV_SI_PLIMIT_PM1_BURST_THRSHLD_MS         = (15 * 8) + NV_MANU_PARAM_START,
-  NV_SI_PLIMIT_PM1_BREAK_THRSHLD_MS         = (16 * 8) + NV_MANU_PARAM_START,
-  NV_SI_PLIMIT_PM1_PERCENTAGE_TDP           = (17 * 8) + NV_MANU_PARAM_START,
+  NV_SI_PLIMIT_APM_DS_PERCENTAGE            = (15 * 8) + NV_MANU_PARAM_START,
+  NV_SI_PLIMIT_APM_EP_MS                    = (16 * 8) + NV_MANU_PARAM_START,
+  NV_SI_PLIMIT_APM_PM1_PERCENTAGE_TDP       = (17 * 8) + NV_MANU_PARAM_START,
   NV_SI_CPU_LPI_FREQ_DISABLE                = (18 * 8) + NV_MANU_PARAM_START,
   NV_SI_CPU_LPI_FREQ_ENERGY_THRSHLD         = (19 * 8) + NV_MANU_PARAM_START,
   NV_SI_CCIX_OPT_CONFIG                     = (20 * 8) + NV_MANU_PARAM_START,
@@ -158,9 +162,15 @@ typedef enum {
   NV_SI_PWR_HEADROOM_WATT                   = (23 * 8) + NV_MANU_PARAM_START,
   NV_SI_EXTRA_PCP_VOLT_MV                   = (24 * 8) + NV_MANU_PARAM_START,
   NV_SI_CPU_LPI_HYST_CNT                    = (25 * 8) + NV_MANU_PARAM_START,
-  NV_PMPRO_REGION2_LOAD_END                 = NV_SI_CPU_LPI_HYST_CNT,
+  NV_SI_DVFS_VOLT_INC_STEP_MV               = (26 * 8) + NV_MANU_PARAM_START,
+  NV_SI_DVFS_VOLT_DEC_STEP_MV               = (27 * 8) + NV_MANU_PARAM_START,
+  NV_SI_PLIMIT_APM_TEMP_THLD                = (28 * 8) + NV_MANU_PARAM_START,
+  NV_SI_PLIMIT_APM_EN                       = (29 * 8) + NV_MANU_PARAM_START,
+  NV_SI_VDM_EN                              = (30 * 8) + NV_MANU_PARAM_START,
+  NV_SI_VDM_VMARGIN_MV                      = (31 * 8) + NV_MANU_PARAM_START,
+  NV_PMPRO_REGION2_LOAD_END                 = NV_SI_VDM_VMARGIN_MV,
   /* NOTE: Add before NV_MANU_PARAM_MAX and increase its value */
-  NV_MANU_PARAM_MAX                         = (25 * 8) + NV_MANU_PARAM_START,
+  NV_MANU_PARAM_MAX                         = (31 * 8) + NV_MANU_PARAM_START,
 
   /*
    * User non-volatile memory
@@ -172,8 +182,6 @@ typedef enum {
   NV_SI_S0_PCP_ACTIVECPM_32_63              = (1 * 8) + NV_USER_PARAM_START,
   NV_SI_S1_PCP_ACTIVECPM_0_31               = (2 * 8) + NV_USER_PARAM_START,
   NV_SI_S1_PCP_ACTIVECPM_32_63              = (3 * 8) + NV_USER_PARAM_START,
-  NV_PMPRO_REGION3_LOAD_START               = NV_SI_S0_PCP_ACTIVECPM_0_31,
-  NV_PMPRO_REGION3_LOAD_END                 = NV_SI_S1_PCP_ACTIVECPM_32_63,
   NV_SI_WDT_BIOS_EXP_MINS                   = (4 * 8) + NV_USER_PARAM_START,
   NV_SI_DDR_CE_RAS_THRESHOLD                = (5 * 8) + NV_USER_PARAM_START,
   NV_SI_DDR_CE_RAS_INTERVAL                 = (6 * 8) + NV_USER_PARAM_START,
@@ -213,8 +221,22 @@ typedef enum {
   NV_SI_NVDIMM_PROV_MASK_S1                 = (40 * 8) + NV_USER_PARAM_START,
   NV_SI_DDR_ZQCS_EN                         = (41 * 8) + NV_USER_PARAM_START,
   NV_SI_DDR_CRC_MODE                        = (42 * 8) + NV_USER_PARAM_START,
+  NV_SI_CXG_RA_AUX_CTL_0_31                 = (43 * 8) + NV_USER_PARAM_START,
+  NV_SI_CXG_RA_AUX_CTL_32_63                = (44 * 8) + NV_USER_PARAM_START,
+  NV_SI_CXG_RA_AUX_CTL_0_31_WR_EN_MASK      = (45 * 8) + NV_USER_PARAM_START,
+  NV_SI_CXG_RA_AUX_CTL_32_63_WR_EN_MASK     = (46 * 8) + NV_USER_PARAM_START,
+  NV_SI_CXLA_AUX_CTL_0_31                   = (47 * 8) + NV_USER_PARAM_START,
+  NV_SI_CXLA_AUX_CTL_32_63                  = (48 * 8) + NV_USER_PARAM_START,
+  NV_SI_CXLA_AUX_CTL_0_31_WR_EN_MASK        = (49 * 8) + NV_USER_PARAM_START,
+  NV_SI_CXLA_AUX_CTL_32_63_WR_EN_MASK       = (50 * 8) + NV_USER_PARAM_START,
+  NV_SI_DDR_LOW_POWER_CFG                   = (51 * 8) + NV_USER_PARAM_START,
+  NV_SI_ALERT_DIMM_SHUTDOWN_EN              = (52 * 8) + NV_USER_PARAM_START,
+  NV_SI_DFS_EN                              = (53 * 8) + NV_USER_PARAM_START,
+  NV_SI_RAS_PCIE_AER_FW_FIRST               = (54 * 8) + NV_USER_PARAM_START,
   /* NOTE: Add before NV_USER_PARAM_MAX and increase its value */
-  NV_USER_PARAM_MAX                         = (42 * 8) + NV_USER_PARAM_START,
+  NV_USER_PARAM_MAX                         = (54 * 8) + NV_USER_PARAM_START,
+  NV_PMPRO_REGION3_LOAD_START               = NV_USER_PARAM_START,
+  NV_PMPRO_REGION3_LOAD_END                 = NV_USER_PARAM_MAX,
 
   /*
    * Non-volatile board read-only setting
@@ -324,7 +346,7 @@ typedef enum {
   NV_SI_RO_BOARD_DDR_PHY_VREFDQ_RANGE_VAL_1DPC      = (86 * 8) + NV_BOARD_PARAM_START, /* Default: 0x24 */
   NV_SI_RO_BOARD_DDR_DRAM_VREFDQ_RANGE_VAL_1DPC     = (87 * 8) + NV_BOARD_PARAM_START, /* Default: 0x1A */
   NV_SI_RO_BOARD_DDR_PHY_VREFDQ_RANGE_VAL_2DPC      = (88 * 8) + NV_BOARD_PARAM_START, /* Default: 0x5B */
-  NV_SI_RO_BOARD_DDR_DRAM_VREFDQ_RANGE_VAL_2DPC     = (89 * 8) + NV_BOARD_PARAM_START, /* Default: 0x24 */
+  NV_SI_RO_BOARD_DDR_DRAM_VREFDQ_RANGE_VAL_2DPC     = (89 * 8) + NV_BOARD_PARAM_START, /* Default: 0x28 */
   NV_SI_RO_BOARD_DDR_CLK_WRDQ_DLY_DEFAULT           = (90 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02800280 */
   NV_SI_RO_BOARD_DDR_RDDQS_DQ_DLY_DEFAULT           = (91 * 8) + NV_BOARD_PARAM_START, /* Default: 0x90909090 */
   NV_SI_RO_BOARD_DDR_WRDQS_SHIFT_DEFAULT            = (92 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
@@ -410,12 +432,22 @@ typedef enum {
   NV_SI_RO_BOARD_S1_RCA5_TXRX_G4PRESET              = (172 * 8) + NV_BOARD_PARAM_START, /* Default: 0x57575757 */
   NV_SI_RO_BOARD_S1_RCA6_TXRX_G4PRESET              = (173 * 8) + NV_BOARD_PARAM_START, /* Default: 0x57575757 */
   NV_SI_RO_BOARD_S1_RCA7_TXRX_G4PRESET              = (174 * 8) + NV_BOARD_PARAM_START, /* Default: 0x57575757 */
-  NV_SI_RO_BOARD_2P_CE_MASK_THRESHOLD               = (175 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000002 */
+  NV_SI_RO_BOARD_2P_CE_MASK_THRESHOLD               = (175 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000003 */
   NV_SI_RO_BOARD_2P_CE_MASK_INTERVAL                = (176 * 8) + NV_BOARD_PARAM_START, /* Default: 0x000001A4 */
   NV_SI_RO_BOARD_SX_PHY_CFG_SETTING                 = (177 * 8) + NV_BOARD_PARAM_START,
-  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_SX_PHY_CFG_SETTING,
+  NV_SI_RO_BOARD_DDR_PHY_DC_CLK                     = (178 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00018000 */
+  NV_SI_RO_BOARD_DDR_PHY_DC_DATA                    = (179 * 8) + NV_BOARD_PARAM_START, /* Default: 0x80018000 */
+  NV_SI_RO_BOARD_SX_RCA0_TXRX_20GPRESET             = (180 * 8) + NV_BOARD_PARAM_START,
+  NV_SI_RO_BOARD_SX_RCA1_TXRX_20GPRESET             = (181 * 8) + NV_BOARD_PARAM_START,
+  NV_SI_RO_BOARD_SX_RCA2_TXRX_20GPRESET             = (182 * 8) + NV_BOARD_PARAM_START,
+  NV_SI_RO_BOARD_SX_RCA3_TXRX_20GPRESET             = (183 * 8) + NV_BOARD_PARAM_START,
+  NV_SI_RO_BOARD_SX_RCA0_TXRX_25GPRESET             = (184 * 8) + NV_BOARD_PARAM_START,
+  NV_SI_RO_BOARD_SX_RCA1_TXRX_25GPRESET             = (185 * 8) + NV_BOARD_PARAM_START,
+  NV_SI_RO_BOARD_SX_RCA2_TXRX_25GPRESET             = (186 * 8) + NV_BOARD_PARAM_START,
+  NV_SI_RO_BOARD_SX_RCA3_TXRX_25GPRESET             = (187 * 8) + NV_BOARD_PARAM_START,
+  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_SX_RCA3_TXRX_25GPRESET,
   /* NOTE: Add before NV_BOARD_PARAM_MAX and increase its value */
-  NV_BOARD_PARAM_MAX                                = (177 * 8) + NV_BOARD_PARAM_START,
+  NV_BOARD_PARAM_MAX                                = (187 * 8) + NV_BOARD_PARAM_START,
 } NVPARAM;
 
 #endif /* _NVPARAMDEF_H_ */
