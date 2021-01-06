@@ -1,0 +1,28 @@
+## @file
+#
+# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = ArmSpciLib
+  FILE_GUID                      = 54AA05AE-2916-4ADB-8943-3CE0A60B7D92
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = ArmSpciLib
+
+[Sources]
+  ArmSpciLib.c
+  ArmSpciSvcLib.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  ArmSmcLib
+  DebugLib
