@@ -17,7 +17,7 @@
 [Sources.common]
   PCF85063.c
   PCF85063.h
-  RtcSystemLib.c
+  PCF85063RealTimeClockLib.c
 
 [Packages]
   ArmPkg/ArmPkg.dec
@@ -35,21 +35,10 @@
   DwapbGpioLib
   DxeServicesTableLib
   I2CLib
-  SMProLib
+  TimeBaseLib
   TimerLib
   UefiLib
   UefiRuntimeLib
 
 [Guids]
   gEfiEventVirtualAddressChangeGuid
-
-[FixedPcd]
-  gArmPlatformTokenSpaceGuid.PcdCoreCount
-  gArmPlatformTokenSpaceGuid.PcdClusterCount
-
-  gAmpereTokenSpaceGuid.PcdTurboDefaultFreq
-  gAmpereTokenSpaceGuid.PcdSmproDb
-  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
-  gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0
-  gAmpereTokenSpaceGuid.PcdSmproI2cBmcBusAddr
-  gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex

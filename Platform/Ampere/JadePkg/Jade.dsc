@@ -86,7 +86,7 @@
   #
   # RTC Library: Common RTC
   #
-  RealTimeClockLib|Platform/Ampere/JadePkg/Library/PCF85063RealTimeClockLib/PCF85063.inf
+  RealTimeClockLib|Platform/Ampere/JadePkg/Library/PCF85063RealTimeClockLib/PCF85063RealTimeClockLib.inf
 
   #
   # Library for FailSafe support

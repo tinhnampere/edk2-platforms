@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef COMMON_H_
-#define COMMON_H_
+#ifndef PCF85063_H_
+#define PCF85063_H_
 
 #include <Uefi.h>
 
@@ -88,4 +88,4 @@ PlatformInitialize (
   VOID
   );
 
-#endif /* COMMON_H_ */
+#endif /* PCF85063_H_ */
