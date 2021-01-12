@@ -103,6 +103,8 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L"$(FIRMWARE_VER)"
 !endif
 
+  gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap|0x3F
+
 [PcdsFixedAtBuild.common]
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|$(MAJOR_VER)
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|$(MINOR_VER)

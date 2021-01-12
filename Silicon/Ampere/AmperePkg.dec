@@ -102,3 +102,6 @@
 
   # NVRam Pcds
   gAmpereTokenSpaceGuid.PcdNvramErased|FALSE|BOOLEAN|0xB0000009
+
+  # Pcie HotPlug reset map
+  gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap|0x0|UINT8|0xB000000A
