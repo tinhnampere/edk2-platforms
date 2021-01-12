@@ -100,9 +100,14 @@ AcpiPcctInit (VOID)
   INTN NumOfSocket = AcpiPcctGetNumOfSocket ();
   INTN Subspace;
   INTN Socket;
+  INTN Idx;
 
   for (Socket = 0; Socket < NumOfSocket; Socket++) {
     for (Subspace = 0; Subspace < PCC_MAX_SUBSPACES_PER_SOCKET; Subspace++ ) {
+      Idx = Subspace + PCC_MAX_SUBSPACES_PER_SOCKET * Socket;
+      if (((1 << Idx) & PCC_SUBSPACE_MASK) == 0) {
+        continue;
+      }
       if (AcpiPcctIsV2 ()) {
         AcpiPccSharedMemInitV2 (Socket, Subspace);
       } else {
@@ -139,6 +144,9 @@ AcpiInstallPcctTable (VOID)
   EFI_STATUS                    Status;
   UINTN                         Size;
   INTN                          Socket;
+  INTN                          Idx;
+
+  SubspaceIdx = 0;
 
   if (IsAcpiInstalled (EFI_ACPI_6_3_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE)) {
     DEBUG ((DEBUG_INFO, "PCCT table is already installed.  Skipping...\n"));
@@ -175,13 +183,16 @@ AcpiInstallPcctTable (VOID)
 
       for (Socket = 0; Socket < NumOfSocket; Socket++) {
         for (Subspace = 0; Subspace < PCC_MAX_SUBSPACES_PER_SOCKET; Subspace++ ) {
-          SubspaceIdx = Subspace + PCC_MAX_SUBSPACES_PER_SOCKET * Socket;
+          Idx = Subspace + PCC_MAX_SUBSPACES_PER_SOCKET * Socket;
+          if (((1 << Idx) & PCC_SUBSPACE_MASK) == 0) {
+            continue;
+          }
 
           CopyMem (&PcctEntryPointer[SubspaceIdx], &PCCTSubspaceTemplate,
                   sizeof(EFI_ACPI_6_3_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS));
 
           PcctEntryPointer[SubspaceIdx].BaseAddress = PccSharedMemPointer +
-                                                      PCC_SUBSPACE_SHARED_MEM_SIZE * SubspaceIdx;
+                                                      PCC_SUBSPACE_SHARED_MEM_SIZE * Idx;
           PcctEntryPointer[SubspaceIdx].AddressLength = PCC_SUBSPACE_SHARED_MEM_SIZE;
 
           IntNum = 0;
@@ -221,11 +232,17 @@ AcpiInstallPcctTable (VOID)
             PcctEntryPointer[SubspaceIdx].DoorbellWrite |=
                 (PcctEntryPointer[SubspaceIdx].BaseAddress >> 40) & PCP_MSG_UPPER_ADDR_MASK;
           }
+
+          SubspaceIdx++;
         }
       }
 
       CopyMem (PcctTablePointer, &PCCTTableHeaderTemplate,
               sizeof (EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER));
+
+      /* Recalculate the size */
+      Size = sizeof (EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER) +
+                    SubspaceIdx * sizeof (EFI_ACPI_6_3_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS);
 
       PcctTablePointer->Header.Length = Size;
       CopyMem (

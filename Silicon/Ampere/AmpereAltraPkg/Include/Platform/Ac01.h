@@ -76,6 +76,7 @@
 #define SMPRO_NS_RNG_MAILBOX_INDEX     6
 
 #define PCC_MAX_SUBSPACES_PER_SOCKET   (SMPRO_MAX_DB + PMPRO_MAX_DB)
+#define PCC_SUBSPACE_MASK              0xEFFFEFFF
 
 #define DB_OUT                         0x00000010
 #define DB_OUT0                        0x00000014
