@@ -178,6 +178,9 @@
 #define EQRQST_SET(dst, src) (((dst) & ~0x10) | (((UINT32) (src) << 4) & 0x10))
 #define INTPIN_SET(dst, src) (((dst) & ~0xFF00) | (((UINT32) (src) << 8) & 0xFF00))
 
+// SLOTCAP
+#define SLOT_HPC_SET(dst, src) (((dst) & ~0x40) | (((UINT32) (src) << 6) & 0x40))
+
 // HOTPLUGSTAT
 #define PWR_IND_SET(dst, src) (((dst) & ~0x1) | (((UINT32) (src)) & 0x1))
 #define ATTEN_IND_SET(dst, src) (((dst) & ~0x2) | (((UINT32) (src) << 1) & 0x2))
@@ -237,6 +240,7 @@
 #define CON_STATUS_REG                          (PM_CAP + 0x4)
 #define LINK_CAPABILITIES_REG                   (PCIE_CAP + 0xc)
 #define LINK_CONTROL_LINK_STATUS_REG            (PCIE_CAP + 0x10)
+#define SLOT_CAPABILITIES_REG                   (PCIE_CAP + 0x14)
 #define DEVICE_CONTROL2_DEVICE_STATUS2_REG      (PCIE_CAP + 0x28)
 #define LINK_CAPABILITIES2_REG                  (PCIE_CAP + 0x2c)
 #define LINK_CONTROL2_LINK_STATUS2_REG          (PCIE_CAP + 0x30)
