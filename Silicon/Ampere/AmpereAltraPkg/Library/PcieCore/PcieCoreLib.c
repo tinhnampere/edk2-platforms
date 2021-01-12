@@ -20,6 +20,7 @@
 #include <Library/PrintLib.h>
 #include <Library/SerialPortLib.h>
 #include <Library/PcieBoardLib.h>
+#include <Library/PcieHotPlug.h>
 #include <Library/AmpereCpuLib.h>
 #include <PciePatchAcpi.h>
 #include <PcieCore.h>
@@ -451,6 +452,8 @@ VOID
 Ac01PcieEnd (VOID)
 {
   Ac01PcieCorePollLinkUp ();
+
+  PcieHotPlugStart ();
 }
 
 /**

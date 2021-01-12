@@ -17,6 +17,7 @@
 [Sources]
   PcieCore.c
   PcieCoreLib.c
+  PcieHotPlug.c
   PciePatchAcpi.c
   PciePatchAcpi.h
   PcieCore.h
@@ -49,8 +50,10 @@
   UefiRuntimeServicesTableLib
   PciePhyLib
   SMProLib
+  ArmSpciLib
 
 [Pcd]
+  gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
 
@@ -59,4 +62,4 @@
   gEfiAcpiSdtProtocolGuid # PROTOCOL ALWAYS_CONSUMED
 
 [Depex]
-    gEfiAcpiTableProtocolGuid AND gEfiAcpiSdtProtocolGuid
+  gEfiAcpiTableProtocolGuid AND gEfiAcpiSdtProtocolGuid
