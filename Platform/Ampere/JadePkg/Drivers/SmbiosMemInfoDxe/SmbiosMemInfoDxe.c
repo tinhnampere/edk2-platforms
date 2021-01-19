@@ -515,7 +515,7 @@ InstallMemStructures (
       return Status;
     }
 
-    for (SlotIndex = 0; SlotIndex < PLATFORM_DIMM_INFO_MAX_SLOT; SlotIndex++) {
+    for (SlotIndex = 0; SlotIndex < PlatformHob->DimmList.BoardDimmSlots; SlotIndex++) {
       // Copy Tempplate to Type 17
       CopyMem (Table, (VOID *) &mArmDefaultType17, sizeof (ARM_TYPE17));
 
