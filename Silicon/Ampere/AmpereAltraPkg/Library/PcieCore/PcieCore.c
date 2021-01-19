@@ -1085,6 +1085,9 @@ Ac01PcieCoreSetupRC (
     Ac01PcieCsrOut32 (CfgAddr + AMBA_LINK_TIMEOUT_OFF, Val);
     Ac01PcieCsrIn32 (CfgAddr + UNCORR_ERR_MASK_OFF, &Val);
     Val = CMPLT_TIMEOUT_ERR_MASK_SET (Val, 1);
+    // AER surprise link down error should be masked due to hotplug is enabled
+    // This event must be handled by Hotplug handler, instead of error handler
+    Val = SDES_ERR_MASK_SET (Val, 1);
     Ac01PcieCsrOut32 (CfgAddr + UNCORR_ERR_MASK_OFF, Val);
 
     // Program Class Code

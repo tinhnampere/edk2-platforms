@@ -364,6 +364,7 @@
 
 // UNCORR_ERR_MASK_OFF
 #define CMPLT_TIMEOUT_ERR_MASK_SET(dst, src) (((dst) & ~0x4000) | (((UINT32) (src) << 14) & 0x4000))
+#define SDES_ERR_MASK_SET(dst, src) (((dst) & ~0x20) | (((UINT32)(src) << 5) & 0x20))
 
 // RESOURCE_STATUS_REG_VC1
 #define VC_NEGO_PENDING_VC1_GET(val) ((val & 0x20000) >> 17)
