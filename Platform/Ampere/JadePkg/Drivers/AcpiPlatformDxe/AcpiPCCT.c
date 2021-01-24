@@ -148,11 +148,6 @@ AcpiInstallPcctTable (VOID)
 
   SubspaceIdx = 0;
 
-  if (IsAcpiInstalled (EFI_ACPI_6_3_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE)) {
-    DEBUG ((DEBUG_INFO, "PCCT table is already installed.  Skipping...\n"));
-    return EFI_ABORTED;
-  }
-
   Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid,
                   NULL, (VOID **) &AcpiTableProtocol);
   if (EFI_ERROR (Status)) {

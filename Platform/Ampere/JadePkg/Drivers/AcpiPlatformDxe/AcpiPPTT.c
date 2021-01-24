@@ -255,11 +255,6 @@ AcpiInstallPpttTable (VOID)
   EFI_STATUS                              Status;
   UINTN                                   Size;
 
-  if (IsAcpiInstalled (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_STRUCTURE_SIGNATURE)) {
-    DEBUG ((DEBUG_INFO, "PPTT table is already installed.  Skipping...\n"));
-    return EFI_ABORTED;
-  }
-
   Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid,
                   NULL, (VOID **) &AcpiTableProtocol);
   if (EFI_ERROR (Status)) {
