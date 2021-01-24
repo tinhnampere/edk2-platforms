@@ -213,11 +213,6 @@ AcpiInstallSratTable (VOID)
   UINTN                                                 SratTableKey;
   UINTN                                                 Size;
 
-  if (IsAcpiInstalled (EFI_ACPI_6_3_SYSTEM_RESOURCE_AFFINITY_TABLE_SIGNATURE)) {
-    DEBUG ((DEBUG_INFO, "SRAT table is already installed.  Skipping...\n"));
-    return EFI_ABORTED;
-  }
-
   Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid,
                   NULL, (VOID **) &AcpiTableProtocol);
   if (EFI_ERROR (Status)) {

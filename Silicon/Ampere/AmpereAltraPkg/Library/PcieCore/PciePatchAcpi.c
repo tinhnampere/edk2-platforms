@@ -278,11 +278,6 @@ AcpiInstallMcfg (
   EFI_STATUS                        Status;
   VOID                              *McfgPtr;
 
-  if (IsAcpiInstalled (EFI_ACPI_6_1_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE)) {
-    DEBUG ((DEBUG_INFO, "MCFG table is already installed.  Skipping...\n"));
-    return EFI_ABORTED;
-  }
-
   Status = gBS->LocateProtocol (
                   &gEfiAcpiTableProtocolGuid,
                   NULL,
@@ -554,11 +549,6 @@ AcpiInstallIort (
   UINTN                             TableKey;
   EFI_STATUS                        Status;
   EFI_ACPI_TABLE_PROTOCOL           *AcpiTableProtocol;
-
-  if (IsAcpiInstalled (EFI_ACPI_6_0_IO_REMAPPING_TABLE_SIGNATURE)) {
-    DEBUG ((DEBUG_INFO, "IORT table is already installed.  Skipping...\n"));
-    return EFI_ABORTED;
-  }
 
   Status = gBS->LocateProtocol (
                   &gEfiAcpiTableProtocolGuid,

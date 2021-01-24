@@ -259,11 +259,6 @@ AcpiInstallMadtTable (VOID)
   UINT32                        *CoreOrder;
   UINT32                        SktMaxCoreNum;
 
-  if (IsAcpiInstalled (EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE)) {
-    DEBUG ((DEBUG_INFO, "APIC table is already installed.  Skipping...\n"));
-    return EFI_ABORTED;
-  }
-
   Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid,
                   NULL, (VOID **) &AcpiTableProtocol);
   if (EFI_ERROR (Status)) {

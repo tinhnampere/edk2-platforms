@@ -31,11 +31,6 @@ AcpiInstallSlitTable (VOID)
   UINTN                                                           SlitTableKey;
   UINTN                                                           NumDomainPerSocket;
 
-  if (IsAcpiInstalled (EFI_ACPI_6_3_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE)) {
-    DEBUG ((DEBUG_INFO, "SLIT table is already installed.  Skipping...\n"));
-    return EFI_ABORTED;
-  }
-
   Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid,
                   NULL, (VOID **) &AcpiTableProtocol);
   if (EFI_ERROR (Status)) {
