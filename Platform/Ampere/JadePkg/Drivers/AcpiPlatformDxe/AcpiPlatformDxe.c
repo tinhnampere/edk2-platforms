@@ -86,6 +86,11 @@ InstallAcpiOnReadyToBoot (
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Installed NFIT table\n"));
   }
+
+  //
+  // Close the event, so it will not be signalled again.
+  //
+  gBS->CloseEvent (Event);
 }
 
 VOID
@@ -113,6 +118,11 @@ UpdateAcpiOnExitBootServices(
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "PCCT Table updated!\n"));
   }
+
+  //
+  // Close the event, so it will not be signalled again.
+  //
+  gBS->CloseEvent (Event);
 }
 
 EFI_STATUS

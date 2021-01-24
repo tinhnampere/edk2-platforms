@@ -40,6 +40,11 @@ OnExitBootServices(
 
   DEBUG ((DEBUG_INFO, "%a:%d +\n", __FUNCTION__, __LINE__));
 
+  //
+  // Close the event, so it will not be signalled again.
+  //
+  gBS->CloseEvent (Event);
+
   Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a:%d -\n", __FUNCTION__, __LINE__));

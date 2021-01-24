@@ -125,6 +125,11 @@ PciHostBridgeReadyToBootEvent (
       Count++;
     }
   }
+
+  //
+  // Close the event, so it will not be signalled again.
+  //
+  gBS->CloseEvent (Event);
 }
 
 /**
