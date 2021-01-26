@@ -543,6 +543,7 @@ InstallMemStructures (
         ((ARM_TYPE17 *) Table)->Base.MemoryType = 0x1A; /* DDR4 */
         ((ARM_TYPE17 *) Table)->Base.Speed = (UINT16) PlatformHob->DramInfo.MaxSpeed;
         ((ARM_TYPE17 *) Table)->Base.ConfiguredMemoryClockSpeed = (UINT16) PlatformHob->DramInfo.MaxSpeed;
+        ((ARM_TYPE17 *) Table)->Base.Attributes = Dimm->Info.DimmNrRank & 0x0F;
         ((ARM_TYPE17 *) Table)->Base.ConfiguredVoltage = 1200;
         ((ARM_TYPE17 *) Table)->Base.MinimumVoltage = 1140;
         ((ARM_TYPE17 *) Table)->Base.MaximumVoltage = 1260;
