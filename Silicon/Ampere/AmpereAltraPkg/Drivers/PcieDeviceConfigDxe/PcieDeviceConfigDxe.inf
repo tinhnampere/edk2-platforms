@@ -1,0 +1,59 @@
+## @file
+#
+# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PcieDeviceConfigDxe
+  FILE_GUID                      = 17E9369D-0A1B-45F4-A286-B1DED6D85D33
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = PcieDeviceConfigEntryPoint
+
+[Sources.common]
+  NVDataStruc.h
+  PcieDeviceConfigDxe.c
+  PcieDeviceConfigDxe.h
+  PcieDeviceConfigDxe.uni
+  PcieHelper.c
+  PcieHelper.h
+  Vfr.vfr
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  DevicePathLib
+  HiiLib
+  MemoryAllocationLib
+  PrintLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiRuntimeServicesTableLib
+
+[Protocols]
+  gEfiPciIoProtocolGuid
+  gEfiDevicePathProtocolGuid                    ## CONSUMES
+  gEfiHiiConfigRoutingProtocolGuid              ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
+  gEfiDevicePathToTextProtocolGuid
+
+[Guids]
+  gEfiIfrTianoGuid
+  gPcieDeviceConfigFormSetGuid
+  gPlatformManagerFormsetGuid
+  gPlatformManagerEntryEventGuid
+
+[Depex]
+  TRUE
