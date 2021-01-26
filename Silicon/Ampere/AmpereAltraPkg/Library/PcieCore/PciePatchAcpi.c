@@ -357,6 +357,7 @@ ConstructIort (
       EFI_ACPI_IORT_MEM_ACCESS_FLAGS_DACS,
       EFI_ACPI_IORT_ROOT_COMPLEX_ATS_UNSUPPORTED,
       .PciSegmentNumber = 0,
+      .MemoryAddressSize = 64,
     },
     __AC01_ID_MAPPING (0x0, 0xffff, 0x0, SmmuNode, 0),
   };
