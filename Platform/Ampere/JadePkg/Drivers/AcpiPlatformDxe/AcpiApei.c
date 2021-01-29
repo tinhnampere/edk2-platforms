@@ -110,6 +110,7 @@ AdjustBERTRegionLen (
    */
   Table->BootErrorRegionLength = Len;
 
+  AcpiTableChecksum ((UINT8 *)Table, Table->Header.Length);
 }
 
 /*
