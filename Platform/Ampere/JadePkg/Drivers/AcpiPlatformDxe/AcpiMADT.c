@@ -167,7 +167,11 @@ AcpiInstallMadtProcessorNode (
     ClusterId -= PLATFORM_CPU_MAX_CPM;
   }
 
-  MadtProcessorEntryPointer->CPUInterfaceNumber = CpuId;
+  //
+  // GICv2 compatibility mode is not supported.
+  // Hence, set GIC's CPU Interface Number to 0.
+  //
+  MadtProcessorEntryPointer->CPUInterfaceNumber = 0;
   MadtProcessorEntryPointer->AcpiProcessorUid =
     (SocketId << PLATFORM_SOCKET_UID_BIT_OFFSET) +
     (ClusterId << 8) + (CpuId  % PLATFORM_CPU_NUM_CORES_PER_CPM);
