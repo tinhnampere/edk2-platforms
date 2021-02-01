@@ -74,6 +74,7 @@ enum DDR_ERROR_CTRL_MODE_FI {
 #define MEM_INFO_DDR_WRITE_CRC_OFFSET                     OFFSET_OF (MEM_INFO_VARSTORE_DATA, WriteCrc)
 #define MEM_INFO_FGR_MODE_OFFSET                          OFFSET_OF (MEM_INFO_VARSTORE_DATA, FGRMode)
 #define MEM_INFO_REFRESH2X_MODE_OFFSET                    OFFSET_OF (MEM_INFO_VARSTORE_DATA, Refresh2x)
+#define MEM_INFO_NVDIMM_MODE_SEL_OFFSET                   OFFSET_OF (MEM_INFO_VARSTORE_DATA, NvdimmModeSel)
 
 #define MEM_INFO_SCREEN_PRIVATE_DATA_SIGNATURE            SIGNATURE_32 ('M', 'E', 'M', 'i')
 
@@ -88,18 +89,24 @@ enum DDR_ERROR_CTRL_MODE_FI {
 #define MEM_INFO_DDR_WRITE_CRC_QUESTION_ID                       0x8009
 #define MEM_INFO_FGR_MODE_QUESTION_ID                            0x800A
 #define MEM_INFO_REFRESH2X_MODE_QUESTION_ID                      0x800B
+#define MEM_INFO_FORM_NVDIMM_QUESTION_ID                         0x800C
+#define MEM_INFO_FORM_NVDIMM_MODE_SEL_QUESTION_ID                0x800D
 
 #define DDR_DEFAULT_SCRUB_PATROL_DURATION 24
 #define DDR_DEFAULT_DEMAND_SCRUB          1
 #define DDR_DEFAULT_WRITE_CRC             0
 #define DDR_DEFAULT_FGR_MODE              0
 #define DDR_DEFAULT_REFRESH2X_MODE        0
+#define DDR_DEFAULT_NVDIMM_MODE_SEL       3
 
 #define DDR_FGR_MODE_GET(Value)           ((Value) & 0x3)  /* Bit 0, 1 */
 #define DDR_FGR_MODE_SET(Dst, Src)        do { Dst = (((Dst) & ~0x3) | ((Src) & 0x3)); } while (0)
 
 #define DDR_REFRESH_2X_GET(Value)         ((Value) & 0x10000) >> 16 /* Bit 16 only */
 #define DDR_REFRESH_2X_SET(Dst, Src)      do { Dst = (((Dst) & ~0x10000) | ((Src) & 0x1) << 16); } while (0)
+
+#define DDR_NVDIMM_MODE_SEL_MASK         0x7FFFFFFF
+#define DDR_NVDIMM_MODE_SEL_VALID_BIT    BIT31
 
 typedef struct {
   UINTN                                 Signature;

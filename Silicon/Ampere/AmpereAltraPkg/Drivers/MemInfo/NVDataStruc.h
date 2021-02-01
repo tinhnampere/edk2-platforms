@@ -13,6 +13,7 @@
 #define MEM_INFO_VARSTORE_ID          0x1234
 #define MEM_INFO_FORM_ID              0x1235
 #define MEM_INFO_FORM_PERFORMANCE_ID  0x1236
+#define MEM_INFO_FORM_NVDIMM_ID       0x1237
 #define MEM_INFO_FORM_SET_GUID                    { 0xd58338ee, 0xe9f7, 0x4d8d, { 0xa7, 0x08, 0xdf, 0xb2, 0xc6, 0x66, 0x1d, 0x61 } }
 #define MEM_INFO_FORM_SET_PERFORMANCE_GUID        { 0x4a072c78, 0x42f9, 0x11ea, { 0xb7, 0x7f, 0x2e, 0x28, 0xce, 0x88, 0x12, 0x62 } }
 
@@ -32,6 +33,7 @@ typedef struct {
   UINT32      WriteCrc;
   UINT32      FGRMode;
   UINT32      Refresh2x;
+  UINT32      NvdimmModeSel;
 } MEM_INFO_VARSTORE_DATA;
 
 //

@@ -128,6 +128,17 @@ MemInfoNvparamGet (
     VarStoreConfig->Refresh2x = DDR_REFRESH_2X_GET (Value);
   }
 
+  Status = NVParamGet (
+             NV_SI_NVDIMM_MODE,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &Value
+             );
+  if (EFI_ERROR (Status)) {
+    VarStoreConfig->NvdimmModeSel = DDR_DEFAULT_NVDIMM_MODE_SEL;
+  } else {
+    VarStoreConfig->NvdimmModeSel = Value & DDR_NVDIMM_MODE_SEL_MASK; /* Mask out valid bit */
+  }
+
   return EFI_SUCCESS;
 }
 
@@ -344,6 +355,35 @@ MemInfoNvparamSet(
                NV_PERM_BIOS | NV_PERM_MANU,
                Value
                );
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+  }
+
+  /* Write NVDIMM-N Mode selection */
+  Value = 0;
+  TmpValue = VarStoreConfig->NvdimmModeSel;
+  Status = NVParamGet (
+             NV_SI_NVDIMM_MODE,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &Value
+             );
+  Value2 = Value & DDR_NVDIMM_MODE_SEL_MASK; /* Mask out valid bit */
+  if (EFI_ERROR (Status) || Value2 != TmpValue ) {
+    if (TmpValue == DDR_DEFAULT_NVDIMM_MODE_SEL) {
+      Status = NVParamClr (
+                 NV_SI_NVDIMM_MODE,
+                 NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC
+                 );
+    } else {
+      Value = TmpValue | DDR_NVDIMM_MODE_SEL_VALID_BIT; /* Add valid bit */
+      Status = NVParamSet (
+                 NV_SI_NVDIMM_MODE,
+                 NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+                 NV_PERM_BIOS | NV_PERM_MANU,
+                 Value
+                 );
+    }
     if (EFI_ERROR (Status)) {
       return Status;
     }

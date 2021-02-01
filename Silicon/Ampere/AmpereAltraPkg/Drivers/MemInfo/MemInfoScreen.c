@@ -374,6 +374,9 @@ DriverCallback (
       case MEM_INFO_REFRESH2X_MODE_QUESTION_ID:
         Value->u32 = DDR_DEFAULT_REFRESH2X_MODE;
         break;
+      case MEM_INFO_FORM_NVDIMM_MODE_SEL_QUESTION_ID:
+        Value->u32 = DDR_DEFAULT_NVDIMM_MODE_SEL;
+        break;
       }
     }
     break;
@@ -636,6 +639,18 @@ MemInfoMainScreen (
     );
 
   //
+  // Create a Goto OpCode to nvdimm-n configuration
+  //
+  HiiCreateGotoOpCode (
+    StartOpCodeHandle,                            // Container for dynamic created opcodes
+    MEM_INFO_FORM_NVDIMM_ID,                      // Target Form ID
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_FORM),      // Prompt text
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_FORM_HELP), // Help text
+    0,                                            // Question flag
+    MEM_INFO_FORM_NVDIMM_QUESTION_ID              // Question ID
+    );
+
+  //
   // Display DIMM list info
   //
   HiiCreateSubTitleOpCode (
@@ -652,18 +667,27 @@ MemInfoMainScreen (
     case UDIMM:
       UnicodeSPrint (Str, sizeof (Str), L"%s", L"UDIMM");
       break;
+
     case RDIMM:
       UnicodeSPrint (Str, sizeof (Str), L"%s", L"RDIMM");
       break;
+
     case SODIMM:
       UnicodeSPrint (Str, sizeof (Str), L"%s", L"SODIMM");
       break;
+
     case LRDIMM:
       UnicodeSPrint (Str, sizeof (Str), L"%s", L"LRDIMM");
       break;
+
     case RSODIMM:
       UnicodeSPrint (Str, sizeof (Str), L"%s", L"RSODIMM");
       break;
+
+    case NVRDIMM:
+      UnicodeSPrint (Str, sizeof (Str), L"%s", L"NV-RDIMM");
+      break;
+
     default:
       UnicodeSPrint (Str, sizeof (Str), L"Unknown Type");
     }
@@ -923,6 +947,200 @@ MemInfoMainPerformanceScreen (
   return Status;
 }
 
+EFI_STATUS
+MemInfoMainNvdimmScreen (
+  PlatformInfoHob_V2 *PlatformHob
+  )
+{
+  EFI_STATUS                   Status;
+  MEM_INFO_SCREEN_PRIVATE_DATA *PrivateData;
+  VOID                         *StartOpCodeHandle;
+  VOID                         *OptionsOpCodeHandle;
+  EFI_IFR_GUID_LABEL           *StartLabel;
+  VOID                         *EndOpCodeHandle;
+  EFI_IFR_GUID_LABEL           *EndLabel;
+  CHAR16                       Str[MAX_STRING_SIZE];
+
+  Status = EFI_SUCCESS;
+  PrivateData = mPrivateData;
+
+  if (PlatformHob == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  //
+  // Initialize the container for dynamic opcodes
+  //
+  StartOpCodeHandle = HiiAllocateOpCodeHandle ();
+  ASSERT (StartOpCodeHandle != NULL);
+
+  EndOpCodeHandle = HiiAllocateOpCodeHandle ();
+  ASSERT (EndOpCodeHandle != NULL);
+
+  //
+  // Create Hii Extend Label OpCode as the start opcode
+  //
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                       StartOpCodeHandle,
+                                       &gEfiIfrTianoGuid,
+                                       NULL,
+                                       sizeof (EFI_IFR_GUID_LABEL)
+                                       );
+  StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
+  StartLabel->Number       = LABEL_UPDATE;
+
+  //
+  // Create Hii Extend Label OpCode as the end opcode
+  //
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                     EndOpCodeHandle,
+                                     &gEfiIfrTianoGuid,
+                                     NULL,
+                                     sizeof (EFI_IFR_GUID_LABEL)
+                                     );
+  EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
+  EndLabel->Number       = LABEL_END;
+
+  //
+  // Update Current NVDIMM-N Mode title Socket0
+  //
+  switch (PlatformHob->DramInfo.NvdimmMode[0]) {
+  case 0:
+    UnicodeSPrint (Str, sizeof (Str), L"%s", L"Non-NVDIMM");
+    break;
+
+  case 1:
+    UnicodeSPrint (Str, sizeof (Str), L"%s", L"Non-Hashed");
+    break;
+
+  case 2:
+    UnicodeSPrint (Str, sizeof (Str), L"%s", L"Hashed");
+    break;
+
+  default:
+    UnicodeSPrint (Str, sizeof (Str), L"%s", L"Unknown");
+    break;
+  }
+
+  HiiSetString (
+    PrivateData->HiiHandle,
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_CUR_MODE_SK0_VALUE),
+    Str,
+    NULL
+    );
+
+  HiiCreateTextOpCode (
+    StartOpCodeHandle,
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_CUR_MODE_SK0),
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_CUR_MODE_SK0),
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_CUR_MODE_SK0_VALUE)
+    );
+
+  //
+  // Update Current NVDIMM-N Mode title Socket1
+  //
+  if (GetNumberActiveSockets () > 1) {
+    switch (PlatformHob->DramInfo.NvdimmMode[1]) {
+    case 0:
+      UnicodeSPrint (Str, sizeof (Str), L"%s", L"Non-NVDIMM");
+      break;
+
+    case 1:
+      UnicodeSPrint (Str, sizeof (Str), L"%s", L"Non-Hashed");
+      break;
+
+    case 2:
+      UnicodeSPrint (Str, sizeof (Str), L"%s", L"Hashed");
+      break;
+
+    default:
+      UnicodeSPrint (Str, sizeof (Str), L"%s", L"Unknown");
+      break;
+    }
+
+    HiiSetString (
+      PrivateData->HiiHandle,
+      STRING_TOKEN (STR_MEM_INFO_NVDIMM_CUR_MODE_SK1_VALUE),
+      Str,
+      NULL
+      );
+
+    HiiCreateTextOpCode (
+      StartOpCodeHandle,
+      STRING_TOKEN (STR_MEM_INFO_NVDIMM_CUR_MODE_SK1),
+      STRING_TOKEN (STR_MEM_INFO_NVDIMM_CUR_MODE_SK1),
+      STRING_TOKEN (STR_MEM_INFO_NVDIMM_CUR_MODE_SK1_VALUE)
+      );
+  }
+  //
+  // Create Option OpCode to NVDIMM-N Mode Selection
+  //
+  OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
+  ASSERT (OptionsOpCodeHandle != NULL);
+
+  //
+  // Create OpCode to NVDIMM-N Mode Selection
+  //
+  HiiCreateOneOfOptionOpCode (
+    OptionsOpCodeHandle,
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_MODE_SEL_VALUE0),
+    0,
+    EFI_IFR_NUMERIC_SIZE_4,
+    0
+    );
+
+  HiiCreateOneOfOptionOpCode (
+    OptionsOpCodeHandle,
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_MODE_SEL_VALUE1),
+    0,
+    EFI_IFR_NUMERIC_SIZE_4,
+    1
+    );
+
+  HiiCreateOneOfOptionOpCode (
+    OptionsOpCodeHandle,
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_MODE_SEL_VALUE2),
+    0,
+    EFI_IFR_NUMERIC_SIZE_4,
+    2
+    );
+
+  HiiCreateOneOfOptionOpCode (
+    OptionsOpCodeHandle,
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_MODE_SEL_VALUE3),
+    0,
+    EFI_IFR_NUMERIC_SIZE_4,
+    3
+    );
+
+  HiiCreateOneOfOpCode (
+    StartOpCodeHandle,                                   // Container for dynamic created opcodes
+    MEM_INFO_FORM_NVDIMM_MODE_SEL_QUESTION_ID,           // Question ID (or call it "key")
+    MEM_INFO_VARSTORE_ID,                                // VarStore ID
+    (UINT16)MEM_INFO_NVDIMM_MODE_SEL_OFFSET,             // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_MODE_SEL_PROMPT),  // Question prompt text
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_MODE_SEL_HELP),    // Question help text
+    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED, // Question flag
+    EFI_IFR_NUMERIC_SIZE_4,                              // Data type of Question Value
+    OptionsOpCodeHandle,                                 // Option Opcode list
+    NULL                                                 // Default Opcode is NULl
+    );
+
+  HiiUpdateForm (
+    PrivateData->HiiHandle,              // HII handle
+    &gMemInfoFormSetGuid,                // Formset GUID
+    MEM_INFO_FORM_NVDIMM_ID,             // Form ID
+    StartOpCodeHandle,                   // Label for where to insert opcodes
+    EndOpCodeHandle                      // Insert data
+    );
+
+  HiiFreeOpCodeHandle (StartOpCodeHandle);
+  HiiFreeOpCodeHandle (EndOpCodeHandle);
+  HiiFreeOpCodeHandle (OptionsOpCodeHandle);
+
+  return Status;
+}
+
 /**
   This function sets up the first elements of the form.
   @param  PrivateData            Private data.
@@ -951,6 +1169,11 @@ MemInfoScreenSetup (
   }
 
   Status = MemInfoMainPerformanceScreen (PlatformHob);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  Status = MemInfoMainNvdimmScreen (PlatformHob);
   if (EFI_ERROR (Status)) {
     return Status;
   }

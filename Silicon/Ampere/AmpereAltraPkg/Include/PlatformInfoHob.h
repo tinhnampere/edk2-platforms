@@ -28,6 +28,7 @@ enum {
   SODIMM,
   RSODIMM,
   LRDIMM,
+  NVRDIMM
 };
 
 /* DIMM status */
@@ -56,7 +57,7 @@ typedef struct {
   UINT32  MaxSpeed;
   UINT32  McuMask[PLATFORM_CPU_MAX_SOCKET];
   UINT32  NvdRegion[PLATFORM_DRAM_INFO_MAX_REGION];
-  UINT32  Reserved[2];
+  UINT32  NvdimmMode[PLATFORM_CPU_MAX_SOCKET];
 } PlatformDramInfoV2;
 
 typedef struct {

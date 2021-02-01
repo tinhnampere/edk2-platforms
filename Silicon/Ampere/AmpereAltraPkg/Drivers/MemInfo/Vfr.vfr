@@ -47,4 +47,16 @@ formset
 
   endform;
 
+  form
+    formid = MEM_INFO_FORM_NVDIMM_ID,
+    title = STRING_TOKEN(STR_MEM_INFO_NVDIMM_FORM);
+
+    subtitle text = STRING_TOKEN(STR_MEM_INFO_NVDIMM_FORM);
+
+    label LABEL_UPDATE;
+    // dynamic content here
+    label LABEL_END;
+
+  endform;
+
 endformset;
