@@ -82,7 +82,12 @@ SratAddMemAffinity (
     ProximityDomain = PlatformHob->DramInfo.Node[Count];
     if (RegionSize > 0) {
       ZeroMem ((VOID *) &SratMemAffinity[NumRegion], sizeof (SratMemAffinity[NumRegion]));
-      SratMemAffinity[NumRegion].Flags = 1;
+      SratMemAffinity[NumRegion].Flags = EFI_ACPI_6_3_MEMORY_ENABLED;
+      if (PlatformHob->DramInfo.NvdRegion[Count] != 0) {
+        /* Mark NVDIMM-N region as HOT_PLUGGABLE and NON-VOLATILE */
+        SratMemAffinity[NumRegion].Flags |= EFI_ACPI_6_3_MEMORY_HOT_PLUGGABLE |
+                                            EFI_ACPI_6_3_MEMORY_NONVOLATILE;
+      }
       SratMemAffinity[NumRegion].LengthLow =
         (UINT32) (RegionSize & 0xFFFFFFFF);
       SratMemAffinity[NumRegion].LengthHigh =
