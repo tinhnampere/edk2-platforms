@@ -6,6 +6,7 @@
 
 **/
 
+#include "AcpiNfit.h"
 #include "AcpiPlatform.h"
 
 #define SUBNUMA_MODE_MONOLITHIC        0
@@ -60,41 +61,94 @@ AcpiPatchDmc620 (VOID)
 STATIC VOID
 AcpiPatchNvdimm (VOID)
 {
-  CHAR8                 NodePath[MAX_ACPI_NODE_PATH];
-  UINTN                 NvdRegionNum, Count;
-  PlatformInfoHob_V2    *PlatformHob;
-  VOID                  *Hob;
+  CHAR8              NodePath[MAX_ACPI_NODE_PATH];
+  UINTN              NvdRegionNumSK0, NvdRegionNumSK1, NvdRegionNum, Count;
+  PlatformInfoHob_V2 *PlatformHob;
+  VOID               *Hob;
 
   Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return;
   }
+  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
 
-  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
-
-  NvdRegionNum = 0;
+  NvdRegionNumSK0 = 0;
+  NvdRegionNumSK1 = 0;
   for (Count = 0; Count < PlatformHob->DramInfo.NumRegion; Count++) {
-    if (PlatformHob->DramInfo.NvdRegion[Count]) {
-      NvdRegionNum += 1;
+    if (PlatformHob->DramInfo.NvdRegion[Count] > 0) {
+      if (PlatformHob->DramInfo.Socket[Count] == 0) {
+        NvdRegionNumSK0++;
+      } else {
+        NvdRegionNumSK1++;
+      }
     }
   }
-
-  if (NvdRegionNum == PLATFORM_MAX_NUM_NVDIMM_DEVICE) {
-    return;
-  }
+  NvdRegionNum = NvdRegionNumSK0 + NvdRegionNumSK1;
 
   /* Disable NVDIMM Root Device */
   if (NvdRegionNum == 0) {
     AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR._STA");
     AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
   }
-
-  /* Disable NVDIMM Device which is not available */
-  Count = NvdRegionNum + 1;
-  while (Count <= PLATFORM_MAX_NUM_NVDIMM_DEVICE) {
-    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD%1X._STA", Count);
+  /* Update NVDIMM Device _STA for SK0 */
+  if (NvdRegionNumSK0 == 0) {
+    /* Disable NVD1/2 */
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD1._STA");
     AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
-    Count++;
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD2._STA");
+    AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
+  } else if (NvdRegionNumSK0 == 1) {
+    if (PlatformHob->DramInfo.NvdimmMode[NVDIMM_SK0] == NVDIMM_NON_HASHED) {
+      for (Count = 0; Count < PlatformHob->DramInfo.NumRegion; Count++) {
+        if (PlatformHob->DramInfo.NvdRegion[Count] > 0 &&
+            PlatformHob->DramInfo.Socket[Count] == 0)
+        {
+          if (PlatformHob->DramInfo.Base[Count] ==
+              PLATFORM_NVDIMM_SK0_NHASHED_REGION0)
+          {
+            /* Disable NVD2 */
+            AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD2._STA");
+            AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
+          } else if (PlatformHob->DramInfo.Base[Count] ==
+                     PLATFORM_NVDIMM_SK0_NHASHED_REGION1)
+          {
+            /* Disable NVD1 */
+            AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD1._STA");
+            AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
+          }
+        }
+      }
+    }
+  }
+  /* Update NVDIMM Device _STA for SK1 */
+  if (NvdRegionNumSK1 == 0) {
+    /* Disable NVD3/4 */
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD3._STA");
+    AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD4._STA");
+    AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
+  } else if (NvdRegionNumSK1 == 1) {
+    if (PlatformHob->DramInfo.NvdimmMode[NVDIMM_SK1] == NVDIMM_NON_HASHED) {
+      for (Count = 0; Count < PlatformHob->DramInfo.NumRegion; Count++) {
+        if (PlatformHob->DramInfo.NvdRegion[Count] > 0 &&
+            PlatformHob->DramInfo.Socket[Count] == 1)
+        {
+          if (PlatformHob->DramInfo.Base[Count] ==
+              PLATFORM_NVDIMM_SK1_NHASHED_REGION0)
+          {
+            /* Disable NVD4 */
+            AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD4._STA");
+            AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
+          } else if (PlatformHob->DramInfo.Base[Count] ==
+                     PLATFORM_NVDIMM_SK1_NHASHED_REGION1)
+          {
+            /* Disable NVD3 */
+            AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD3._STA");
+            AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
+          }
+        }
+      }
+    }
   }
 }
 

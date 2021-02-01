@@ -636,7 +636,7 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
         Return (Buffer() {0})
       }
       Device (NVD1) {
-        Name(_ADR, 1)
+        Name(_ADR, 0x0330)
         Name(SMRT, Buffer(13) {0})
         CreateDWordField(SMRT, 0, BSTA)
         CreateWordField(SMRT, 4, BHTH)
@@ -681,7 +681,7 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
         }
       }
       Device (NVD2) {
-        Name(_ADR, 2)
+        Name(_ADR, 0x0770)
         Name(SMRT, Buffer(13) {0})
         CreateDWordField(SMRT, 0, BSTA)
         CreateWordField(SMRT, 4, BHTH)
@@ -726,7 +726,7 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
         }
       }
       Device (NVD3) {
-        Name(_ADR, 3)
+        Name(_ADR, 0x1330)
         Name(SMRT, Buffer(13) {0})
         CreateDWordField(SMRT, 0, BSTA)
         CreateWordField(SMRT, 4, BHTH)
@@ -771,7 +771,7 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
         }
       }
       Device (NVD4) {
-        Name(_ADR, 4)
+        Name(_ADR, 0x1770)
         Name(SMRT, Buffer(13) {0})
         CreateDWordField(SMRT, 0, BSTA)
         CreateWordField(SMRT, 4, BHTH)

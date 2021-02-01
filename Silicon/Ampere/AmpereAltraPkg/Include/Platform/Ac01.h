@@ -143,8 +143,59 @@
 /* Offset of failsafe testing feature */
 #define NV_UEFI_FAILURE_FAILSAFE_OFFSET   0x1F8
 
-/* Maximum number of nvdimm device supported */
-#define PLATFORM_MAX_NUM_NVDIMM_DEVICE    0x4
+/* Maximum number of memory controller supports NVDIMM-N per socket */
+#define PLATFORM_NVDIMM_MCU_MAX_PER_SK    2
+
+/* Maximum number of NVDIMM-N per memory controller */
+#define PLATFORM_NVDIMM_NUM_MAX_PER_MCU   1
+
+/* Maximum number of NVDIMM region per socket */
+#define PLATFORM_NVDIMM_REGION_MAX_PER_SK 2
+
+/* Socket 0 base address of NVDIMM non-hashed region 0 */
+#define PLATFORM_NVDIMM_SK0_NHASHED_REGION0     0x0B0000000000ULL
+
+/* Socket 0 base address of NVDIMM non-hashed region 1 */
+#define PLATFORM_NVDIMM_SK0_NHASHED_REGION1     0x0F0000000000ULL
+
+/* Socket 1 base address of NVDIMM non-hashed region 0 */
+#define PLATFORM_NVDIMM_SK1_NHASHED_REGION0     0x430000000000ULL
+
+/* Socket 1 base address of NVDIMM non-hashed region 1 */
+#define PLATFORM_NVDIMM_SK1_NHASHED_REGION1     0x470000000000ULL
+
+/* DIMM ID of NVDIMM-N device 1 */
+#define PLATFORM_NVDIMM_NVD1_DIMM_ID            6
+
+/* DIMM ID of NVDIMM-N device 2 */
+#define PLATFORM_NVDIMM_NVD2_DIMM_ID            14
+
+/* DIMM ID of NVDIMM-N device 3 */
+#define PLATFORM_NVDIMM_NVD3_DIMM_ID            22
+
+/* DIMM ID of NVDIMM-N device 4 */
+#define PLATFORM_NVDIMM_NVD4_DIMM_ID            30
+
+/* NFIT device handle of NVDIMM-N device 1 */
+#define PLATFORM_NVDIMM_NVD1_DEVICE_HANDLE      0x0330
+
+/* NFIT device handle of NVDIMM-N device 2 */
+#define PLATFORM_NVDIMM_NVD2_DEVICE_HANDLE      0x0770
+
+/* NFIT device handle of NVDIMM-N device 3 */
+#define PLATFORM_NVDIMM_NVD3_DEVICE_HANDLE      0x1330
+
+/* NFIT device handle of NVDIMM-N device 4 */
+#define PLATFORM_NVDIMM_NVD4_DEVICE_HANDLE      0x1770
+
+/* Interleave ways of non-hashed NVDIMM-N */
+#define PLATFORM_NVDIMM_NHASHED_INTERLEAVE_WAYS 1
+
+/* Interleave ways of hashed NVDIMM-N */
+#define PLATFORM_NVDIMM_HASHED_INTERLEAVE_WAYS  2
+
+/* Region offset of hashed NVDIMM-N */
+#define PLATFORM_NVDIMM_HASHED_REGION_OFFSET    512
 
 /* The base address of master socket GIC redistributor registers */
 #define GICR_MASTER_BASE_REG    0x100100140000
