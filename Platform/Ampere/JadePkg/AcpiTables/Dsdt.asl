@@ -637,24 +637,180 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
       }
       Device (NVD1) {
         Name(_ADR, 1)
+        Name(SMRT, Buffer(13) {0})
+        CreateDWordField(SMRT, 0, BSTA)
+        CreateWordField(SMRT, 4, BHTH)
+        CreateWordField(SMRT, 6, BTMP)
+        CreateByteField(SMRT, 8, BETH)
+        CreateByteField(SMRT, 9, BWTH)
+        CreateByteField(SMRT, 10, BNLF)
+        OperationRegion(BUF1, SystemMemory, 0x88980000, 16)
+        Field (BUF1, DWordAcc, NoLock, Preserve) {
+          STAT, 32, //Status
+          HLTH, 16, //Module Health
+          CTMP, 16, //Module Current Status
+          ETHS, 8, //Error Threshold Status
+          WTHS, 8, //Warning Threshold Status
+          NVLF, 8, //NVM Lifetime
+          ,     40 //Reserve
+        }
+        Method (_DSM, 0x4, Serialized) {
+          //Accept only MSF Family type NVDIMM DSM functions
+          If(LEqual(Arg0, ToUUID ("1ee68b36-d4bd-4a1a-9a16-4f8e53d46e05"))) {
+            //Handle Func 0 query implemented commands
+            If(LEqual(Arg2, 0)) {
+              //Check revision and returned proper implemented commands
+              //Support only health check for now
+              Return (Buffer() {0x01, 0x08}) //Byte 0: 0x1
+            }
+            //Handle MSF DSM Func 11 Get Smart and Health Info
+            If(LEqual(Arg2, 11)) {
+              Store(\_SB.NVDR.NVD1.STAT, BSTA)
+              Store(\_SB.NVDR.NVD1.HLTH, BHTH)
+              Store(\_SB.NVDR.NVD1.CTMP, BTMP)
+              Store(\_SB.NVDR.NVD1.ETHS, BETH)
+              Store(\_SB.NVDR.NVD1.WTHS, BWTH)
+              Store(\_SB.NVDR.NVD1.NVLF, BNLF)
+              Return (SMRT)
+            }
+          }
+          Return (Buffer() {0})
+        }
         Method(_STA, 0, NotSerialized) {
           return (0xf)
         }
       }
       Device (NVD2) {
         Name(_ADR, 2)
+        Name(SMRT, Buffer(13) {0})
+        CreateDWordField(SMRT, 0, BSTA)
+        CreateWordField(SMRT, 4, BHTH)
+        CreateWordField(SMRT, 6, BTMP)
+        CreateByteField(SMRT, 8, BETH)
+        CreateByteField(SMRT, 9, BWTH)
+        CreateByteField(SMRT, 10, BNLF)
+        OperationRegion(BUF1, SystemMemory, 0x88988000, 16)
+        Field (BUF1, DWordAcc, NoLock, Preserve) {
+          STAT, 32, //Status
+          HLTH, 16, //Module Health
+          CTMP, 16, //Module Current Status
+          ETHS, 8, //Error Threshold Status
+          WTHS, 8, //Warning Threshold Status
+          NVLF, 8, //NVM Lifetime
+          ,     40 //Reserve
+        }
+        Method (_DSM, 0x4, Serialized) {
+          //Accept only MSF Family type NVDIMM DSM functions
+          If(LEqual(Arg0, ToUUID ("1ee68b36-d4bd-4a1a-9a16-4f8e53d46e05"))) {
+            //Handle Func 0 query implemented commands
+            If(LEqual(Arg2, 0)) {
+              //Check revision and returned proper implemented commands
+              //Support only health check for now
+              Return (Buffer() {0x01, 0x08}) //Byte 0: 0x1
+            }
+            //Handle MSF DSM Func 11 Get Smart and Health Info
+            If(LEqual(Arg2, 11)) {
+              Store(\_SB.NVDR.NVD2.STAT, BSTA)
+              Store(\_SB.NVDR.NVD2.HLTH, BHTH)
+              Store(\_SB.NVDR.NVD2.CTMP, BTMP)
+              Store(\_SB.NVDR.NVD2.ETHS, BETH)
+              Store(\_SB.NVDR.NVD2.WTHS, BWTH)
+              Store(\_SB.NVDR.NVD2.NVLF, BNLF)
+              Return (SMRT)
+            }
+          }
+          Return (Buffer() {0})
+        }
         Method(_STA, 0, NotSerialized) {
           return (0xf)
         }
       }
       Device (NVD3) {
         Name(_ADR, 3)
+        Name(SMRT, Buffer(13) {0})
+        CreateDWordField(SMRT, 0, BSTA)
+        CreateWordField(SMRT, 4, BHTH)
+        CreateWordField(SMRT, 6, BTMP)
+        CreateByteField(SMRT, 8, BETH)
+        CreateByteField(SMRT, 9, BWTH)
+        CreateByteField(SMRT, 10, BNLF)
+        OperationRegion(BUF1, SystemMemory, 0xC0080000, 16)
+        Field (BUF1, DWordAcc, NoLock, Preserve) {
+          STAT, 32, //Status
+          HLTH, 16, //Module Health
+          CTMP, 16, //Module Current Status
+          ETHS, 8, //Error Threshold Status
+          WTHS, 8, //Warning Threshold Status
+          NVLF, 8, //NVM Lifetime
+          ,     40 //Reserve
+        }
+        Method (_DSM, 0x4, Serialized) {
+          //Accept only MSF Family type NVDIMM DSM functions
+          If(LEqual(Arg0, ToUUID ("1ee68b36-d4bd-4a1a-9a16-4f8e53d46e05"))) {
+            //Handle Func 0 query implemented commands
+            If(LEqual(Arg2, 0)) {
+              //Check revision and returned proper implemented commands
+              //Support only health check for now
+              Return (Buffer() {0x01, 0x08}) //Byte 0: 0x1
+            }
+            //Handle MSF DSM Func 11 Get Smart and Health Info
+            If(LEqual(Arg2, 11)) {
+              Store(\_SB.NVDR.NVD3.STAT, BSTA)
+              Store(\_SB.NVDR.NVD3.HLTH, BHTH)
+              Store(\_SB.NVDR.NVD3.CTMP, BTMP)
+              Store(\_SB.NVDR.NVD3.ETHS, BETH)
+              Store(\_SB.NVDR.NVD3.WTHS, BWTH)
+              Store(\_SB.NVDR.NVD3.NVLF, BNLF)
+              Return (SMRT)
+            }
+          }
+          Return (Buffer() {0})
+        }
         Method(_STA, 0, NotSerialized) {
           return (0xf)
         }
       }
       Device (NVD4) {
         Name(_ADR, 4)
+        Name(SMRT, Buffer(13) {0})
+        CreateDWordField(SMRT, 0, BSTA)
+        CreateWordField(SMRT, 4, BHTH)
+        CreateWordField(SMRT, 6, BTMP)
+        CreateByteField(SMRT, 8, BETH)
+        CreateByteField(SMRT, 9, BWTH)
+        CreateByteField(SMRT, 10, BNLF)
+        OperationRegion(BUF1, SystemMemory, 0xC0088000, 16)
+        Field (BUF1, DWordAcc, NoLock, Preserve) {
+          STAT, 32, //Status
+          HLTH, 16, //Module Health
+          CTMP, 16, //Module Current Status
+          ETHS, 8, //Error Threshold Status
+          WTHS, 8, //Warning Threshold Status
+          NVLF, 8, //NVM Lifetime
+          ,     40 //Reserve
+        }
+        Method (_DSM, 0x4, Serialized) {
+          //Accept only MSF Family type NVDIMM DSM functions
+          If(LEqual(Arg0, ToUUID ("1ee68b36-d4bd-4a1a-9a16-4f8e53d46e05"))) {
+            //Handle Func 0 query implemented commands
+            If(LEqual(Arg2, 0)) {
+              //Check revision and returned proper implemented commands
+              //Support only health check for now
+              Return (Buffer() {0x01, 0x08}) //Byte 0: 0x1
+            }
+            //Handle MSF DSM Func 11 Get Smart and Health Info
+            If(LEqual(Arg2, 11)) {
+              Store(\_SB.NVDR.NVD4.STAT, BSTA)
+              Store(\_SB.NVDR.NVD4.HLTH, BHTH)
+              Store(\_SB.NVDR.NVD4.CTMP, BTMP)
+              Store(\_SB.NVDR.NVD4.ETHS, BETH)
+              Store(\_SB.NVDR.NVD4.WTHS, BWTH)
+              Store(\_SB.NVDR.NVD4.NVLF, BNLF)
+              Return (SMRT)
+            }
+          }
+          Return (Buffer() {0})
+        }
         Method(_STA, 0, NotSerialized) {
           return (0xf)
         }
