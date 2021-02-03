@@ -85,6 +85,12 @@
   gAmpereTokenSpaceGuid.PcdBmcSlaveAddr|0x10|UINT8|0x0000000D
   gAmpereTokenSpaceGuid.PcdBmcReadyGpio|18|UINT8|0x0000000E
 
+  #
+  # IPMI
+  #
+  gAmpereTokenSpaceGuid.PcdIpmiLunNumber|0|UINT8|0x000000F
+  gAmpereTokenSpaceGuid.PcdIpmiSsifRetryDelay|60000|UINT32|0x00000010 # 60ms - 250ms
+
 [PcdsFixedAtBuild, PcdsDynamic]
   #
   # Firmware Volume Pcds

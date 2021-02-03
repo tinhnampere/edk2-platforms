@@ -755,6 +755,11 @@
   Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcDxe/SmbusHcDxe.inf
 
   #
+  # SSIF
+  #
+  Silicon/Ampere/Drivers/IpmiSsifDxe/IpmiSsifDxe.inf
+
+  #
   # Bds
   #
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf

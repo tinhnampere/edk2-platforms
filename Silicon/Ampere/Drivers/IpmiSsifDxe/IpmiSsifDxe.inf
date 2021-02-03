@@ -1,0 +1,45 @@
+## @file
+#
+# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = IpmiSsifDxe
+  FILE_GUID                      = 825583FD-F834-4E10-9875-9E2B22781902
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = SsifEntry
+
+[Sources.common]
+  IpmiSsifDxe.c
+  IpmiSsifDxe.h
+
+[Packages]
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  PcdLib
+  SmbusLib
+  TimerLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+
+[Protocols]
+  gIpmiProtocolGuid                ## PRODUCES
+
+[Pcd]
+  gAmpereTokenSpaceGuid.PcdBmcSlaveAddr
+  gAmpereTokenSpaceGuid.PcdIpmiLunNumber
+  gAmpereTokenSpaceGuid.PcdIpmiSsifRetryDelay
+
+[Depex]
+  TRUE
