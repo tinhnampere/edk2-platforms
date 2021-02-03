@@ -60,7 +60,8 @@
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
   IntrinsicLib|CryptoPkg/Library/IntrinsicLib/IntrinsicLib.inf
   OpensslLib|CryptoPkg/Library/OpensslLib/OpensslLib.inf
-  RngLib|MdePkg/Library/DxeRngLib/DxeRngLib.inf
+  TrngLib|Silicon/Ampere/AmpereAltraPkg/Library/TrngLib/TrngLib.inf
+  RngLib|Silicon/Ampere/AmpereAltraPkg/Library/RngLib/RngLib.inf
 
   # ARM Libraries
   ArmLib|ArmPkg/Library/ArmLib/ArmBaseLib.inf
@@ -681,7 +682,7 @@
   #
   # Random Number Generator Support
   #
-  Silicon/Ampere/Drivers/RngDxe/RngDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/RngDxe/RngDxe.inf
 
   #
   # Bds
