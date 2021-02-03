@@ -1,6 +1,6 @@
 ## @file
 #
-# Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+# Copyright (c) 2020-2021, Ampere Computing LLC. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -45,6 +45,9 @@
 
   ##  @libraryclass  Defines a set of methods to access flash memory.
   FlashLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/FlashLib.h
+
+  ##  @libraryclass  Defines a set of methods to generate random numbers by using Hardware RNG.
+  TrngLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/TrngLib.h
 
 [Guids]
   # GUID for the CPU HII configuration form
