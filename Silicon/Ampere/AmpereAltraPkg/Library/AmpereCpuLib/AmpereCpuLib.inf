@@ -42,5 +42,8 @@
   gAmpereTokenSpaceGuid.PcdSmproI2cBmcBusAddr
   gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex
 
+[Guids]
+  gPlatformHobV2Guid
+
 [Depex]
   TRUE

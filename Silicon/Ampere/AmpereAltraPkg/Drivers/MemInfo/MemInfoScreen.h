@@ -18,6 +18,8 @@
 #include <Protocol/HiiConfigKeyword.h>
 
 #include <Guid/MdeModuleHii.h>
+#include <Guid/PlatformInfoHobGuid.h>
+
 #include <Library/DebugLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>

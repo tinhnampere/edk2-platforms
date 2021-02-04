@@ -33,12 +33,11 @@ AcpiPatchDmc620 (VOID)
 {
   CHAR8                 NodePath[MAX_ACPI_NODE_PATH];
   UINTN                 Index, Index1;
-  EFI_GUID              PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2    *PlatformHob;
   UINT32                McuMask;
   VOID                  *Hob;
 
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return;
   }
@@ -63,11 +62,10 @@ AcpiPatchNvdimm (VOID)
 {
   CHAR8                 NodePath[MAX_ACPI_NODE_PATH];
   UINTN                 NvdRegionNum, Count;
-  EFI_GUID              PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2    *PlatformHob;
   VOID                  *Hob;
 
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return;
   }
@@ -148,12 +146,11 @@ PcieGetSubNumaMode (
   VOID
   )
 {
-  EFI_GUID                    PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2          *PlatformHob;
   VOID                        *Hob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return SUBNUMA_MODE_MONOLITHIC;
   }

@@ -57,6 +57,7 @@
 #include <Library/DwapbGpioLib.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/NVParamLib.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <NVParamDef.h>
 #include <NVDataStruc.h>
 #include <Library/PcieBoardLib.h>
@@ -169,7 +170,6 @@ PcieBoardParseRCParams (
   IN   AC01_RC *RC
   )
 {
-  CONST EFI_GUID      PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   UINT32              Efuse;
   PlatformInfoHob_V2  *PlatformHob;
   UINT8               PlatRCId;
@@ -221,7 +221,7 @@ PcieBoardParseRCParams (
     // Consolidate with E-fuse
     //
     Efuse = 0;
-    Hob = GetFirstGuidHob (&PlatformHobGuid);
+    Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
     if (Hob) {
       PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
       Efuse = PlatformHob->RcDisableMask[0] | (PlatformHob->RcDisableMask[1] << RCS_PER_SOCKET);

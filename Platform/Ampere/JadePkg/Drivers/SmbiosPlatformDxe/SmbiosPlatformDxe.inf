@@ -55,5 +55,8 @@
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion
 
+[Guids]
+  gPlatformHobV2Guid
+
 [Depex]
   gEfiSmbiosProtocolGuid

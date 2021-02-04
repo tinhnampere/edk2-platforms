@@ -49,11 +49,10 @@ EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER PCCTTableHeaderTemplate
 STATIC BOOLEAN
 AcpiPcctIsV2 (VOID)
 {
-  CONST EFI_GUID       PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   VOID                 *Hob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return FALSE;
   }
@@ -65,13 +64,12 @@ STATIC UINT32
 AcpiPcctGetNumOfSocket (VOID)
 {
   UINTN                NumberSockets, NumberActiveSockets, Count, Index, Index1;
-  CONST EFI_GUID       PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2   *PlatformHob;
   PlatformClusterEn    *Socket;
   VOID                 *Hob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return 1;
   }

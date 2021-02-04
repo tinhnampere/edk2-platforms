@@ -43,6 +43,9 @@
   gArmTokenSpaceGuid.PcdMmBufferBase
   gArmTokenSpaceGuid.PcdMmBufferSize
 
+[Guids]
+  gPlatformHobV2Guid
+
 [FixedPcd]
   gArmPlatformTokenSpaceGuid.PcdClusterCount
   gArmPlatformTokenSpaceGuid.PcdCoreCount

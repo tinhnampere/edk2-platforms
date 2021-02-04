@@ -17,6 +17,7 @@
 #include <Library/HobLib.h>
 #include <Library/AmpereCpuLib.h>
 #include <Guid/SmBios.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Protocol/Smbios.h>
 #include <PlatformInfoHob.h>
 
@@ -463,7 +464,6 @@ InstallMemStructures (
   )
 {
   EFI_STATUS           Status = EFI_SUCCESS;
-  CONST EFI_GUID       PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   EFI_SMBIOS_HANDLE    SmbiosHandle;
   EFI_SMBIOS_HANDLE    Type16Handle;
   PlatformInfoHob_V2   *PlatformHob;
@@ -479,7 +479,7 @@ InstallMemStructures (
   ASSERT (Smbios != NULL);
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   ASSERT (Hob != NULL);
   if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;

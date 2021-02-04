@@ -1154,10 +1154,9 @@ MemInfoScreenSetup (
   EFI_STATUS                      Status;
   VOID                            *Hob;
   PlatformInfoHob_V2              *PlatformHob;
-  CONST EFI_GUID                  PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (!Hob) {
     return EFI_DEVICE_ERROR;
   }

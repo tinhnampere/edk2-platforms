@@ -12,6 +12,7 @@
 #include <Uefi.h>
 #include <IndustryStandard/Acpi63.h>
 #include <Guid/EventGroup.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Protocol/AcpiTable.h>
 #include <Library/UefiLib.h>
 #include <Library/AcpiLib.h>

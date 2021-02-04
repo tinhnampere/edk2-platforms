@@ -35,5 +35,9 @@
   PcdLib
   PeiServicesLib
 
+[Guids]
+  gPlatformHobGuid
+  gPlatformHobV2Guid
+
 [Depex]
   TRUE

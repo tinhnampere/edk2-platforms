@@ -576,7 +576,6 @@ AcpiConfigEntryPoint (
   BOOLEAN                         ActionFlag;
   EFI_STRING                      ConfigRequestHdr;
   EFI_EVENT                       ReadyToBootEvent;
-  CONST EFI_GUID                  PlatformHobGuid= PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2              *PlatformHob;
   VOID                            *Hob;
 
@@ -602,7 +601,7 @@ AcpiConfigEntryPoint (
   //
   // Get the Platform HOB
   //
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   ASSERT (Hob != NULL);
   if (Hob == NULL) {
     AcpiConfigUnload ();

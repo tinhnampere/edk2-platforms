@@ -18,6 +18,7 @@
 #include <Ppi/TemporaryRamSupport.h>
 #include <Library/PL011UartLib.h>
 #include <Library/SerialPortLib.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <PlatformInfoHob.h>
 #include <Platform/Ac01.h>
 
@@ -108,7 +109,6 @@ PrePeiCoreGetMpCoreInfo (
   OUT ARM_CORE_INFO **ArmCoreTable
   )
 {
-  CONST EFI_GUID                PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   UINTN                         mArmPlatformCoreCount;
   PlatformInfoHob_V2            *PlatformHob;
   UINTN                         ClusterId;
@@ -120,7 +120,7 @@ PrePeiCoreGetMpCoreInfo (
   ASSERT (ArmCoreTable != NULL);
   ASSERT (*ArmCoreTable != NULL);
 
-  Hob = GetNextGuidHob (&PlatformHobGuid,
+  Hob = GetNextGuidHob (&gPlatformHobV2Guid,
                         (CONST VOID *) FixedPcdGet64 (PcdSystemMemoryBase));
   if (!Hob) {
     return EFI_UNSUPPORTED;

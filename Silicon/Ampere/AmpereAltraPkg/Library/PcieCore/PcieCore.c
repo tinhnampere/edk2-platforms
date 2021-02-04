@@ -12,6 +12,7 @@
 #include <Library/PciePhyLib.h>
 #include <Library/PcieBoardLib.h>
 #include <Library/SMProLib.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <PlatformInfoHob.h>
 #include "PcieCore.h"
 #include "Pcie.h"
@@ -719,11 +720,10 @@ RasdpMitigationCheck (
   INTN    PcieIndex
   )
 {
-  EFI_GUID           PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2 *PlatformHob;
   VOID               *Hob;
 
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
   if ((PlatformHob->ScuProductId[0] & 0xff) == 0x01) {
     if (AsciiStrCmp ((CONST CHAR8 *) PlatformHob->CpuVer, "A0") == 0) {

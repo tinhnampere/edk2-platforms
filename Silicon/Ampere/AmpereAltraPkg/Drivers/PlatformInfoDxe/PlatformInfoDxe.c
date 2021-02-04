@@ -8,6 +8,7 @@
 
 #include <Uefi.h>
 #include <Guid/MdeModuleHii.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -113,7 +114,6 @@ UpdatePlatformInfoScreen (
 {
   VOID                                *Hob;
   PlatformInfoHob_V2                  *PlatformHob;
-  CONST EFI_GUID                      PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   CHAR16                              Str[MAX_STRING_SIZE];
 
   VOID                                *StartOpCodeHandle;
@@ -122,7 +122,7 @@ UpdatePlatformInfoScreen (
   EFI_IFR_GUID_LABEL                  *EndLabel;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return EFI_DEVICE_ERROR;
   }

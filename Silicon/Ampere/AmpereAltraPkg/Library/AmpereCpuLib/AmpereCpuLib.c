@@ -14,6 +14,7 @@
 #include <Library/HobLib.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/NVParamLib.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Platform/Ac01.h>
 #include <PlatformInfoHob.h>
 #include <NVParamDef.h>
@@ -28,9 +29,8 @@ STATIC PlatformInfoHob_V2*
 GetPlatformHob (VOID)
 {
   VOID                *Hob;
-  CONST EFI_GUID      PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
 
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return NULL;
   }

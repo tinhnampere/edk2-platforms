@@ -11,6 +11,7 @@
 #include <Library/HobLib.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/PcieBoardLib.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <PlatformInfoHob.h>
 #include <Pcie.h>
 #include <NVParamDef.h>
@@ -509,7 +510,6 @@ PcieRCActiveDefaultSetting (
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   )
 {
-  CONST EFI_GUID      PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2  *PlatformHob;
   VOID                *Hob;
   UINT32              Efuse;
@@ -519,7 +519,7 @@ PcieRCActiveDefaultSetting (
     return FALSE;
   }
 
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob != NULL) {
     PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
     Efuse = PlatformHob->RcDisableMask[0] | (PlatformHob->RcDisableMask[1] << RCS_PER_SOCKET);

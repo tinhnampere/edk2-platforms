@@ -45,6 +45,7 @@
 [Guids]
   gEfiIfrTianoGuid                              ## PRODUCES ## UNDEFINED
   gPlatformManagerFormsetGuid
+  gPlatformHobV2Guid
 
 [Protocols]
   gEfiDevicePathProtocolGuid                    ## CONSUMES

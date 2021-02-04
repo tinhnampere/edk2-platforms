@@ -19,6 +19,7 @@
 #include <Library/IoLib.h>
 #include <Library/I2CLib.h>
 #include <Library/HobLib.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <PlatformInfoHob.h>
 
 #undef I2C_DBG
@@ -915,13 +916,11 @@ I2CLibConstructor (
   VOID                *Hob;
   PlatformInfoHob     *PlatformHob;
   PlatformInfoHob_V2  *PlatformHob_V2;
-  CONST EFI_GUID      PlatformHobGuid = PLATFORM_INFO_HOB_GUID;
-  CONST EFI_GUID      PlatformHobGuid_V2 = PLATFORM_INFO_HOB_GUID_V2;
 
   /* Get I2C Clock from the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
-    Hob = GetFirstGuidHob (&PlatformHobGuid_V2);
+    Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
     if (Hob == NULL) {
       return EFI_NOT_FOUND;
     }

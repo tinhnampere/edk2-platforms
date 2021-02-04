@@ -109,14 +109,13 @@ EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER *MadtTablePointer;
 STATIC UINT32 *
 CPUGetCoreOrder (VOID)
 {
-  EFI_GUID                    PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2          *PlatformHob;
   VOID                        *Hob;
   UINT32                      SubNumaMode;
   UINT8                       Ac01Chip = 1;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return SUBNUMA_MODE_MONOLITHIC;
   }

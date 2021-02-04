@@ -81,13 +81,12 @@ AcpiGetNvdRegionNumber (
   IN OUT UINTN *NvdRegionNum
   )
 {
-  CONST EFI_GUID      PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2  *PlatformHob;
   UINTN               Count;
   VOID                *Hob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;
   }
@@ -161,7 +160,6 @@ AcpiNfitFillTable (
   EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE   *NfitSpaPointer;
   EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE           *NfitRegionMappingPointer;
   EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE           *NfitControlRegionPointer;
-  CONST EFI_GUID PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
   PlatformInfoHob_V2  *PlatformHob;
   UINTN               Count;
   VOID                *Hob;
@@ -170,7 +168,7 @@ AcpiNfitFillTable (
   UINT64              NvdRegionSize;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;
   }

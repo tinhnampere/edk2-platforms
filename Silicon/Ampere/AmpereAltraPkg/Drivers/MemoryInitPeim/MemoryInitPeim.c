@@ -14,6 +14,7 @@
 #include <Ppi/MasterBootMode.h>
 #include <Ppi/BootInRecoveryMode.h>
 #include <Guid/MemoryTypeInformation.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/PeimEntryPoint.h>
@@ -77,11 +78,10 @@ InitializeMemory (
   UINTN                                 Index;
   VOID                                  *Hob;
   PlatformInfoHob_V2                    *PlatformHob;
-  CONST EFI_GUID                        PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
 
   DEBUG ((DEBUG_INFO, "Memory Init PEIM Loaded\n"));
 
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return EFI_DEVICE_ERROR;
   }

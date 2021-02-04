@@ -28,6 +28,7 @@
 
 #include <Protocol/AcpiSystemDescriptionTable.h>
 #include <Guid/AcpiConfigFormSet.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Library/AcpiHelperLib.h>
 #include <Library/PMProLib.h>
 #include <Library/AcpiHelperLib.h>

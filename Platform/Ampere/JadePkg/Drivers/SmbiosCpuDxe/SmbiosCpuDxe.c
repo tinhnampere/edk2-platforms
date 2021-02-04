@@ -17,6 +17,7 @@
 #include <Library/HobLib.h>
 #include <Library/AmpereCpuLib.h>
 #include <Guid/SmBios.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Protocol/Smbios.h>
 #include <PlatformInfoHob.h>
 
@@ -528,10 +529,9 @@ UpdateSmbiosInfo (
 {
   VOID                        *Hob;
   PlatformInfoHob_V2          *PlatformHob;
-  CONST EFI_GUID              PlatformHobGuid = PLATFORM_INFO_HOB_GUID_V2;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&PlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   ASSERT (Hob != NULL);
   if (Hob == NULL) {
     return;
