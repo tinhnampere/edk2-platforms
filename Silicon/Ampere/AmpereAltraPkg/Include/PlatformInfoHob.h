@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2020-2021, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -9,6 +9,7 @@
 #ifndef _PLATFORM_INFO_HOB_H_
 #define _PLATFORM_INFO_HOB_H_
 
+#include <IndustryStandard/Tpm20.h>
 #include <Platform/Ac01.h>
 
 /* DIMM type */
@@ -128,6 +129,58 @@ typedef struct {
   UINT32            EnableMask[4];
 } PlatformClusterEn;
 
+//
+// Algorithm ID defined in pre-UEFI firmware
+//
+typedef enum {
+  PLATFORM_ALGORITHM_SHA1 = 1,
+  PLATFORM_ALGORITHM_SHA256
+} PLATFORM_ALGORITHM_ID;
+
+//
+// Platform digest data definition
+//
+typedef union {
+  unsigned char Sha1[SHA1_DIGEST_SIZE];
+  unsigned char Sha256[SHA256_DIGEST_SIZE];
+} PLATFORM_TPM_DIGEST;
+
+#define MAX_VIRTUAL_PCR_INDEX   0x0002
+
+#pragma pack(1)
+typedef struct {
+  PLATFORM_ALGORITHM_ID AlgorithmId;
+  struct {
+    PLATFORM_TPM_DIGEST Hash;
+  } VPcr[MAX_VIRTUAL_PCR_INDEX]; // vPCR 0 or 1
+} PLATFORM_VPCR_HASH_INFO;
+
+typedef struct {
+  UINT8   InterfaceType;               // If I/F is CRB then CRB parameters are expected
+  UINT64  InterfaceParametersAddress;  // Physical address of interface, by Value */
+  UINT64  InterfaceParametersLength;
+  UINT32  SupportedAlgorithmsBitMask;
+  UINT64  EventLogAddress;
+  UINT64  EventLogLength;
+  UINT8   Reserved[3];
+} PLATFORM_TPM2_CONFIG_DATA;
+
+typedef struct {
+  UINT64  AddressOfControlArea;
+  UINT64  ControlAreaLength;
+  UINT8   InterruptMode;
+  UINT8   Reserved[3];
+  UINT32  InterruptNumber;          // Should have a value of zero polling
+  UINT32  SmcFunctionId;            // SMC Function ID
+} PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS;
+
+typedef struct {
+  PLATFORM_TPM2_CONFIG_DATA                 Tpm2ConfigData;
+  PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS    Tpm2CrbInterfaceParams;
+  PLATFORM_VPCR_HASH_INFO                   Tpm2VPcrHashInfo;
+} PLATFORM_TPM2_INFO;
+#pragma pack()
+
 typedef struct {
   UINT64            PcpClk;
   UINT64            PmdClk;
@@ -182,7 +235,7 @@ typedef struct {
   UINT32              AHBCId[2];
 
   /* TPM2 Info */
-  UINT8               TpmHob[60];
+  PLATFORM_TPM2_INFO  Tpm2Info;
 
   /* 2P link info for RCA0/RCA1 */
   UINT8               Link2PSpeed[2];
