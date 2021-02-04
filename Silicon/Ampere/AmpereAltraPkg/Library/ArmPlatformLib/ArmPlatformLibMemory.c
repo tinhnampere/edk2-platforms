@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2020-2021, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -359,6 +359,14 @@ ArmPlatformGetVirtualMemoryMap (
   VirtualMemoryTable[Index].VirtualBase  = 0x88230000ULL;
   VirtualMemoryTable[Index].Length       = 0x30000ULL;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
+
+  /*
+   * TPM CRB address - Attribute has to be Uncached
+   */
+  VirtualMemoryTable[++Index].PhysicalBase = 0x88500000ULL;
+  VirtualMemoryTable[Index].VirtualBase  = 0x88500000ULL;
+  VirtualMemoryTable[Index].Length       = 0x100000ULL;
+  VirtualMemoryTable[Index].Attributes   = DDR_ATTRIBUTES_UNCACHED;
 
   /*
    *  - DDR memory region
