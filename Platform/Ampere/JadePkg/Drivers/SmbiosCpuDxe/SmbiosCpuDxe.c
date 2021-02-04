@@ -29,7 +29,7 @@
 
 #define TYPE4_ADDITIONAL_STRINGS                                  \
   "SOCKET 0\0"                       /* socket type */            \
-  "Ampere Computing\0"               /* manufacturer */           \
+  "Ampere(R)\0"                      /* manufacturer */           \
   "Ampere(TM) Altra(TM) Processor\0" /* processor description */  \
   "NotSet\0"                         /* part number */
 

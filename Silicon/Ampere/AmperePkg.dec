@@ -88,12 +88,12 @@
   # SMBIOS, default or template values
   #
   # SMBIOS Type 0 - BIOS Information
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVendor|"Ampere Computing"|VOID*|0xB0000000
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVendor|"Ampere(R)"|VOID*|0xB0000000
   gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVersion|"TianoCore EDKII"|VOID*|0xB0000001
   gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate|"MM/DD/YYYY"|VOID*|0xB0000002 # Must follow this MM/DD/YYYY SMBIOS date format
 
   # SMBIOS Type 1 - System Information
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemManufacturer|"Ampere Computing"|VOID*|0xB0000003
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemManufacturer|"Ampere(R)"|VOID*|0xB0000003
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemProductName|"Mt Jade"|VOID*|0xB0000004
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemVersion|"0.0"|VOID*|0xB0000005
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSerialNumber|"1234-5678-9ABC-DEFF"|VOID*|0xB0000006

@@ -18,7 +18,7 @@
 #include <PlatformInfoHob.h>
 
 // Type0 Data
-#define VENDOR_TEMPLATE       "Ampere Computing\0"
+#define VENDOR_TEMPLATE       "Ampere(R)\0"
 #define BIOS_VERSION_TEMPLATE "TianoCore EDKII\0"
 #define RELEASE_DATE_TEMPLATE "MM/DD/YYYY\0"
 
@@ -28,7 +28,7 @@
   RELEASE_DATE_TEMPLATE        /* BiosReleaseDate */
 
 // Type1 Data
-#define MANUFACTURER_TEMPLATE "Ampere Computing\0"
+#define MANUFACTURER_TEMPLATE "Ampere(R)\0"
 #define PRODUCT_NAME_TEMPLATE "Mt. Jade\0"
 #define SYS_VERSION_TEMPLATE  "PR010\0"
 #define SERIAL_TEMPLATE       "123456789ABCDEFF123456789ABCDEFF\0"

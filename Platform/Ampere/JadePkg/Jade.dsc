@@ -124,12 +124,12 @@
 
 [PcdsDynamicDefault.common.DEFAULT]
   # SMBIOS Type 0 - BIOS Information
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVendor|"Ampere Computing"
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVendor|"Ampere(R)"
   gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVersion|"TianoCore EDKII"
   gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate|"MM/DD/YYYY"
 
   # SMBIOS Type 1 - System Information
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemManufacturer|"Ampere Computing"
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemManufacturer|"Ampere(R)"
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemProductName|"Mt Jade"
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemVersion|"0.3"
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSerialNumber|"0123-4567-89AB-CDEF"
