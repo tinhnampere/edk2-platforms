@@ -1,0 +1,46 @@
+## @file
+#  Provides TPM 2.0 PTP functions.
+#
+#  Spec Compliance Info:
+#    "TCG PC Client Platform TPM Profile(PTP) Specification Family 2.0 Level 00 Revision 00.43"
+#
+#  This library implements PTP (Platform TPM Profile) functions which is
+#  used for every TPM 2.0 command. Choosing this library means platform uses and
+#  only uses TPM 2.0 DTPM device.
+#
+#  Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = Tpm2DeviceLibArmCrb
+  FILE_GUID                      = DA1571C5-C55B-4D7C-BD06-A13E0A70EDC7
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = Tpm2DeviceLib|PEIM DXE_DRIVER DXE_RUNTIME_DRIVER UEFI_APPLICATION UEFI_DRIVER
+  CONSTRUCTOR                    = Tpm2DeviceLibConstructor
+
+[Sources]
+  Tpm2ArmCrb.c
+  Tpm2DeviceLibArmCrb.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  MdePkg/MdePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  ArmSmcLib
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  HobLib
+  IoLib
+  TimerLib
+  PcdLib
+
+[Guids]
+  gPlatformHobV2Guid

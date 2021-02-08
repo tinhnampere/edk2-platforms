@@ -1,0 +1,42 @@
+## @file
+#  Provides a TPM instance.
+#
+#  This library can be registered to Tpm 2.0 device router, to be active TPM 2.0
+#  engine, based on platform setting.
+#
+#  Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = Tpm2InstanceLibArmCrb
+  FILE_GUID                      = A4FEE049-F95A-4F75-A4DD-9C3CA4C90619
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = NULL
+  CONSTRUCTOR                    = Tpm2InstanceLibArmCrbConstructor
+
+[Sources]
+  Tpm2ArmCrb.c
+  Tpm2InstanceLibArmCrb.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  MdePkg/MdePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  ArmSmcLib
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  HobLib
+  IoLib
+  TimerLib
+  PcdLib
+
+[Guids]
+  gPlatformHobV2Guid
