@@ -344,6 +344,11 @@ APRIORI DXE {
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/RngDxe/RngDxe.inf
 
   #
+  # SMBus
+  #
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcDxe/SmbusHcDxe.inf
+
+  #
   # UEFI application (Shell Embedded Boot Loader)
   #
   INF ShellPkg/Application/Shell/Shell.inf

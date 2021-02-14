@@ -73,6 +73,12 @@
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|0|UINT8|0x00000009
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|0|UINT8|0x0000000A
 
+  #
+  # SMBus
+  #
+  gAmpereTokenSpaceGuid.PcdSmbusI2cBusNumber|0x00|UINT8|0x0000000B
+  gAmpereTokenSpaceGuid.PcdSmbusI2cBusSpeed|100000|UINT32|0x0000000C # Hz
+
 [PcdsFixedAtBuild, PcdsDynamic]
   #
   # Firmware Volume Pcds

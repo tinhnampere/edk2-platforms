@@ -1,0 +1,43 @@
+## @file
+#
+# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = SmbusHcDxe
+  FILE_GUID                      = A92C6874-B59E-49A7-957D-8511C9D8520E
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InitializeSmbus
+
+[Sources]
+  SmbusHcDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  DwapbGpioLib
+  I2CLib
+  PcdLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+
+[Protocols]
+  gEfiSmbusHcProtocolGuid
+
+[Pcd]
+  gAmpereTokenSpaceGuid.PcdSmbusI2cBusNumber
+  gAmpereTokenSpaceGuid.PcdSmbusI2cBusSpeed
+
+[Depex]
+  TRUE

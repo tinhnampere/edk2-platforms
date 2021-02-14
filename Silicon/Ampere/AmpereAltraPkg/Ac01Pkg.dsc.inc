@@ -750,6 +750,11 @@
   Silicon/Ampere/AmpereAltraPkg/Drivers/RngDxe/RngDxe.inf
 
   #
+  # SMBus
+  #
+  Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcDxe/SmbusHcDxe.inf
+
+  #
   # Bds
   #
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
