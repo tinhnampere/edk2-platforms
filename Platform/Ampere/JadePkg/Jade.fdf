@@ -354,6 +354,7 @@ APRIORI DXE {
 !if $(TPM2_ENABLE) == TRUE
   INF  Silicon/Ampere/AmpereAltraPkg/Drivers/Tcg2Dxe/Tcg2Dxe.inf
   INF  Silicon/Ampere/AmpereAltraPkg/Drivers/Tcg2Config/Tcg2ConfigDxe.inf
+  INF  Silicon/Ampere/AmpereAltraPkg/Drivers/Tcg2AcpiDxe/Tcg2AcpiDxe.inf
 !endif
 
   #

@@ -10,7 +10,7 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
   //
   // Board Model
   Name(\BDMD, "Jade Board")
-  Name(TPMF, 0x0)  // TPM presence
+  Name(TPMF, 0)  // TPM presence
   Scope(\_SB) {
 
     Include ("CPU.asi")
@@ -818,14 +818,33 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
     }
 
     Device (TPM0) {
-      Name (_HID, "MSFT0101")
+      //
+      // TPM 2.0
+      //
+
+      //
+      // TAG for patching TPM2.0 _HID
+      //
+      Name (_HID, "NNNN0000")
       Name (_CID, "MSFT0101")
       Name (_UID, 0)
+
+      Name (CRBB, 0x10000000)
+      Name (CRBL, 0x10000000)
+
+      Name (RBUF, ResourceTemplate () {
+        Memory32Fixed (ReadWrite, 0x88500000, 0x1000, PCRE)
+      })
+
       Method (_CRS, 0x0, Serialized) {
-        Name (RBUF, ResourceTemplate () {
-          //QWORDMemory(ResourceConsumer, , MinFixed, MaxFixed, NonCacheable, ReadWrite, 0x00000000, 0x80300000, 0x80300FFF, 0x0, 0x1000,, ,)
-          Memory32Fixed (ReadWrite, 0x88500000, 0x1000, PCRE)
-        })
+        // Declare fields in PCRE
+        CreateDWordField(RBUF, ^PCRE._BAS, BASE)
+        CreateDWordField(RBUF, ^PCRE._LEN, LENG)
+
+        // Store updatable values into them
+        Store(CRBB, BASE)
+        Store(CRBL, LENG)
+
         Return (RBUF)
       }
 
