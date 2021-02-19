@@ -313,12 +313,12 @@ typedef enum {
    */
   NV_SI_RO_BOARD_TPM_ALG_ID                         = (54 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000002 */
   NV_SI_RO_BOARD_DDR_SPEED_GRADE                    = (55 * 8) + NV_BOARD_PARAM_START, /* Default: 3200 */
-  NV_SI_RO_BOARD_DDR_S0_RTT_WR                      = (56 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
-  NV_SI_RO_BOARD_DDR_S1_RTT_WR                      = (57 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
-  NV_SI_RO_BOARD_DDR_S0_RTT_NOM                     = (58 * 8) + NV_BOARD_PARAM_START, /* Default: 0xFF010107 */
-  NV_SI_RO_BOARD_DDR_S1_RTT_NOM                     = (59 * 8) + NV_BOARD_PARAM_START, /* Default: 0xFF010107 */
-  NV_SI_RO_BOARD_DDR_S0_RTT_PARK                    = (60 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00010000 */
-  NV_SI_RO_BOARD_DDR_S1_RTT_PARK                    = (61 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00010000 */
+  NV_SI_RO_BOARD_DDR_S0_RTT_WR                      = (56 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00020000 */
+  NV_SI_RO_BOARD_DDR_S1_RTT_WR                      = (57 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00020000 */
+  NV_SI_RO_BOARD_DDR_S0_RTT_NOM                     = (58 * 8) + NV_BOARD_PARAM_START, /* Default: 0xFF060177 */
+  NV_SI_RO_BOARD_DDR_S1_RTT_NOM                     = (59 * 8) + NV_BOARD_PARAM_START, /* Default: 0xFF060177 */
+  NV_SI_RO_BOARD_DDR_S0_RTT_PARK                    = (60 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00060070 */
+  NV_SI_RO_BOARD_DDR_S1_RTT_PARK                    = (61 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00060070 */
   NV_SI_RO_BOARD_DDR_CS0_RDODT_MASK_1DPC            = (62 * 8) + NV_BOARD_PARAM_START, /* Default: 0x000000 */
   NV_SI_RO_BOARD_DDR_CS1_RDODT_MASK_1DPC            = (63 * 8) + NV_BOARD_PARAM_START, /* Default: 0x000000 */
   NV_SI_RO_BOARD_DDR_CS2_RDODT_MASK_1DPC            = (64 * 8) + NV_BOARD_PARAM_START, /* Default: 0x000000 */
@@ -331,10 +331,10 @@ typedef enum {
   NV_SI_RO_BOARD_DDR_CS1_WRODT_MASK_1DPC            = (71 * 8) + NV_BOARD_PARAM_START, /* Default: 0x030333 */
   NV_SI_RO_BOARD_DDR_CS2_WRODT_MASK_1DPC            = (72 * 8) + NV_BOARD_PARAM_START, /* Default: 0x030333 */
   NV_SI_RO_BOARD_DDR_CS3_WRODT_MASK_1DPC            = (73 * 8) + NV_BOARD_PARAM_START, /* Default: 0x030333 */
-  NV_SI_RO_BOARD_DDR_CS0_WRODT_MASK_2DPC            = (74 * 8) + NV_BOARD_PARAM_START, /* Default: 0x0D0DDD */
-  NV_SI_RO_BOARD_DDR_CS1_WRODT_MASK_2DPC            = (75 * 8) + NV_BOARD_PARAM_START, /* Default: 0x0E0EEE */
-  NV_SI_RO_BOARD_DDR_CS2_WRODT_MASK_2DPC            = (76 * 8) + NV_BOARD_PARAM_START, /* Default: 0x070777 */
-  NV_SI_RO_BOARD_DDR_CS3_WRODT_MASK_2DPC            = (77 * 8) + NV_BOARD_PARAM_START, /* Default: 0x0B0BBB */
+  NV_SI_RO_BOARD_DDR_CS0_WRODT_MASK_2DPC            = (74 * 8) + NV_BOARD_PARAM_START, /* Default: 0x0EDEED */
+  NV_SI_RO_BOARD_DDR_CS1_WRODT_MASK_2DPC            = (75 * 8) + NV_BOARD_PARAM_START, /* Default: 0x0DEDDE */
+  NV_SI_RO_BOARD_DDR_CS2_WRODT_MASK_2DPC            = (76 * 8) + NV_BOARD_PARAM_START, /* Default: 0x0B7BB7 */
+  NV_SI_RO_BOARD_DDR_CS3_WRODT_MASK_2DPC            = (77 * 8) + NV_BOARD_PARAM_START, /* Default: 0x07B77B */
   NV_SI_RO_BOARD_DDR_PHY_TERM_DQ_CTRL_1DPC          = (78 * 8) + NV_BOARD_PARAM_START, /* Default: 0x5 */
   NV_SI_RO_BOARD_DDR_PHY_TERM_DQ_VAL_1DPC           = (79 * 8) + NV_BOARD_PARAM_START, /* Default: 0x90DD90 */
   NV_SI_RO_BOARD_DDR_PHY_TERM_DQS_CTRL_1DPC         = (80 * 8) + NV_BOARD_PARAM_START, /* Default: 0x5 */
@@ -345,8 +345,8 @@ typedef enum {
   NV_SI_RO_BOARD_DDR_PHY_TERM_DQS_VAL_2DPC          = (85 * 8) + NV_BOARD_PARAM_START, /* Default: 0x90DD90 */
   NV_SI_RO_BOARD_DDR_PHY_VREFDQ_RANGE_VAL_1DPC      = (86 * 8) + NV_BOARD_PARAM_START, /* Default: 0x24 */
   NV_SI_RO_BOARD_DDR_DRAM_VREFDQ_RANGE_VAL_1DPC     = (87 * 8) + NV_BOARD_PARAM_START, /* Default: 0x1A */
-  NV_SI_RO_BOARD_DDR_PHY_VREFDQ_RANGE_VAL_2DPC      = (88 * 8) + NV_BOARD_PARAM_START, /* Default: 0x5B */
-  NV_SI_RO_BOARD_DDR_DRAM_VREFDQ_RANGE_VAL_2DPC     = (89 * 8) + NV_BOARD_PARAM_START, /* Default: 0x28 */
+  NV_SI_RO_BOARD_DDR_PHY_VREFDQ_RANGE_VAL_2DPC      = (88 * 8) + NV_BOARD_PARAM_START, /* Default: 0x50 */
+  NV_SI_RO_BOARD_DDR_DRAM_VREFDQ_RANGE_VAL_2DPC     = (89 * 8) + NV_BOARD_PARAM_START, /* Default: 0x20 */
   NV_SI_RO_BOARD_DDR_CLK_WRDQ_DLY_DEFAULT           = (90 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02800280 */
   NV_SI_RO_BOARD_DDR_RDDQS_DQ_DLY_DEFAULT           = (91 * 8) + NV_BOARD_PARAM_START, /* Default: 0x90909090 */
   NV_SI_RO_BOARD_DDR_WRDQS_SHIFT_DEFAULT            = (92 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
@@ -356,7 +356,7 @@ typedef enum {
   NV_SI_RO_BOARD_DDR_PHY_VREF_ADJ                   = (96 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_DDR_DRAM_VREF_ADJ                  = (97 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_DDR_WR_PREAMBLE_CYCLE              = (98 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02010201 */
-  NV_SI_RO_BOARD_DDR_ADCMD_2T_MODE                  = (99 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00010000 */
+  NV_SI_RO_BOARD_DDR_ADCMD_2T_MODE                  = (99 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_I2C_VRD_CONFIG_INFO                = (100 * 8) + NV_BOARD_PARAM_START,
   NV_SI_RO_BOARD_DDR_PHY_FEATURE_CTRL               = (101 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_BMC_HANDSHAKE_SPI_ACCESS           = (102 * 8) + NV_BOARD_PARAM_START, /* Default: 0x01050106 */
