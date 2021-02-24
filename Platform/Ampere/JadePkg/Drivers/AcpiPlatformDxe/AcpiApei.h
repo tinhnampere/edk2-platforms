@@ -25,7 +25,7 @@
 #include <Library/AmpereCpuLib.h>
 
 #pragma pack(1)
-#define BERT_MSG_SIZE                0x40
+#define BERT_MSG_SIZE                0x2C
 #define BERT_ERROR_TYPE              0x7F
 #define BERT_UEFI_FAILURE            5
 #define RAS_2P_TYPE                  0x03
