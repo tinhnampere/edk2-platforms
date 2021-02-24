@@ -16,6 +16,7 @@
 
 [Sources]
   SmbiosPlatformDxe.c
+  IpmiFruInfo.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -23,6 +24,7 @@
   ArmPkg/ArmPkg.dec
   Silicon/Ampere/AmperePkg.dec
   Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+  OutOfBandManagement/IpmiFeaturePkg/IpmiFeaturePkg.dec
 
 [LibraryClasses]
   UefiBootServicesTableLib
@@ -33,9 +35,12 @@
   MemoryAllocationLib
   BaseMemoryLib
   HobLib
+  IpmiLib
+  IpmiCommandLib
 
 [Protocols]
   gEfiSmbiosProtocolGuid                     ## CONSUMED
+  gIpmiProtocolGuid
 
 [Pcd]
   # Type 0
@@ -54,6 +59,27 @@
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSkuNumber
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion
+
+  # FRU Chassis Information
+  gAmpereTokenSpaceGuid.PcdFruChassisPartNumber
+  gAmpereTokenSpaceGuid.PcdFruChassisSerialNumber
+  gAmpereTokenSpaceGuid.PcdFruChassisExtra
+
+  # FRU Board Information
+  gAmpereTokenSpaceGuid.PcdFruBoardManufacturerName
+  gAmpereTokenSpaceGuid.PcdFruBoardProductName
+  gAmpereTokenSpaceGuid.PcdFruBoardSerialNumber
+  gAmpereTokenSpaceGuid.PcdFruBoardPartNumber
+
+  # FRU Product Information
+  gAmpereTokenSpaceGuid.PcdFruProductManufacturerName
+  gAmpereTokenSpaceGuid.PcdFruProductName
+  gAmpereTokenSpaceGuid.PcdFruProductPartNumber
+  gAmpereTokenSpaceGuid.PcdFruProductVersion
+  gAmpereTokenSpaceGuid.PcdFruProductSerialNumber
+  gAmpereTokenSpaceGuid.PcdFruProductAssetTag
+  gAmpereTokenSpaceGuid.PcdFruProductFruFileId
+  gAmpereTokenSpaceGuid.PcdFruProductExtra
 
 [Guids]
   gPlatformHobV2Guid

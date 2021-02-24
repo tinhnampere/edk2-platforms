@@ -294,6 +294,10 @@
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Library/NVParamDxeLib/NVParamDxeLib.inf
   FlashLib|Silicon/Ampere/AmpereAltraPkg/Library/FlashLib/FlashLib.inf
 
+[LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION, LibraryClasses.common.DXE_RUNTIME_DRIVER, LibraryClasses.common.DXE_DRIVER]
+  IpmiLib|MdeModulePkg/Library/DxeIpmiLibIpmiProtocol/DxeIpmiLibIpmiProtocol.inf
+  IpmiCommandLib|OutOfBandManagement/IpmiFeaturePkg/Library/IpmiCommandLib/IpmiCommandLib.inf
+
 [LibraryClasses.ARM,LibraryClasses.AARCH64]
   #
   # It is not possible to prevent the ARM compiler for generic intrinsic functions.

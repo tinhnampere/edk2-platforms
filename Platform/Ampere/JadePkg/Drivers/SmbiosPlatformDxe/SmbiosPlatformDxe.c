@@ -10,11 +10,13 @@
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Guid/SmBios.h>
 #include <Guid/PlatformInfoHobGuid.h>
 #include <Library/HobLib.h>
+#include <Protocol/IpmiProtocol.h>
 #include <Protocol/Smbios.h>
 #include <PlatformInfoHob.h>
 
@@ -53,11 +55,16 @@
   "FF\0"                      /* Version */        \
   "FF\0"                      /* Version */
 
+#define CHASSIS_VERSION_TEMPLATE    "None               \0"
+#define CHASSIS_SERIAL_TEMPLATE     "Serial Not Set     \0"
+#define CHASSIS_ASSET_TAG_TEMPLATE  "Asset Tag Not Set  \0"
+
 #define TYPE3_ADDITIONAL_STRINGS                 \
   MANUFACTURER_TEMPLATE       /* Manufacturer */ \
-  "None\0"                    /* Version */      \
-  "Serial Not Set\0"          /* Serial  */      \
-  "Asset Tag Not Set\0"       /* Asset Tag */
+  CHASSIS_VERSION_TEMPLATE    /* Version */      \
+  CHASSIS_SERIAL_TEMPLATE     /* Serial  */      \
+  CHASSIS_ASSET_TAG_TEMPLATE  /* Asset Tag */    \
+  SKU_TEMPLATE                /* SKU Number */
 
 #define TYPE8_ADDITIONAL_STRINGS      \
   "VGA1 - Rear VGA Connector\0"       \
@@ -256,6 +263,7 @@ STATIC CONST ARM_TYPE3 mArmDefaultType3 = {
     1,                               //1U height
     2,                               //number of power cords
     0,                               //no contained elements
+    3,                               //ContainedElementRecordLength;
   },
   TYPE3_ADDITIONAL_STRINGS
 };
@@ -743,6 +751,9 @@ STATIC MonthStringDig MonthMatch[12] = {
   { "Dec", "12" }
 };
 
+EFI_STATUS
+IpmiReadFruInfo (VOID);
+
 STATIC
 VOID
 ConstructBuildDate (
@@ -887,16 +898,83 @@ InstallType3Structure (
 {
   EFI_STATUS          Status = EFI_SUCCESS;
   EFI_SMBIOS_HANDLE   SmbiosHandle;
+  SMBIOS_TABLE_TYPE3  *InputData;
+  SMBIOS_TABLE_TYPE3  *SmbiosRecord;
+  UINTN               ManuStrLen;
+  UINTN               VerStrLen;
+  UINTN               AssertTagStrLen;
+  UINTN               SerialNumStrLen;
+  UINTN               ChaNumStrLen;
+  UINT8               ContainedElementCount;
+  UINT8               ExtendLength;
+  SMBIOS_TABLE_STRING *SkuNumberPtr;
+  UINTN               StringOffset;
 
   ASSERT (Smbios != NULL);
 
-  SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*) &mArmDefaultType3)->Handle;
+  ManuStrLen = AsciiStrLen (MANUFACTURER_TEMPLATE);
+  VerStrLen = AsciiStrLen (CHASSIS_VERSION_TEMPLATE);
+  SerialNumStrLen = AsciiStrLen (CHASSIS_SERIAL_TEMPLATE);
+  AssertTagStrLen = AsciiStrLen (CHASSIS_ASSET_TAG_TEMPLATE);
+  ChaNumStrLen = AsciiStrLen (SKU_TEMPLATE);
+
+  InputData = (SMBIOS_TABLE_TYPE3 *)&mArmDefaultType3;
+
+  ContainedElementCount = InputData->ContainedElementCount;
+
+  ExtendLength = 0;
+  if (ContainedElementCount > 1) {
+    ExtendLength = (ContainedElementCount - 1) * sizeof (CONTAINED_ELEMENT);
+  }
+
+  //
+  // Two zeros following the last string.
+  //
+  SmbiosRecord = AllocateZeroPool (
+                   sizeof (SMBIOS_TABLE_TYPE3)
+                   + ExtendLength     + 1
+                   + ManuStrLen       + 1
+                   + VerStrLen        + 1
+                   + SerialNumStrLen  + 1
+                   + AssertTagStrLen  + 1
+                   + ChaNumStrLen     + 1 + 1
+                   );
+  if (SmbiosRecord == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  CopyMem (SmbiosRecord, InputData, sizeof (SMBIOS_TABLE_TYPE3));
+
+  SmbiosRecord->Hdr.Length = OFFSET_OF (SMBIOS_TABLE_TYPE3, ContainedElements) + ExtendLength + sizeof (SMBIOS_TABLE_STRING);
+
+  //
+  // TODO: Create ContainedElements and copy them into SMBIOS record if it is supported
+  //
+  // if (ExtendLength > 0) {
+  //   CopyMem ((UINT8 *)SmbiosRecord + OFFSET_OF (SMBIOS_TABLE_TYPE3, ContainedElements), &ContainedElements, ExtendLength);
+  // }
+
+  SkuNumberPtr = (UINT8 *)SmbiosRecord + SmbiosRecord->Hdr.Length - sizeof (SMBIOS_TABLE_STRING);
+  *SkuNumberPtr = 5;
+
+  StringOffset = SmbiosRecord->Hdr.Length;
+  CopyMem ((UINT8 *)SmbiosRecord + StringOffset, (UINT8 *)MANUFACTURER_TEMPLATE, ManuStrLen);
+  StringOffset += ManuStrLen + 1;
+  CopyMem ((UINT8 *)SmbiosRecord + StringOffset, (UINT8 *)CHASSIS_VERSION_TEMPLATE, VerStrLen);
+  StringOffset += VerStrLen + 1;
+  CopyMem ((UINT8 *)SmbiosRecord + StringOffset, (UINT8 *)CHASSIS_SERIAL_TEMPLATE, SerialNumStrLen);
+  StringOffset += SerialNumStrLen + 1;
+  CopyMem ((UINT8 *)SmbiosRecord + StringOffset, (UINT8 *)CHASSIS_ASSET_TAG_TEMPLATE, AssertTagStrLen);
+  StringOffset += AssertTagStrLen + 1;
+  CopyMem ((UINT8 *)SmbiosRecord + StringOffset, (UINT8 *)SKU_TEMPLATE, ChaNumStrLen);
+
+  SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*)SmbiosRecord)->Handle;
   Status = Smbios->Add (
                      Smbios,
                      NULL,
                      &SmbiosHandle,
-                     (EFI_SMBIOS_TABLE_HEADER*)&mArmDefaultType3
-                   );
+                     (EFI_SMBIOS_TABLE_HEADER*)SmbiosRecord
+                     );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "adding SMBIOS type 3 failed\n"));
     //stop adding rather than continuing
@@ -905,6 +983,8 @@ InstallType3Structure (
 
   //Save this handle to type 2 table
   mArmDefaultType2.Base.ChassisHandle = SmbiosHandle;
+
+  FreePool (SmbiosRecord);
 
   return Status;
 }
@@ -997,6 +1077,135 @@ InstallAllStructures (
   return Status;
 }
 
+EFI_STATUS
+SmbiosUpdateString (
+  EFI_SMBIOS_PROTOCOL       *Smbios,
+  IN  EFI_SMBIOS_HANDLE     SmbiosHandle,
+  IN  SMBIOS_TABLE_STRING   StringNumber,
+  IN  CHAR8                 *String
+  )
+{
+  EFI_STATUS  Status;
+  UINTN       StringIndex;
+
+  if (String == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (*String == '\0') {
+    // A string with no data is not legal in SMBIOS
+    return EFI_INVALID_PARAMETER;
+  }
+
+  StringIndex = StringNumber;
+  Status = Smbios->UpdateString (Smbios, &SmbiosHandle, &StringIndex, String);
+  ASSERT_EFI_ERROR (Status);
+
+  return Status;
+}
+
+VOID
+UpdateSmbiosType123 (
+  EFI_SMBIOS_PROTOCOL       *Smbios
+  )
+{
+  EFI_STATUS                Status;
+  EFI_SMBIOS_HANDLE         SmbiosHandle;
+  EFI_SMBIOS_TABLE_HEADER   *Record;
+  UINTN                     StringIndex;
+
+  ASSERT (Smbios != NULL);
+
+  SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
+  Status = Smbios->GetNext (Smbios, &SmbiosHandle, NULL, &Record, NULL);
+  while (!EFI_ERROR (Status)) {
+    //
+    // Update SMBIOS Type 1
+    //
+    if (Record->Type == SMBIOS_TYPE_SYSTEM_INFORMATION) {
+      StringIndex = ((SMBIOS_TABLE_TYPE1 *)Record)->Manufacturer;
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductManufacturerName));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductName));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductVersion));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductSerialNumber));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductExtra));
+    }
+
+    //
+    // Update SMBIOS Type 2
+    //
+    if (Record->Type == SMBIOS_TYPE_BASEBOARD_INFORMATION) {
+      StringIndex = ((SMBIOS_TABLE_TYPE2 *)Record)->Manufacturer;
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruBoardManufacturerName));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruBoardProductName));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruBoardPartNumber));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruBoardSerialNumber));
+    }
+
+    //
+    // Update SMBIOS Type 3
+    //
+    if (Record->Type == SMBIOS_TYPE_SYSTEM_ENCLOSURE) {
+      StringIndex = ((SMBIOS_TABLE_TYPE3 *)Record)->Manufacturer;
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruBoardManufacturerName));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruChassisPartNumber));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruChassisSerialNumber));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductAssetTag));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruChassisExtra));
+    }
+
+    Status = Smbios->GetNext (Smbios, &SmbiosHandle, NULL, &Record, NULL);
+  }
+}
+
+VOID
+EFIAPI
+IpmiInstalledCallback (
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
+  )
+{
+  EFI_STATUS                Status;
+  IPMI_PROTOCOL             *IpmiProtocol;
+  EFI_SMBIOS_PROTOCOL       *Smbios;
+
+  Status = gBS->LocateProtocol (
+                  &gIpmiProtocolGuid,
+                  NULL,
+                  (VOID **) &IpmiProtocol
+                  );
+  if (EFI_ERROR (Status) || IpmiProtocol == NULL) {
+    DEBUG ((DEBUG_ERROR, "%a: IPMI protocol not installed\n", __FUNCTION__));
+    return;
+  }
+
+  Status = gBS->LocateProtocol (
+                  &gEfiSmbiosProtocolGuid,
+                  NULL,
+                  (VOID**) &Smbios
+                  );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: SMBIOS protocol not installed\n", __FUNCTION__));
+    return;
+  }
+
+  Status = IpmiReadFruInfo ();
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Failed to read FRU Information!\n", __FUNCTION__));
+    return;
+  }
+
+  //
+  // Update SMBIOS Type 1, 2 and 3 based on FRU data that were read from BMC.
+  //
+  UpdateSmbiosType123 (Smbios);
+
+  if (Event != NULL) {
+     gBS->CloseEvent (Event);
+  }
+}
+
 /**
    Installs SMBIOS information for ARM platforms
 
@@ -1016,6 +1225,8 @@ SmbiosPlatformDxeEntry (
 {
   EFI_STATUS            Status;
   EFI_SMBIOS_PROTOCOL   *Smbios;
+  EFI_EVENT             IpmiInstalledEvent;
+  VOID                  *Registration;
 
   //
   // Find the SMBIOS protocol
@@ -1032,6 +1243,15 @@ SmbiosPlatformDxeEntry (
 
   Status = InstallAllStructures (Smbios);
   DEBUG ((DEBUG_ERROR, "SmbiosPlatform install - %r\n", Status));
+
+  IpmiInstalledEvent = EfiCreateProtocolNotifyEvent (
+                         &gIpmiProtocolGuid,
+                         TPL_CALLBACK,
+                         IpmiInstalledCallback,
+                         NULL,
+                         &Registration
+                         );
+  ASSERT (IpmiInstalledEvent != NULL);
 
   return Status;
 }

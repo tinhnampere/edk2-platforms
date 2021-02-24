@@ -147,6 +147,28 @@
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSerialNumber|"0123-4567-89AB-CDEF"
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSkuNumber|"01234567"
 
+  # FRU Chassis Information
+  gAmpereTokenSpaceGuid.PcdFruChassisPartNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruChassisSerialNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruChassisExtra|"To be filled by O.E.M.                             "
+
+  # FRU Board Information
+  gAmpereTokenSpaceGuid.PcdFruBoardManufacturerName|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruBoardProductName|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruBoardSerialNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruBoardPartNumber|"To be filled by O.E.M.                             "
+
+  # FRU Product Information
+  gAmpereTokenSpaceGuid.PcdFruProductManufacturerName|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductName|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductPartNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductVersion|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductSerialNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductAssetTag|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductFruFileId|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductExtra|"To be filled by O.E.M.                             "
+
+
 [PcdsDynamicExDefault.common.DEFAULT]
   gEfiSignedCapsulePkgTokenSpaceGuid.PcdEdkiiSystemFirmwareImageDescriptor|{0x0}|VOID*|0x100
   gEfiMdeModulePkgTokenSpaceGuid.PcdSystemFmpCapsuleImageTypeIdGuid|{0x31, 0xca, 0x8b, 0xf0, 0x2e, 0x54, 0xea, 0x4c, 0x8b, 0x48, 0x8e, 0x54, 0xf9, 0x42, 0x25, 0x94}

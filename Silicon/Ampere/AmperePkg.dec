@@ -118,6 +118,27 @@
   gAmpereTokenSpaceGuid.PcdSmbiosTables1Uuid|"FEDCBA9876543210"|VOID*|0xB0000007
   gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSkuNumber|"12345678"|VOID*|0xB0000008
 
+  # FRU Chassis Information
+  gAmpereTokenSpaceGuid.PcdFruChassisPartNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000021
+  gAmpereTokenSpaceGuid.PcdFruChassisSerialNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000022
+  gAmpereTokenSpaceGuid.PcdFruChassisExtra|"To be filled by O.E.M.                             "|VOID*|0xB0000023
+
+  # FRU Board Information
+  gAmpereTokenSpaceGuid.PcdFruBoardManufacturerName|"To be filled by O.E.M.                             "|VOID*|0xB0000031
+  gAmpereTokenSpaceGuid.PcdFruBoardProductName|"To be filled by O.E.M.                             "|VOID*|0xB0000032
+  gAmpereTokenSpaceGuid.PcdFruBoardSerialNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000033
+  gAmpereTokenSpaceGuid.PcdFruBoardPartNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000034
+
+  # FRU Product Information
+  gAmpereTokenSpaceGuid.PcdFruProductManufacturerName|"To be filled by O.E.M.                             "|VOID*|0xB0000041
+  gAmpereTokenSpaceGuid.PcdFruProductName|"To be filled by O.E.M.                             "|VOID*|0xB0000042
+  gAmpereTokenSpaceGuid.PcdFruProductPartNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000043
+  gAmpereTokenSpaceGuid.PcdFruProductVersion|"To be filled by O.E.M.                             "|VOID*|0xB0000044
+  gAmpereTokenSpaceGuid.PcdFruProductSerialNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000045
+  gAmpereTokenSpaceGuid.PcdFruProductAssetTag|"To be filled by O.E.M.                             "|VOID*|0xB0000046
+  gAmpereTokenSpaceGuid.PcdFruProductFruFileId|"To be filled by O.E.M.                             "|VOID*|0xB0000047
+  gAmpereTokenSpaceGuid.PcdFruProductExtra|"To be filled by O.E.M.                             "|VOID*|0xB0000048
+
   # NVRam Pcds
   gAmpereTokenSpaceGuid.PcdNvramErased|FALSE|BOOLEAN|0xB0000009
 
