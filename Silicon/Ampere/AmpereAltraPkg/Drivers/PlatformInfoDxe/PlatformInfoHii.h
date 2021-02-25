@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __PLATFORM_INFO_HII_H__
-#define __PLATFORM_INFO_HII_H__
+#ifndef PLATFORM_INFO_HII_H_
+#define PLATFORM_INFO_HII_H_
 
 #define PLATFORM_INFO_FORMSET_GUID \
   { \

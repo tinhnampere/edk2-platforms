@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _DRIVER_SAMPLE_H_
-#define _DRIVER_SAMPLE_H_
+#ifndef DRIVER_SAMPLE_H_
+#define DRIVER_SAMPLE_H_
 
 #include <Uefi.h>
 #include <Protocol/HiiConfigRouting.h>

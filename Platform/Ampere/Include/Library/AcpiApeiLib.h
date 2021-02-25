@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _ACPI_APEI_LIB_H_
-#define _ACPI_APEI_LIB_H_
+#ifndef ACPI_APEI_LIB_H_
+#define ACPI_APEI_LIB_H_
 
 #include <Base.h>
 #include <Guid/Cper.h>
@@ -155,4 +155,4 @@ AcpiApeiLibEnable (
   UINT8 FwErrorDetection
   );
 
-#endif /* _ACPI_APEI_LIB_H_ */
+#endif /* ACPI_APEI_LIB_H_ */

@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _ACPI_PLATFORM_H_
-#define _ACPI_PLATFORM_H_
+#ifndef ACPI_PLATFORM_H_
+#define ACPI_PLATFORM_H_
 
 #include <Uefi.h>
 #include <IndustryStandard/Acpi63.h>
@@ -72,4 +72,4 @@ AcpiInstallSratTable (
   VOID
   );
 
-#endif /* _ACPI_PLATFORM_H_ */
+#endif /* ACPI_PLATFORM_H_ */

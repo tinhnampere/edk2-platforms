@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __PLATFORM_AC01_H_
-#define __PLATFORM_AC01_H_
+#ifndef PLATFORM_AC01_H_
+#define PLATFORM_AC01_H_
 
 /* Number of supported sockets in the platform */
 #define PLATFORM_CPU_MAX_SOCKET             2
@@ -231,4 +231,4 @@
 //
 #define SLAVE_PRESENT_N             0x2
 
-#endif /* __PLATFORM_AC01_H_ */
+#endif /* PLATFORM_AC01_H_ */

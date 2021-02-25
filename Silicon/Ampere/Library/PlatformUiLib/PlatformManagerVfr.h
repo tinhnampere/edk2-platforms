@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PLATFORM_MANAGER_VFR_H_
-#define _PLATFORM_MANAGER_VFR_H_
+#ifndef PLATFORM_MANAGER_VFR_H_
+#define PLATFORM_MANAGER_VFR_H_
 
 #define FORMSET_GUID \
   { \
@@ -25,4 +25,4 @@
 #define LABEL_ENTRY_LIST                     0x1100
 #define LABEL_END                            0xffff
 
-#endif /* _PLATFORM_MANAGER_VFR_H_ */
+#endif /* PLATFORM_MANAGER_VFR_H_ */

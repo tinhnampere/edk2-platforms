@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _MM_LIB_H_
-#define _MM_LIB_H_
+#ifndef MM_LIB_H_
+#define MM_LIB_H_
 
 enum {
   MM_SPINOR_FUNC_GET_INFO,
@@ -76,4 +76,4 @@ typedef struct {
   UINT64 Value;
 } EFI_MM_COMMUNICATE_NVPARAM_RES;
 
-#endif /* _MM_LIB_H_ */
+#endif /* MM_LIB_H_ */

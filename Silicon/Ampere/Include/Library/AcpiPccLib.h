@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _ACPI_PCC_LIB_H_
-#define _ACPI_PCC_LIB_H_
+#ifndef ACPI_PCC_LIB_H_
+#define ACPI_PCC_LIB_H_
 
 struct ACPI_PCCT_SHARED_MEMORY {
   UINT32 Signature;
@@ -88,4 +88,4 @@ AcpiPccFreeSharedMemory (
   IN UINT32                      SubspaceNum
   );
 
-#endif /* _ACPI_PCC_LIB_H_*/
+#endif /* ACPI_PCC_LIB_H_*/

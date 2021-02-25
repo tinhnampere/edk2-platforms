@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _NVDATASTRUC_H_
-#define _NVDATASTRUC_H_
+#ifndef NVDATASTRUC_H_
+#define NVDATASTRUC_H_
 
 #include <Guid/WatchdogConfigHii.h>
 

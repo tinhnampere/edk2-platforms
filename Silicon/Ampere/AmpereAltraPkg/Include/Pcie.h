@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __PCIE_H__
-#define __PCIE_H__
+#ifndef PCIE_H_
+#define PCIE_H_
 
 #define PCIE_CORE_DEBUG
 #define PCIE_CORE_CFG_DEBUG

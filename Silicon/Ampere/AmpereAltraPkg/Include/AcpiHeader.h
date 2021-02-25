@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _ACPI_HEADER_H_
-#define _ACPI_HEADER_H_
+#ifndef ACPI_HEADER_H_
+#define ACPI_HEADER_H_
 
 #include <IndustryStandard/Acpi.h>
 
@@ -34,4 +34,4 @@
     EFI_ACPI_CREATOR_REVISION       /* UINT32  CreatorRevision */ \
   }
 
-#endif /* _ACPI_HEADER_H_ */
+#endif /* ACPI_HEADER_H_ */

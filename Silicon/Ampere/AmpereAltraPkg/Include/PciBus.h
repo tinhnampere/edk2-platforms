@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __PCI_BUS_H_
-#define __PCI_BUS_H_
+#ifndef PCI_BUS_H_
+#define PCI_BUS_H_
 
 /**
  * This ENUM value definitions used to identify PCI Device different Resource types.
@@ -35,4 +35,4 @@ typedef enum {
     rtMaxRes
 } MRES_TYPE;
 
-#endif /* __PCI_BUS_H_ */
+#endif /* PCI_BUS_H_ */

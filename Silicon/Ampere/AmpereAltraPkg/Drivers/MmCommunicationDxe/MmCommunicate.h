@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _MM_COMMUNICATE_H_
-#define _MM_COMMUNICATE_H_
+#ifndef MM_COMMUNICATE_H_
+#define MM_COMMUNICATE_H_
 
 #define MM_MAJOR_VER_MASK        0xEFFF0000
 #define MM_MINOR_VER_MASK        0x0000FFFF
@@ -19,4 +19,4 @@
 #define MM_CALLER_MAJOR_VER      0x1UL
 #define MM_CALLER_MINOR_VER      0x0
 
-#endif /* _MM_COMMUNICATE_H_ */
+#endif /* MM_COMMUNICATE_H_ */

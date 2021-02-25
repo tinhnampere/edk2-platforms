@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _GENERIC_WATCHDOG_H_
-#define _GENERIC_WATCHDOG_H_
+#ifndef GENERIC_WATCHDOG_H_
+#define GENERIC_WATCHDOG_H_
 
 #include <Protocol/WatchdogTimer.h>
 
@@ -26,4 +26,4 @@ WatchdogTimerInstallProtocol (
   EFI_WATCHDOG_TIMER_ARCH_PROTOCOL **WatchdogTimerProtocol
   );
 
-#endif /* _GENERIC_WATCHDOG_H_ */
+#endif /* GENERIC_WATCHDOG_H_ */

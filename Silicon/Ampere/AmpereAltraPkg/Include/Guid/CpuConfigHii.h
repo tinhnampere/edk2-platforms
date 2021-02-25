@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _CPU_CONFIG_HII_H_
-#define _CPU_CONFIG_HII_H_
+#ifndef CPU_CONFIG_HII_H_
+#define CPU_CONFIG_HII_H_
 
 #define CPU_CONFIGURATION_FORMSET_GUID \
   { \
@@ -16,4 +16,4 @@
 
 extern EFI_GUID gCpuConfigFormSetGuid;
 
-#endif /* _CPU_CONFIG_HII_H_ */
+#endif /* CPU_CONFIG_HII_H_ */

@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _FAILSAFE_H_
-#define _FAILSAFE_H_
+#ifndef FAILSAFE_H_
+#define FAILSAFE_H_
 
 #include <Uefi.h>
 
@@ -15,4 +15,4 @@ BOOLEAN
 EFIAPI
 IsFailSafeOff (VOID);
 
-#endif /* _FAILSAFE_H_ */
+#endif /* FAILSAFE_H_ */

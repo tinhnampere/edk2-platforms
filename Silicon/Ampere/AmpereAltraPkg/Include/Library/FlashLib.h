@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __FLASH_LIB_H__
-#define __FLASH_LIB_H__
+#ifndef FLASH_LIB_H_
+#define FLASH_LIB_H_
 
 EFI_STATUS
 EFIAPI
@@ -39,4 +39,4 @@ FlashReadCommand (
   IN OUT  UINTN     *Length
   );
 
-#endif /* __FLASH_LIB_H__ */
+#endif /* FLASH_LIB_H_ */

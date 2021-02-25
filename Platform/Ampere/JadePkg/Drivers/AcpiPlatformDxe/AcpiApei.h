@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __ACPIAPEI_H__
-#define __ACPIAPEI_H__
+#ifndef ACPIAPEI_H_
+#define ACPIAPEI_H_
 
 #include <Base.h>
 #include <IndustryStandard/Acpi63.h>
@@ -133,5 +133,5 @@ AcpiPopulateBert (
   VOID
   );
 
-#endif /* __ACPIAPEI_H__ */
+#endif /* ACPIAPEI_H_ */
 

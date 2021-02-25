@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PCI_HOST_BRIDGE_H_
-#define _PCI_HOST_BRIDGE_H_
+#ifndef PCI_HOST_BRIDGE_H_
+#define PCI_HOST_BRIDGE_H_
 
 #include <IndustryStandard/Acpi.h>
 
@@ -438,4 +438,4 @@ PreprocessController (
   IN  EFI_PCI_CONTROLLER_RESOURCE_ALLOCATION_PHASE      Phase
   );
 
-#endif /* _PCI_HOST_BRIDGE_H_ */
+#endif /* PCI_HOST_BRIDGE_H_ */

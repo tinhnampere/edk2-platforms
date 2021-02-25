@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _WATCHDOG_CONFIG_DXE_H_
-#define _WATCHDOG_CONFIG_DXE_H_
+#ifndef WATCHDOG_CONFIG_DXE_H_
+#define WATCHDOG_CONFIG_DXE_H_
 
 #include <Uefi.h>
 #include <NVParamDef.h>
@@ -80,4 +80,4 @@ WatchdogConfigNvParamGet (
   OUT WATCHDOG_CONFIG_VARSTORE_DATA *VarStoreConfig
   );
 
-#endif /* _WATCHDOG_CONFIG_DXE_H_ */
+#endif /* WATCHDOG_CONFIG_DXE_H_ */

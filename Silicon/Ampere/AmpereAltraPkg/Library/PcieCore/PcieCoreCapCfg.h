@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __X16_CAP_PORT_CFG_H__
-#define __X16_CAP_PORT_CFG_H__
+#ifndef X16_CAP_PORT_CFG_H_
+#define X16_CAP_PORT_CFG_H_
 
 
 /* PCIe config space capabilities offset */
@@ -61,4 +61,4 @@
 #define RBAR_CAP        0x3E8
 #define VF_RBAR_CAP     0x3E8
 
-#endif /* __X16_CAP_PORT_CFG_H__ */
+#endif /* X16_CAP_PORT_CFG_H_ */

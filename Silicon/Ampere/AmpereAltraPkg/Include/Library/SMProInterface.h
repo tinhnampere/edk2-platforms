@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _SMPRO_INTERFACE_H_
-#define _SMPRO_INTERFACE_H_
+#ifndef SMPRO_INTERFACE_H_
+#define SMPRO_INTERFACE_H_
 
 #define IPP_ENCODE_OK_MSG               (1 << 28)
 
@@ -98,4 +98,4 @@
                 IPP_MSG_CONTROL_BYTE_MASK) | (((p0) << IPP_DBGMSG_P0_SHIFT) & \
                 IPP_DBGMSG_P0_MASK) | (((p1) << IPP_DBGMSG_P1_SHIFT) & IPP_DBGMSG_P1_MASK))
 
-#endif /* _SMPRO_INTERFACE_H_ */
+#endif /* SMPRO_INTERFACE_H_ */

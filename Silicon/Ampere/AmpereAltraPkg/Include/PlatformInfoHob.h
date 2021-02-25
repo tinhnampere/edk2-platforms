@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PLATFORM_INFO_HOB_H_
-#define _PLATFORM_INFO_HOB_H_
+#ifndef PLATFORM_INFO_HOB_H_
+#define PLATFORM_INFO_HOB_H_
 
 #include <IndustryStandard/Tpm20.h>
 #include <Platform/Ac01.h>
@@ -243,4 +243,4 @@ typedef struct {
 
 } PlatformInfoHob_V2;
 
-#endif /* _PLATFORM_INFO_HOB_H_ */
+#endif /* PLATFORM_INFO_HOB_H_ */

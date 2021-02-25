@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PCIE_SCREEN_H_
-#define _PCIE_SCREEN_H_
+#ifndef PCIE_SCREEN_H_
+#define PCIE_SCREEN_H_
 
 #include <Protocol/HiiConfigRouting.h>
 #include <Protocol/FormBrowser2.h>
@@ -135,4 +135,4 @@ PcieRCActiveDefaultSetting (
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   );
 
-#endif /* _PCIE_SCREEN_H_ */
+#endif /* PCIE_SCREEN_H_ */

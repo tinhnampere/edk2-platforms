@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __PCIECORE_H__
-#define __PCIECORE_H__
+#ifndef PCIECORE_H_
+#define PCIECORE_H_
 
 #include <Library/ArmLib.h>
 #include <Library/BaseLib.h>
@@ -578,4 +578,4 @@ Ac01PcieCoreQoSLinkCheckRecovery (
   IN INTN      PcieIndex
 );
 
-#endif /* __PCIECORE_H__ */
+#endif /* PCIECORE_H_ */

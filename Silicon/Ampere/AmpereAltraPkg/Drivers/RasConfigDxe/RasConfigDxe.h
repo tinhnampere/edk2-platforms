@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _RAS_CONFIG_DXE_H_
-#define _RAS_CONFIG_DXE_H_
+#ifndef RAS_CONFIG_DXE_H_
+#define RAS_CONFIG_DXE_H_
 
 #include <Uefi.h>
 #include <Guid/MdeModuleHii.h>
@@ -78,4 +78,4 @@ typedef struct {
 
 #pragma pack()
 
-#endif /* _RAS_CONFIG_DXE_H_ */
+#endif /* RAS_CONFIG_DXE_H_ */

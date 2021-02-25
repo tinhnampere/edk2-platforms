@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _FAILSAFE_LIB_H_
-#define _FAILSAFE_LIB_H_
+#ifndef FAILSAFE_LIB_H_
+#define FAILSAFE_LIB_H_
 
 enum {
   MM_SPINOR_FUNC_GET_INFO,
@@ -55,4 +55,4 @@ EFI_STATUS
 EFIAPI
 FailSafeTestBootFailure (VOID);
 
-#endif /* _FAILSAFE_LIB_H_ */
+#endif /* FAILSAFE_LIB_H_ */

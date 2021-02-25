@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _WATCHDOG_CONFIG_HII_H_
-#define _WATCHDOG_CONFIG_HII_H_
+#ifndef WATCHDOG_CONFIG_HII_H_
+#define WATCHDOG_CONFIG_HII_H_
 
 #define WATCHDOG_CONFIG_FORMSET_GUID \
   { \
@@ -16,4 +16,4 @@
 
 extern EFI_GUID gWatchdogConfigFormSetGuid;
 
-#endif /* _WATCHDOG_CONFIG_HII_H_ */
+#endif /* WATCHDOG_CONFIG_HII_H_ */

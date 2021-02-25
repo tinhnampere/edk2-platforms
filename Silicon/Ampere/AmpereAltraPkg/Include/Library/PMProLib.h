@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PMPRO_LIB_H_
-#define _PMPRO_LIB_H_
+#ifndef PMPRO_LIB_H_
+#define PMPRO_LIB_H_
 
 #include <Uefi.h>
 
@@ -69,4 +69,4 @@ PMProSendPSCIAddr (
   UINT32 AdrLo
   );
 
-#endif /* _PMPRO_LIB_H_*/
+#endif /* PMPRO_LIB_H_*/

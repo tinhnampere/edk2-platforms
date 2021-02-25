@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _ACPI_NV_DATA_STRUC_H_
-#define _ACPI_NV_DATA_STRUC_H_
+#ifndef ACPI_NV_DATA_STRUC_H_
+#define ACPI_NV_DATA_STRUC_H_
 
 #pragma pack(1)
 
@@ -39,4 +39,4 @@ typedef struct {
 
 #pragma pack()
 
-#endif /* _ACPI_NV_DATA_STRUC_H_ */
+#endif /* ACPI_NV_DATA_STRUC_H_ */

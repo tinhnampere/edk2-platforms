@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _ACPI_CONFIG_FORMSET_GUID_H_
-#define _ACPI_CONFIG_FORMSET_GUID_H_
+#ifndef ACPI_CONFIG_FORMSET_GUID_H_
+#define ACPI_CONFIG_FORMSET_GUID_H_
 
 #define ACPI_CONFIGURATION_FORMSET_GUID \
   { \
@@ -16,4 +16,4 @@
 
 extern EFI_GUID gAcpiConfigFormSetGuid;
 
-#endif /* _ACPI_CONFIG_FORMSET_GUID_H_ */
+#endif /* ACPI_CONFIG_FORMSET_GUID_H_ */

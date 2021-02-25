@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _ACPIHELPERLIB_H_
-#define _ACPIHELPERLIB_H_
+#ifndef ACPIHELPERLIB_H_
+#define ACPIHELPERLIB_H_
 
 #include <Uefi.h>
 #include <Uefi/UefiSpec.h>
@@ -106,4 +106,4 @@ IsAcpiInstalled (
   IN  UINT32                  AcpiTableSignature
   );
 
-#endif /* _ACPIHELPERLIB_H_ */
+#endif /* ACPIHELPERLIB_H_ */

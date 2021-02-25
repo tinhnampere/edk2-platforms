@@ -7,8 +7,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-#ifndef __TCG2_CONFIG_IMPL_H__
-#define __TCG2_CONFIG_IMPL_H__
+#ifndef TCG2_CONFIG_IMPL_H_
+#define TCG2_CONFIG_IMPL_H_
 
 #include <Uefi.h>
 

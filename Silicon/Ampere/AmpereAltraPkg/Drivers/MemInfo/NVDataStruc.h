@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _NVDATASTRUC_H_
-#define _NVDATASTRUC_H_
+#ifndef NVDATASTRUC_H_
+#define NVDATASTRUC_H_
 
 #define MEM_INFO_VARSTORE_NAME        L"MemInfoIfrNVData"
 #define MEM_INFO_VARSTORE_ID          0x1234

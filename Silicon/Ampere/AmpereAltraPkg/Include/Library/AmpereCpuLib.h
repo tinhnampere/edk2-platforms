@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _AMPERE_CPU_LIB_H_
-#define _AMPERE_CPU_LIB_H_
+#ifndef AMPERE_CPU_LIB_H_
+#define AMPERE_CPU_LIB_H_
 
 /* Ctypen, bits[3(n - 1) + 2 : 3(n - 1)], for n = 1 to 7 */
 #define CLIDR_CTYPE_SHIFT(Level)    (3 * (Level - 1))
@@ -250,4 +250,4 @@ BOOLEAN
 EFIAPI
 PlatSlaveSocketPresent (VOID);
 
-#endif /* _AMPERE_CPU_LIB_H_ */
+#endif /* AMPERE_CPU_LIB_H_ */

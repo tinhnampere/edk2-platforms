@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _MEM_INFO_SCREEN_H_
-#define _MEM_INFO_SCREEN_H_
+#ifndef MEM_INFO_SCREEN_H_
+#define MEM_INFO_SCREEN_H_
 
 #include <Uefi.h>
 
@@ -167,5 +167,5 @@ MemInfoNvparamSet (
   IN     MEM_INFO_VARSTORE_DATA      *VarStoreConfig
   );
 
-#endif /* _MEM_INFO_SCREEN_H_ */
+#endif /* MEM_INFO_SCREEN_H_ */
 

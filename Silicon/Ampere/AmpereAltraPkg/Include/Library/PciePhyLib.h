@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __PCIE_PHY_LIB_H__
-#define __PCIE_PHY_LIB_H__
+#ifndef PCIE_PHY_LIB_H_
+#define PCIE_PHY_LIB_H_
 
 #define PHY_TX_PARAM_SIZE           2
 #define PHY_RX_PARAM_SIZE           2

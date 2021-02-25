@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PCI_ROOT_BRIDGE_IO_H_
-#define _PCI_ROOT_BRIDGE_IO_H_
+#ifndef PCI_ROOT_BRIDGE_IO_H_
+#define PCI_ROOT_BRIDGE_IO_H_
 
 #include <Library/PciLib.h>
 #include <IndustryStandard/Pci22.h>
@@ -551,4 +551,4 @@ RootBridgeIoConfiguration (
   OUT    VOID                             **Resources
   );
 
-#endif /* _PCI_ROOT_BRIDGE_IO_H_ */
+#endif /* PCI_ROOT_BRIDGE_IO_H_ */

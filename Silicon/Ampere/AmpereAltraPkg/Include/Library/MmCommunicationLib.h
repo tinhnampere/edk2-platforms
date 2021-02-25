@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _MM_COMMUNICATION_LIB_H_
-#define _MM_COMMUNICATION_LIB_H_
+#ifndef MM_COMMUNICATION_LIB_H_
+#define MM_COMMUNICATION_LIB_H_
 
 EFI_STATUS
 EFIAPI
@@ -16,4 +16,4 @@ MmCommunicationCommunicate (
   IN OUT UINTN                            *CommSize OPTIONAL
   );
 
-#endif /* _MM_COMMUNICATION_LIB_H_ */
+#endif /* MM_COMMUNICATION_LIB_H_ */

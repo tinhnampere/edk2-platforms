@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _I2CLIB_H_
-#define _I2CLIB_H_
+#ifndef I2CLIB_H_
+#define I2CLIB_H_
 
 #include <Base.h>
 #include <Uefi/UefiBaseType.h>
@@ -89,4 +89,4 @@ I2CSetupRuntime (
   IN UINT32 Bus
   );
 
-#endif /* _I2CLIB_H_ */
+#endif /* I2CLIB_H_ */

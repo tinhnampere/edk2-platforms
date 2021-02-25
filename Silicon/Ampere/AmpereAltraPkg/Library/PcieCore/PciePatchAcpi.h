@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __PCIEPATCHACPI_H__
-#define __PCIEPATCHACPI_H__
+#ifndef PCIEPATCHACPI_H_
+#define PCIEPATCHACPI_H_
 
 EFI_STATUS
 EFIAPI
@@ -27,4 +27,4 @@ AcpiInstallIort (
   INT8 *PciSegEnabled
   );
 
-#endif /* __PCIEPATCHACPI_H__ */
+#endif /* PCIEPATCHACPI_H_ */

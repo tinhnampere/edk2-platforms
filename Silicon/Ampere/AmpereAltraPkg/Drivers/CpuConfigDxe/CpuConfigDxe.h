@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _CPU_CONFIG_H_
-#define _CPU_CONFIG_H_
+#ifndef CPU_CONFIG_H_
+#define CPU_CONFIG_H_
 
 #include <Uefi.h>
 #include <Protocol/HiiConfigRouting.h>
@@ -72,4 +72,4 @@ typedef struct {
 
 #pragma pack()
 
-#endif /* _CPU_CONFIG_H_ */
+#endif /* CPU_CONFIG_H_ */

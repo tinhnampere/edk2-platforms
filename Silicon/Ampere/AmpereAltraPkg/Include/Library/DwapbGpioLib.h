@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _DWAPB_GPIO_LIB_H_
-#define _DWAPB_GPIO_LIB_H_
+#ifndef DWAPB_GPIO_LIB_H_
+#define DWAPB_GPIO_LIB_H_
 
 enum SocGpioConfigMode {
   GPIO_CONFIG_OUT_LOW = 0,
@@ -72,4 +72,4 @@ DwapbGPIOSetupRuntime (
   IN UINT32 Pin
   );
 
-#endif /* _DWAPB_GPIO_LIB_H_ */
+#endif /* DWAPB_GPIO_LIB_H_ */

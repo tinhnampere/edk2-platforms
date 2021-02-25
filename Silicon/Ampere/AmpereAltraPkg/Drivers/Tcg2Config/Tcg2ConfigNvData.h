@@ -7,8 +7,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-#ifndef __TCG2_CONFIG_NV_DATA_H__
-#define __TCG2_CONFIG_NV_DATA_H__
+#ifndef TCG2_CONFIG_NV_DATA_H_
+#define TCG2_CONFIG_NV_DATA_H_
 
 #include <Guid/HiiPlatformSetupFormset.h>
 #include <Guid/Tcg2ConfigHii.h>

@@ -35,8 +35,8 @@
 
 **/
 
-#ifndef _NV_PARAM_LIB_H_
-#define _NV_PARAM_LIB_H_
+#ifndef NV_PARAM_LIB_H_
+#define NV_PARAM_LIB_H_
 
 #define NV_PARAM_MAX_SIZE   (64 * 1024)
 #define NV_PARAM_ENTRYSIZE  8
@@ -128,4 +128,4 @@ NVParamClr (
 EFI_STATUS
 NVParamClrAll (VOID);
 
-#endif /* _NV_PARAM_LIB_H_ */
+#endif /* NV_PARAM_LIB_H_ */

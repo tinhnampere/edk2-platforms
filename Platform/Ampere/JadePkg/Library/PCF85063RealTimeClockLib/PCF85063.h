@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _COMMON_H_
-#define _COMMON_H_
+#ifndef COMMON_H_
+#define COMMON_H_
 
 #include <Uefi.h>
 #include <Library/BaseLib.h>
@@ -83,4 +83,4 @@ EFI_STATUS
 EFIAPI
 PlatformInitialize (VOID);
 
-#endif /* _COMMON_H_ */
+#endif /* COMMON_H_ */

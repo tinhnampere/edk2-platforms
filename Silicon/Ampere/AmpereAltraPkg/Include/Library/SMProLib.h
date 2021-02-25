@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _SMPRO_LIB_H_
-#define _SMPRO_LIB_H_
+#ifndef SMPRO_LIB_H_
+#define SMPRO_LIB_H_
 
 /*
  * Read the doorbell status into data
@@ -102,4 +102,4 @@ SMProRegWr (
   UINT32 Value
   );
 
-#endif /* _SMPRO_LIB_H_*/
+#endif /* SMPRO_LIB_H_*/

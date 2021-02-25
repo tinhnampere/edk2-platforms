@@ -35,8 +35,8 @@
 
 **/
 
-#ifndef _NVPARAMDEF_H_
-#define _NVPARAMDEF_H_
+#ifndef NVPARAMDEF_H_
+#define NVPARAMDEF_H_
 
 typedef enum {
   /*
@@ -494,4 +494,4 @@ typedef enum {
   NV_BOARD_PARAM_MAX                                = (196 * 8) + NV_BOARD_PARAM_START,
 } NVPARAM;
 
-#endif /* _NVPARAMDEF_H_ */
+#endif /* NVPARAMDEF_H_ */

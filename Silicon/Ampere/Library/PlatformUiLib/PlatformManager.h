@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PLATFORM_MANAGER_H_
-#define _PLATFORM_MANAGER_H_
+#ifndef PLATFORM_MANAGER_H_
+#define PLATFORM_MANAGER_H_
 
 #include <Uefi.h>
 

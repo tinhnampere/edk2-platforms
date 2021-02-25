@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef _PCIE_BOARD_LIB_H_
-#define _PCIE_BOARD_LIB_H_
+#ifndef PCIE_BOARD_LIB_H_
+#define PCIE_BOARD_LIB_H_
 
 #include "Pcie.h"
 
@@ -96,4 +96,4 @@ PcieBoardCheckSmmuPmuEnabled (
   VOID
   );
 
-#endif /* _PCIE_BOARD_LIB_H_ */
+#endif /* PCIE_BOARD_LIB_H_ */
