@@ -592,7 +592,9 @@ InstallMemStructures (
       // Copy Tempplate to Type 19
       CopyMem (Table, (VOID *) &mArmDefaultType19, sizeof (ARM_TYPE19));
 
-      if (PlatformHob->DramInfo.Node[MemRegionIndex] != Index) {
+      if (PlatformHob->DramInfo.NvdRegion[MemRegionIndex] > 0
+          || PlatformHob->DramInfo.Socket[MemRegionIndex] != Index)
+      {
         continue;
       }
 
