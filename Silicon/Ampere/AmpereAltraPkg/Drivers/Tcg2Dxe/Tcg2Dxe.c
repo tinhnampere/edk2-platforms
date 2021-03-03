@@ -22,7 +22,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Guid/TpmInstance.h>
 
 #include <Protocol/DevicePath.h>
-#include <Protocol/MpService.h>
 #include <Protocol/VariableWrite.h>
 #include <Protocol/Tcg2Protocol.h>
 #include <Protocol/TrEEProtocol.h>
@@ -272,89 +271,6 @@ InternalDumpHex (
     InternalDumpData (Data + Index * COLUME_SIZE, Left);
     DEBUG ((DEBUG_INFO, "\n"));
   }
-}
-
-/**
-  Get All processors EFI_CPU_LOCATION in system. LocationBuf is allocated inside the function
-  Caller is responsible to free LocationBuf.
-
-  @param[out] LocationBuf          Returns Processor Location Buffer.
-  @param[out] Num                  Returns processor number.
-
-  @retval EFI_SUCCESS              Operation completed successfully.
-  @retval EFI_UNSUPPORTED       MpService protocol not found.
-
-**/
-EFI_STATUS
-GetProcessorsCpuLocation (
-    OUT  EFI_CPU_PHYSICAL_LOCATION   **LocationBuf,
-    OUT  UINTN                       *Num
-  )
-{
-  EFI_STATUS                        Status;
-  EFI_MP_SERVICES_PROTOCOL          *MpProtocol;
-  UINTN                             ProcessorNum;
-  UINTN                             EnabledProcessorNum;
-  EFI_PROCESSOR_INFORMATION         ProcessorInfo;
-  EFI_CPU_PHYSICAL_LOCATION         *ProcessorLocBuf;
-  UINTN                             Index;
-
-  ASSERT (Num != NULL);
-
-  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **) &MpProtocol);
-  if (EFI_ERROR (Status)) {
-    //
-    // MP protocol is not installed
-    //
-    return EFI_UNSUPPORTED;
-  }
-
-  Status = MpProtocol->GetNumberOfProcessors(
-                         MpProtocol,
-                         &ProcessorNum,
-                         &EnabledProcessorNum
-                         );
-  if (EFI_ERROR(Status)){
-    return Status;
-  }
-
-  Status = gBS->AllocatePool(
-                  EfiBootServicesData,
-                  sizeof(EFI_CPU_PHYSICAL_LOCATION) * ProcessorNum,
-                  (VOID **) &ProcessorLocBuf
-                  );
-  if (EFI_ERROR(Status)){
-    return Status;
-  }
-
-  //
-  // Get each processor Location info
-  //
-  for (Index = 0; Index < ProcessorNum; Index++) {
-    Status = MpProtocol->GetProcessorInfo(
-                           MpProtocol,
-                           Index,
-                           &ProcessorInfo
-                           );
-    if (EFI_ERROR(Status)){
-      FreePool(ProcessorLocBuf);
-      return Status;
-    }
-
-    //
-    // Get all Processor Location info & measure
-    //
-    CopyMem(
-      &ProcessorLocBuf[Index],
-      &ProcessorInfo.Location,
-      sizeof(EFI_CPU_PHYSICAL_LOCATION)
-      );
-  }
-
-  *LocationBuf = ProcessorLocBuf;
-  *Num = ProcessorNum;
-
-  return Status;
 }
 
 /**
@@ -1844,58 +1760,6 @@ TcgMeasureAction (
 }
 
 /**
-  Measure and log EFI handoff tables, and extend the measurement result into PCR[1].
-
-  @retval EFI_SUCCESS         Operation completed successfully.
-  @retval EFI_DEVICE_ERROR    The operation was unsuccessful.
-
-**/
-EFI_STATUS
-MeasureHandoffTables (
-  VOID
-  )
-{
-  EFI_STATUS                        Status;
-  TCG_PCR_EVENT_HDR                 TcgEvent;
-  EFI_HANDOFF_TABLE_POINTERS        HandoffTables;
-  UINTN                             ProcessorNum;
-  EFI_CPU_PHYSICAL_LOCATION         *ProcessorLocBuf;
-
-  ProcessorLocBuf = NULL;
-  Status = EFI_SUCCESS;
-
-  if (PcdGet8 (PcdTpmPlatformClass) == TCG_PLATFORM_TYPE_SERVER) {
-    //
-    // Tcg Server spec.
-    // Measure each processor EFI_CPU_PHYSICAL_LOCATION with EV_TABLE_OF_DEVICES to PCR[1]
-    //
-    Status = GetProcessorsCpuLocation(&ProcessorLocBuf, &ProcessorNum);
-
-    if (!EFI_ERROR(Status)){
-      TcgEvent.PCRIndex  = 1;
-      TcgEvent.EventType = EV_TABLE_OF_DEVICES;
-      TcgEvent.EventSize = sizeof (HandoffTables);
-
-      HandoffTables.NumberOfTables = 1;
-      HandoffTables.TableEntry[0].VendorGuid  = gEfiMpServiceProtocolGuid;
-      HandoffTables.TableEntry[0].VendorTable = ProcessorLocBuf;
-
-      Status = TcgDxeHashLogExtendEvent (
-                 0,
-                 (UINT8*)(UINTN)ProcessorLocBuf,
-                 sizeof(EFI_CPU_PHYSICAL_LOCATION) * ProcessorNum,
-                 &TcgEvent,
-                 (UINT8*)&HandoffTables
-                 );
-
-      FreePool(ProcessorLocBuf);
-    }
-  }
-
-  return Status;
-}
-
-/**
   Measure and log Separator event, and extend the measurement result into a specific PCR.
 
   @param[in] PCRIndex         PCR index.
@@ -2346,14 +2210,6 @@ OnReadyToBoot (
 
   PERF_START_EX (mImageHandle, "EventRec", "Tcg2Dxe", 0, PERF_ID_TCG2_DXE);
   if (mBootAttempts == 0) {
-
-    //
-    // Measure handoff tables.
-    //
-    Status = MeasureHandoffTables ();
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "HOBs not Measured. Error!\n"));
-    }
 
     //
     // Measure BootOrder & Boot#### variables.
