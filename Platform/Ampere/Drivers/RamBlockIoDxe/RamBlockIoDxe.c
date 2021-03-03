@@ -212,7 +212,7 @@ RamBlockIoReadBlocks (
   NumBlocks = ((UINT32) BufferSizeInBytes) / Instance->Media.BlockSize ;
 
   if ((Lba + NumBlocks) > (Instance->Media.LastBlock + 1)) {
-    DEBUG ((EFI_D_ERROR, "%a: Read will exceed last block\n", __FUNCTION__));
+    DEBUG ((DEBUG_ERROR, "%a: Read will exceed last block\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -227,7 +227,7 @@ RamBlockIoReadBlocks (
   } else if ((Media->IoAlign > 2) && (((UINTN)Buffer & (Media->IoAlign - 1)) != 0)) {
     Status = EFI_INVALID_PARAMETER;
   } else {
-    DEBUG ((EFI_D_ERROR, "%a: Read from address %p\n",
+    DEBUG ((DEBUG_ERROR, "%a: Read from address %p\n",
             __FUNCTION__,
             (VOID *)(Instance->StartAddress + Lba * Instance->Media.BlockSize)));
     CopyMem (Buffer, (VOID *)(Instance->StartAddress + Lba * Instance->Media.BlockSize), BufferSizeInBytes);
@@ -292,7 +292,7 @@ RamBlockIoWriteBlocks (
   NumBlocks = ((UINT32)BufferSizeInBytes) / Instance->Media.BlockSize ;
 
   if ((Lba + NumBlocks) > (Instance->Media.LastBlock + 1)) {
-    DEBUG ((EFI_D_ERROR, "%a: Write will exceed last block.\n", __FUNCTION__));
+    DEBUG ((DEBUG_ERROR, "%a: Write will exceed last block.\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -388,7 +388,7 @@ RamBlockIoInitialise (
              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR,
+    DEBUG ((DEBUG_ERROR,
             "%a: Fail to create instance for Ramdisk BlockIo\n",
             __FUNCTION__));
   }

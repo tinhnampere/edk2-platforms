@@ -355,7 +355,7 @@ Tcg2ConfigDriverEntryPoint (
                   &Tcg2Configuration
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Tcg2ConfigDriver: Fail to set TCG2_STORAGE_NAME\n"));
+    DEBUG ((DEBUG_ERROR, "Tcg2ConfigDriver: Fail to set TCG2_STORAGE_NAME\n"));
   }
 
   //
