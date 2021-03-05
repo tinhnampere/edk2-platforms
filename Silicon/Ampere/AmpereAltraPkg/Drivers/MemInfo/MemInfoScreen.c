@@ -692,13 +692,13 @@ MemInfoMainScreen (
       UnicodeSPrint (Str, sizeof (Str), L"Unknown Type");
     }
     if (DimmInfo->DimmStatus == DIMM_INSTALLED_OPERATIONAL) {
-      UnicodeSPrint (Str1, sizeof (Str1), L"Slot: %d: %d GB %s Installed&Operational", Count + 1, DimmInfo->DimmSize, Str);
+      UnicodeSPrint (Str1, sizeof (Str1), L"Slot %2d: %d GB %s Installed&Operational", Count + 1, DimmInfo->DimmSize, Str);
     } else if (DimmInfo->DimmStatus == DIMM_NOT_INSTALLED) {
-      UnicodeSPrint (Str1, sizeof (Str1), L"Slot: %d: Not Installed", Count + 1, PlatformHob->DimmList.Dimm[Count].NodeId);
+      UnicodeSPrint (Str1, sizeof (Str1), L"Slot %2d: Not Installed", Count + 1, PlatformHob->DimmList.Dimm[Count].NodeId);
     } else if (DimmInfo->DimmStatus == DIMM_INSTALLED_NONOPERATIONAL) {
-      UnicodeSPrint (Str1, sizeof (Str1), L"Slot: %d: Installed&Non-Operational", Count + 1, PlatformHob->DimmList.Dimm[Count].NodeId);
+      UnicodeSPrint (Str1, sizeof (Str1), L"Slot %2d: Installed&Non-Operational", Count + 1, PlatformHob->DimmList.Dimm[Count].NodeId);
     } else {
-      UnicodeSPrint (Str1, sizeof (Str1), L"Slot: %d: Installed&Failed", Count + 1, PlatformHob->DimmList.Dimm[Count].NodeId);
+      UnicodeSPrint (Str1, sizeof (Str1), L"Slot %2d: Installed&Failed", Count + 1, PlatformHob->DimmList.Dimm[Count].NodeId);
     }
 
     StringId = HiiSetString (PrivateData->HiiHandle, 0, Str1, NULL);
