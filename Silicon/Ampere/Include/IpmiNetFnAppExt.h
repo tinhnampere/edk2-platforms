@@ -44,5 +44,18 @@ typedef struct {
   UINT8  OutputMsgSize;
 } IPMI_GET_SYSTEM_INTERFACE_SSIF_CAPABILITIES_RESPONSE;
 
+//
+//  Constants and Structure definitions for "Get Channel Info" command to follow here
+//
+#define BMC_CHANNEL_MEDIUM_TYPE_ETHERNET 0x04
+
+typedef union {
+  struct {
+    UINT8 ChannelNumber : 4;
+    UINT8 Reserved : 4;
+  } Bits;
+  UINT8 Uint8;
+} IPMI_GET_CHANNEL_INFO_REQUEST;
+
 #pragma pack()
 #endif

@@ -1,0 +1,29 @@
+## @file
+#
+# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = IpmiCommandLibExt
+  FILE_GUID                      = 98A77F1D-F70B-40C0-96F3-CBF857B4796E
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = IpmiCommandLibExt
+
+[sources]
+  IpmiCommandLibExt.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmperePkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  IpmiLib
+  MemoryAllocationLib

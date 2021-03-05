@@ -297,6 +297,7 @@
 [LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION, LibraryClasses.common.DXE_RUNTIME_DRIVER, LibraryClasses.common.DXE_DRIVER]
   IpmiLib|MdeModulePkg/Library/DxeIpmiLibIpmiProtocol/DxeIpmiLibIpmiProtocol.inf
   IpmiCommandLib|OutOfBandManagement/IpmiFeaturePkg/Library/IpmiCommandLib/IpmiCommandLib.inf
+  IpmiCommandLibExt|Silicon/Ampere/Library/IpmiCommandLibExt/IpmiCommandLibExt.inf
 
 [LibraryClasses.ARM,LibraryClasses.AARCH64]
   #
