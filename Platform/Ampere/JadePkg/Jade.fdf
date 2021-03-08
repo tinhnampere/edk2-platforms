@@ -171,7 +171,7 @@ APRIORI PEI {
   INF MdeModulePkg/Core/Pei/PeiMain.inf
   INF UefiCpuPkg/CpuIoPei/CpuIoPei.inf
   INF ArmPlatformPkg/PlatformPei/PlatformPeim.inf
-  INF Silicon/Ampere/Drivers/ATFHobPei/ATFHobPeim.inf
+  INF Silicon/Ampere/AmpereSiliconPkg/Drivers/ATFHobPei/ATFHobPeim.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/MemoryInitPeim/MemoryInitPeim.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationPei/MmCommunicationPei.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/FlashPei/FlashPei.inf
@@ -252,7 +252,7 @@ APRIORI DXE {
   #
   # Fixup memory map
   #
-  INF Silicon/Ampere/Drivers/FixupMemoryMap/FixupMemoryMap.inf
+  INF Silicon/Ampere/AmpereSiliconPkg/Drivers/FixupMemoryMap/FixupMemoryMap.inf
 
   #
   # Environment Variables Protocol
@@ -351,7 +351,7 @@ APRIORI DXE {
   #
   # IPMI
   #
-  INF Silicon/Ampere/Drivers/IpmiSsifDxe/IpmiSsifDxe.inf
+  INF Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsifDxe/IpmiSsifDxe.inf
 
   #
   # UEFI application (Shell Embedded Boot Loader)
@@ -424,7 +424,7 @@ APRIORI DXE {
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/RasConfigDxe/RasConfigDxe.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/WatchdogConfigDxe/WatchdogConfigDxe.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/PcieDeviceConfigDxe/PcieDeviceConfigDxe.inf
-  INF Silicon/Ampere/Drivers/BmcInfoScreenDxe/BmcInfoScreenDxe.inf
+  INF Silicon/Ampere/AmpereSiliconPkg/Drivers/BmcInfoScreenDxe/BmcInfoScreenDxe.inf
 
   #
   # Misc

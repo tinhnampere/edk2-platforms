@@ -122,7 +122,7 @@
 
   # BDS Libraries
   UefiBootManagerLib|MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib.inf
-  PlatformBootManagerLib|Silicon/Ampere/Library/LinuxBootBootManagerLib/LinuxBootBootManagerLib.inf
+  PlatformBootManagerLib|Silicon/Ampere/AmpereSiliconPkg/Library/LinuxBootBootManagerLib/LinuxBootBootManagerLib.inf
   BootLogoLib|MdeModulePkg/Library/BootLogoLib/BootLogoLib.inf
 
   SortLib|MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
@@ -474,7 +474,7 @@
       PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   }
   ArmPlatformPkg/PlatformPei/PlatformPeim.inf
-  Silicon/Ampere/Drivers/ATFHobPei/ATFHobPeim.inf
+  Silicon/Ampere/AmpereSiliconPkg/Drivers/ATFHobPei/ATFHobPeim.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/MemoryInitPeim/MemoryInitPeim.inf
   ArmPkg/Drivers/CpuPei/CpuPei.inf
   UefiCpuPkg/CpuIoPei/CpuIoPei.inf

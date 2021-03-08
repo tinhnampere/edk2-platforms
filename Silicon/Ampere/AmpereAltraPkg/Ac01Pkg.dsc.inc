@@ -297,7 +297,7 @@
 [LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION, LibraryClasses.common.DXE_RUNTIME_DRIVER, LibraryClasses.common.DXE_DRIVER]
   IpmiLib|MdeModulePkg/Library/DxeIpmiLibIpmiProtocol/DxeIpmiLibIpmiProtocol.inf
   IpmiCommandLib|OutOfBandManagement/IpmiFeaturePkg/Library/IpmiCommandLib/IpmiCommandLib.inf
-  IpmiCommandLibExt|Silicon/Ampere/Library/IpmiCommandLibExt/IpmiCommandLibExt.inf
+  IpmiCommandLibExt|Silicon/Ampere/AmpereSiliconPkg/Library/IpmiCommandLibExt/IpmiCommandLibExt.inf
 
 [LibraryClasses.ARM,LibraryClasses.AARCH64]
   #
@@ -574,7 +574,7 @@
       PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   }
   ArmPlatformPkg/PlatformPei/PlatformPeim.inf
-  Silicon/Ampere/Drivers/ATFHobPei/ATFHobPeim.inf
+  Silicon/Ampere/AmpereSiliconPkg/Drivers/ATFHobPei/ATFHobPeim.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/MemoryInitPeim/MemoryInitPeim.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/DebugInfoPei/DebugInfoPei.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationPei/MmCommunicationPei.inf
@@ -656,7 +656,7 @@
   #
   # Fix Memory Map
   #
-  Silicon/Ampere/Drivers/FixupMemoryMap/FixupMemoryMap.inf
+  Silicon/Ampere/AmpereSiliconPkg/Drivers/FixupMemoryMap/FixupMemoryMap.inf
 
   #
   # Environment Variables Protocol
@@ -762,7 +762,7 @@
   #
   # SSIF
   #
-  Silicon/Ampere/Drivers/IpmiSsifDxe/IpmiSsifDxe.inf
+  Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsifDxe/IpmiSsifDxe.inf
 
   #
   # Bds
@@ -774,7 +774,7 @@
   MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
   MdeModulePkg/Application/UiApp/UiApp.inf {
     <LibraryClasses>
-      NULL|Silicon/Ampere/Library/PlatformUiLib/PlatformManagerUiLib.inf
+      NULL|Silicon/Ampere/AmpereSiliconPkg/Library/PlatformUiLib/PlatformManagerUiLib.inf
       NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
       NULL|MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib.inf
       NULL|MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib.inf

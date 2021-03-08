@@ -20,7 +20,7 @@
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   BaseLib

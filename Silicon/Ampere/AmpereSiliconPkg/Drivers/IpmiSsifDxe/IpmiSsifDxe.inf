@@ -21,7 +21,7 @@
 [Packages]
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
-  Silicon/Ampere/AmperePkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   BaseMemoryLib

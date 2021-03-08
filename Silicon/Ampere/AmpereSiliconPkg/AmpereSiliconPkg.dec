@@ -8,7 +8,7 @@
 
 [Defines]
   DEC_SPECIFICATION              = 0x0001001B
-  PACKAGE_NAME                   = AmperePkg
+  PACKAGE_NAME                   = AmpereSiliconPkg
   PACKAGE_GUID                   = F9EB69A8-7569-4C0E-87D1-3CC9EB7CBF09
   PACKAGE_VERSION                = 0.1
 
@@ -26,10 +26,10 @@
 
 [LibraryClasses]
   ##  @libraryclass  Provides functions to create the ACPI PCCT Table which which advertises PCC mailbox channel information.
-  AcpiPccLib|Silicon/Ampere/Include/Library/AcpiPccLib.h
+  AcpiPccLib|Silicon/Ampere/AmpereSiliconPkg/Include/Library/AcpiPccLib.h
 
   ##  @libraryclass  Provides helper functions to update ACPI DSDT Table.
-  AcpiHelperLib|Silicon/Ampere/Include/Library/AcpiHelperLib.h
+  AcpiHelperLib|Silicon/Ampere/AmpereSiliconPkg/Include/Library/AcpiHelperLib.h
 
 [Guids]
   gAmpereTokenSpaceGuid = { 0xdbd4436e, 0x89cb, 0x44dc, { 0xb5, 0xc0, 0x49, 0xc3, 0x91, 0x35, 0xbf, 0xdf } }
