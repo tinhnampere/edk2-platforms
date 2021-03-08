@@ -28,7 +28,7 @@
   ArmPlatformPkg/ArmPlatformPkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
-  Platform/Ampere/AmperePkg.dec
+  Platform/Ampere/AmperePlatformPkg/AmperePlatformPkg.dec
 
 [LibraryClasses]
   UefiDriverEntryPoint

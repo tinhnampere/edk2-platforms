@@ -95,8 +95,8 @@
   SerialPortLib|ArmPlatformPkg/Library/PL011SerialPortLib/PL011SerialPortLib.inf
   PL011UartClockLib|ArmPlatformPkg/Library/PL011UartClockLib/PL011UartClockLib.inf
 
-  AcpiHelperLib|Platform/Ampere/Library/AcpiHelperLib/AcpiHelperLib.inf
-  AcpiPccLib|Platform/Ampere/Library/AcpiPccLib/AcpiPccLib.inf
+  AcpiHelperLib|Platform/Ampere/AmperePlatformPkg/Library/AcpiHelperLib/AcpiHelperLib.inf
+  AcpiPccLib|Platform/Ampere/AmperePlatformPkg/Library/AcpiPccLib/AcpiPccLib.inf
 
   # ACPI and FDT Library
   AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf

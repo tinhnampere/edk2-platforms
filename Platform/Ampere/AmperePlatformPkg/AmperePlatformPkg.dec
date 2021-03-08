@@ -26,6 +26,6 @@
 
 [LibraryClasses]
   ##  @libraryclass  Provides functions to support FailSafe operations.
-  FailSafeLib|Platform/Ampere/Include/Library/FailSafeLib.h
+  FailSafeLib|Platform/Ampere/AmperePlatformPkg/Include/Library/FailSafeLib.h
 
 [Guids]

@@ -140,7 +140,7 @@ APRIORI DXE {
   #
   # Driver to handle HW Watchdog
   #
-  INF Platform/Ampere/Drivers/FailSafeDxe/FailSafeDxe.inf
+  INF Platform/Ampere/AmperePlatformPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
 
   #
   # ACPI
@@ -197,4 +197,4 @@ APRIORI PEI {
     }
   }
 
-!include Platform/Ampere/FvRules.fdf.inc
+!include Platform/Ampere/AmperePlatformPkg/FvRules.fdf.inc

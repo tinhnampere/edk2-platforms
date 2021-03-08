@@ -70,15 +70,15 @@
   #
   # Library for FailSafe support
   #
-  FailSafeLib|Platform/Ampere/Library/FailSafeLib/FailSafeLib.inf
+  FailSafeLib|Platform/Ampere/AmperePlatformPkg/Library/FailSafeLib/FailSafeLib.inf
 
   #
   # ACPI Libraries
   #
   AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf
-  AcpiHelperLib|Platform/Ampere/Library/AcpiHelperLib/AcpiHelperLib.inf
-  AcpiPccLib|Platform/Ampere/Library/AcpiPccLib/AcpiPccLib.inf
-  AcpiApeiLib|Platform/Ampere/Library/AcpiApeiLib/AcpiApeiLib.inf
+  AcpiHelperLib|Platform/Ampere/AmperePlatformPkg/Library/AcpiHelperLib/AcpiHelperLib.inf
+  AcpiPccLib|Platform/Ampere/AmperePlatformPkg/Library/AcpiPccLib/AcpiPccLib.inf
+  AcpiApeiLib|Platform/Ampere/AmperePlatformPkg/Library/AcpiApeiLib/AcpiApeiLib.inf
 
   #
   # Pcie Board
@@ -190,7 +190,7 @@
   #
   # FailSafe and Watchdog Timer
   #
-  Platform/Ampere/Drivers/FailSafeDxe/FailSafeDxe.inf
+  Platform/Ampere/AmperePlatformPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
 
   #
   # ACPI
@@ -205,12 +205,12 @@
   #
   # Network PCIe I210
   #
-  Platform/Ampere/Drivers/GigUndiDxe/GigUndiDxe.inf
+  Platform/Ampere/AmperePlatformPkg/Drivers/GigUndiDxe/GigUndiDxe.inf
 
   #
   # VGA Aspeed
   #
-  Platform/Ampere/Drivers/ASpeedGopBinPkg/GopDxe.inf
+  Platform/Ampere/AmperePlatformPkg/Drivers/ASpeedGopBinPkg/GopDxe.inf
 
   #
   # SMBIOS

@@ -278,7 +278,7 @@ APRIORI DXE {
   #
   # FailSafe and Watchdog Timer
   #
-  INF Platform/Ampere/Drivers/FailSafeDxe/FailSafeDxe.inf
+  INF Platform/Ampere/AmperePlatformPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
 
   #
   # ARM GIC Dxe
@@ -331,12 +331,12 @@ APRIORI DXE {
   #
   # Network PCIe I210
   #
-  INF Platform/Ampere/Drivers/GigUndiDxe/GigUndiDxe.inf
+  INF Platform/Ampere/AmperePlatformPkg/Drivers/GigUndiDxe/GigUndiDxe.inf
 
   #
   # VGA Aspeed
   #
-  INF Platform/Ampere/Drivers/ASpeedGopBinPkg/GopDxe.inf
+  INF Platform/Ampere/AmperePlatformPkg/Drivers/ASpeedGopBinPkg/GopDxe.inf
 
   #
   # Random Number Generator Support
@@ -471,4 +471,4 @@ READ_LOCK_STATUS   = TRUE
 
   INF  SignedCapsulePkg/Universal/SystemFirmwareUpdate/SystemFirmwareUpdateDxe.inf
 
-!include Platform/Ampere/FvRules.fdf.inc
+!include Platform/Ampere/AmperePlatformPkg/FvRules.fdf.inc

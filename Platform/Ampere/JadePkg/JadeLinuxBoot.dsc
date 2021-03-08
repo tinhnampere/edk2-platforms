@@ -45,7 +45,7 @@
   #
   # Libraries needed byFailSafeDxe
   #
-  FailSafeLib|Platform/Ampere/Library/FailSafeLib/FailSafeLib.inf
+  FailSafeLib|Platform/Ampere/AmperePlatformPkg/Library/FailSafeLib/FailSafeLib.inf
 
 #
 # Specific Platform Component
@@ -70,4 +70,4 @@
   #
   # FailSafeDxe added to prevent watchdog from resetting the system
   #
-  Platform/Ampere/Drivers/FailSafeDxe/FailSafeDxe.inf
+  Platform/Ampere/AmperePlatformPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
