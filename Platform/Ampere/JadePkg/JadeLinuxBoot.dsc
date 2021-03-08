@@ -31,7 +31,7 @@
   DEFINE EDK2_SKIP_PEICORE       = TRUE
 
 # Include default Ampere Platform DSC file
-!include Silicon/Ampere/AmpereAltraPkg/Ac01LinuxBootPkg.dsc.inc
+!include Silicon/Ampere/AmpereAltraPkg/AmpereAltraLinuxBootPkg.dsc.inc
 
 #
 # Specific Platform Library

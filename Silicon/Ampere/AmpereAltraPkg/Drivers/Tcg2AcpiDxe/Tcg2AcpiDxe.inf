@@ -29,7 +29,7 @@
   MdeModulePkg/MdeModulePkg.dec
   SecurityPkg/SecurityPkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
-  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
 
 [LibraryClasses]
   BaseLib

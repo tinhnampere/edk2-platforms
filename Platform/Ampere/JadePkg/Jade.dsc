@@ -43,7 +43,7 @@
   DEFINE NETWORK_TLS_ENABLE                  = TRUE
 
 # Include default Ampere Platform DSC file
-!include Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dsc.inc
+!include Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dsc.inc
 
 ################################################################################
 #

@@ -23,7 +23,7 @@
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
   OutOfBandManagement/IpmiFeaturePkg/IpmiFeaturePkg.dec
-  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]

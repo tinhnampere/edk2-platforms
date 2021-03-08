@@ -28,7 +28,7 @@
   MdePkg/MdePkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
-  Silicon/Ampere/AmpereAltraPkg/Ac01Pkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
 
 [LibraryClasses]
   ArmLib
