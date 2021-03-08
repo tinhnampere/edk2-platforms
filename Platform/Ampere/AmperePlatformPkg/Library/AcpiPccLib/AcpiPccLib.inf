@@ -17,27 +17,21 @@
 [Sources.common]
   AcpiPccLib.c
 
-[FeaturePcd]
-
-[Pcd]
-
-[FixedPcd]
-
 [Packages]
   ArmPkg/ArmPkg.dec
-  MdePkg/MdePkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   ArmLib
   BaseLib
+  BaseMemoryLib
   DebugLib
   IoLib
   PrintLib
   TimerLib
-  BaseMemoryLib
   UefiBootServicesTableLib
 
 [Pcd]

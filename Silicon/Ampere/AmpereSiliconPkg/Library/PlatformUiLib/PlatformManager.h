@@ -13,16 +13,15 @@
 
 #include <Guid/MdeModuleHii.h>
 #include <Guid/PlatformManagerHii.h>
-
-#include <Library/DebugLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
 #include <Library/BaseLib.h>
-#include <Library/HiiLib.h>
-#include <Library/UefiLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
+#include <Library/HiiLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiHiiServicesLib.h>
+#include <Library/UefiLib.h>
 
 #include "PlatformManagerVfr.h"
 

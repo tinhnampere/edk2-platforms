@@ -14,23 +14,23 @@
   VERSION_STRING                 = 1.0
 
 [Sources]
-  Dsdt.asl
-  Dbg2.aslc
-  Ssdt.asl
-  Gtdt.aslc
-  Fadt.aslc
-  Spcr.aslc
-  Sdei.asl
-  Einj.asl
-  Hest.asl
   Bert.asl
+  Dbg2.aslc
+  Dsdt.asl
+  Einj.asl
+  Fadt.aslc
+  Gtdt.aslc
+  Hest.asl
+  Sdei.asl
+  Spcr.aslc
+  Ssdt.asl
 
 [Packages]
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
   EmbeddedPkg/EmbeddedPkg.dec
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
 
 [FixedPcd]

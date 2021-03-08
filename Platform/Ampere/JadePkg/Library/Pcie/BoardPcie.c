@@ -47,22 +47,22 @@
 
 **/
 
+#include <Guid/PlatformInfoHobGuid.h>
+#include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
+#include <Library/DwapbGpioLib.h>
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
+#include <Library/NVParamLib.h>
+#include <Library/PcieBoardLib.h>
 #include <Library/TimerLib.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/DwapbGpioLib.h>
-#include <Library/AmpereCpuLib.h>
-#include <Library/NVParamLib.h>
-#include <Guid/PlatformInfoHobGuid.h>
-#include <NVParamDef.h>
 #include <NVDataStruc.h>
-#include <Library/PcieBoardLib.h>
-#include <PlatformInfoHob.h>
+#include <NVParamDef.h>
 #include <Pcie.h>
+#include <PlatformInfoHob.h>
 
 #ifndef BIT
 #define BIT(nr)                         (1 << (nr))

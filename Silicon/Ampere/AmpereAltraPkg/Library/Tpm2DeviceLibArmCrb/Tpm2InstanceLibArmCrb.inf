@@ -35,8 +35,8 @@
   DebugLib
   HobLib
   IoLib
-  TimerLib
   PcdLib
+  TimerLib
 
 [Guids]
   gPlatformHobV2Guid

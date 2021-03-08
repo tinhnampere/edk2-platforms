@@ -9,8 +9,8 @@
 #ifndef PCI_ROOT_BRIDGE_IO_H_
 #define PCI_ROOT_BRIDGE_IO_H_
 
-#include <Library/PciLib.h>
 #include <IndustryStandard/Pci22.h>
+#include <Library/PciLib.h>
 
 /**
    Polls an address in memory mapped I/O space until an exit condition is met, or

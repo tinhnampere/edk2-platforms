@@ -15,28 +15,28 @@
   LIBRARY_CLASS                  = ArmPlatformLib
 
 [Sources]
+  ArmPlatformHelper.S
   ArmPlatformLib.c
   ArmPlatformLibMemory.c
-  ArmPlatformHelper.S
 
 [LibraryClasses]
-  IoLib
+  AmpereCpuLib
   ArmLib
   ArmSmcLib
+  HobLib
+  IoLib
   MemoryAllocationLib
   PL011UartLib
-  SerialPortLib
   PcdLib
-  HobLib
-  AmpereCpuLib
+  SerialPortLib
 
 [Packages]
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [Pcd]
   gArmTokenSpaceGuid.PcdSystemMemorySize

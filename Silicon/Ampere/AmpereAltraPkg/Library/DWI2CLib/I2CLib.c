@@ -7,19 +7,19 @@
 **/
 
 #include <PiDxe.h>
-#include <Base.h>
-#include <Uefi/UefiBaseType.h>
-#include <Library/UefiRuntimeLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/DxeServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/TimerLib.h>
-#include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
-#include <Library/IoLib.h>
-#include <Library/I2CLib.h>
-#include <Library/HobLib.h>
+#include <Uefi.h>
+
 #include <Guid/PlatformInfoHobGuid.h>
+#include <Library/DebugLib.h>
+#include <Library/DxeServicesTableLib.h>
+#include <Library/HobLib.h>
+#include <Library/I2CLib.h>
+#include <Library/IoLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PcdLib.h>
+#include <Library/TimerLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeLib.h>
 #include <PlatformInfoHob.h>
 
 #undef I2C_DBG

@@ -19,8 +19,8 @@
   ArmSpciSvcLib.h
 
 [Packages]
-  MdePkg/MdePkg.dec
   ArmPkg/ArmPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
 
 [LibraryClasses]

@@ -16,29 +16,29 @@
 
 [Sources.common]
   PCF85063.c
-  RtcSystemLib.c
   PCF85063.h
+  RtcSystemLib.c
 
 [Packages]
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
   EmbeddedPkg/EmbeddedPkg.dec
   MdePkg/MdePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  BaseLib
-  UefiRuntimeLib
-  UefiLib
-  DebugLib
-  TimerLib
-  DxeServicesTableLib
-  ArmLib
-  SMProLib
   ArmGenericTimerCounterLib
-  I2CLib
+  ArmLib
+  BaseLib
+  DebugLib
   DwapbGpioLib
+  DxeServicesTableLib
+  I2CLib
+  SMProLib
+  TimerLib
+  UefiLib
+  UefiRuntimeLib
 
 [Guids]
   gEfiEventVirtualAddressChangeGuid

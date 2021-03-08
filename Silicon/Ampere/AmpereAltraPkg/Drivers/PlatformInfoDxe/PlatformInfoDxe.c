@@ -7,23 +7,24 @@
 **/
 
 #include <Uefi.h>
+
 #include <Guid/MdeModuleHii.h>
 #include <Guid/PlatformInfoHobGuid.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/BaseMemoryLib.h>
+#include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
-#include <Library/UefiLib.h>
-#include <Library/DevicePathLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/PrintLib.h>
-#include <Library/HiiLib.h>
 #include <Library/DevicePathLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/HiiLib.h>
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
-#include <Library/AmpereCpuLib.h>
-#include <PlatformInfoHob.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PrintLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
 #include <Pcie.h>
+#include <PlatformInfoHob.h>
 
 #include "PlatformInfoHii.h"
 

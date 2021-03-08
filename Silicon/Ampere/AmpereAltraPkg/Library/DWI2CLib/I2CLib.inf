@@ -19,18 +19,18 @@
   I2CLib.c
 
 [Packages]
-  MdePkg/MdePkg.dec
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
 
 [LibraryClasses]
-  IoLib
-  DebugLib
   BaseLib
   BaseMemoryLib
-  TimerLib
+  DebugLib
   HobLib
+  IoLib
+  TimerLib
 
 [Guids]
   gEfiEventVirtualAddressChangeGuid

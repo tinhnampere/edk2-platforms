@@ -6,8 +6,8 @@
 
 **/
 
-#include "AcpiPlatform.h"
 #include "AcpiApei.h"
+#include "AcpiPlatform.h"
 
 STATIC EFI_EVENT mAcpiRegistration = NULL;
 

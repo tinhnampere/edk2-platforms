@@ -6,13 +6,15 @@
 
 **/
 
+#include <Uefi.h>
+
+#include <Guid/PlatformInfoHobGuid.h>
+#include <Library/AmpereCpuLib.h>
 #include <Library/ArmPlatformLib.h>
 #include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
 #include <Library/HobLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/AmpereCpuLib.h>
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Library/PcdLib.h>
 #include <PlatformInfoHob.h>
 
 /* Number of Virtual Memory Map Descriptors */

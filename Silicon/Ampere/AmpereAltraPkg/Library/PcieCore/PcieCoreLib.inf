@@ -16,41 +16,42 @@
 
 [Sources]
   PcieCore.c
+  PcieCore.h
+  PcieCoreCapCfg.h
   PcieCoreLib.c
   PcieHotPlug.c
   PciePatchAcpi.c
   PciePatchAcpi.h
-  PcieCore.h
-  PcieCoreCapCfg.h
 
 [Packages]
-  MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [BuildOptions]
   *_*_*_CC_FLAGS = -Wno-error=switch -Wno-missing-braces
 
 [LibraryClasses]
-  UefiLib
-  MemoryAllocationLib
-  BaseMemoryLib
+  AmpereCpuLib
+  ArmLib
+  ArmSpciLib
   BaseLib
+  BaseMemoryLib
   DebugLib
   DwapbGpioLib
-  TimerLib
-  ArmLib
   IoLib
+  MemoryAllocationLib
   PcdLib
   PcieBoardLib
-  UefiBootServicesTableLib
-  UefiRuntimeServicesTableLib
   PciePhyLib
   SMProLib
-  ArmSpciLib
+  TimerLib
+  UefiBootServicesTableLib
+  UefiLib
+  UefiRuntimeServicesTableLib
 
 [Pcd]
   gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap

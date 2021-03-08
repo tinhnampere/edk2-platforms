@@ -7,8 +7,8 @@
 **/
 
 #include <Library/ArmLib.h>
-#include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
 #include <Library/MmCommunicationLib.h>
 #include <Library/NVParamLib.h>
 #include <MmLib.h>

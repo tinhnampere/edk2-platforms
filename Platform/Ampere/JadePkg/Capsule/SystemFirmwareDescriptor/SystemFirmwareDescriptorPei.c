@@ -9,6 +9,7 @@
 **/
 
 #include <PiPei.h>
+
 #include <Guid/EdkiiSystemFmpCapsule.h>
 #include <Library/DebugLib.h>
 #include <Library/PcdLib.h>

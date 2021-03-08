@@ -6,6 +6,9 @@
 
 **/
 
+#include <Uefi.h>
+
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Library/ArmLib.h>
 #include <Library/ArmPlatformLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -13,14 +16,13 @@
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/PL011UartLib.h>
 #include <Library/PcdLib.h>
+#include <Library/SerialPortLib.h>
+#include <Platform/Ac01.h>
+#include <PlatformInfoHob.h>
 #include <Ppi/ArmMpCoreInfo.h>
 #include <Ppi/TemporaryRamSupport.h>
-#include <Library/PL011UartLib.h>
-#include <Library/SerialPortLib.h>
-#include <Guid/PlatformInfoHobGuid.h>
-#include <PlatformInfoHob.h>
-#include <Platform/Ac01.h>
 
 ARM_CORE_INFO mArmPlatformMpCoreInfoTable[PLATFORM_CPU_MAX_NUM_CORES];
 

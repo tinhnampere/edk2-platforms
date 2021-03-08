@@ -7,8 +7,8 @@
 **/
 
 #include <PiDxe.h>
-#include <Base.h>
-#include <Uefi/UefiBaseType.h>
+#include <Uefi.h>
+
 #include <Library/UefiRuntimeLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/IoLib.h>

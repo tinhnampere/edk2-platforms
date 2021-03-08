@@ -9,8 +9,9 @@
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/Tpm2DeviceLib.h>
 #include <Library/PcdLib.h>
+#include <Library/Tpm2DeviceLib.h>
+
 #include "Tpm2ArmCrb.h"
 
 /**

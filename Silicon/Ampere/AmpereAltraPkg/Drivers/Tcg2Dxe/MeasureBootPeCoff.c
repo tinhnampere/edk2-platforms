@@ -14,14 +14,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <PiDxe.h>
 
 #include <Library/BaseLib.h>
-#include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
+#include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
-#include <Library/UefiBootServicesTableLib.h>
+#include <Library/HashLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/PeCoffLib.h>
 #include <Library/Tpm2CommandLib.h>
-#include <Library/HashLib.h>
+#include <Library/UefiBootServicesTableLib.h>
 
 UINTN  mTcg2DxeImageSize = 0;
 

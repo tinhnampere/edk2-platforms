@@ -6,15 +6,14 @@
 
 **/
 
+#include <IndustryStandard/ArmStdSmc.h>
 #include <Library/ArmLib.h>
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
 #include <Library/MmCommunicationLib.h>
+#include <Library/PcdLib.h>
 #include <Protocol/MmCommunication.h>
-
-#include <IndustryStandard/ArmStdSmc.h>
 
 //
 // Address, Length of the pre-allocated buffer for communication with the secure

@@ -6,19 +6,20 @@
 
 **/
 
-#include <Uefi.h>
-#include <Library/UefiRuntimeLib.h>
 #include <PiPei.h>
+#include <Uefi.h>
+
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
-#include <Library/HobLib.h>
 #include <Library/FailSafeLib.h>
+#include <Library/HobLib.h>
 #include <Library/NVParamLib.h>
+#include <Library/PcdLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include <Protocol/MmCommunication.h>
+#include <Library/UefiRuntimeLib.h>
 #include <Platform/Ac01.h>
+#include <Protocol/MmCommunication.h>
 
 #define EFI_MM_MAX_PAYLOAD_U64_E  10
 #define EFI_MM_MAX_PAYLOAD_SIZE   (EFI_MM_MAX_PAYLOAD_U64_E * sizeof (UINT64))

@@ -10,7 +10,7 @@
 #define ACPIHELPERLIB_H_
 
 #include <Uefi.h>
-#include <Uefi/UefiSpec.h>
+
 #include <Protocol/AcpiSystemDescriptionTable.h>
 
 #define MAX_ACPI_NODE_PATH    256

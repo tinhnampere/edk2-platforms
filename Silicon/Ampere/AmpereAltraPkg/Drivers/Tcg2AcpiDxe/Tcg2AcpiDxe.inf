@@ -25,25 +25,25 @@
   Tcg2AcpiDxe.c
 
 [Packages]
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
   SecurityPkg/SecurityPkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
+  AcpiHelperLib
   BaseLib
   BaseMemoryLib
-  UefiDriverEntryPoint
-  UefiBootServicesTableLib
   DebugLib
-  TpmMeasurementLib
+  HobLib
+  PcdLib
+  Tcg2PhysicalPresenceLib
   Tpm2CommandLib
   Tpm2DeviceLib
-  Tcg2PhysicalPresenceLib
-  PcdLib
-  AcpiHelperLib
-  HobLib
+  TpmMeasurementLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
 
 [Guids]
   gEfiTpmDeviceInstanceTpm20DtpmGuid                            ## PRODUCES           ## GUID       # TPM device identifier

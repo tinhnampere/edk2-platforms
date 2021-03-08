@@ -6,7 +6,8 @@
 
 **/
 
-#include <Uefi/UefiBaseType.h>
+#include <Uefi.h>
+
 #include <Library/DebugLib.h>
 #include <Library/RngLib.h>
 #include <Library/TrngLib.h>

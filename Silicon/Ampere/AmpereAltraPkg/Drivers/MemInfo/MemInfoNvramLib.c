@@ -7,6 +7,7 @@
 **/
 
 #include <Uefi.h>
+
 #include <Library/NVParamLib.h>
 
 #include "MemInfoScreen.h"

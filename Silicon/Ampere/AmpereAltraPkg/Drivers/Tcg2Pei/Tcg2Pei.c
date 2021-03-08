@@ -10,39 +10,36 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include <PiPei.h>
 
+#include <Guid/MeasuredFvHob.h>
+#include <Guid/MigratedFvInfo.h>
+#include <Guid/TcgEventHob.h>
+#include <Guid/TpmInstance.h>
 #include <IndustryStandard/UefiTcgPlatform.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#include <Library/HashLib.h>
+#include <Library/HobLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PcdLib.h>
+#include <Library/PeiServicesLib.h>
+#include <Library/PeiServicesTablePointerLib.h>
+#include <Library/PeimEntryPoint.h>
+#include <Library/PerformanceLib.h>
+#include <Library/PrintLib.h>
+#include <Library/ReportStatusCodeLib.h>
+#include <Library/ResetSystemLib.h>
+#include <Library/Tpm2CommandLib.h>
+#include <Library/Tpm2DeviceLib.h>
+#include <PlatformInfoHob.h>
+#include <Ppi/EndOfPeiPhase.h>
+#include <Ppi/FirmwareVolume.h>
 #include <Ppi/FirmwareVolumeInfo.h>
 #include <Ppi/FirmwareVolumeInfo2.h>
-#include <Ppi/TpmInitialized.h>
-#include <Ppi/FirmwareVolume.h>
-#include <Ppi/EndOfPeiPhase.h>
 #include <Ppi/FirmwareVolumeInfoMeasurementExcluded.h>
 #include <Ppi/FirmwareVolumeInfoPrehashedFV.h>
 #include <Ppi/Tcg.h>
-
-#include <Guid/TcgEventHob.h>
-#include <Guid/MeasuredFvHob.h>
-#include <Guid/TpmInstance.h>
-#include <Guid/MigratedFvInfo.h>
-
-#include <Library/DebugLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/PeiServicesLib.h>
-#include <Library/PeimEntryPoint.h>
-#include <Library/Tpm2CommandLib.h>
-#include <Library/Tpm2DeviceLib.h>
-#include <Library/HashLib.h>
-#include <Library/HobLib.h>
-#include <Library/PcdLib.h>
-#include <Library/PeiServicesTablePointerLib.h>
+#include <Ppi/TpmInitialized.h>
 #include <Protocol/Tcg2Protocol.h>
-#include <Library/PerformanceLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/ReportStatusCodeLib.h>
-#include <Library/ResetSystemLib.h>
-#include <Library/PrintLib.h>
-
-#include <PlatformInfoHob.h>
 
 #define PERF_ID_TCG2_PEI  0x3080
 

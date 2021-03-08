@@ -10,24 +10,26 @@
 #define CPU_CONFIG_H_
 
 #include <Uefi.h>
-#include <Protocol/HiiConfigRouting.h>
-#include <Protocol/HiiConfigAccess.h>
+
+#include <Guid/CpuConfigHii.h>
 #include <Guid/MdeModuleHii.h>
 #include <Guid/PlatformManagerHii.h>
-#include <Guid/CpuConfigHii.h>
-#include <Library/DebugLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/UefiDriverEntryPoint.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/HiiLib.h>
+#include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
-#include <Library/PrintLib.h>
-#include <Library/UefiLib.h>
+#include <Library/HiiLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/NVParamLib.h>
+#include <Library/PrintLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiDriverEntryPoint.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <NVParamDef.h>
+#include <Protocol/HiiConfigAccess.h>
+#include <Protocol/HiiConfigRouting.h>
+
 #include "NVDataStruc.h"
 
 //

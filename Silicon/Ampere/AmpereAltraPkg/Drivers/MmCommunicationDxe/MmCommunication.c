@@ -7,6 +7,7 @@
 
 **/
 
+#include <IndustryStandard/ArmStdSmc.h>
 #include <Library/ArmLib.h>
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -16,10 +17,7 @@
 #include <Library/PcdLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-
 #include <Protocol/MmCommunication.h>
-
-#include <IndustryStandard/ArmStdSmc.h>
 
 #include "MmCommunicate.h"
 

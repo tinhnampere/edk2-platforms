@@ -11,8 +11,8 @@
 #include <PiDxe.h>
 
 #include <Library/BaseMemoryLib.h>
-#include <Library/PlatformFlashAccessLib.h>
 #include <Library/DebugLib.h>
+#include <Library/PlatformFlashAccessLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Protocol/MmCommunication.h>
 

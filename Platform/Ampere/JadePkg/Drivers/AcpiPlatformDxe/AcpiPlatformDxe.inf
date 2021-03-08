@@ -22,32 +22,32 @@
   AcpiNfit.c
   AcpiPCCT.c
   AcpiPPTT.c
-  AcpiSLIT.c
-  AcpiSRAT.c
   AcpiPlatform.h
   AcpiPlatformDxe.c
+  AcpiSLIT.c
+  AcpiSRAT.c
 
 [Packages]
-  MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
-  EmbeddedPkg/EmbeddedPkg.dec
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  UefiBootServicesTableLib
-  UefiRuntimeServicesTableLib
-  UefiDriverEntryPoint
-  DebugLib
-  BaseLib
-  UefiLib
+  AcpiHelperLib
   AcpiLib
   AcpiPccLib
-  AcpiHelperLib
   AmpereCpuLib
+  BaseLib
+  DebugLib
   FlashLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiRuntimeServicesTableLib
 
 [Pcd]
   gArmPlatformTokenSpaceGuid.PcdCoreCount

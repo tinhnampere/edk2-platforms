@@ -15,33 +15,33 @@
   ENTRY_POINT                    = InitializePciHostBridge
 
 [Sources]
-  PciHostBridge.h
   PciHostBridge.c
-  PciRootBridgeIo.h
+  PciHostBridge.h
   PciRootBridgeIo.c
+  PciRootBridgeIo.h
 
 [Packages]
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  IoLib
-  UefiDriverEntryPoint
-  UefiBootServicesTableLib
-  DxeServicesTableLib
-  UefiLib
-  MemoryAllocationLib
-  BaseMemoryLib
+  AcpiHelperLib
   BaseLib
+  BaseMemoryLib
   DebugLib
   DevicePathLib
+  DxeServicesTableLib
+  IoLib
+  MemoryAllocationLib
   PcdLib
   PcieCoreLib
-  AcpiHelperLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
 
 [Protocols]
   gEfiPciHostBridgeResourceAllocationProtocolGuid

@@ -12,18 +12,19 @@
 **/
 
 #include <Uefi.h>
+
+#include <Guid/EventGroup.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/UefiBootManagerLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/UefiBootManagerLib.h>
-#include <Protocol/PlatformBootManager.h>
 #include <Protocol/LoadedImage.h>
-#include <Guid/EventGroup.h>
+#include <Protocol/PlatformBootManager.h>
 
 // This GUID must match the FILE_GUID in the LinuxBootPkg/LinuxBoot.inf file.
 // GUID: D834A5AD-459C-4AED-B0D0-8CBCB28838D7

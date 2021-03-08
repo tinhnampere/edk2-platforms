@@ -21,25 +21,25 @@
   VfrStrings.uni
 
 [Packages]
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  UefiDriverEntryPoint
-  UefiBootServicesTableLib
-  MemoryAllocationLib
-  BaseMemoryLib
-  BaseLib
-  UefiLib
-  DevicePathLib
-  DebugLib
-  HiiLib
-  DevicePathLib
-  HobLib
   AmpereCpuLib
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  DevicePathLib
+  DevicePathLib
+  HiiLib
+  HobLib
   IoLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
 
 [Guids]
   gPlatformManagerFormsetGuid

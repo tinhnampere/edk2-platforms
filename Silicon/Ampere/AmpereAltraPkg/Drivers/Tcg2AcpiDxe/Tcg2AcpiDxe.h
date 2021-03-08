@@ -11,33 +11,29 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define TCG2_ACPI_DXE_H_
 
 #include <PiDxe.h>
-#include <IndustryStandard/Acpi.h>
-#include <IndustryStandard/Tpm2Acpi.h>
 
 #include <Guid/TpmInstance.h>
-
-#include <Protocol/AcpiTable.h>
-#include <Protocol/Tcg2Protocol.h>
-
+#include <IndustryStandard/Acpi.h>
+#include <IndustryStandard/Tpm2Acpi.h>
+#include <IndustryStandard/TpmPtp.h>
+#include <Library/AcpiHelperLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/UefiDriverEntryPoint.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/TpmMeasurementLib.h>
+#include <Library/HobLib.h>
+#include <Library/IoLib.h>
+#include <Library/PcdLib.h>
+#include <Library/PrintLib.h>
+#include <Library/Tcg2PhysicalPresenceLib.h>
 #include <Library/Tpm2CommandLib.h>
 #include <Library/Tpm2DeviceLib.h>
-#include <Library/Tcg2PhysicalPresenceLib.h>
-#include <Library/IoLib.h>
-#include <Library/PrintLib.h>
-#include <Library/PcdLib.h>
 #include <Library/Tpm2DeviceLib.h>
-#include <Library/AcpiHelperLib.h>
-#include <Library/HobLib.h>
-
-#include <IndustryStandard/TpmPtp.h>
-
+#include <Library/TpmMeasurementLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiDriverEntryPoint.h>
 #include <PlatformInfoHob.h>
+#include <Protocol/AcpiTable.h>
+#include <Protocol/Tcg2Protocol.h>
 
 //
 // PNP _HID for TPM2 device

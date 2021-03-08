@@ -12,13 +12,14 @@
 **/
 
 #include <PiPei.h>
-#include <Ppi/ReportStatusCodeHandler.h>
-#include <Library/PeiServicesLib.h>
-#include <Pi/PiStatusCode.h>
-#include <Library/DebugLib.h>
-#include <Library/SMProLib.h>
-#include <Library/SMProInterface.h>
+
 #include <Library/AmpereCpuLib.h>
+#include <Library/DebugLib.h>
+#include <Library/PeiServicesLib.h>
+#include <Library/SMProInterface.h>
+#include <Library/SMProLib.h>
+#include <Pi/PiStatusCode.h>
+#include <Ppi/ReportStatusCodeHandler.h>
 
 #define BIOS_BOOT_PROG_SET     1
 #define BIOS_BOOT_STAGE        8

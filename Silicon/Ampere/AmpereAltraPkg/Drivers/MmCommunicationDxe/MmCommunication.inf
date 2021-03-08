@@ -24,8 +24,8 @@
 #
 
 [Sources.AARCH64]
-  MmCommunication.c
   MmCommunicate.h
+  MmCommunication.c
 
 [Packages]
   ArmPkg/ArmPkg.dec

@@ -32,33 +32,33 @@
   ENTRY_POINT                    = DriverEntry
 
 [Sources]
-  Tcg2Dxe.c
   MeasureBootPeCoff.c
+  Tcg2Dxe.c
 
 [Packages]
-  MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
-  SecurityPkg/SecurityPkg.dec
   CryptoPkg/CryptoPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  SecurityPkg/SecurityPkg.dec
 
 [LibraryClasses]
-  MemoryAllocationLib
   BaseLib
-  UefiBootServicesTableLib
-  HobLib
-  UefiDriverEntryPoint
-  UefiRuntimeServicesTableLib
   BaseMemoryLib
   DebugLib
-  Tpm2CommandLib
-  PrintLib
-  UefiLib
-  Tpm2DeviceLib
   HashLib
+  HobLib
+  MemoryAllocationLib
+  PeCoffLib
   PerformanceLib
+  PrintLib
   ReportStatusCodeLib
   Tcg2PhysicalPresenceLib
-  PeCoffLib
+  Tpm2CommandLib
+  Tpm2DeviceLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiRuntimeServicesTableLib
 
 [Guids]
   ## SOMETIMES_CONSUMES     ## Variable:L"SecureBoot"

@@ -31,16 +31,16 @@
   BootProgressPeim.c
 
 [Packages]
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  PeimEntryPoint
-  PeiServicesLib
   BaseLib
   DebugLib
+  PeiServicesLib
+  PeimEntryPoint
   SMProLib
 
 [Ppis]

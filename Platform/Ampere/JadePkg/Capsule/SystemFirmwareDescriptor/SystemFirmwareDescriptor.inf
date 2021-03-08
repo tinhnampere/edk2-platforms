@@ -17,8 +17,8 @@
   ENTRY_POINT                    = SystemFirmwareDescriptorPeimEntry
 
 [Sources]
-  SystemFirmwareDescriptorPei.c
   SystemFirmwareDescriptor.aslc
+  SystemFirmwareDescriptorPei.c
 
 [Packages]
   ArmPkg/ArmPkg.dec
@@ -29,8 +29,8 @@
 [LibraryClasses]
   DebugLib
   PcdLib
-  PeimEntryPoint
   PeiServicesLib
+  PeimEntryPoint
 
 [FixedPcd]
 

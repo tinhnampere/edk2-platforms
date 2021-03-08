@@ -7,19 +7,20 @@
 **/
 
 #include <Uefi.h>
+
+#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/SmBios.h>
+#include <Library/AmpereCpuLib.h>
+#include <Library/ArmLib.h>
 #include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/HobLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/ArmLib.h>
-#include <Library/HobLib.h>
-#include <Library/AmpereCpuLib.h>
-#include <Guid/SmBios.h>
-#include <Guid/PlatformInfoHobGuid.h>
-#include <Protocol/Smbios.h>
 #include <PlatformInfoHob.h>
+#include <Protocol/Smbios.h>
 
 #define TYPE16_ADDITIONAL_STRINGS        \
   "\0"                       /* no string*/

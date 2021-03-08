@@ -23,27 +23,27 @@
   VfrStrings.uni
 
 [Packages]
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  IoLib
-  UefiBootServicesTableLib
-  UefiDriverEntryPoint
-  DebugLib
   ArmLib
   BaseLib
-  UefiLib
-  PcdLib
-  HobLib
-  PrintLib
-  MemoryAllocationLib
-  UefiRuntimeServicesTableLib
-  HiiLib
+  DebugLib
   DevicePathLib
+  HiiLib
+  HobLib
+  IoLib
+  MemoryAllocationLib
   NVParamLib
+  PcdLib
+  PrintLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiRuntimeServicesTableLib
 
 [Protocols]
   gEfiHiiConfigRoutingProtocolGuid             ## CONSUMES

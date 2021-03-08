@@ -6,11 +6,12 @@
 
 **/
 
-#include <Uefi/UefiBaseType.h>
-#include <Library/DebugLib.h>
+#include <Uefi.h>
+
 #include <Library/BaseMemoryLib.h>
-#include <Library/SMProLib.h>
+#include <Library/DebugLib.h>
 #include <Library/SMProInterface.h>
+#include <Library/SMProLib.h>
 #include <Library/TrngLib.h>
 #include <Platform/Ac01.h>
 

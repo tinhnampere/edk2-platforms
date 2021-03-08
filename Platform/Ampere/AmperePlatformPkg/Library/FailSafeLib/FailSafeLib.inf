@@ -24,17 +24,17 @@
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
   MdePkg/MdePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
-  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
   Platform/Ampere/AmperePlatformPkg/AmperePlatformPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  IoLib
-  DebugLib
+  ArmSmcLib
   BaseLib
   BaseMemoryLib
-  ArmSmcLib
+  DebugLib
   HobLib
+  IoLib
   NVParamLib
 
 [Guids]

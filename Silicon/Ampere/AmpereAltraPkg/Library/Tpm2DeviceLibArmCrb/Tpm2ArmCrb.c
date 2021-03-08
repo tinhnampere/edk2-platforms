@@ -8,18 +8,20 @@
 **/
 
 #include <PiPei.h>
+
+#include <Guid/PlatformInfoHobGuid.h>
+#include <IndustryStandard/Tpm20.h>
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/IoLib.h>
 #include <Library/HobLib.h>
+#include <Library/IoLib.h>
+#include <Library/PcdLib.h>
 #include <Library/TimerLib.h>
 #include <Library/Tpm2DeviceLib.h>
-#include <Library/PcdLib.h>
-#include <IndustryStandard/Tpm20.h>
-#include <Guid/PlatformInfoHobGuid.h>
 #include <PlatformInfoHob.h>
+
 #include "Tpm2ArmCrb.h"
 
 typedef enum {

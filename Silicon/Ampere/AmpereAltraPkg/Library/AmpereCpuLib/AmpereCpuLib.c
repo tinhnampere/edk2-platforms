@@ -6,18 +6,18 @@
 
 **/
 
-#include <Uefi.h>
-#include <Base.h>
 #include <PiPei.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/IoLib.h>
-#include <Library/HobLib.h>
-#include <Library/AmpereCpuLib.h>
-#include <Library/NVParamLib.h>
+#include <Uefi.h>
+
 #include <Guid/PlatformInfoHobGuid.h>
+#include <Library/AmpereCpuLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/HobLib.h>
+#include <Library/IoLib.h>
+#include <Library/NVParamLib.h>
+#include <NVParamDef.h>
 #include <Platform/Ac01.h>
 #include <PlatformInfoHob.h>
-#include <NVParamDef.h>
 
 #define MONOLITIC_NUM_OF_REGION        1
 #define HEMISPHERE_NUM_OF_REGION       2

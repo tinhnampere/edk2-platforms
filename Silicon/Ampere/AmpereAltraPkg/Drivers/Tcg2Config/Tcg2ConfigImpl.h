@@ -12,28 +12,25 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include <Uefi.h>
 
+#include <Guid/MdeModuleHii.h>
 #include <IndustryStandard/Tpm2Acpi.h>
-
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/HiiLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PcdLib.h>
+#include <Library/PrintLib.h>
+#include <Library/Tcg2PhysicalPresenceLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiHiiServicesLib.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Protocol/HiiConfigAccess.h>
 #include <Protocol/HiiConfigRouting.h>
 #include <Protocol/Tcg2Protocol.h>
 #include <Protocol/VariableLock.h>
-
-#include <Library/BaseLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/DebugLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/UefiHiiServicesLib.h>
-#include <Library/UefiLib.h>
-#include <Library/HiiLib.h>
-#include <Library/DevicePathLib.h>
-#include <Library/PcdLib.h>
-#include <Library/PrintLib.h>
-#include <Library/Tcg2PhysicalPresenceLib.h>
-
-#include <Guid/MdeModuleHii.h>
 
 #include "Tcg2ConfigNvData.h"
 #include "Tcg2Internal.h"

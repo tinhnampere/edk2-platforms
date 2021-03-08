@@ -7,18 +7,19 @@
 **/
 
 #include <Uefi.h>
+
+#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/SmBios.h>
 #include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/HobLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Guid/SmBios.h>
-#include <Guid/PlatformInfoHobGuid.h>
-#include <Library/HobLib.h>
+#include <PlatformInfoHob.h>
 #include <Protocol/IpmiProtocol.h>
 #include <Protocol/Smbios.h>
-#include <PlatformInfoHob.h>
 
 // Type0 Data
 #define VENDOR_TEMPLATE       "Ampere(R)\0"

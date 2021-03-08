@@ -6,16 +6,16 @@
 
 **/
 
-#include <Base.h>
-#include <Uefi/UefiSpec.h>
+#include <Uefi.h>
+
 #include <Guid/EventGroup.h>
 #include <Guid/MemoryAttributesTable.h>
-#include <Protocol/Cpu.h>
-#include <Library/DebugLib.h>
-#include <Library/UefiLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
+#include <Protocol/Cpu.h>
 
 EFI_CPU_ARCH_PROTOCOL             *mCpu;
 

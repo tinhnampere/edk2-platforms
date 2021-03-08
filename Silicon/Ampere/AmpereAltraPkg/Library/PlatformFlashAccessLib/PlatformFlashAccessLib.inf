@@ -20,9 +20,9 @@
   PlatformFlashAccessLib.c
 
 [Packages]
+  ArmPkg/ArmPkg.dec
   MdePkg/MdePkg.dec
   SignedCapsulePkg/SignedCapsulePkg.dec
-  ArmPkg/ArmPkg.dec
 
 [LibraryClasses]
   BaseLib

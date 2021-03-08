@@ -7,15 +7,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-#include "Tcg2ConfigImpl.h"
+#include <Guid/TpmInstance.h>
+#include <IndustryStandard/TpmPtp.h>
+#include <Library/IoLib.h>
 #include <Library/PcdLib.h>
 #include <Library/Tpm2CommandLib.h>
 #include <Library/Tpm2DeviceLib.h>
-#include <Library/IoLib.h>
 
-#include <Guid/TpmInstance.h>
-
-#include <IndustryStandard/TpmPtp.h>
+#include "Tcg2ConfigImpl.h"
 
 #define EFI_TCG2_EVENT_LOG_FORMAT_ALL   (EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 | EFI_TCG2_EVENT_LOG_FORMAT_TCG_2)
 

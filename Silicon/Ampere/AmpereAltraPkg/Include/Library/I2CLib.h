@@ -9,7 +9,6 @@
 #ifndef I2CLIB_H_
 #define I2CLIB_H_
 
-#include <Base.h>
 #include <Uefi/UefiBaseType.h>
 
 /**

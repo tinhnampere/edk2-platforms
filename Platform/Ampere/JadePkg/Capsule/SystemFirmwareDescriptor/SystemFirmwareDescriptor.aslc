@@ -10,8 +10,9 @@
 **/
 
 #include <PiPei.h>
-#include <Protocol/FirmwareManagement.h>
+
 #include <Guid/EdkiiSystemFmpCapsule.h>
+#include <Protocol/FirmwareManagement.h>
 
 #define PACKAGE_VERSION                     0xFFFFFFFF
 #define PACKAGE_VERSION_STRING              L"Unknown"

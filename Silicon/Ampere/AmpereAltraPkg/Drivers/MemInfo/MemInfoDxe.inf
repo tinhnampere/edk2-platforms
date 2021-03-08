@@ -15,32 +15,32 @@
   ENTRY_POINT                    = MemInfoScreenInitialize
 
 [Sources]
-  MemInfoScreen.c
   MemInfoNvramLib.c
-  MemInfoScreenStrings.uni
-  Vfr.vfr
+  MemInfoScreen.c
   MemInfoScreen.h
+  MemInfoScreenStrings.uni
   NVDataStruc.h
+  Vfr.vfr
 
 [Packages]
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
+  AmpereCpuLib
+  BaseLib
+  DevicePathLib
+  HiiLib
+  HobLib
+  MemoryAllocationLib
+  NVParamLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
-  HobLib
   UefiLib
-  DevicePathLib
-  MemoryAllocationLib
-  BaseLib
-  HiiLib
-  AmpereCpuLib
-  NVParamLib
 
 [Guids]
   gEfiIfrTianoGuid                              ## PRODUCES ## UNDEFINED

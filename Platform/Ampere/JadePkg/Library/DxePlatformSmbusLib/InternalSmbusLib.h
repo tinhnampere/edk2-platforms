@@ -14,14 +14,12 @@
 
 #include <PiDxe.h>
 
-#include <Protocol/SmbusHc.h>
-
-#include <Library/SmbusLib.h>
-#include <Library/DebugLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/BaseMemoryLib.h>
-
 #include <IndustryStandard/SmBus.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#include <Library/SmbusLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Protocol/SmbusHc.h>
 
 //
 // Declaration for internal functions

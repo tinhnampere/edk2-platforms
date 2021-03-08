@@ -10,6 +10,7 @@
 #define COMMON_H_
 
 #include <Uefi.h>
+
 #include <Library/BaseLib.h>
 #include <Library/RealTimeClockLib.h>
 

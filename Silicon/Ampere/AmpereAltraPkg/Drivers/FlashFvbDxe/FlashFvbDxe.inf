@@ -19,19 +19,18 @@
 
 [Packages]
   ArmPkg/ArmPkg.dec
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   DebugLib
-  PcdLib
   FlashLib
-  UefiDriverEntryPoint
+  PcdLib
   UefiBootServicesTableLib
+  UefiDriverEntryPoint
   UefiRuntimeLib
-
 
 [FixedPcd]
   gAmpereTokenSpaceGuid.PcdFvBlockSize

@@ -6,11 +6,14 @@
 
 **/
 
-#include "AcpiApei.h"
-#include <Library/NVParamLib.h>
-#include <Library/FlashLib.h>
+#include <Uefi.h>
+
 #include <Library/AcpiHelperLib.h>
+#include <Library/FlashLib.h>
+#include <Library/NVParamLib.h>
 #include <NVParamDef.h>
+
+#include "AcpiApei.h"
 
 UINT8 AMPERE_GUID[16] = {0x8d, 0x89, 0xed, 0xe8, 0x16, 0xdf, 0xcc, 0x43, 0x8e, 0xcc, 0x54, 0xf0, 0x60, 0xef, 0x15, 0x7f};
 CHAR8 DEFAULT_BERT_REBOOT_MSG[BERT_MSG_SIZE] = "Unknown reboot reason";

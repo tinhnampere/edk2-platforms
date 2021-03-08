@@ -19,10 +19,10 @@
 
 [Packages]
   ArmPkg/ArmPkg.dec
-  MdePkg/MdePkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   ArmLib
@@ -34,6 +34,6 @@
   IoLib
   MemoryAllocationLib
   PrintLib
+  SMProLib
   TimerLib
   UefiLib
-  SMProLib

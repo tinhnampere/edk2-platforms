@@ -23,8 +23,8 @@
 #include <Protocol/HiiConfigAccess.h>
 #include <Protocol/PciIo.h>
 
-#include "PcieHelper.h"
 #include "PcieDeviceConfigDxe.h"
+#include "PcieHelper.h"
 
 STATIC VOID      *mPciProtocolNotifyRegistration;
 STATIC EFI_EVENT mPciProtocolNotifyEvent;

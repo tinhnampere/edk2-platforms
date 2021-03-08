@@ -8,8 +8,9 @@
 
 #include <PiPei.h>
 #include <Uefi/UefiSpec.h>
-#include <Library/PeimEntryPoint.h>
+
 #include <Library/HobLib.h>
+#include <Library/PeimEntryPoint.h>
 
 /**
   Entry point function for the PEIM

@@ -11,13 +11,12 @@
 #include <IndustryStandard/Ipmi.h>
 #include <IndustryStandard/IpmiNetFnApp.h>
 #include <IndustryStandard/IpmiNetFnTransport.h>
+#include <IpmiNetFnAppExt.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/IpmiCommandLibExt.h>
 #include <Library/IpmiLib.h>
 #include <Library/MemoryAllocationLib.h>
-
-#include <IpmiNetFnAppExt.h>
 
 /**
   Get BMC Lan IP Address

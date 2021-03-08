@@ -6,26 +6,25 @@
 
 **/
 
-#include <Base.h>
 #include <PiPei.h>
-#include <Uefi/UefiSpec.h>
-#include <Uefi/UefiBaseType.h>
-#include <Library/IoLib.h>
+#include <Uefi.h>
+
+#include <Guid/PlatformInfoHobGuid.h>
+#include <Library/AmpereCpuLib.h>
 #include <Library/ArmLib.h>
 #include <Library/DebugLib.h>
-#include <Library/PeimEntryPoint.h>
+#include <Library/HobLib.h>
+#include <Library/IoLib.h>
+#include <Library/NVParamLib.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/PeiServicesTablePointerLib.h>
+#include <Library/PeimEntryPoint.h>
 #include <Library/PrintLib.h>
-#include <Library/SerialPortLib.h>
-#include <Library/HobLib.h>
-#include <Library/NVParamLib.h>
 #include <Library/SMProLib.h>
-#include <Library/AmpereCpuLib.h>
-#include <Guid/PlatformInfoHobGuid.h>
-#include <PlatformInfoHob.h>
+#include <Library/SerialPortLib.h>
 #include <NVParamDef.h>
 #include <Pcie.h>
+#include <PlatformInfoHob.h>
 
 #define MAX_PRINT_LEN       512
 

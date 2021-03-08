@@ -7,15 +7,16 @@
 **/
 
 #include <Uefi.h>
+
 #include <Library/ArmLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/NVParamLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/NVParamLib.h>
-#include <Protocol/MmCommunication.h>
 #include <MmLib.h>
+#include <Protocol/MmCommunication.h>
 
 
 STATIC EFI_MM_COMMUNICATION_PROTOCOL *mNVParamMmCommProtocol = NULL;

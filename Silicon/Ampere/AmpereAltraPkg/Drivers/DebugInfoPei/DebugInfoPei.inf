@@ -20,19 +20,19 @@
 [Packages]
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
+  AmpereCpuLib
+  ArmLib
+  HobLib
+  NVParamLib
   PeimEntryPoint
   PrintLib
   SerialPortLib
-  NVParamLib
-  HobLib
-  ArmLib
-  AmpereCpuLib
 
 [Guids]
   gPlatformHobV2Guid

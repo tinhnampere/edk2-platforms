@@ -28,27 +28,27 @@
   Tcg2Pei.c
 
 [Packages]
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
   SecurityPkg/SecurityPkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
 
 [LibraryClasses]
-  HobLib
-  PeimEntryPoint
-  PeiServicesLib
   BaseMemoryLib
   DebugLib
-  Tpm2CommandLib
-  PeiServicesTablePointerLib
-  Tpm2DeviceLib
   HashLib
-  PerformanceLib
+  HobLib
+  HobLib
   MemoryAllocationLib
+  PeiServicesLib
+  PeiServicesTablePointerLib
+  PeimEntryPoint
+  PerformanceLib
+  PrintLib
   ReportStatusCodeLib
   ResetSystemLib
-  PrintLib
-  HobLib
+  Tpm2CommandLib
+  Tpm2DeviceLib
 
 [Guids]
   gTcgEventEntryHobGuid                                                ## PRODUCES               ## HOB

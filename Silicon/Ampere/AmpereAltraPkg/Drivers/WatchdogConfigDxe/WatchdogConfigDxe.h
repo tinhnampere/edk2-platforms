@@ -10,7 +10,6 @@
 #define WATCHDOG_CONFIG_DXE_H_
 
 #include <Uefi.h>
-#include <NVParamDef.h>
 
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
@@ -20,7 +19,7 @@
 #include <Library/NVParamLib.h>
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-
+#include <NVParamDef.h>
 #include <Protocol/HiiConfigAccess.h>
 #include <Protocol/HiiConfigRouting.h>
 

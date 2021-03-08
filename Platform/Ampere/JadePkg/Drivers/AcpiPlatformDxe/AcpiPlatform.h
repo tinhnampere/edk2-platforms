@@ -10,27 +10,27 @@
 #define ACPI_PLATFORM_H_
 
 #include <Uefi.h>
-#include <IndustryStandard/Acpi63.h>
+
+#include <AcpiHeader.h>
 #include <Guid/EventGroup.h>
 #include <Guid/PlatformInfoHobGuid.h>
-#include <Protocol/AcpiTable.h>
-#include <Library/UefiLib.h>
-#include <Library/AcpiLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/DevicePathLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/PrintLib.h>
-#include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
-#include <Library/HobLib.h>
-
+#include <IndustryStandard/Acpi63.h>
 #include <Library/AcpiHelperLib.h>
+#include <Library/AcpiLib.h>
 #include <Library/AmpereCpuLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/HobLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PcdLib.h>
+#include <Library/PrintLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Platform/Ac01.h>
 #include <PlatformInfoHob.h>
-#include <AcpiHeader.h>
+#include <Protocol/AcpiTable.h>
 
 EFI_STATUS
 AcpiPatchDsdtTable (

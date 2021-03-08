@@ -7,15 +7,16 @@
 **/
 
 #include <PiPei.h>
-#include <Uefi/UefiBaseType.h>
+
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
-#include <Library/PeimEntryPoint.h>
-#include <Library/PeiServicesLib.h>
 #include <Library/PcdLib.h>
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Library/PeiServicesLib.h>
+#include <Library/PeimEntryPoint.h>
 #include <PlatformInfoHob.h>
+#include <Uefi/UefiBaseType.h>
 
 VOID
 BuildPlatformInformationHob (

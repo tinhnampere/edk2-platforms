@@ -11,16 +11,16 @@
 /*
  * The protocols, PPI and GUID defintions for this module
  */
-#include <Ppi/MasterBootMode.h>
-#include <Ppi/BootInRecoveryMode.h>
 #include <Guid/MemoryTypeInformation.h>
 #include <Guid/PlatformInfoHobGuid.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
-#include <Library/PeimEntryPoint.h>
-#include <Library/PeiServicesLib.h>
 #include <Library/PcdLib.h>
+#include <Library/PeiServicesLib.h>
+#include <Library/PeimEntryPoint.h>
 #include <PlatformInfoHob.h>
+#include <Ppi/BootInRecoveryMode.h>
+#include <Ppi/MasterBootMode.h>
 
 EFI_STATUS
 EFIAPI

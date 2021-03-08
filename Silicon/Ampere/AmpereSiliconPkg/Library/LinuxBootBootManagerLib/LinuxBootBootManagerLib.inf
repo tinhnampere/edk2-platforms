@@ -36,12 +36,12 @@
 [LibraryClasses]
   BaseLib
   BaseMemoryLib
-  UefiLib
-  PrintLib
   DebugLib
   MemoryAllocationLib
+  PrintLib
   UefiBootManagerLib
   UefiBootServicesTableLib
+  UefiLib
   UefiRuntimeServicesTableLib
 
 [Pcd]

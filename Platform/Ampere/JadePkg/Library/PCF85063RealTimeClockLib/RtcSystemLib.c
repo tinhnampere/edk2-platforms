@@ -8,19 +8,21 @@
 
 #include <PiDxe.h>
 #include <Uefi.h>
-#include <Library/BaseLib.h>
-#include <Library/DebugLib.h>
-#include <Library/RealTimeClockLib.h>
-#include <Library/UefiLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiRuntimeLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/DxeServicesTableLib.h>
-#include <Protocol/RealTimeClock.h>
+
+#include <Guid/EventGroup.h>
 #include <Library/ArmGenericTimerCounterLib.h>
 #include <Library/ArmLib.h>
-#include <Guid/EventGroup.h>
+#include <Library/BaseLib.h>
+#include <Library/DebugLib.h>
+#include <Library/DxeServicesTableLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/RealTimeClockLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiRuntimeLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
+#include <Protocol/RealTimeClock.h>
+
 #include "PCF85063.h"
 
 #define TICKS_PER_SEC     (ArmGenericTimerGetTimerFreq ())

@@ -6,15 +6,16 @@
 
 **/
 
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/NVParamLib.h>
-#include <Library/HobLib.h>
-#include <Library/AmpereCpuLib.h>
-#include <Library/PcieBoardLib.h>
 #include <Guid/PlatformInfoHobGuid.h>
-#include <PlatformInfoHob.h>
-#include <Pcie.h>
+#include <Library/AmpereCpuLib.h>
+#include <Library/HobLib.h>
+#include <Library/NVParamLib.h>
+#include <Library/PcieBoardLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <NVParamDef.h>
+#include <Pcie.h>
+#include <PlatformInfoHob.h>
+
 #include "BoardPcieScreen.h"
 
 #ifndef BIT

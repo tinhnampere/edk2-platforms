@@ -20,19 +20,19 @@
 [Packages]
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   ArmLib
+  ArmPlatformLib
   ArmSmcLib
   DebugLib
   HobLib
-  PeiServicesLib
-  ArmPlatformLib
   PcdLib
+  PeiServicesLib
 
 [FixedPcd]
   gAmpereTokenSpaceGuid.PcdFvMainCoreBaseAddress

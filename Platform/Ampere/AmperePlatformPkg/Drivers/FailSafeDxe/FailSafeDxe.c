@@ -7,15 +7,16 @@
 **/
 
 #include <Uefi.h>
+
+#include <Guid/EventGroup.h>
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
-#include <Guid/EventGroup.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/UefiLib.h>
-#include <Library/NVParamLib.h>
 #include <Library/FailSafeLib.h>
+#include <Library/NVParamLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 
 #include "FailSafe.h"
 #include "Watchdog.h"

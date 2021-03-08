@@ -6,19 +6,19 @@
 
 **/
 
+#include <IndustryStandard/Pci22.h>
+#include <Library/ArmLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/UefiLib.h>
-#include <Library/IoLib.h>
-#include <Library/PciLib.h>
-#include <Library/PcdLib.h>
-#include <Library/TimerLib.h>
 #include <Library/DebugLib.h>
-#include <Library/ArmLib.h>
-#include <Library/PciHostBridgeLib.h>
+#include <Library/IoLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PcdLib.h>
 #include <Library/PciHostBridgeElink.h>
-#include <IndustryStandard/Pci22.h>
+#include <Library/PciHostBridgeLib.h>
+#include <Library/PciLib.h>
+#include <Library/TimerLib.h>
+#include <Library/UefiLib.h>
 
 #include "PciHostBridge.h"
 #include "PciRootBridgeIo.h"

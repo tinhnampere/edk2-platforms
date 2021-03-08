@@ -6,18 +6,17 @@
 
 **/
 
-#include <Base.h>
+#include <Uefi.h>
+
+#include <Library/AcpiPccLib.h>
 #include <Library/ArmLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/IoLib.h>
 #include <Library/PrintLib.h>
 #include <Library/TimerLib.h>
-#include <Uefi/UefiSpec.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Platform/Ac01.h>
-#include <Library/AcpiPccLib.h>
-#include <Uefi/UefiBaseType.h>
 
 #define PCC_NULL_MSG             0x0F000000
 

@@ -7,14 +7,15 @@
 **/
 
 #include <Uefi.h>
+
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/FlashLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/FlashLib.h>
-#include <Protocol/MmCommunication.h>
 #include <MmLib.h>
+#include <Protocol/MmCommunication.h>
 
 STATIC EFI_MM_COMMUNICATION_PROTOCOL   *mMmCommunicationProtocol = NULL;
 STATIC EFI_MM_COMM_REQUEST             *mCommBuffer              = NULL;

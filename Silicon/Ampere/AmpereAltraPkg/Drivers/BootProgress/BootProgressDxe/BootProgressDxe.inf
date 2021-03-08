@@ -29,21 +29,21 @@
   BootProgressDxe.c
 
 [Packages]
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  UefiDriverEntryPoint
-  UefiBootServicesTableLib
-  UefiRuntimeServicesTableLib
+  AmpereCpuLib
   BaseLib
   DebugLib
   DxeServicesLib
-  UefiLib
   SMProLib
-  AmpereCpuLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiRuntimeServicesTableLib
 
 [Protocols]
   gEfiRscHandlerProtocolGuid                    ## CONSUMES

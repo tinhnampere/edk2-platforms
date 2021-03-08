@@ -7,8 +7,8 @@
 **/
 
 #include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
 #include <Library/FlashLib.h>
+#include <Library/PcdLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeLib.h>
 #include <Protocol/FirmwareVolumeBlock.h>

@@ -7,20 +7,22 @@
 **/
 
 #include <Uefi.h>
+
 #include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/UefiLib.h>
+#include <Library/DwapbGpioLib.h>
+#include <Library/I2CLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PcdLib.h>
+#include <Library/SMProInterface.h>
+#include <Library/TimerLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
 #include <Library/UefiRuntimeLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/PcdLib.h>
-#include <Library/I2CLib.h>
-#include <Library/DwapbGpioLib.h>
-#include <Library/TimerLib.h>
-#include <Library/SMProInterface.h>
 #include <Platform/Ac01.h>
+
 #include "PCF85063.h"
 
 #define RTC_TIMEOUT_WAIT_ACCESS        100000 /* 100 miliseconds */

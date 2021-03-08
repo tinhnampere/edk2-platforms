@@ -22,20 +22,20 @@
   WatchdogConfigDxe.h
 
 [Packages]
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  UefiDriverEntryPoint
-  UefiBootServicesTableLib
-  PrintLib
   BaseLib
   DebugLib
+  DevicePathLib
   HiiLib
   NVParamLib
-  DevicePathLib
+  PrintLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
 
 [Guids]
   gPlatformManagerFormsetGuid

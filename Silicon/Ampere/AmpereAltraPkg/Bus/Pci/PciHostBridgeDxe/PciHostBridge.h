@@ -10,24 +10,22 @@
 #define PCI_HOST_BRIDGE_H_
 
 #include <IndustryStandard/Acpi.h>
-
-#include <Protocol/PciHostBridgeResourceAllocation.h>
-#include <Protocol/PciRootBridgeIo.h>
-#include <Protocol/Metronome.h>
-#include <Protocol/DevicePath.h>
-
 #include <Library/BaseLib.h>
-#include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/UefiLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/DxeServicesTableLib.h>
+#include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
+#include <Library/DxeServicesTableLib.h>
 #include <Library/IoLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PciHostBridgeLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
 #include <PciBus.h>
+#include <Protocol/DevicePath.h>
+#include <Protocol/Metronome.h>
+#include <Protocol/PciHostBridgeResourceAllocation.h>
+#include <Protocol/PciRootBridgeIo.h>
 
 #undef PCIE_PLATFORM_DEBUG
 #undef PCIE_MMIO_DEBUG

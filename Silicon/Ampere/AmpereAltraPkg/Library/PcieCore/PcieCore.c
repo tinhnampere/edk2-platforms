@@ -6,14 +6,15 @@
 
 **/
 
-#include <string.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/HobLib.h>
-#include <Library/PciePhyLib.h>
 #include <Library/PcieBoardLib.h>
+#include <Library/PciePhyLib.h>
 #include <Library/SMProLib.h>
-#include <Guid/PlatformInfoHobGuid.h>
 #include <PlatformInfoHob.h>
+#include <string.h>
+
 #include "PcieCore.h"
 #include "Pcie.h"
 

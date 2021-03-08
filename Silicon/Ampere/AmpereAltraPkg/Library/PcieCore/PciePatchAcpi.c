@@ -6,20 +6,22 @@
 
 **/
 
-#include <string.h>
+#include <AcpiHeader.h>
 #include <IndustryStandard/Acpi30.h>
+#include <IndustryStandard/IoRemappingTable.h>
+#include <Library/AcpiHelperLib.h>
+#include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/AcpiHelperLib.h>
-#include <Protocol/AcpiTable.h>
-#include <IndustryStandard/IoRemappingTable.h>
-#include <Library/PrintLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PcieBoardLib.h>
-#include <AcpiHeader.h>
+#include <Library/PrintLib.h>
+#include <Library/UefiBootServicesTableLib.h>
 #include <Platform/Ac01.h>
+#include <Protocol/AcpiTable.h>
+#include <string.h>
+
 #include "Pcie.h"
 #include "PcieCore.h"
 

@@ -7,18 +7,17 @@
 **/
 
 #include <Uefi.h>
-#include <Uefi/UefiSpec.h>
+
+#include <IndustryStandard/Acpi.h>
 #include <IndustryStandard/Acpi63.h>
 #include <IndustryStandard/AcpiAml.h>
-#include <IndustryStandard/Acpi.h>
+#include <Library/AcpiHelperLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
-#include <Protocol/AcpiTable.h>
 #include <Protocol/AcpiSystemDescriptionTable.h>
-
-#include <Library/AcpiHelperLib.h>
+#include <Protocol/AcpiTable.h>
 
 #define DSDT_SIGNATURE                  0x54445344
 #define FADT_SIGNATURE                  0x50434146

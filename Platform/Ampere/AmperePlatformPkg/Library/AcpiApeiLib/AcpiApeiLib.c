@@ -7,16 +7,17 @@
 **/
 
 #include <PiDxe.h>
+
+#include <Library/AcpiApeiLib.h>
+#include <Library/ArmLib.h>
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/UefiLib.h>
-#include <Library/AcpiApeiLib.h>
 #include <Library/IoLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/TimerLib.h>
-#include <Library/ArmLib.h>
+#include <Library/UefiLib.h>
 
 #define SMC_XRAS_PROXY_FUNC_ID  0xc300ff07
 

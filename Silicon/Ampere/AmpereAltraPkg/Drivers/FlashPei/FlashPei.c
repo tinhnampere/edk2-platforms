@@ -7,13 +7,14 @@
 **/
 
 #include <PiPei.h>
-#include <Uefi/UefiSpec.h>
+#include <Uefi.h>
+
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/MmCommunicationLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PeimEntryPoint.h>
-#include <Library/MmCommunicationLib.h>
 #include <MmLib.h>
 
 // Convert to string

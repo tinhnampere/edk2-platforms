@@ -12,14 +12,15 @@
 **/
 
 #include <PiDxe.h>
-#include <Protocol/ReportStatusCodeHandler.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/DxeServicesLib.h>
-#include <Pi/PiStatusCode.h>
-#include <Library/DebugLib.h>
-#include <Library/SMProLib.h>
-#include <Library/SMProInterface.h>
+
 #include <Library/AmpereCpuLib.h>
+#include <Library/DebugLib.h>
+#include <Library/DxeServicesLib.h>
+#include <Library/SMProInterface.h>
+#include <Library/SMProLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Pi/PiStatusCode.h>
+#include <Protocol/ReportStatusCodeHandler.h>
 
 #define BIOS_BOOT_PROG_SET     1
 #define BIOS_BOOT_STAGE        8

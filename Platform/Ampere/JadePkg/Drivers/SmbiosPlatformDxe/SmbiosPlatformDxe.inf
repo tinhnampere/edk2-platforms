@@ -15,28 +15,28 @@
   ENTRY_POINT                    = SmbiosPlatformDxeEntry
 
 [Sources]
-  SmbiosPlatformDxe.c
   IpmiFruInfo.c
+  SmbiosPlatformDxe.c
 
 [Packages]
-  MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
   ArmPkg/ArmPkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
-  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
   OutOfBandManagement/IpmiFeaturePkg/IpmiFeaturePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  HobLib
+  IpmiCommandLib
+  IpmiLib
+  MemoryAllocationLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
-  DebugLib
-  BaseLib
   UefiLib
-  MemoryAllocationLib
-  BaseMemoryLib
-  HobLib
-  IpmiLib
-  IpmiCommandLib
 
 [Protocols]
   gEfiSmbiosProtocolGuid                     ## CONSUMED

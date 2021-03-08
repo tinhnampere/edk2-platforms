@@ -19,36 +19,36 @@
   ENTRY_POINT                    = Tcg2ConfigDriverEntryPoint
 
 [Sources]
+  Tcg2Config.vfr
   Tcg2ConfigDriver.c
   Tcg2ConfigImpl.c
   Tcg2ConfigImpl.h
-  Tcg2Config.vfr
-  Tcg2ConfigStrings.uni
   Tcg2ConfigNvData.h
+  Tcg2ConfigStrings.uni
   Tcg2Internal.h
 
 [Packages]
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
   SecurityPkg/SecurityPkg.dec
 
 [LibraryClasses]
   BaseLib
   BaseMemoryLib
-  MemoryAllocationLib
-  UefiLib
-  UefiBootServicesTableLib
-  UefiRuntimeServicesTableLib
-  UefiDriverEntryPoint
-  UefiHiiServicesLib
   DebugLib
   HiiLib
+  IoLib
+  MemoryAllocationLib
   PcdLib
   PrintLib
-  Tpm2DeviceLib
-  Tpm2CommandLib
   Tcg2PhysicalPresenceLib
-  IoLib
+  Tpm2CommandLib
+  Tpm2DeviceLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiHiiServicesLib
+  UefiLib
+  UefiRuntimeServicesTableLib
 
 [Guids]
   ## PRODUCES           ## HII

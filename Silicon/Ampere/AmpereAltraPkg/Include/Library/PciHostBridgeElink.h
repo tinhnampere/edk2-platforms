@@ -9,6 +9,7 @@
 #ifndef PCI_HOST_BRIDGE_ELINK_H_
 #define PCI_HOST_BRIDGE_ELINK_H_
 
+#include <Library/PciHostBridgeLib.h>
 #include <Protocol/PciHostBridgeResourceAllocation.h>
 
 typedef BOOLEAN (PCI_CHECK_ROOT_BRIDGE_DISABLED_FUNC)(IN UINTN, IN UINTN);

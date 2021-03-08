@@ -6,8 +6,8 @@
 
 **/
 
-#include <Base.h>
-#include <Uefi/UefiBaseType.h>
+#include <Uefi.h>
+
 #include <Library/ArmLib.h>
 #include <Library/DebugLib.h>
 #include <Library/IoLib.h>

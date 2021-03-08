@@ -18,16 +18,16 @@
   AcpiHelperLib.c
 
 [Packages]
-  MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   BaseLib
   BaseMemoryLib
+  DebugLib
   UefiBootServicesTableLib
   UefiLib
-  DebugLib
 
 [Protocols]
   gEfiAcpiSdtProtocolGuid         ## COMSUMED

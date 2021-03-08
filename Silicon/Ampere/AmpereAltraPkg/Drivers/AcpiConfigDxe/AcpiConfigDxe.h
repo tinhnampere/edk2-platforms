@@ -10,30 +10,30 @@
 #define DRIVER_SAMPLE_H_
 
 #include <Uefi.h>
-#include <Protocol/HiiConfigRouting.h>
-#include <Protocol/HiiConfigAccess.h>
-#include <Guid/MdeModuleHii.h>
-#include <Library/DebugLib.h>
-#include <Library/BaseLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/UefiDriverEntryPoint.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/HiiLib.h>
-#include <Library/DevicePathLib.h>
-#include <Library/PrintLib.h>
-#include <Library/UefiLib.h>
-#include <Library/HobLib.h>
 
-#include <Protocol/AcpiSystemDescriptionTable.h>
+#include <AcpiNVDataStruc.h>
 #include <Guid/AcpiConfigFormSet.h>
+#include <Guid/MdeModuleHii.h>
 #include <Guid/PlatformInfoHobGuid.h>
 #include <Library/AcpiHelperLib.h>
-#include <Library/PMProLib.h>
 #include <Library/AcpiHelperLib.h>
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/HiiLib.h>
+#include <Library/HobLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PMProLib.h>
+#include <Library/PrintLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiDriverEntryPoint.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <PlatformInfoHob.h>
-#include <AcpiNVDataStruc.h>
+#include <Protocol/AcpiSystemDescriptionTable.h>
+#include <Protocol/HiiConfigAccess.h>
+#include <Protocol/HiiConfigRouting.h>
 
 //
 // This is the generated IFR binary data for each formset defined in VFR.

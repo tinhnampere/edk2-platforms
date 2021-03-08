@@ -18,18 +18,18 @@
   RamBlockIoDxe.c
 
 [Packages]
-  MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
   ArmPkg/ArmPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
 
 [LibraryClasses]
-  IoLib
   BaseLib
   DebugLib
-  UefiLib
-  UefiDriverEntryPoint
-  UefiBootServicesTableLib
   DxeServicesTableLib
+  IoLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
 
 [Guids]
 

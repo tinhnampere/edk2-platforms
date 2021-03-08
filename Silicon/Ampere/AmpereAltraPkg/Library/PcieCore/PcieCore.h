@@ -9,16 +9,17 @@
 #ifndef PCIECORE_H_
 #define PCIECORE_H_
 
+#include <IndustryStandard/Pci22.h>
 #include <Library/ArmLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/IoLib.h>
-#include <Library/PciLib.h>
 #include <Library/PcdLib.h>
+#include <Library/PciHostBridgeLib.h>
+#include <Library/PciLib.h>
 #include <Library/TimerLib.h>
 #include <Library/UefiLib.h>
-#include <IndustryStandard/Pci22.h>
-#include <Library/PciHostBridgeLib.h>
+
 #include "PcieCoreCapCfg.h"
 #include "Pcie.h"
 

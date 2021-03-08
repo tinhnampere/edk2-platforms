@@ -8,9 +8,10 @@
 
 #include <PiPei.h>
 #include <PiDxe.h>
+
 #include <Library/ArmLib.h>
-#include <Library/ArmSmcLib.h>
 #include <Library/ArmPlatformLib.h>
+#include <Library/ArmSmcLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>

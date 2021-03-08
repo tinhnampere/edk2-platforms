@@ -10,6 +10,7 @@
 #include <Uefi.h>
 
 #include <IndustryStandard/IpmiNetFnApp.h>
+#include <IpmiNetFnAppExt.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
@@ -18,7 +19,6 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Protocol/IpmiProtocol.h>
 
-#include <IpmiNetFnAppExt.h>
 #include "IpmiSsifDxe.h"
 
 //

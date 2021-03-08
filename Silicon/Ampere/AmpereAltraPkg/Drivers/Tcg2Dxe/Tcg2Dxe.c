@@ -9,41 +9,39 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 
 #include <PiDxe.h>
+
+#include <Guid/EventExitBootServiceFailed.h>
+#include <Guid/EventGroup.h>
+#include <Guid/GlobalVariable.h>
+#include <Guid/HobList.h>
+#include <Guid/ImageAuthentication.h>
+#include <Guid/TcgEventHob.h>
+#include <Guid/TpmInstance.h>
 #include <IndustryStandard/Acpi.h>
 #include <IndustryStandard/PeImage.h>
 #include <IndustryStandard/TcpaAcpi.h>
-
-#include <Guid/GlobalVariable.h>
-#include <Guid/HobList.h>
-#include <Guid/TcgEventHob.h>
-#include <Guid/EventGroup.h>
-#include <Guid/EventExitBootServiceFailed.h>
-#include <Guid/ImageAuthentication.h>
-#include <Guid/TpmInstance.h>
-
-#include <Protocol/DevicePath.h>
-#include <Protocol/VariableWrite.h>
-#include <Protocol/Tcg2Protocol.h>
-#include <Protocol/TrEEProtocol.h>
-#include <Protocol/ResetNotification.h>
-
-#include <Library/DebugLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/UefiDriverEntryPoint.h>
-#include <Library/HobLib.h>
-#include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/PrintLib.h>
-#include <Library/Tpm2CommandLib.h>
-#include <Library/PcdLib.h>
-#include <Library/UefiLib.h>
-#include <Library/Tpm2DeviceLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
 #include <Library/HashLib.h>
+#include <Library/HobLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PcdLib.h>
 #include <Library/PerformanceLib.h>
+#include <Library/PrintLib.h>
 #include <Library/ReportStatusCodeLib.h>
 #include <Library/Tcg2PhysicalPresenceLib.h>
+#include <Library/Tpm2CommandLib.h>
+#include <Library/Tpm2DeviceLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiDriverEntryPoint.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
+#include <Protocol/DevicePath.h>
+#include <Protocol/ResetNotification.h>
+#include <Protocol/Tcg2Protocol.h>
+#include <Protocol/TrEEProtocol.h>
+#include <Protocol/VariableWrite.h>
 
 #define PERF_ID_TCG2_DXE  0x3120
 
