@@ -160,11 +160,8 @@ AcpiInstallMadtProcessorNode (
   Size = sizeof (GiccTemplate);
   CopyMem (MadtProcessorEntryPointer, &GiccTemplate, Size);
 
-  SocketId = CpuId / (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM);
-  ClusterId = CpuId / PLATFORM_CPU_NUM_CORES_PER_CPM;
-  if (SocketId == 1) {
-    ClusterId -= PLATFORM_CPU_MAX_CPM;
-  }
+  SocketId = SOCKET_ID (CpuId);
+  ClusterId = CLUSTER_ID (CpuId);
 
   //
   // GICv2 compatibility mode is not supported.

@@ -80,7 +80,7 @@ AcpiPcctGetNumOfSocket (VOID)
 
   for (Index = 0; Index < NumberSockets; Index++) {
     Socket = &PlatformHob->ClusterEn[Index];
-    Count = sizeof (Socket->EnableMask) / sizeof (Socket->EnableMask[0]);
+    Count = ARRAY_SIZE (Socket->EnableMask);
     for (Index1 = 0; Index1 < Count; Index1++) {
       if (Socket->EnableMask[Index1] != 0) {
         NumberActiveSockets++;

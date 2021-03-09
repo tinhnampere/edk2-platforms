@@ -361,7 +361,7 @@ GetNumberActiveSockets (VOID)
 
   for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
     Socket = &PlatformHob->ClusterEn[Index];
-    Count = sizeof (Socket->EnableMask) / sizeof (Socket->EnableMask[0]);
+    Count = ARRAY_SIZE (Socket->EnableMask);
     for (Index1 = 0; Index1 < Count; Index1++) {
       if (Socket->EnableMask[Index1]) {
         NumberActiveSockets++;
@@ -402,7 +402,7 @@ GetNumberActiveCPMsPerSocket (
 
   NumberCPMs = 0;
   Socket = &PlatformHob->ClusterEn[SocketId];
-  Count = sizeof (Socket->EnableMask) / sizeof (Socket->EnableMask[0]);
+  Count = ARRAY_SIZE (Socket->EnableMask);
   for (Index = 0; Index < Count; Index++) {
     Val32 = Socket->EnableMask[Index];
     while (Val32) {
@@ -603,8 +603,11 @@ IsCpuEnabled (
 {
   PlatformClusterEn    *Socket;
   PlatformInfoHob_V2   *PlatformHob;
-  UINT32               SocketId = CpuId / (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM);
-  UINT32               ClusterId = (CpuId / PLATFORM_CPU_NUM_CORES_PER_CPM) % PLATFORM_CPU_MAX_CPM;
+  UINT32               SocketId;
+  UINT32               ClusterId;
+
+  SocketId = SOCKET_ID (CpuId);
+  ClusterId = CLUSTER_ID (CpuId);
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {

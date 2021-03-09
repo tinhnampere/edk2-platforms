@@ -34,6 +34,9 @@
 #define SUBNUMA_MODE_HEMISPHERE        1
 #define SUBNUMA_MODE_QUADRANT          2
 
+#define SOCKET_ID(CpuId)               ((CpuId) / (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM))
+#define CLUSTER_ID(CpuId)              (((CpuId) / PLATFORM_CPU_NUM_CORES_PER_CPM) % PLATFORM_CPU_MAX_CPM)
+
 /**
   Get the SubNUMA mode.
 

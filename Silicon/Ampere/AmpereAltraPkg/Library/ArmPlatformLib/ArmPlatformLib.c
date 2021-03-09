@@ -10,6 +10,7 @@
 
 #include <Guid/PlatformInfoHobGuid.h>
 #include <Library/ArmLib.h>
+#include <Library/AmpereCpuLib.h>
 #include <Library/ArmPlatformLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -28,17 +29,15 @@ ARM_CORE_INFO mArmPlatformMpCoreInfoTable[PLATFORM_CPU_MAX_NUM_CORES];
 
 STATIC
 UINTN
-ArmPlatformCpuIsEnabled(PlatformInfoHob_V2 *Hob, UINT32 Cpu)
+ArmPlatformCpuIsEnabled(PlatformInfoHob_V2 *Hob, UINT32 CpuId)
 {
-  UINT32                        ClusterID = Cpu / PLATFORM_CPU_NUM_CORES_PER_CPM;
-  UINT32                        SocketID;
+  UINT32                        ClusterId;
+  UINT32                        SocketId;
 
-  SocketID = Cpu / (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM);
-  if (SocketID == 1) {
-    ClusterID -= PLATFORM_CPU_MAX_CPM;
-  }
+  SocketId = SOCKET_ID (CpuId);
+  ClusterId = CLUSTER_ID (CpuId);
 
-  if (Hob->ClusterEn[SocketID].EnableMask[ClusterID / 32] & (1 << (ClusterID % 32))) {
+  if (Hob->ClusterEn[SocketId].EnableMask[ClusterId / 32] & (1 << (ClusterId % 32))) {
     return 1;
   }
 
@@ -135,11 +134,8 @@ PrePeiCoreGetMpCoreInfo (
     if (ArmPlatformCpuIsEnabled(PlatformHob, Index) == 0) {
       continue;
     }
-    SocketId = Index / (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM);
-    ClusterId = Index / PLATFORM_CPU_NUM_CORES_PER_CPM;
-    if (SocketId) {
-      ClusterId -= PLATFORM_CPU_MAX_CPM;
-    }
+    SocketId = SOCKET_ID (Index);
+    ClusterId = CLUSTER_ID (Index);
     mArmPlatformMpCoreInfoTable[mArmPlatformCoreCount].ClusterId = SocketId;
     mArmPlatformMpCoreInfoTable[mArmPlatformCoreCount].CoreId =
       (ClusterId << 8) | (Index % PLATFORM_CPU_NUM_CORES_PER_CPM);
