@@ -14,7 +14,7 @@
 //
 // Max BMC channel
 //
-#define BMC_MAX_CHANNEL 0xF  // 4 bits
+#define BMC_MAX_CHANNEL 0xF // 4 bits
 
 /**
   Get BMC Lan IP Address

@@ -9,12 +9,12 @@
 #include <Uefi.h>
 
 #include <Library/ArmLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/IoLib.h>
 #include <Library/PrintLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/TimerLib.h>
 #include <Library/SMProInterface.h>
+#include <Library/TimerLib.h>
 #include <Platform/Ac01.h>
 
 /* Mailbox Door Bell */
@@ -143,8 +143,9 @@ SMProDBWr (
   /* Wait for ack */
   while ((MmioRead32 (MsgReg + IntStatOffset) & DB_ACK_MASK) == 0) {
     MicroSecondDelay (MB_POLL_INTERVALus);
-    if (--TimeoutCnt == 0)
+    if (--TimeoutCnt == 0) {
       return EFI_TIMEOUT;
+    }
   }
 
   /* Clear iPP ack */
@@ -161,11 +162,11 @@ SMProRegRd (
   UINT32 *Value
   )
 {
-  UINT32      Data0 = (UINT32) Addr;
-  UINT32      Upper = (UINT32) (Addr >> 32);
-  UINT32      Data1 = 0;
-  UINT32      Msg;
-  EFI_STATUS  Status;
+  UINT32     Data0 = (UINT32)Addr;
+  UINT32     Upper = (UINT32)(Addr >> 32);
+  UINT32     Data1 = 0;
+  UINT32     Msg;
+  EFI_STATUS Status;
 
   Msg = IPP_ENCODE_DEBUG_MSG (
           IPP_DBG_SUBTYPE_REGREAD,
@@ -214,8 +215,8 @@ SMProRegWr (
   UINT32 Value
   )
 {
-  UINT32 Data0 = (UINT32) Addr;
-  UINT32 Upper = (UINT32) (Addr >> 32);
+  UINT32 Data0 = (UINT32)Addr;
+  UINT32 Upper = (UINT32)(Addr >> 32);
   UINT32 Data1 = Value;
   UINT32 Msg;
 

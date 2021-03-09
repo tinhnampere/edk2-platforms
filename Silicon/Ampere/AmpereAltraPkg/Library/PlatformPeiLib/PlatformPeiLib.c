@@ -6,8 +6,8 @@
 
 **/
 
-#include <PiPei.h>
 #include <PiDxe.h>
+#include <PiPei.h>
 
 #include <Library/ArmLib.h>
 #include <Library/ArmPlatformLib.h>
@@ -26,8 +26,8 @@ PlatformPeim (
   VOID
   )
 {
-  UINT64    FvMainBase;
-  UINT32    FvMainSize;
+  UINT64 FvMainBase;
+  UINT32 FvMainSize;
 
   ASSERT (FixedPcdGet32 (PcdFvMainCoreSize) != 0);
 
@@ -36,12 +36,12 @@ PlatformPeim (
   FvMainSize = FixedPcdGet32 (PcdFvMainCoreSize);
   BuildFvHob (FvMainBase, FvMainSize);
   PeiServicesInstallFvInfoPpi (
-      &(((EFI_FIRMWARE_VOLUME_HEADER*) ReadUnaligned64 (&FvMainBase)))->FileSystemGuid,
-      (VOID*) (UINTN) ReadUnaligned64 (&FvMainBase),
-      FvMainSize,
-      NULL,
-      NULL
-      );
+    &(((EFI_FIRMWARE_VOLUME_HEADER *)ReadUnaligned64 (&FvMainBase)))->FileSystemGuid,
+    (VOID *)(UINTN)ReadUnaligned64 (&FvMainBase),
+    FvMainSize,
+    NULL,
+    NULL
+    );
 
   return EFI_SUCCESS;
 }

@@ -9,7 +9,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "Tcg2ConfigImpl.h"
 
-extern TPM_INSTANCE_ID  mTpmInstanceId[TPM_DEVICE_MAX + 1];
+extern TPM_INSTANCE_ID mTpmInstanceId[TPM_DEVICE_MAX + 1];
 
 /**
   Update default PCR banks data.
@@ -21,15 +21,15 @@ extern TPM_INSTANCE_ID  mTpmInstanceId[TPM_DEVICE_MAX + 1];
 **/
 VOID
 UpdateDefaultPCRBanks (
-  IN VOID                           *HiiPackage,
-  IN UINTN                          HiiPackageSize,
-  IN UINT32                         PCRBanks
+  IN VOID   *HiiPackage,
+  IN UINTN  HiiPackageSize,
+  IN UINT32 PCRBanks
   )
 {
-  EFI_HII_PACKAGE_HEADER        *HiiPackageHeader;
-  EFI_IFR_OP_HEADER             *IfrOpCodeHeader;
-  EFI_IFR_CHECKBOX              *IfrCheckBox;
-  EFI_IFR_DEFAULT               *IfrDefault;
+  EFI_HII_PACKAGE_HEADER *HiiPackageHeader;
+  EFI_IFR_OP_HEADER      *IfrOpCodeHeader;
+  EFI_IFR_CHECKBOX       *IfrCheckBox;
+  EFI_IFR_DEFAULT        *IfrDefault;
 
   HiiPackageHeader = (EFI_HII_PACKAGE_HEADER *)HiiPackage;
 
@@ -52,7 +52,7 @@ UpdateDefaultPCRBanks (
     }
     break;
   }
-  return ;
+  return;
 }
 
 /**
@@ -68,16 +68,16 @@ UpdateDefaultPCRBanks (
 **/
 VOID
 InitializeTcg2VersionInfo (
-  IN TCG2_CONFIG_PRIVATE_DATA   *PrivateData
+  IN TCG2_CONFIG_PRIVATE_DATA *PrivateData
   )
 {
-  EFI_STATUS                    Status;
-  EFI_STRING                    ConfigRequestHdr;
-  BOOLEAN                       ActionFlag;
-  TCG2_VERSION                  Tcg2Version;
-  UINTN                         DataSize;
-  UINT64                        PcdTcg2PpiVersion;
-  UINT8                         PcdTpm2AcpiTableRev;
+  EFI_STATUS   Status;
+  EFI_STRING   ConfigRequestHdr;
+  BOOLEAN      ActionFlag;
+  TCG2_VERSION Tcg2Version;
+  UINTN        DataSize;
+  UINT64       PcdTcg2PpiVersion;
+  UINT8        PcdTpm2AcpiTableRev;
 
   //
   // Get the PCD value before initializing efi varstore configuration data.
@@ -86,7 +86,7 @@ InitializeTcg2VersionInfo (
   CopyMem (
     &PcdTcg2PpiVersion,
     PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer),
-    AsciiStrSize ((CHAR8 *) PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer))
+    AsciiStrSize ((CHAR8 *)PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer))
     );
 
   PcdTpm2AcpiTableRev = PcdGet8 (PcdTpm2AcpiTableRev);
@@ -190,7 +190,7 @@ InitializeTcg2VersionInfo (
   CopyMem (
     &PcdTcg2PpiVersion,
     PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer),
-    AsciiStrSize ((CHAR8 *) PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer))
+    AsciiStrSize ((CHAR8 *)PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer))
     );
   if (PcdTcg2PpiVersion != Tcg2Version.PpiVersion) {
     DEBUG ((DEBUG_WARN, "WARNING: PcdTcgPhysicalPresenceInterfaceVer is not DynamicHii type and does not map to TCG2_VERSION.PpiVersion\n"));
@@ -198,15 +198,17 @@ InitializeTcg2VersionInfo (
   }
 
   switch (PcdTcg2PpiVersion) {
-    case TCG2_PPI_VERSION_1_2:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_PPI_VERSION_STATE_CONTENT), L"1.2", NULL);
-      break;
-    case TCG2_PPI_VERSION_1_3:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_PPI_VERSION_STATE_CONTENT), L"1.3", NULL);
-      break;
-    default:
-      ASSERT (FALSE);
-      break;
+  case TCG2_PPI_VERSION_1_2:
+    HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_PPI_VERSION_STATE_CONTENT), L"1.2", NULL);
+    break;
+
+  case TCG2_PPI_VERSION_1_3:
+    HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_PPI_VERSION_STATE_CONTENT), L"1.3", NULL);
+    break;
+
+  default:
+    ASSERT (FALSE);
+    break;
   }
 
   //
@@ -221,15 +223,17 @@ InitializeTcg2VersionInfo (
   }
 
   switch (PcdTpm2AcpiTableRev) {
-    case EFI_TPM2_ACPI_TABLE_REVISION_3:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_ACPI_REVISION_STATE_CONTENT), L"Rev 3", NULL);
-      break;
-    case EFI_TPM2_ACPI_TABLE_REVISION_4:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_ACPI_REVISION_STATE_CONTENT), L"Rev 4", NULL);
-      break;
-    default:
-      ASSERT (FALSE);
-      break;
+  case EFI_TPM2_ACPI_TABLE_REVISION_3:
+    HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_ACPI_REVISION_STATE_CONTENT), L"Rev 3", NULL);
+    break;
+
+  case EFI_TPM2_ACPI_TABLE_REVISION_4:
+    HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_ACPI_REVISION_STATE_CONTENT), L"Rev 4", NULL);
+    break;
+
+  default:
+    ASSERT (FALSE);
+    break;
   }
 }
 
@@ -248,17 +252,17 @@ InitializeTcg2VersionInfo (
 EFI_STATUS
 EFIAPI
 Tcg2ConfigDriverEntryPoint (
-  IN EFI_HANDLE          ImageHandle,
-  IN EFI_SYSTEM_TABLE    *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS                    Status;
-  TCG2_CONFIG_PRIVATE_DATA      *PrivateData;
-  TCG2_CONFIGURATION            Tcg2Configuration;
-  UINTN                         Index;
-  UINTN                         DataSize;
-  UINT32                        CurrentActivePCRBanks;
-  UINT8                         TpmDeviceDetected;
+  EFI_STATUS               Status;
+  TCG2_CONFIG_PRIVATE_DATA *PrivateData;
+  TCG2_CONFIGURATION       Tcg2Configuration;
+  UINTN                    Index;
+  UINTN                    DataSize;
+  UINT32                   CurrentActivePCRBanks;
+  UINT8                    TpmDeviceDetected;
 
   Status = gBS->OpenProtocol (
                   ImageHandle,
@@ -289,17 +293,17 @@ Tcg2ConfigDriverEntryPoint (
                   );
   ASSERT_EFI_ERROR (Status);
 
-  Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **) &PrivateData->Tcg2Protocol);
+  Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **)&PrivateData->Tcg2Protocol);
   ASSERT_EFI_ERROR (Status);
 
-  PrivateData->ProtocolCapability.Size = sizeof(PrivateData->ProtocolCapability);
+  PrivateData->ProtocolCapability.Size = sizeof (PrivateData->ProtocolCapability);
   Status = PrivateData->Tcg2Protocol->GetCapability (
                                         PrivateData->Tcg2Protocol,
                                         &PrivateData->ProtocolCapability
                                         );
   ASSERT_EFI_ERROR (Status);
 
-  DataSize = sizeof(Tcg2Configuration);
+  DataSize = sizeof (Tcg2Configuration);
   Status = gRT->GetVariable (
                   TCG2_STORAGE_NAME,
                   &gTcg2ConfigFormSetGuid,
@@ -328,14 +332,14 @@ Tcg2ConfigDriverEntryPoint (
   Status = PrivateData->Tcg2Protocol->GetActivePcrBanks (PrivateData->Tcg2Protocol, &CurrentActivePCRBanks);
   ASSERT_EFI_ERROR (Status);
   PrivateData->PCRBanksDesired = CurrentActivePCRBanks;
-  UpdateDefaultPCRBanks (Tcg2ConfigBin + sizeof(UINT32), ReadUnaligned32((UINT32 *)Tcg2ConfigBin) - sizeof(UINT32), CurrentActivePCRBanks);
+  UpdateDefaultPCRBanks (Tcg2ConfigBin + sizeof (UINT32), ReadUnaligned32 ((UINT32 *)Tcg2ConfigBin) - sizeof (UINT32), CurrentActivePCRBanks);
 
   //
   // Sync data from PCD to variable.
   //
   TpmDeviceDetected = TPM_DEVICE_NULL;
-  for (Index = 0; Index < sizeof(mTpmInstanceId)/sizeof(mTpmInstanceId[0]); Index++) {
-    if (CompareGuid (PcdGetPtr(PcdTpmInstanceGuid), &mTpmInstanceId[Index].TpmInstanceGuid)) {
+  for (Index = 0; Index < sizeof (mTpmInstanceId)/sizeof (mTpmInstanceId[0]); Index++) {
+    if (CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &mTpmInstanceId[Index].TpmInstanceGuid)) {
       TpmDeviceDetected = mTpmInstanceId[Index].TpmDevice;
       break;
     }
@@ -351,7 +355,7 @@ Tcg2ConfigDriverEntryPoint (
                   TCG2_STORAGE_NAME,
                   &gTcg2ConfigFormSetGuid,
                   EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                  sizeof(Tcg2Configuration),
+                  sizeof (Tcg2Configuration),
                   &Tcg2Configuration
                   );
   if (EFI_ERROR (Status)) {

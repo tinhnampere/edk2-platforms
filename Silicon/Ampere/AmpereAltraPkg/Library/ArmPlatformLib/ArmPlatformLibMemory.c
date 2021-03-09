@@ -36,26 +36,26 @@
 **/
 VOID
 ArmPlatformGetVirtualMemoryMap (
-  OUT ARM_MEMORY_REGION_DESCRIPTOR** VirtualMemoryMap
+  OUT ARM_MEMORY_REGION_DESCRIPTOR **VirtualMemoryMap
   )
 {
-  UINTN                         Index = 0;
-  ARM_MEMORY_REGION_DESCRIPTOR  *VirtualMemoryTable;
-  UINT32                        NumRegion;
-  UINTN                         Count;
-  VOID                          *Hob;
-  PlatformInfoHob_V2            *PlatformHob;
+  UINTN                        Index = 0;
+  ARM_MEMORY_REGION_DESCRIPTOR *VirtualMemoryTable;
+  UINT32                       NumRegion;
+  UINTN                        Count;
+  VOID                         *Hob;
+  PlatformInfoHob_V2           *PlatformHob;
 
   Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (!Hob) {
     return;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
 
-  ASSERT(VirtualMemoryMap != NULL);
+  ASSERT (VirtualMemoryMap != NULL);
 
-  VirtualMemoryTable = (ARM_MEMORY_REGION_DESCRIPTOR*)AllocatePages(EFI_SIZE_TO_PAGES (sizeof(ARM_MEMORY_REGION_DESCRIPTOR) * MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS));
+  VirtualMemoryTable = (ARM_MEMORY_REGION_DESCRIPTOR *)AllocatePages (EFI_SIZE_TO_PAGES (sizeof (ARM_MEMORY_REGION_DESCRIPTOR) * MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS));
   if (VirtualMemoryTable == NULL) {
     return;
   }
@@ -72,7 +72,8 @@ ArmPlatformGetVirtualMemoryMap (
    *  - Device memory
    */
   if (PlatformHob->ClusterEn[1].EnableMask[0] ||
-      PlatformHob->ClusterEn[1].EnableMask[1]) {
+      PlatformHob->ClusterEn[1].EnableMask[1])
+  {
     VirtualMemoryTable[++Index].PhysicalBase = 0x500000000000ULL;
     VirtualMemoryTable[Index].VirtualBase  = 0x500000000000ULL;
     VirtualMemoryTable[Index].Length       = 0x101000000ULL;
@@ -398,9 +399,9 @@ ArmPlatformGetVirtualMemoryMap (
   VirtualMemoryTable[++Index].PhysicalBase = 0;
   VirtualMemoryTable[Index].VirtualBase  = 0;
   VirtualMemoryTable[Index].Length       = 0;
-  VirtualMemoryTable[Index].Attributes   = (ARM_MEMORY_REGION_ATTRIBUTES) 0;
+  VirtualMemoryTable[Index].Attributes   = (ARM_MEMORY_REGION_ATTRIBUTES)0;
 
-  ASSERT((Index + 1) <= MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS);
+  ASSERT ((Index + 1) <= MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS);
 
   *VirtualMemoryMap = VirtualMemoryTable;
 }

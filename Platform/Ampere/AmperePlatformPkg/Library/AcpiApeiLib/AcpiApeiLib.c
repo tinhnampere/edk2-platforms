@@ -38,7 +38,9 @@ STATIC RAS_APEI_BERT_ES *FwRasApeiBertLookUpTable = NULL;
  * AcpiApeiLibAllocateReservedMemForErrorSourceTable
  */
 STATIC EFI_STATUS
-AcpiApeiLibAllocateReservedMemForErrorSourceTable (VOID)
+AcpiApeiLibAllocateReservedMemForErrorSourceTable (
+  VOID
+  )
 {
   UINT32 Length;
 
@@ -46,7 +48,7 @@ AcpiApeiLibAllocateReservedMemForErrorSourceTable (VOID)
    * Allocate reserved memory for each Error Source and initialize it.
    */
   Length = sizeof (RAS_APEI_GHES_ES);
-  FwRasApeiGhesLookUpTable = (RAS_APEI_GHES_ES *) AllocateReservedZeroPool (Length);
+  FwRasApeiGhesLookUpTable = (RAS_APEI_GHES_ES *)AllocateReservedZeroPool (Length);
   if (FwRasApeiGhesLookUpTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -62,7 +64,7 @@ AcpiApeiLibAllocateReservedMemForErrorSourceTable (VOID)
    * Source (let's call it the BERT Error Source).
    */
   Length = sizeof (RAS_APEI_BERT_ES);
-  FwRasApeiBertLookUpTable = (RAS_APEI_BERT_ES *) AllocateReservedZeroPool (Length);
+  FwRasApeiBertLookUpTable = (RAS_APEI_BERT_ES *)AllocateReservedZeroPool (Length);
   if (FwRasApeiBertLookUpTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -77,7 +79,9 @@ AcpiApeiLibAllocateReservedMemForErrorSourceTable (VOID)
  * AcpiApeiLibFreeReservedMem
  */
 STATIC VOID
-AcpiApeiLibFreeReservedMem (VOID)
+AcpiApeiLibFreeReservedMem (
+  VOID
+  )
 {
   if (FwRasApeiGhesLookUpTable != NULL) {
     FreePool (FwRasApeiGhesLookUpTable);
@@ -94,7 +98,9 @@ AcpiApeiLibFreeReservedMem (VOID)
  * AcpiApeiLibAllocateReservedMem
  */
 STATIC EFI_STATUS
-AcpiApeiLibAllocateReservedMem(VOID)
+AcpiApeiLibAllocateReservedMem (
+  VOID
+  )
 {
   EFI_STATUS Status;
 
@@ -103,9 +109,11 @@ AcpiApeiLibAllocateReservedMem(VOID)
    */
   Status = AcpiApeiLibAllocateReservedMemForErrorSourceTable ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR,
+    DEBUG ((
+      DEBUG_ERROR,
       "%a: Allocating APEI Reserved Memory for ErrorSourceTable failed\n",
-      __FUNCTION__));
+      __FUNCTION__
+      ));
     goto Error;
   }
 
@@ -119,13 +127,14 @@ Error:
 /*
  * AcpiApeiLibGetGhesData
  */
-RAS_APEI_GHES_DATA*
+RAS_APEI_GHES_DATA *
 AcpiApeiLibGetGhesData (
   IN UINT32 ErrorSourceIdx
   )
 {
-  if ((FwRasApeiGhesLookUpTable == NULL) || (ErrorSourceIdx >= ACPI_APEI_GHES_MAX))
+  if ((FwRasApeiGhesLookUpTable == NULL) || (ErrorSourceIdx >= ACPI_APEI_GHES_MAX)) {
     return NULL;
+  }
 
   return &FwRasApeiGhesLookUpTable->ErrorSourceData[ErrorSourceIdx];
 }
@@ -133,11 +142,14 @@ AcpiApeiLibGetGhesData (
 /*
  * AcpiApeiLibGetBertData
  */
-RAS_APEI_BERT_DATA*
-AcpiApeiLibGetBertData (VOID)
+RAS_APEI_BERT_DATA *
+AcpiApeiLibGetBertData (
+  VOID
+  )
 {
-  if (FwRasApeiBertLookUpTable == NULL)
+  if (FwRasApeiBertLookUpTable == NULL) {
     return NULL;
+  }
 
   return &FwRasApeiBertLookUpTable->ErrorSourceData[0];
 }
@@ -146,7 +158,9 @@ AcpiApeiLibGetBertData (VOID)
  * AcpiApeiLibInit
  */
 EFI_STATUS
-AcpiApeiLibInit (VOID)
+AcpiApeiLibInit (
+  VOID
+  )
 {
   EFI_STATUS Status;
 
@@ -212,8 +226,8 @@ AcpiApeiLibEnable (
     /*
      * Setup firmware (e.g. ATF) for RAS_APEI module support
      */
-    ApeiGhesPtr = (UINT64) FwRasApeiGhesLookUpTable;
-    ApeiBertPtr = (UINT64) FwRasApeiBertLookUpTable;
+    ApeiGhesPtr = (UINT64)FwRasApeiGhesLookUpTable;
+    ApeiBertPtr = (UINT64)FwRasApeiBertLookUpTable;
 
     if (FwErrorDetection == APEI_ERROR_DETECTION_ATF) {
       AcpiApeiLibAtfApeiSetup (ApeiGhesPtr, ApeiBertPtr);

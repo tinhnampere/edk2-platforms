@@ -99,8 +99,9 @@ PMProDBWr (
   /* Wait for ack */
   while ((MmioRead32 (MsgReg + IntStatOffset) & DB_ACK_MASK) == 0) {
     MicroSecondDelay (MB_POLL_INTERVALus);
-    if (--TimeoutCnt == 0)
+    if (--TimeoutCnt == 0) {
       return EFI_TIMEOUT;
+    }
   }
 
   /* Clear iPP ack */

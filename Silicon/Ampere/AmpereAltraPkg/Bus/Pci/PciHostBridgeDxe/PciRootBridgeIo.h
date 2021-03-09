@@ -44,13 +44,13 @@
 EFI_STATUS
 EFIAPI
 RootBridgeIoPollMem (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN  UINT64                                 Address,
-  IN  UINT64                                 Mask,
-  IN  UINT64                                 Value,
-  IN  UINT64                                 Delay,
-  OUT UINT64                                 *Result
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                Address,
+  IN  UINT64                                Mask,
+  IN  UINT64                                Value,
+  IN  UINT64                                Delay,
+  OUT UINT64                                *Result
   );
 
 /**
@@ -85,13 +85,13 @@ RootBridgeIoPollMem (
 EFI_STATUS
 EFIAPI
 RootBridgeIoPollIo (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN  UINT64                                 Address,
-  IN  UINT64                                 Mask,
-  IN  UINT64                                 Value,
-  IN  UINT64                                 Delay,
-  OUT UINT64                                 *Result
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                Address,
+  IN  UINT64                                Mask,
+  IN  UINT64                                Value,
+  IN  UINT64                                Delay,
+  OUT UINT64                                *Result
   );
 
 /**
@@ -120,11 +120,11 @@ RootBridgeIoPollIo (
 EFI_STATUS
 EFIAPI
 RootBridgeIoMemRead (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN  UINT64                                 Address,
-  IN  UINTN                                  Count,
-  OUT VOID                                   *Buffer
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                Address,
+  IN  UINTN                                 Count,
+  OUT VOID                                  *Buffer
   );
 
 /**
@@ -152,11 +152,11 @@ RootBridgeIoMemRead (
 EFI_STATUS
 EFIAPI
 RootBridgeIoMemWrite (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 Address,
-  IN     UINTN                                  Count,
-  IN     VOID                                   *Buffer
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                                Address,
+  IN UINTN                                 Count,
+  IN VOID                                  *Buffer
   );
 
 /**
@@ -180,11 +180,11 @@ RootBridgeIoMemWrite (
 EFI_STATUS
 EFIAPI
 RootBridgeIoIoRead (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 UserAddress,
-  IN     UINTN                                  Count,
-  OUT    VOID                                   *UserBuffer
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                UserAddress,
+  IN  UINTN                                 Count,
+  OUT VOID                                  *UserBuffer
   );
 
 /**
@@ -208,11 +208,11 @@ RootBridgeIoIoRead (
 EFI_STATUS
 EFIAPI
 RootBridgeIoIoWrite (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 UserAddress,
-  IN     UINTN                                  Count,
-  IN     VOID                                   *UserBuffer
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                                UserAddress,
+  IN UINTN                                 Count,
+  IN VOID                                  *UserBuffer
   );
 
 /**
@@ -242,11 +242,11 @@ RootBridgeIoIoWrite (
 EFI_STATUS
 EFIAPI
 RootBridgeIoCopyMem (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 DestAddress,
-  IN     UINT64                                 SrcAddress,
-  IN     UINTN                                  Count
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                                DestAddress,
+  IN UINT64                                SrcAddress,
+  IN UINTN                                 Count
   );
 
 /**
@@ -275,11 +275,11 @@ RootBridgeIoCopyMem (
 EFI_STATUS
 EFIAPI
 RootBridgeIoPciRead (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 Address,
-  IN     UINTN                                  Count,
-  OUT    VOID                                   *Buffer
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                Address,
+  IN  UINTN                                 Count,
+  OUT VOID                                  *Buffer
   );
 
 /**
@@ -308,11 +308,11 @@ RootBridgeIoPciRead (
 EFI_STATUS
 EFIAPI
 RootBridgeIoPciWrite (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 Address,
-  IN     UINTN                                  Count,
-  IN     VOID                                   *Buffer
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                                Address,
+  IN UINTN                                 Count,
+  IN VOID                                  *Buffer
   );
 
 /**
@@ -344,12 +344,12 @@ RootBridgeIoPciWrite (
 EFI_STATUS
 EFIAPI
 RootBridgeIoMap (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL            *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_OPERATION  Operation,
-  IN     VOID                                       *HostAddress,
-  IN OUT UINTN                                      *NumberOfBytes,
-  OUT    EFI_PHYSICAL_ADDRESS                       *DeviceAddress,
-  OUT    VOID                                       **Mapping
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL           *This,
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_OPERATION Operation,
+  IN     VOID                                      *HostAddress,
+  IN OUT UINTN                                     *NumberOfBytes,
+  OUT    EFI_PHYSICAL_ADDRESS                      *DeviceAddress,
+  OUT    VOID                                      **Mapping
   );
 
 /**
@@ -371,8 +371,8 @@ RootBridgeIoMap (
 EFI_STATUS
 EFIAPI
 RootBridgeIoUnmap (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  IN  VOID                             *Mapping
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  IN VOID                            *Mapping
   );
 
 /**
@@ -399,12 +399,12 @@ RootBridgeIoUnmap (
 EFI_STATUS
 EFIAPI
 RootBridgeIoAllocateBuffer (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  IN  EFI_ALLOCATE_TYPE                Type,
-  IN  EFI_MEMORY_TYPE                  MemoryType,
-  IN  UINTN                            Pages,
-  OUT VOID                             **HostAddress,
-  IN  UINT64                           Attributes
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  IN  EFI_ALLOCATE_TYPE               Type,
+  IN  EFI_MEMORY_TYPE                 MemoryType,
+  IN  UINTN                           Pages,
+  OUT VOID                            **HostAddress,
+  IN  UINT64                          Attributes
   );
 
 /**
@@ -424,9 +424,9 @@ RootBridgeIoAllocateBuffer (
 EFI_STATUS
 EFIAPI
 RootBridgeIoFreeBuffer (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  IN  UINTN                            Pages,
-  OUT VOID                             *HostAddress
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  IN  UINTN                           Pages,
+  OUT VOID                            *HostAddress
   );
 
 /**
@@ -451,7 +451,7 @@ RootBridgeIoFreeBuffer (
 EFI_STATUS
 EFIAPI
 RootBridgeIoFlush (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This
   );
 
 /**
@@ -477,9 +477,9 @@ RootBridgeIoFlush (
 EFI_STATUS
 EFIAPI
 RootBridgeIoGetAttributes (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  OUT UINT64                           *Supported,
-  OUT UINT64                           *Attributes
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  OUT UINT64                          *Supported,
+  OUT UINT64                          *Attributes
   );
 
 /**
@@ -515,10 +515,10 @@ RootBridgeIoGetAttributes (
 EFI_STATUS
 EFIAPI
 RootBridgeIoSetAttributes (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  IN     UINT64                           Attributes,
-  IN OUT UINT64                           *ResourceBase,
-  IN OUT UINT64                           *ResourceLength
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  IN     UINT64                          Attributes,
+  IN OUT UINT64                          *ResourceBase,
+  IN OUT UINT64                          *ResourceLength
   );
 
 /**
@@ -547,8 +547,8 @@ RootBridgeIoSetAttributes (
 EFI_STATUS
 EFIAPI
 RootBridgeIoConfiguration (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  OUT    VOID                             **Resources
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  OUT VOID                            **Resources
   );
 
 #endif /* PCI_ROOT_BRIDGE_IO_H_ */

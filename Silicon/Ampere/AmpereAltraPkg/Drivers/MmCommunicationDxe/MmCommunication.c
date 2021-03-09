@@ -27,15 +27,15 @@
 // Address, Length of the pre-allocated buffer for communication with the secure
 // world.
 //
-STATIC ARM_MEMORY_REGION_DESCRIPTOR  mNsCommBuffMemRegion;
+STATIC ARM_MEMORY_REGION_DESCRIPTOR mNsCommBuffMemRegion;
 
 // Notification event when virtual address map is set.
-STATIC EFI_EVENT  mSetVirtualAddressMapEvent;
+STATIC EFI_EVENT mSetVirtualAddressMapEvent;
 
 //
 // Handle to install the MM Communication Protocol
 //
-STATIC EFI_HANDLE  mMmCommunicateHandle;
+STATIC EFI_HANDLE mMmCommunicateHandle;
 
 /**
   Communicates with a registered handler.
@@ -70,15 +70,15 @@ STATIC
 EFI_STATUS
 EFIAPI
 MmCommunicationCommunicate (
-  IN CONST EFI_MM_COMMUNICATION_PROTOCOL  *This,
-  IN OUT VOID                             *CommBuffer,
-  IN OUT UINTN                            *CommSize OPTIONAL
+  IN CONST EFI_MM_COMMUNICATION_PROTOCOL *This,
+  IN OUT   VOID                          *CommBuffer,
+  IN OUT   UINTN                         *CommSize OPTIONAL
   )
 {
-  EFI_MM_COMMUNICATE_HEADER   *CommunicateHeader;
-  ARM_SMC_ARGS                CommunicateSmcArgs;
-  EFI_STATUS                  Status;
-  UINTN                       BufferSize;
+  EFI_MM_COMMUNICATE_HEADER *CommunicateHeader;
+  ARM_SMC_ARGS              CommunicateSmcArgs;
+  EFI_STATUS                Status;
+  UINTN                     BufferSize;
 
   Status = EFI_ACCESS_DENIED;
   BufferSize = 0;
@@ -106,7 +106,8 @@ MmCommunicationCommunicate (
     // This case can be used by the consumer of this driver to find out the
     // max size that can be used for allocating CommBuffer.
     if ((*CommSize == 0) ||
-        (*CommSize > mNsCommBuffMemRegion.Length)) {
+        (*CommSize > mNsCommBuffMemRegion.Length))
+    {
       *CommSize = mNsCommBuffMemRegion.Length;
       return EFI_BAD_BUFFER_SIZE;
     }
@@ -114,7 +115,7 @@ MmCommunicationCommunicate (
     // CommSize must match MessageLength + sizeof (EFI_MM_COMMUNICATE_HEADER);
     //
     if (*CommSize != BufferSize) {
-        return EFI_INVALID_PARAMETER;
+      return EFI_INVALID_PARAMETER;
     }
   }
 
@@ -123,7 +124,8 @@ MmCommunicationCommunicate (
   // environment then return the expected size.
   //
   if ((BufferSize == 0) ||
-      (BufferSize > mNsCommBuffMemRegion.Length)) {
+      (BufferSize > mNsCommBuffMemRegion.Length))
+  {
     CommunicateHeader->MessageLength = mNsCommBuffMemRegion.Length -
                                        sizeof (CommunicateHeader->HeaderGuid) -
                                        sizeof (CommunicateHeader->MessageLength);
@@ -192,7 +194,7 @@ MmCommunicationCommunicate (
 //
 // MM Communication Protocol instance
 //
-EFI_MM_COMMUNICATION_PROTOCOL  mMmCommunication = {
+EFI_MM_COMMUNICATION_PROTOCOL mMmCommunication = {
   MmCommunicationCommunicate
 };
 
@@ -214,19 +216,23 @@ STATIC
 VOID
 EFIAPI
 NotifySetVirtualAddressMap (
-  IN EFI_EVENT  Event,
+  IN EFI_EVENT Event,
   IN VOID      *Context
   )
 {
-  EFI_STATUS  Status;
+  EFI_STATUS Status;
 
   Status = gRT->ConvertPointer (
                   EFI_OPTIONAL_PTR,
                   (VOID **)&mNsCommBuffMemRegion.VirtualBase
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Unable to convert MM runtime pointer. Status:0x%r\n",
-            __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Unable to convert MM runtime pointer. Status:0x%r\n",
+      __FUNCTION__,
+      Status
+      ));
   }
 
 }
@@ -247,20 +253,32 @@ GetMmCompatibility ()
   MmVersion = MmVersionArgs.Arg0;
 
   if ((MM_MAJOR_VER (MmVersion) == MM_CALLER_MAJOR_VER) &&
-      (MM_MINOR_VER (MmVersion) >= MM_CALLER_MINOR_VER)) {
-    DEBUG ((DEBUG_INFO, "MM Version: Major=0x%x, Minor=0x%x\n",
-            MM_MAJOR_VER (MmVersion), MM_MINOR_VER (MmVersion)));
+      (MM_MINOR_VER (MmVersion) >= MM_CALLER_MINOR_VER))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "MM Version: Major=0x%x, Minor=0x%x\n",
+      MM_MAJOR_VER (MmVersion),
+      MM_MINOR_VER (MmVersion)
+      ));
     Status = EFI_SUCCESS;
   } else {
-    DEBUG ((DEBUG_ERROR, "Incompatible MM Versions.\n Current Version: Major=0x%x, Minor=0x%x.\n Expected: Major=0x%x, Minor>=0x%x.\n",
-            MM_MAJOR_VER (MmVersion), MM_MINOR_VER (MmVersion), MM_CALLER_MAJOR_VER, MM_CALLER_MINOR_VER));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Incompatible MM Versions.\n Current Version: Major=0x%x, "
+      "Minor=0x%x.\n Expected: Major=0x%x, Minor>=0x%x.\n",
+      MM_MAJOR_VER (MmVersion),
+      MM_MINOR_VER (MmVersion),
+      MM_CALLER_MAJOR_VER,
+      MM_CALLER_MINOR_VER
+      ));
     Status = EFI_UNSUPPORTED;
   }
 
   return Status;
 }
 
-STATIC EFI_GUID* CONST mGuidedEventGuid[] = {
+STATIC EFI_GUID *CONST mGuidedEventGuid[] = {
   &gEfiEndOfDxeEventGroupGuid,
   &gEfiEventExitBootServicesGuid,
   &gEfiEventReadyToBootGuid,
@@ -279,12 +297,12 @@ STATIC
 VOID
 EFIAPI
 MmGuidedEventNotify (
-  IN EFI_EVENT  Event,
-  IN VOID       *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
-  EFI_MM_COMMUNICATE_HEADER   Header;
-  UINTN                       Size;
+  EFI_MM_COMMUNICATE_HEADER Header;
+  UINTN                     Size;
 
   //
   // Use Guid to initialize EFI_SMM_COMMUNICATE_HEADER structure
@@ -314,12 +332,12 @@ MmGuidedEventNotify (
 EFI_STATUS
 EFIAPI
 MmCommunicationInitialize (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS                 Status;
-  UINTN                      Index;
+  EFI_STATUS Status;
+  UINTN      Index;
 
   // Check if we can make the MM call
   Status = GetMmCompatibility ();
@@ -346,8 +364,11 @@ MmCommunicationInitialize (
                   EFI_MEMORY_RUNTIME
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to add MM-NS Buffer Memory Space\n",
-            __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Failed to add MM-NS Buffer Memory Space\n",
+      __FUNCTION__
+      ));
     goto ReturnErrorStatus;
   }
 
@@ -357,8 +378,11 @@ MmCommunicationInitialize (
                   EFI_MEMORY_WB | EFI_MEMORY_XP | EFI_MEMORY_RUNTIME
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to set MM-NS Buffer Memory attributes\n",
-            __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Failed to set MM-NS Buffer Memory attributes\n",
+      __FUNCTION__
+      ));
     goto CleanAddedMemorySpace;
   }
 #endif
@@ -371,8 +395,11 @@ MmCommunicationInitialize (
                   &mMmCommunication
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to install MM communication protocol\n",
-            __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Failed to install MM communication protocol\n",
+      __FUNCTION__
+      ));
     goto CleanAddedMemorySpace;
   }
 
@@ -389,9 +416,14 @@ MmCommunicationInitialize (
   ASSERT_EFI_ERROR (Status);
 
   for (Index = 0; Index < ARRAY_SIZE (mGuidedEventGuid); Index++) {
-    Status = gBS->CreateEventEx (EVT_NOTIFY_SIGNAL, TPL_CALLBACK,
-                    MmGuidedEventNotify, mGuidedEventGuid[Index],
-                    mGuidedEventGuid[Index], &mGuidedEvent[Index]);
+    Status = gBS->CreateEventEx (
+                    EVT_NOTIFY_SIGNAL,
+                    TPL_CALLBACK,
+                    MmGuidedEventNotify,
+                    mGuidedEventGuid[Index],
+                    mGuidedEventGuid[Index],
+                    &mGuidedEvent[Index]
+                    );
     ASSERT_EFI_ERROR (Status);
     if (EFI_ERROR (Status)) {
       while (Index-- > 0) {

@@ -17,8 +17,8 @@
 VOID
 EFIAPI
 RecoveryCallback (
-  IN EFI_EVENT  Event,
-  IN VOID       *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
   DEBUG ((DEBUG_INFO, "%a: Do recover boot options\n", __FUNCTION__));
@@ -32,12 +32,12 @@ RecoveryCallback (
 EFI_STATUS
 EFIAPI
 BootOptionsRecoveryDxeEntry (
-  IN EFI_HANDLE             ImageHandle,
-  IN EFI_SYSTEM_TABLE       *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS    Status;
-  EFI_EVENT     EndOfDxeEvent;
+  EFI_STATUS Status;
+  EFI_EVENT  EndOfDxeEvent;
 
   DEBUG ((DEBUG_INFO, "%a: NVRAM Clear is %d\n", PcdGetBool (PcdNvramErased), __FUNCTION__));
 

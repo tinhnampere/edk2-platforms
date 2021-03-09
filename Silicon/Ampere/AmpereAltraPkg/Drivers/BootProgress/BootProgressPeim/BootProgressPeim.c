@@ -42,59 +42,59 @@ enum BOOT_PROGRESS_STATE {
 };
 
 UINT32 PeiProgressStatusCode[] = {
-  //Regular boot
-  (EFI_SOFTWARE_PEI_CORE | EFI_SW_PEI_CORE_PC_ENTRY_POINT),     // PEI Core is started
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_POWER_ON_INIT),// Pre-memory CPU initialization is started
-  (EFI_SOFTWARE_PEI_SERVICE | EFI_SW_PS_PC_INSTALL_PEI_MEMORY), // Memory Installed
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_PC_INIT_BEGIN),   // CPU post-memory initialization is started
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_CACHE_INIT),// CPU post-memory initialization. Cache initialization
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_AP_INIT),   // CPU post-memory initialization. Application Processor(s) (AP) initialization
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_BSP_SELECT),// CPU post-memory initialization. Boot Strap Processor (BSP) selection
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_SMM_INIT),  // CPU post-memory initialization. System Management Mode (SMM) initialization
+  // Regular boot
+  (EFI_SOFTWARE_PEI_CORE | EFI_SW_PEI_CORE_PC_ENTRY_POINT),         // PEI Core is started
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_POWER_ON_INIT), // Pre-memory CPU initialization is started
+  (EFI_SOFTWARE_PEI_SERVICE | EFI_SW_PS_PC_INSTALL_PEI_MEMORY),     // Memory Installed
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_PC_INIT_BEGIN),       // CPU post-memory initialization is started
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_CACHE_INIT),    // CPU post-memory initialization. Cache initialization
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_AP_INIT),       // CPU post-memory initialization. Application Processor(s) (AP) initialization
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_BSP_SELECT),    // CPU post-memory initialization. Boot Strap Processor (BSP) selection
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_PC_SMM_INIT),      // CPU post-memory initialization. System Management Mode (SMM) initialization
   // DXE IPL is started
   (EFI_SOFTWARE_PEI_CORE | EFI_SW_PEI_CORE_PC_HANDOFF_TO_NEXT), // DXE IPL is started
   // DXE Core is started
   (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_PC_ENTRY_POINT),     // DXE Core is started
-   //Recovery
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_RECOVERY_AUTO), // Recovery condition triggered by firmware (Auto recovery)
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_RECOVERY_USER), // Recovery condition triggered by user (Forced recovery)
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_RECOVERY_BEGIN),// Recovery process started
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_CAPSULE_LOAD),  // Recovery firmware image is found
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_CAPSULE_START), // Recovery firmware image is loaded
-  //S3
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_S3_BOOT_SCRIPT),//S3 Boot Script execution
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_OS_WAKE),       //OS S3 wake vector call
-  0 // Must end with 0
+  // Recovery
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_RECOVERY_AUTO),  // Recovery condition triggered by firmware (Auto recovery)
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_RECOVERY_USER),  // Recovery condition triggered by user (Forced recovery)
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_RECOVERY_BEGIN), // Recovery process started
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_CAPSULE_LOAD),   // Recovery firmware image is found
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_CAPSULE_START),  // Recovery firmware image is loaded
+  // S3
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_S3_BOOT_SCRIPT), // S3 Boot Script execution
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_OS_WAKE),        // OS S3 wake vector call
+  0                                                         // Must end with 0
 };
 
 UINT32 PeiErrorStatusCode[] = {
-  //Regular boot
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_INVALID_TYPE), // Memory initialization error. Invalid memory type
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_INVALID_SPEED),// Memory initialization error. Incompatible memory speed
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_SPD_FAIL),     // Memory initialization error. SPD reading has failed
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_INVALID_SIZE), // Memory initialization error. Invalid memory size
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_MISMATCH),     // Memory initialization error. Memory modules do not match
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_NONE_DETECTED),// Memory initialization error. No usable memory detected
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_NONE_USEFUL),  // Memory initialization error. No usable memory detected
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC),        // Unspecified memory initialization error.
-  (EFI_SOFTWARE_PEI_CORE | EFI_SW_PEI_CORE_EC_MEMORY_NOT_INSTALLED),// Memory not installed
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_INVALID_TYPE),  // Invalid CPU type
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_INVALID_SPEED), // Invalid CPU Speed
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_MISMATCH),      // CPU mismatch
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_SELF_TEST),     // CPU self test failed
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_CACHE),         // possible CPU cache error
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_INTERNAL),      // Internal CPU error
-  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_EC_NON_SPECIFIC),     // Internal CPU error
-  (EFI_SOFTWARE_PEI_SERVICE | EFI_SW_PS_EC_RESET_NOT_AVAILABLE),    // reset PPI is not available
-  //Recovery
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_RECOVERY_PPI_NOT_FOUND), // Recovery PPI is not available
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_NO_RECOVERY_CAPSULE),    // Recovery capsule is not found
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_INVALID_CAPSULE_DESCRIPTOR),//Invalid recovery capsule
-  //S3 Resume
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_S3_RESUME_FAIL),    // S3 Resume Failed
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_S3_RESUME_PPI_NOT_FOUND),// S3 Resume PPI not found
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_S3_BOOT_SCRIPT_ERROR),   // S3 Resume Boot Script Error
-  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_S3_OS_WAKE_ERROR),       // S3 OS Wake Error
+  // Regular boot
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_INVALID_TYPE),       // Memory initialization error. Invalid memory type
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_INVALID_SPEED),      // Memory initialization error. Incompatible memory speed
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_SPD_FAIL),           // Memory initialization error. SPD reading has failed
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_INVALID_SIZE),       // Memory initialization error. Invalid memory size
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_MISMATCH),           // Memory initialization error. Memory modules do not match
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_NONE_DETECTED),      // Memory initialization error. No usable memory detected
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_NONE_USEFUL),        // Memory initialization error. No usable memory detected
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC),              // Unspecified memory initialization error.
+  (EFI_SOFTWARE_PEI_CORE | EFI_SW_PEI_CORE_EC_MEMORY_NOT_INSTALLED), // Memory not installed
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_INVALID_TYPE),   // Invalid CPU type
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_INVALID_SPEED),  // Invalid CPU Speed
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_MISMATCH),       // CPU mismatch
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_SELF_TEST),      // CPU self test failed
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_CACHE),          // possible CPU cache error
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_INTERNAL),       // Internal CPU error
+  (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_EC_NON_SPECIFIC),      // Internal CPU error
+  (EFI_SOFTWARE_PEI_SERVICE | EFI_SW_PS_EC_RESET_NOT_AVAILABLE),     // reset PPI is not available
+  // Recovery
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_RECOVERY_PPI_NOT_FOUND),     // Recovery PPI is not available
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_NO_RECOVERY_CAPSULE),        // Recovery capsule is not found
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_INVALID_CAPSULE_DESCRIPTOR), // Invalid recovery capsule
+  // S3 Resume
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_S3_RESUME_FAIL),     // S3 Resume Failed
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_S3_RESUME_PPI_NOT_FOUND), // S3 Resume PPI not found
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_S3_BOOT_SCRIPT_ERROR),    // S3 Resume Boot Script Error
+  (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_S3_OS_WAKE_ERROR),        // S3 OS Wake Error
   0
 };
 
@@ -136,10 +136,10 @@ BootProgressSendSMpro (
   IN UINT32 Data2
   )
 {
-  UINT32      NumSockets;
-  UINT32      Msg;
-  EFI_STATUS  Status;
-  UINT32      Index;
+  UINT32     NumSockets;
+  UINT32     Msg;
+  EFI_STATUS Status;
+  UINT32     Index;
 
   Msg = SMPRO_BOOT_PROCESS_ENCODE_MSG (BIOS_BOOT_PROG_SET, BIOS_BOOT_STAGE);
 
@@ -177,16 +177,16 @@ BootProgressSendSMpro (
 EFI_STATUS
 EFIAPI
 BootProgressListenerPei (
-  IN CONST  EFI_PEI_SERVICES        **PeiServices,
-  IN        EFI_STATUS_CODE_TYPE    CodeType,
-  IN        EFI_STATUS_CODE_VALUE   Value,
-  IN        UINT32                  Instance,
-  IN CONST  EFI_GUID                *CallerId,
-  IN CONST  EFI_STATUS_CODE_DATA    *Data
+  IN       CONST EFI_PEI_SERVICES **PeiServices,
+  IN       EFI_STATUS_CODE_TYPE   CodeType,
+  IN       EFI_STATUS_CODE_VALUE  Value,
+  IN       UINT32                 Instance,
+  IN CONST EFI_GUID               *CallerId,
+  IN CONST EFI_STATUS_CODE_DATA   *Data
   )
 {
-  BOOLEAN   IsProgress = FALSE;
-  BOOLEAN   IsError = FALSE;
+  BOOLEAN IsProgress = FALSE;
+  BOOLEAN IsError = FALSE;
 
   if ((CodeType & EFI_STATUS_CODE_TYPE_MASK) == EFI_PROGRESS_CODE) {
     IsProgress = StatusCodeFilter (PeiProgressStatusCode, Value);
@@ -201,9 +201,14 @@ BootProgressListenerPei (
     return EFI_SUCCESS;
   }
 
-  DEBUG ((DEBUG_INFO,
+  DEBUG ((
+    DEBUG_INFO,
     "BootProgressPeim: CodeType=0x%X Value=0x%X Instance=0x%X CallerIdGuid=%g Data=%p\n",
-    CodeType, Value, Instance, CallerId, Data
+    CodeType,
+    Value,
+    Instance,
+    CallerId,
+    Data
     ));
 
   if (IsError) {
@@ -211,9 +216,9 @@ BootProgressListenerPei (
   }
 
   BootProgressSendSMpro (
-    (((UINT32) mBootstate << BOOT_STATE_SHIFT) & BOOT_STATE_MASK) | (((UINT32) Value << STATUS_SHIFT) & STATUS_MASK),
+    (((UINT32)mBootstate << BOOT_STATE_SHIFT) & BOOT_STATE_MASK) | (((UINT32)Value << STATUS_SHIFT) & STATUS_MASK),
     Value >> STATUS_SHIFT
-  );
+    );
 
   return EFI_SUCCESS;
 }
@@ -232,18 +237,18 @@ BootProgressListenerPei (
 EFI_STATUS
 EFIAPI
 BootProgressPeiEntryPoint (
-  IN       EFI_PEI_FILE_HANDLE  FileHandle,
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
-  EFI_STATUS               Status;
-  EFI_PEI_RSC_HANDLER_PPI  *RscHandler;
+  EFI_STATUS              Status;
+  EFI_PEI_RSC_HANDLER_PPI *RscHandler;
 
   Status = PeiServicesLocatePpi (
              &gEfiPeiRscHandlerPpiGuid,
              0,
              NULL,
-             (VOID **) &RscHandler
+             (VOID **)&RscHandler
              );
   ASSERT_EFI_ERROR (Status);
 

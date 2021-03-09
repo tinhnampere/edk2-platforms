@@ -39,14 +39,14 @@
 // This data array is ready to be used as input of HiiAddPackages() to
 // create a packagelist (which contains Form packages, String packages, etc).
 //
-extern UINT8  VfrBin[];
+extern UINT8 VfrBin[];
 
 //
 // This is the generated String package data for all .UNI files.
 // This data array is ready to be used as input of HiiAddPackages() to
 // create a packagelist (which contains Form packages, String packages, etc).
 //
-extern UINT8  MemInfoDxeStrings[];
+extern UINT8 MemInfoDxeStrings[];
 
 enum DDR_ECC_MODE {
   ECC_DISABLE = 0,
@@ -99,7 +99,7 @@ enum DDR_ERROR_CTRL_MODE_FI {
 #define DDR_DEFAULT_REFRESH2X_MODE        0
 #define DDR_DEFAULT_NVDIMM_MODE_SEL       3
 
-#define DDR_FGR_MODE_GET(Value)           ((Value) & 0x3)  /* Bit 0, 1 */
+#define DDR_FGR_MODE_GET(Value)           ((Value) & 0x3) /* Bit 0, 1 */
 #define DDR_FGR_MODE_SET(Dst, Src)        do { Dst = (((Dst) & ~0x3) | ((Src) & 0x3)); } while (0)
 
 #define DDR_REFRESH_2X_GET(Value)         ((Value) & 0x10000) >> 16 /* Bit 16 only */
@@ -109,25 +109,25 @@ enum DDR_ERROR_CTRL_MODE_FI {
 #define DDR_NVDIMM_MODE_SEL_VALID_BIT    BIT31
 
 typedef struct {
-  UINTN                                 Signature;
+  UINTN Signature;
 
-  EFI_HANDLE                            DriverHandle;
-  EFI_HII_HANDLE                        HiiHandle;
-  MEM_INFO_VARSTORE_DATA                VarStoreConfig;
+  EFI_HANDLE             DriverHandle;
+  EFI_HII_HANDLE         HiiHandle;
+  MEM_INFO_VARSTORE_DATA VarStoreConfig;
 
   //
   // Consumed protocol
   //
-  EFI_HII_DATABASE_PROTOCOL             *HiiDatabase;
-  EFI_HII_STRING_PROTOCOL               *HiiString;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL       *HiiConfigRouting;
-  EFI_CONFIG_KEYWORD_HANDLER_PROTOCOL   *HiiKeywordHandler;
-  EFI_FORM_BROWSER2_PROTOCOL            *FormBrowser2;
+  EFI_HII_DATABASE_PROTOCOL           *HiiDatabase;
+  EFI_HII_STRING_PROTOCOL             *HiiString;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL     *HiiConfigRouting;
+  EFI_CONFIG_KEYWORD_HANDLER_PROTOCOL *HiiKeywordHandler;
+  EFI_FORM_BROWSER2_PROTOCOL          *FormBrowser2;
 
   //
   // Produced protocol
   //
-  EFI_HII_CONFIG_ACCESS_PROTOCOL        ConfigAccess;
+  EFI_HII_CONFIG_ACCESS_PROTOCOL ConfigAccess;
 } MEM_INFO_SCREEN_PRIVATE_DATA;
 
 #define MEM_INFO_SCREEN_PRIVATE_FROM_THIS(a)  CR (a, MEM_INFO_SCREEN_PRIVATE_DATA, ConfigAccess, MEM_INFO_SCREEN_PRIVATE_DATA_SIGNATURE)
@@ -138,16 +138,16 @@ typedef struct {
 /// HII specific Vendor Device Path definition.
 ///
 typedef struct {
-  VENDOR_DEVICE_PATH             VendorDevicePath;
-  EFI_DEVICE_PATH_PROTOCOL       End;
+  VENDOR_DEVICE_PATH       VendorDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL End;
 } HII_VENDOR_DEVICE_PATH;
 
 #pragma pack()
 
 EFI_STATUS
 MemInfoScreenInitialize (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   );
 
 EFI_STATUS
@@ -157,13 +157,12 @@ MemInfoScreenUnload (
 
 EFI_STATUS
 MemInfoNvparamGet (
-  OUT    MEM_INFO_VARSTORE_DATA      *VarStoreConfig
+  OUT MEM_INFO_VARSTORE_DATA *VarStoreConfig
   );
 
 EFI_STATUS
 MemInfoNvparamSet (
-  IN     MEM_INFO_VARSTORE_DATA      *VarStoreConfig
+  IN MEM_INFO_VARSTORE_DATA *VarStoreConfig
   );
 
 #endif /* MEM_INFO_SCREEN_H_ */
-

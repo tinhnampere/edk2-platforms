@@ -27,26 +27,31 @@
 EFI_STATUS
 EFIAPI
 SystemFirmwareDescriptorPeimEntry (
-  IN EFI_PEI_FILE_HANDLE     FileHandle,
-  IN CONST EFI_PEI_SERVICES  **PeiServices
+  IN EFI_PEI_FILE_HANDLE    FileHandle,
+  IN CONST EFI_PEI_SERVICES **PeiServices
   )
 {
-  EFI_STATUS                              Status;
-  EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR  *Descriptor;
-  UINTN                                   Size;
-  UINTN                                   Index;
-  UINT32                                  AuthenticationStatus;
+  EFI_STATUS                             Status;
+  EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR *Descriptor;
+  UINTN                                  Size;
+  UINTN                                  Index;
+  UINT32                                 AuthenticationStatus;
 
   //
   // Search RAW section.
   //
   Index = 0;
   while (TRUE) {
-    Status = PeiServicesFfsFindSectionData3(EFI_SECTION_RAW, Index, FileHandle,
-               (VOID **)&Descriptor, &AuthenticationStatus);
-    if (EFI_ERROR(Status)) {
+    Status = PeiServicesFfsFindSectionData3 (
+               EFI_SECTION_RAW,
+               Index,
+               FileHandle,
+               (VOID **)&Descriptor,
+               &AuthenticationStatus
+               );
+    if (EFI_ERROR (Status)) {
       // Should not happen, must something wrong in FDF.
-      ASSERT(FALSE);
+      ASSERT (FALSE);
       return EFI_NOT_FOUND;
     }
     if (Descriptor->Signature == EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR_SIGNATURE) {
@@ -55,8 +60,11 @@ SystemFirmwareDescriptorPeimEntry (
     Index++;
   }
 
-  DEBUG((DEBUG_INFO, "EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR size - 0x%x\n",
-    Descriptor->Length));
+  DEBUG ((
+    DEBUG_INFO,
+    "EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR size - 0x%x\n",
+    Descriptor->Length
+    ));
 
   Size = Descriptor->Length;
   PcdSetPtrS (PcdEdkiiSystemFirmwareImageDescriptor, &Size, Descriptor);

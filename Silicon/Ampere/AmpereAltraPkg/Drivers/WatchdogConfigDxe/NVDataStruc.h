@@ -14,13 +14,13 @@
 #define WATCHDOG_CONFIG_VARSTORE_ID       0x1234
 #define WATCHDOG_CONFIG_FORM_ID           0x1235
 
-#define NWDT_UEFI_DEFAULT_VALUE           300  // 5 minutes
-#define SWDT_DEFAULT_VALUE                300  // 5 minutes
+#define NWDT_UEFI_DEFAULT_VALUE           300 // 5 minutes
+#define SWDT_DEFAULT_VALUE                300 // 5 minutes
 
 #pragma pack(1)
 typedef struct {
-    UINT32 WatchdogTimerUEFITimeout;
-    UINT32 SecureWatchdogTimerTimeout;
+  UINT32 WatchdogTimerUEFITimeout;
+  UINT32 SecureWatchdogTimerTimeout;
 } WATCHDOG_CONFIG_VARSTORE_DATA;
 #pragma pack()
 

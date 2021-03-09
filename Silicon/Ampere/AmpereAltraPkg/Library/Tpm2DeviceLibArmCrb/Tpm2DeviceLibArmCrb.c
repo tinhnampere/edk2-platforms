@@ -31,10 +31,10 @@
 EFI_STATUS
 EFIAPI
 Tpm2SubmitCommand (
-  IN UINT32            InputParameterBlockSize,
-  IN UINT8             *InputParameterBlock,
-  IN OUT UINT32        *OutputParameterBlockSize,
-  IN UINT8             *OutputParameterBlock
+  IN     UINT32 InputParameterBlockSize,
+  IN     UINT8  *InputParameterBlock,
+  IN OUT UINT32 *OutputParameterBlockSize,
+  IN     UINT8  *OutputParameterBlock
   )
 {
   return Tpm2ArmCrbSubmitCommand (
@@ -73,7 +73,7 @@ Tpm2RequestUseTpm (
 EFI_STATUS
 EFIAPI
 Tpm2RegisterTpm2DeviceLib (
-  IN TPM2_DEVICE_INTERFACE   *Tpm2Device
+  IN TPM2_DEVICE_INTERFACE *Tpm2Device
   )
 {
   return EFI_UNSUPPORTED;
@@ -91,12 +91,14 @@ Tpm2DeviceLibConstructor (
   VOID
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS Status;
 
   Status = Tpm2ArmCrbInitialize ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a:%d Failed to initialize TPM2 CRB interface \n",
-      __FUNCTION__, __LINE__
+    DEBUG ((
+      DEBUG_ERROR, "%a:%d Failed to initialize TPM2 CRB interface \n",
+      __FUNCTION__,
+      __LINE__
       ));
 
     return Status;

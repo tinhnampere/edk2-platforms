@@ -71,7 +71,9 @@ PlatformSetTime (
  */
 VOID
 EFIAPI
-PlatformVirtualAddressChangeEvent (VOID);
+PlatformVirtualAddressChangeEvent (
+  VOID
+  );
 
 /**
  * Callback function for hardware platform to initialize private data
@@ -82,6 +84,8 @@ PlatformVirtualAddressChangeEvent (VOID);
  */
 EFI_STATUS
 EFIAPI
-PlatformInitialize (VOID);
+PlatformInitialize (
+  VOID
+  );
 
 #endif /* COMMON_H_ */

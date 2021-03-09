@@ -14,14 +14,14 @@
 
 EFI_GUID gMemInfoFormSetGuid = MEM_INFO_FORM_SET_GUID;
 
-HII_VENDOR_DEVICE_PATH  mHiiVendorDevicePath = {
+HII_VENDOR_DEVICE_PATH mHiiVendorDevicePath = {
   {
     {
       HARDWARE_DEVICE_PATH,
       HW_VENDOR_DP,
       {
-        (UINT8) (sizeof (VENDOR_DEVICE_PATH)),
-        (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
+        (UINT8)(sizeof (VENDOR_DEVICE_PATH)),
+        (UINT8)((sizeof (VENDOR_DEVICE_PATH)) >> 8)
       }
     },
     MEM_INFO_FORM_SET_GUID
@@ -30,14 +30,14 @@ HII_VENDOR_DEVICE_PATH  mHiiVendorDevicePath = {
     END_DEVICE_PATH_TYPE,
     END_ENTIRE_DEVICE_PATH_SUBTYPE,
     {
-      (UINT8) (END_DEVICE_PATH_LENGTH),
-      (UINT8) ((END_DEVICE_PATH_LENGTH) >> 8)
+      (UINT8)(END_DEVICE_PATH_LENGTH),
+      (UINT8)((END_DEVICE_PATH_LENGTH) >> 8)
     }
   }
 };
 
-EFI_HANDLE                       DriverHandle = NULL;
-MEM_INFO_SCREEN_PRIVATE_DATA     *mPrivateData = NULL;
+EFI_HANDLE                   DriverHandle = NULL;
+MEM_INFO_SCREEN_PRIVATE_DATA *mPrivateData = NULL;
 
 /**
   This function allows a caller to extract the current configuration for one
@@ -64,21 +64,21 @@ MEM_INFO_SCREEN_PRIVATE_DATA     *mPrivateData = NULL;
 EFI_STATUS
 EFIAPI
 ExtractConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Request,
-  OUT EFI_STRING                             *Progress,
-  OUT EFI_STRING                             *Results
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Request,
+  OUT      EFI_STRING                     *Progress,
+  OUT      EFI_STRING                     *Results
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  MEM_INFO_SCREEN_PRIVATE_DATA     *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
-  EFI_STRING                       ConfigRequest;
-  EFI_STRING                       ConfigRequestHdr;
-  UINTN                            Size;
-  CHAR16                           *StrPointer;
-  BOOLEAN                          AllocatedRequest;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  MEM_INFO_SCREEN_PRIVATE_DATA    *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
+  EFI_STRING                      ConfigRequest;
+  EFI_STRING                      ConfigRequestHdr;
+  UINTN                           Size;
+  CHAR16                          *StrPointer;
+  BOOLEAN                         AllocatedRequest;
 
   if (Progress == NULL || Results == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -120,7 +120,7 @@ ExtractConfig (
     ConfigRequest = AllocateZeroPool (Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
-    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64) BufferSize);
+    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
     FreePool (ConfigRequestHdr);
     ConfigRequestHdr = NULL;
   } else {
@@ -153,7 +153,7 @@ ExtractConfig (
         ConfigRequest    = AllocateZeroPool (Size);
         ASSERT (ConfigRequest != NULL);
         AllocatedRequest = TRUE;
-        UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", Request, (UINT64) BufferSize);
+        UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", Request, (UINT64)BufferSize);
       }
     }
   }
@@ -173,7 +173,7 @@ ExtractConfig (
     Status = HiiConfigRouting->BlockToConfig (
                                  HiiConfigRouting,
                                  ConfigRequest,
-                                 (UINT8 *) &PrivateData->VarStoreConfig,
+                                 (UINT8 *)&PrivateData->VarStoreConfig,
                                  BufferSize,
                                  Results,
                                  Progress
@@ -220,15 +220,15 @@ ExtractConfig (
 EFI_STATUS
 EFIAPI
 RouteConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Configuration,
-  OUT EFI_STRING                             *Progress
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Configuration,
+  OUT      EFI_STRING                     *Progress
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  MEM_INFO_SCREEN_PRIVATE_DATA     *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  MEM_INFO_SCREEN_PRIVATE_DATA    *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
 
   if (Configuration == NULL || Progress == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -271,7 +271,7 @@ RouteConfig (
   Status = HiiConfigRouting->ConfigToBlock (
                                HiiConfigRouting,
                                Configuration,
-                               (UINT8 *) &PrivateData->VarStoreConfig,
+                               (UINT8 *)&PrivateData->VarStoreConfig,
                                &BufferSize,
                                Progress
                                );
@@ -282,7 +282,7 @@ RouteConfig (
   //
   // Store Buffer Storage back to NVParam
   //
-  Status = MemInfoNvparamSet(&PrivateData->VarStoreConfig);
+  Status = MemInfoNvparamSet (&PrivateData->VarStoreConfig);
 
   return Status;
 }
@@ -307,17 +307,18 @@ RouteConfig (
 EFI_STATUS
 EFIAPI
 DriverCallback (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  EFI_BROWSER_ACTION                     Action,
-  IN  EFI_QUESTION_ID                        QuestionId,
-  IN  UINT8                                  Type,
-  IN  EFI_IFR_TYPE_VALUE                     *Value,
-  OUT EFI_BROWSER_ACTION_REQUEST             *ActionRequest
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN       EFI_BROWSER_ACTION             Action,
+  IN       EFI_QUESTION_ID                QuestionId,
+  IN       UINT8                          Type,
+  IN       EFI_IFR_TYPE_VALUE             *Value,
+  OUT      EFI_BROWSER_ACTION_REQUEST     *ActionRequest
   )
 {
   if (((Value == NULL) && (Action != EFI_BROWSER_ACTION_FORM_OPEN)
-        && (Action != EFI_BROWSER_ACTION_FORM_CLOSE))
-        || (ActionRequest == NULL)) {
+       && (Action != EFI_BROWSER_ACTION_FORM_CLOSE))
+      || (ActionRequest == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -325,66 +326,78 @@ DriverCallback (
   case EFI_BROWSER_ACTION_FORM_OPEN:
   case EFI_BROWSER_ACTION_FORM_CLOSE:
     break;
+
   case EFI_BROWSER_ACTION_DEFAULT_STANDARD:
   case EFI_BROWSER_ACTION_DEFAULT_MANUFACTURING:
-    {
-      switch (QuestionId) {
-      case MEM_INFO_DDR_SPEED_SEL_QUESTION_ID:
-        //
-        // DDR speed selection default to auto
-        //
-        Value->u32 = 0;
-        break;
-      case MEM_INFO_FORM_PERFORMANCE_ECC_QUESTION_ID:
-        //
-        // ECC mode default to be enabled
-        //
-        Value->u32 = ECC_SECDED;
-        break;
-      case MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_DE_QUESTION_ID:
-        //
-        // ErrCtrl_DE default to be enabled
-        //
-        Value->u32 = ERRCTLR_DE_ENABLE;
-        break;
-      case MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_FI_QUESTION_ID:
-        //
-        // ErrCtrl_FI default to be enabled
-        //
-        Value->u32 = ERRCTLR_FI_ENABLE;
-        break;
-      case MEM_INFO_DDR_SLAVE_32BIT_QUESTION_ID:
-        //
-        // Slave's 32bit region to be disabled
-        //
-        Value->u32 = 0;
-        break;
-      case MEM_INFO_DDR_SCRUB_PATROL_QUESTION_ID:
-        Value->u32 = DDR_DEFAULT_SCRUB_PATROL_DURATION;
-        break;
-      case MEM_INFO_DDR_DEMAND_SCRUB_QUESTION_ID:
-        Value->u32 = DDR_DEFAULT_DEMAND_SCRUB;
-        break;
-      case MEM_INFO_DDR_WRITE_CRC_QUESTION_ID:
-        Value->u32 = DDR_DEFAULT_WRITE_CRC;
-        break;
-      case MEM_INFO_FGR_MODE_QUESTION_ID:
-        Value->u32 = DDR_DEFAULT_FGR_MODE;
-        break;
-      case MEM_INFO_REFRESH2X_MODE_QUESTION_ID:
-        Value->u32 = DDR_DEFAULT_REFRESH2X_MODE;
-        break;
-      case MEM_INFO_FORM_NVDIMM_MODE_SEL_QUESTION_ID:
-        Value->u32 = DDR_DEFAULT_NVDIMM_MODE_SEL;
-        break;
-      }
+  {
+    switch (QuestionId) {
+    case MEM_INFO_DDR_SPEED_SEL_QUESTION_ID:
+      //
+      // DDR speed selection default to auto
+      //
+      Value->u32 = 0;
+      break;
+
+    case MEM_INFO_FORM_PERFORMANCE_ECC_QUESTION_ID:
+      //
+      // ECC mode default to be enabled
+      //
+      Value->u32 = ECC_SECDED;
+      break;
+
+    case MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_DE_QUESTION_ID:
+      //
+      // ErrCtrl_DE default to be enabled
+      //
+      Value->u32 = ERRCTLR_DE_ENABLE;
+      break;
+
+    case MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_FI_QUESTION_ID:
+      //
+      // ErrCtrl_FI default to be enabled
+      //
+      Value->u32 = ERRCTLR_FI_ENABLE;
+      break;
+
+    case MEM_INFO_DDR_SLAVE_32BIT_QUESTION_ID:
+      //
+      // Slave's 32bit region to be disabled
+      //
+      Value->u32 = 0;
+      break;
+
+    case MEM_INFO_DDR_SCRUB_PATROL_QUESTION_ID:
+      Value->u32 = DDR_DEFAULT_SCRUB_PATROL_DURATION;
+      break;
+
+    case MEM_INFO_DDR_DEMAND_SCRUB_QUESTION_ID:
+      Value->u32 = DDR_DEFAULT_DEMAND_SCRUB;
+      break;
+
+    case MEM_INFO_DDR_WRITE_CRC_QUESTION_ID:
+      Value->u32 = DDR_DEFAULT_WRITE_CRC;
+      break;
+
+    case MEM_INFO_FGR_MODE_QUESTION_ID:
+      Value->u32 = DDR_DEFAULT_FGR_MODE;
+      break;
+
+    case MEM_INFO_REFRESH2X_MODE_QUESTION_ID:
+      Value->u32 = DDR_DEFAULT_REFRESH2X_MODE;
+      break;
+
+    case MEM_INFO_FORM_NVDIMM_MODE_SEL_QUESTION_ID:
+      Value->u32 = DDR_DEFAULT_NVDIMM_MODE_SEL;
+      break;
     }
-    break;
+  }
+  break;
 
   case EFI_BROWSER_ACTION_RETRIEVE:
   case EFI_BROWSER_ACTION_CHANGING:
   case EFI_BROWSER_ACTION_SUBMITTED:
     break;
+
   default:
     return EFI_UNSUPPORTED;
   }
@@ -397,20 +410,20 @@ MemInfoMainScreen (
   PlatformInfoHob_V2 *PlatformHob
   )
 {
-  MEM_INFO_SCREEN_PRIVATE_DATA    *PrivateData = mPrivateData;
-  EFI_STATUS                      Status;
-  VOID                            *StartOpCodeHandle;
-  VOID                            *OptionsOpCodeHandle;
-  VOID                            *OptionsOpCodeHandle1;
-  EFI_IFR_GUID_LABEL              *StartLabel;
-  EFI_STRING_ID                   StringId;
-  VOID                            *EndOpCodeHandle;
-  EFI_IFR_GUID_LABEL              *EndLabel;
-  CHAR16                          Str[MAX_STRING_SIZE], Str1[MAX_STRING_SIZE];
-  EFI_HOB_RESOURCE_DESCRIPTOR     *ResHob;
-  PlatformDimmInfoV2              *DimmInfo;
-  UINT64                          Size;
-  UINTN                           Count;
+  MEM_INFO_SCREEN_PRIVATE_DATA *PrivateData = mPrivateData;
+  EFI_STATUS                   Status;
+  VOID                         *StartOpCodeHandle;
+  VOID                         *OptionsOpCodeHandle;
+  VOID                         *OptionsOpCodeHandle1;
+  EFI_IFR_GUID_LABEL           *StartLabel;
+  EFI_STRING_ID                StringId;
+  VOID                         *EndOpCodeHandle;
+  EFI_IFR_GUID_LABEL           *EndLabel;
+  CHAR16                       Str[MAX_STRING_SIZE], Str1[MAX_STRING_SIZE];
+  EFI_HOB_RESOURCE_DESCRIPTOR  *ResHob;
+  PlatformDimmInfoV2           *DimmInfo;
+  UINT64                       Size;
+  UINTN                        Count;
 
   //
   // Get Buffer Storage data from EFI variable
@@ -424,29 +437,38 @@ MemInfoMainScreen (
 
   /* Update Total memory */
   UnicodeSPrint (Str, sizeof (Str), L"%d GB", PlatformHob->DramInfo.TotalSize / GB_SCALE_FACTOR);
-  HiiSetString (PrivateData->HiiHandle,
-              STRING_TOKEN(STR_MEM_INFO_TOTAL_MEM_VALUE),
-              Str, NULL);
+  HiiSetString (
+    PrivateData->HiiHandle,
+    STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM_VALUE),
+    Str,
+    NULL
+    );
 
   /* Update effective memory */
   Size = 0;
-  ResHob = (EFI_HOB_RESOURCE_DESCRIPTOR *) GetFirstHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR);
+  ResHob = (EFI_HOB_RESOURCE_DESCRIPTOR *)GetFirstHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR);
   while (ResHob != NULL) {
     if ((ResHob->ResourceType == EFI_RESOURCE_SYSTEM_MEMORY)) {
       Size += ResHob->ResourceLength;
     }
-    ResHob = (EFI_HOB_RESOURCE_DESCRIPTOR *) GetNextHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR,(VOID *)((UINTN)ResHob + ResHob->Header.HobLength));
+    ResHob = (EFI_HOB_RESOURCE_DESCRIPTOR *)GetNextHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR,(VOID *)((UINTN)ResHob + ResHob->Header.HobLength));
   }
   UnicodeSPrint (Str, sizeof (Str), L"%d GB", Size / GB_SCALE_FACTOR);
-  HiiSetString (PrivateData->HiiHandle,
-      STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM_VALUE),
-      Str, NULL);
+  HiiSetString (
+    PrivateData->HiiHandle,
+    STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM_VALUE),
+    Str,
+    NULL
+    );
 
   /* Update current DDR speed */
   UnicodeSPrint (Str, sizeof (Str), L"%d MHz", PlatformHob->DramInfo.MaxSpeed);
-  HiiSetString (PrivateData->HiiHandle,
-              STRING_TOKEN(STR_MEM_INFO_CURRENT_SPEED_VALUE),
-              Str, NULL);
+  HiiSetString (
+    PrivateData->HiiHandle,
+    STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED_VALUE),
+    Str,
+    NULL
+    );
 
   //
   // Initialize the container for dynamic opcodes
@@ -472,14 +494,14 @@ MemInfoMainScreen (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  StartLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
   StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartLabel->Number       = LABEL_UPDATE;
 
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
-  EndLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
@@ -491,7 +513,7 @@ MemInfoMainScreen (
     STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM),
     STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM),
     STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM_VALUE)
-  );
+    );
 
   //
   // Create a effective mem title
@@ -501,7 +523,7 @@ MemInfoMainScreen (
     STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM),
     STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM),
     STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM_VALUE)
-  );
+    );
 
   //
   // Create a current speed title
@@ -511,7 +533,7 @@ MemInfoMainScreen (
     STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED),
     STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED),
     STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED_VALUE)
-  );
+    );
 
   HiiCreateOneOfOptionOpCode (
     OptionsOpCodeHandle,
@@ -562,27 +584,27 @@ MemInfoMainScreen (
     );
 
   HiiCreateOneOfOpCode (
-    StartOpCodeHandle,                               // Container for dynamic created opcodes
-    MEM_INFO_DDR_SPEED_SEL_QUESTION_ID,              // Question ID (or call it "key")
-    MEM_INFO_VARSTORE_ID,                            // VarStore ID
-    (UINT16) MEM_INFO_DDR_SPEED_SEL_OFFSET,          // Offset in Buffer Storage
-    STRING_TOKEN (STR_MEM_INFO_SPEED_SELECT_PROMPT), // Question prompt text
-    STRING_TOKEN (STR_MEM_INFO_SPEED_SELECT_HELP),   // Question help text
-    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,                     // Question flag
-    EFI_IFR_NUMERIC_SIZE_4,                          // Data type of Question Value
-    OptionsOpCodeHandle,                             // Option Opcode list
-    NULL                                             // Default Opcode is NULl
+    StartOpCodeHandle,                                   // Container for dynamic created opcodes
+    MEM_INFO_DDR_SPEED_SEL_QUESTION_ID,                  // Question ID (or call it "key")
+    MEM_INFO_VARSTORE_ID,                                // VarStore ID
+    (UINT16)MEM_INFO_DDR_SPEED_SEL_OFFSET,               // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_SPEED_SELECT_PROMPT),     // Question prompt text
+    STRING_TOKEN (STR_MEM_INFO_SPEED_SELECT_HELP),       // Question help text
+    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED, // Question flag
+    EFI_IFR_NUMERIC_SIZE_4,                              // Data type of Question Value
+    OptionsOpCodeHandle,                                 // Option Opcode list
+    NULL                                                 // Default Opcode is NULl
     );
 
   if (GetNumberActiveSockets () > 1) {
     /* Display enable slave's 32bit region */
     HiiCreateCheckBoxOpCode (
-      StartOpCodeHandle,                                  // Container for dynamic created opcodes
-      MEM_INFO_DDR_SLAVE_32BIT_QUESTION_ID,               // Question ID
-      MEM_INFO_VARSTORE_ID,                               // VarStore ID
-      (UINT16) MEM_INFO_ERR_SLAVE_32BIT_OFFSET,           // Offset in Buffer Storage
-      STRING_TOKEN (STR_MEM_INFO_ENABLE_32GB_SLAVE_PROMPT),   // Question prompt text
-      STRING_TOKEN (STR_MEM_INFO_ENABLE_32GB_SLAVE_HELP),     // Question help text
+      StartOpCodeHandle,                                    // Container for dynamic created opcodes
+      MEM_INFO_DDR_SLAVE_32BIT_QUESTION_ID,                 // Question ID
+      MEM_INFO_VARSTORE_ID,                                 // VarStore ID
+      (UINT16)MEM_INFO_ERR_SLAVE_32BIT_OFFSET,              // Offset in Buffer Storage
+      STRING_TOKEN (STR_MEM_INFO_ENABLE_32GB_SLAVE_PROMPT), // Question prompt text
+      STRING_TOKEN (STR_MEM_INFO_ENABLE_32GB_SLAVE_HELP),   // Question help text
       EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
       0,
       NULL
@@ -614,28 +636,28 @@ MemInfoMainScreen (
     );
 
   HiiCreateOneOfOpCode (
-    StartOpCodeHandle,                               // Container for dynamic created opcodes
-    MEM_INFO_FGR_MODE_QUESTION_ID,                   // Question ID (or call it "key")
-    MEM_INFO_VARSTORE_ID,                            // VarStore ID
-    (UINT16) MEM_INFO_FGR_MODE_OFFSET,               // Offset in Buffer Storage
-    STRING_TOKEN (STR_MEM_INFO_FGR_MODE_PROMPT),     // Question prompt text
-    STRING_TOKEN (STR_MEM_INFO_FGR_MODE_HELP),       // Question help text
-    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,   // Question flag
-    EFI_IFR_NUMERIC_SIZE_4,                          // Data type of Question Value
-    OptionsOpCodeHandle1,                            // Option Opcode list
-    NULL                                             // Default Opcode is NULl
+    StartOpCodeHandle,                                   // Container for dynamic created opcodes
+    MEM_INFO_FGR_MODE_QUESTION_ID,                       // Question ID (or call it "key")
+    MEM_INFO_VARSTORE_ID,                                // VarStore ID
+    (UINT16)MEM_INFO_FGR_MODE_OFFSET,                    // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_FGR_MODE_PROMPT),         // Question prompt text
+    STRING_TOKEN (STR_MEM_INFO_FGR_MODE_HELP),           // Question help text
+    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED, // Question flag
+    EFI_IFR_NUMERIC_SIZE_4,                              // Data type of Question Value
+    OptionsOpCodeHandle1,                                // Option Opcode list
+    NULL                                                 // Default Opcode is NULl
     );
 
   //
   // Create a Goto OpCode to ras memory configuration
   //
   HiiCreateGotoOpCode (
-    StartOpCodeHandle,                // Container for dynamic created opcodes
-    MEM_INFO_FORM_PERFORMANCE_ID,     // Target Form ID
+    StartOpCodeHandle,                                 // Container for dynamic created opcodes
+    MEM_INFO_FORM_PERFORMANCE_ID,                      // Target Form ID
     STRING_TOKEN (STR_MEM_INFO_PERFORMANCE_FORM),      // Prompt text
     STRING_TOKEN (STR_MEM_INFO_PERFORMANCE_FORM_HELP), // Help text
-    0,                                     // Question flag
-    MEM_INFO_FORM_PERFORMANCE_QUESTION_ID  // Question ID
+    0,                                                 // Question flag
+    MEM_INFO_FORM_PERFORMANCE_QUESTION_ID              // Question ID
     );
 
   //
@@ -708,7 +730,8 @@ MemInfoMainScreen (
       StringId,
       0,
       0,
-      0);
+      0
+      );
   }
 
   HiiUpdateForm (
@@ -731,16 +754,16 @@ MemInfoMainPerformanceScreen (
   PlatformInfoHob_V2 *PlatformHob
   )
 {
-  EFI_STATUS                      Status;
-  MEM_INFO_SCREEN_PRIVATE_DATA    *PrivateData = mPrivateData;
-  VOID                            *StartOpCodeHandle;
-  VOID                            *OptionsEccOpCodeHandle, *OptionsScrubOpCodeHandle;
-  EFI_IFR_GUID_LABEL              *StartLabel;
-  VOID                            *EndOpCodeHandle;
-  EFI_IFR_GUID_LABEL              *EndLabel;
-  EFI_STRING_ID                   StringId;
-  CHAR16                          Str[MAX_STRING_SIZE];
-  UINTN                           Idx;
+  EFI_STATUS                   Status;
+  MEM_INFO_SCREEN_PRIVATE_DATA *PrivateData = mPrivateData;
+  VOID                         *StartOpCodeHandle;
+  VOID                         *OptionsEccOpCodeHandle, *OptionsScrubOpCodeHandle;
+  EFI_IFR_GUID_LABEL           *StartLabel;
+  VOID                         *EndOpCodeHandle;
+  EFI_IFR_GUID_LABEL           *EndLabel;
+  EFI_STRING_ID                StringId;
+  CHAR16                       Str[MAX_STRING_SIZE];
+  UINTN                        Idx;
 
   Status = EFI_SUCCESS;
 
@@ -756,14 +779,14 @@ MemInfoMainPerformanceScreen (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  StartLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
   StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartLabel->Number       = LABEL_UPDATE;
 
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
-  EndLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
@@ -805,27 +828,27 @@ MemInfoMainPerformanceScreen (
     );
 
   HiiCreateOneOfOpCode (
-    StartOpCodeHandle,                         // Container for dynamic created opcodes
-    MEM_INFO_FORM_PERFORMANCE_ECC_QUESTION_ID,                                    // Question ID (or call it "key")
-    MEM_INFO_VARSTORE_ID,                           // VarStore ID
-    (UINT16) MEM_INFO_ECC_MODE_SEL_OFFSET,      // Offset in Buffer Storage
-    STRING_TOKEN (STR_MEM_INFO_ENABLE_ECC_PROMPT),   // Question prompt text
-    STRING_TOKEN (STR_MEM_INFO_ENABLE_ECC_HELP),     // Question help text
-    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,               // Question flag
-    EFI_IFR_NUMERIC_SIZE_4,                    // Data type of Question Value
-    OptionsEccOpCodeHandle,                       // Option Opcode list
-    NULL                                       // Default Opcode is NULl
+    StartOpCodeHandle,                                   // Container for dynamic created opcodes
+    MEM_INFO_FORM_PERFORMANCE_ECC_QUESTION_ID,           // Question ID (or call it "key")
+    MEM_INFO_VARSTORE_ID,                                // VarStore ID
+    (UINT16)MEM_INFO_ECC_MODE_SEL_OFFSET,                // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_ENABLE_ECC_PROMPT),       // Question prompt text
+    STRING_TOKEN (STR_MEM_INFO_ENABLE_ECC_HELP),         // Question help text
+    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED, // Question flag
+    EFI_IFR_NUMERIC_SIZE_4,                              // Data type of Question Value
+    OptionsEccOpCodeHandle,                              // Option Opcode list
+    NULL                                                 // Default Opcode is NULl
     );
 
   /*
    * Display ErrCtrl options
    */
   HiiCreateCheckBoxOpCode (
-    StartOpCodeHandle,                             // Container for dynamic created opcodes
-    MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_DE_QUESTION_ID,     // Question ID
-    MEM_INFO_VARSTORE_ID,                                  // VarStore ID
-    (UINT16) MEM_INFO_ERR_CTRL_DE_MODE_SEL_OFFSET,         // Offset in Buffer Storage
-    STRING_TOKEN (STR_MEM_INFO_ENABLE_ERRCTRL_DE_PROMPT),        // Question prompt text
+    StartOpCodeHandle,                                    // Container for dynamic created opcodes
+    MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_DE_QUESTION_ID,    // Question ID
+    MEM_INFO_VARSTORE_ID,                                 // VarStore ID
+    (UINT16)MEM_INFO_ERR_CTRL_DE_MODE_SEL_OFFSET,         // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_ENABLE_ERRCTRL_DE_PROMPT), // Question prompt text
     STRING_TOKEN (STR_MEM_INFO_ENABLE_ERRCTRL_DE_HELP),   // Question help text
     EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
     0,
@@ -833,11 +856,11 @@ MemInfoMainPerformanceScreen (
     );
 
   HiiCreateCheckBoxOpCode (
-    StartOpCodeHandle,                             // Container for dynamic created opcodes
-    MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_FI_QUESTION_ID,     // Question ID
-    MEM_INFO_VARSTORE_ID,                                  // VarStore ID
-    (UINT16) MEM_INFO_ERR_CTRL_FI_MODE_SEL_OFFSET,         // Offset in Buffer Storage
-    STRING_TOKEN (STR_MEM_INFO_ENABLE_ERRCTRL_FI_PROMPT),        // Question prompt text
+    StartOpCodeHandle,                                    // Container for dynamic created opcodes
+    MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_FI_QUESTION_ID,    // Question ID
+    MEM_INFO_VARSTORE_ID,                                 // VarStore ID
+    (UINT16)MEM_INFO_ERR_CTRL_FI_MODE_SEL_OFFSET,         // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_ENABLE_ERRCTRL_FI_PROMPT), // Question prompt text
     STRING_TOKEN (STR_MEM_INFO_ENABLE_ERRCTRL_FI_HELP),   // Question help text
     EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
     0,
@@ -861,9 +884,12 @@ MemInfoMainPerformanceScreen (
 
   for (Idx = 1; Idx <= 24; Idx++) {
     UnicodeSPrint (Str, sizeof (Str), L"%d", Idx);
-    StringId = HiiSetString (PrivateData->HiiHandle,
-                              0,
-                              Str, NULL);
+    StringId = HiiSetString (
+                 PrivateData->HiiHandle,
+                 0,
+                 Str,
+                 NULL
+                 );
     HiiCreateOneOfOptionOpCode (
       OptionsScrubOpCodeHandle,
       StringId,
@@ -874,27 +900,27 @@ MemInfoMainPerformanceScreen (
   }
 
   HiiCreateOneOfOpCode (
-    StartOpCodeHandle,                         // Container for dynamic created opcodes
-    MEM_INFO_DDR_SCRUB_PATROL_QUESTION_ID,     // Question ID (or call it "key")
-    MEM_INFO_VARSTORE_ID,                      // VarStore ID
-    (UINT16) MEM_INFO_DDR_SCRUB_OFFSET,        // Offset in Buffer Storage
-    STRING_TOKEN (STR_MEM_INFO_ENABLE_SCRUB),  // Question prompt text
-    STRING_TOKEN (STR_MEM_INFO_ENABLE_SCRUB_HELP),        // Question help text
-    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,  // Question flag
-    EFI_IFR_NUMERIC_SIZE_4,                    // Data type of Question Value
-    OptionsScrubOpCodeHandle,                  // Option Opcode list
-    NULL                                       // Default Opcode is NULl
+    StartOpCodeHandle,                                   // Container for dynamic created opcodes
+    MEM_INFO_DDR_SCRUB_PATROL_QUESTION_ID,               // Question ID (or call it "key")
+    MEM_INFO_VARSTORE_ID,                                // VarStore ID
+    (UINT16)MEM_INFO_DDR_SCRUB_OFFSET,                   // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_ENABLE_SCRUB),            // Question prompt text
+    STRING_TOKEN (STR_MEM_INFO_ENABLE_SCRUB_HELP),       // Question help text
+    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED, // Question flag
+    EFI_IFR_NUMERIC_SIZE_4,                              // Data type of Question Value
+    OptionsScrubOpCodeHandle,                            // Option Opcode list
+    NULL                                                 // Default Opcode is NULl
     );
 
   /*
    * Display Demand Scrub options
    */
   HiiCreateCheckBoxOpCode (
-    StartOpCodeHandle,                             // Container for dynamic created opcodes
-    MEM_INFO_DDR_DEMAND_SCRUB_QUESTION_ID,         // Question ID
-    MEM_INFO_VARSTORE_ID,                          // VarStore ID
-    (UINT16) MEM_INFO_DDR_DEMAND_SCRUB_OFFSET,     // Offset in Buffer Storage
-    STRING_TOKEN (STR_MEM_INFO_ENABLE_DEMAND_SCRUB_PROMPT),        // Question prompt text
+    StartOpCodeHandle,                                      // Container for dynamic created opcodes
+    MEM_INFO_DDR_DEMAND_SCRUB_QUESTION_ID,                  // Question ID
+    MEM_INFO_VARSTORE_ID,                                   // VarStore ID
+    (UINT16)MEM_INFO_DDR_DEMAND_SCRUB_OFFSET,               // Offset in Buffer Storage
+    STRING_TOKEN (STR_MEM_INFO_ENABLE_DEMAND_SCRUB_PROMPT), // Question prompt text
     STRING_TOKEN (STR_MEM_INFO_ENABLE_DEMAND_SCRUB_HELP),   // Question help text
     EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
     0,
@@ -905,10 +931,10 @@ MemInfoMainPerformanceScreen (
    * Display Write CRC options
    */
   HiiCreateCheckBoxOpCode (
-    StartOpCodeHandle,                             // Container for dynamic created opcodes
-    MEM_INFO_DDR_WRITE_CRC_QUESTION_ID,            // Question ID
-    MEM_INFO_VARSTORE_ID,                          // VarStore ID
-    (UINT16) MEM_INFO_DDR_WRITE_CRC_OFFSET,        // Offset in Buffer Storage
+    StartOpCodeHandle,                                   // Container for dynamic created opcodes
+    MEM_INFO_DDR_WRITE_CRC_QUESTION_ID,                  // Question ID
+    MEM_INFO_VARSTORE_ID,                                // VarStore ID
+    (UINT16)MEM_INFO_DDR_WRITE_CRC_OFFSET,               // Offset in Buffer Storage
     STRING_TOKEN (STR_MEM_INFO_ENABLE_WRITE_CRC_PROMPT), // Question prompt text
     STRING_TOKEN (STR_MEM_INFO_ENABLE_WRITE_CRC_HELP),   // Question help text
     EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
@@ -920,10 +946,10 @@ MemInfoMainPerformanceScreen (
    * Display CVE-2020-10255 options
    */
   HiiCreateCheckBoxOpCode (
-    StartOpCodeHandle,                             // Container for dynamic created opcodes
-    MEM_INFO_REFRESH2X_MODE_QUESTION_ID,           // Question ID
-    MEM_INFO_VARSTORE_ID,                          // VarStore ID
-    (UINT16) MEM_INFO_REFRESH2X_MODE_OFFSET,       // Offset in Buffer Storage
+    StartOpCodeHandle,                                 // Container for dynamic created opcodes
+    MEM_INFO_REFRESH2X_MODE_QUESTION_ID,               // Question ID
+    MEM_INFO_VARSTORE_ID,                              // VarStore ID
+    (UINT16)MEM_INFO_REFRESH2X_MODE_OFFSET,            // Offset in Buffer Storage
     STRING_TOKEN (STR_MEM_INFO_REFRESH2X_MODE_PROMPT), // Question prompt text
     STRING_TOKEN (STR_MEM_INFO_REFRESH2X_MODE_HELP),   // Question help text
     EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
@@ -1151,16 +1177,16 @@ MemInfoScreenSetup (
   VOID
   )
 {
-  EFI_STATUS                      Status;
-  VOID                            *Hob;
-  PlatformInfoHob_V2              *PlatformHob;
+  EFI_STATUS         Status;
+  VOID               *Hob;
+  PlatformInfoHob_V2 *PlatformHob;
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (!Hob) {
     return EFI_DEVICE_ERROR;
   }
-  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
 
   Status = MemInfoMainScreen (PlatformHob);
   if (EFI_ERROR (Status)) {
@@ -1182,15 +1208,15 @@ MemInfoScreenSetup (
 
 EFI_STATUS
 MemInfoScreenInitialize (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS                            Status;
-  EFI_HII_HANDLE                        HiiHandle;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL       *HiiConfigRouting;
-  BOOLEAN                               ActionFlag;
-  EFI_STRING                            ConfigRequestHdr;
+  EFI_STATUS                      Status;
+  EFI_HII_HANDLE                  HiiHandle;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
+  BOOLEAN                         ActionFlag;
+  EFI_STRING                      ConfigRequestHdr;
 
   //
   // Initialize driver private data
@@ -1209,7 +1235,7 @@ MemInfoScreenInitialize (
   //
   // Locate ConfigRouting protocol
   //
-  Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **) &HiiConfigRouting);
+  Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **)&HiiConfigRouting);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1271,7 +1297,7 @@ MemInfoScreenInitialize (
 
 EFI_STATUS
 MemInfoScreenUnload (
-  IN EFI_HANDLE         ImageHandle
+  IN EFI_HANDLE ImageHandle
   )
 {
   ASSERT (mPrivateData != NULL);

@@ -31,8 +31,8 @@
 #define RCA_NUM_TBU_PMU         6
 #define RCB_NUM_TBU_PMU         10
 
-STATIC  UINT32  gTbuPmuIrqArray[] = { SMMU_TBU_PMU_IRQ_START_ARRAY };
-STATIC  UINT32  gTcuPmuIrqArray[] = { SMMU_TCU_PMU_IRQ_START_ARRAY };
+STATIC UINT32 gTbuPmuIrqArray[] = { SMMU_TBU_PMU_IRQ_START_ARRAY };
+STATIC UINT32 gTcuPmuIrqArray[] = { SMMU_TCU_PMU_IRQ_START_ARRAY };
 
 #pragma pack(1)
 typedef struct
@@ -47,7 +47,7 @@ typedef struct
 typedef struct
 {
   EFI_ACPI_DESCRIPTION_HEADER Header;
-  UINT64 Reserved1;
+  UINT64                      Reserved1;
 } EFI_MCFG_TABLE_CONFIG;
 
 typedef struct {
@@ -59,12 +59,12 @@ typedef struct {
 } QWordMemory;
 
 typedef struct ResourceEntry {
-  UINT8   ResourceType;
-  UINT16  ResourceSize;
-  UINT8   Attribute;
-  UINT8   Byte0;
-  UINT8   Byte1;
-  VOID    *ResourcePtr;
+  UINT8  ResourceType;
+  UINT16 ResourceSize;
+  UINT8  Attribute;
+  UINT8  Byte0;
+  UINT8  Byte1;
+  VOID   *ResourcePtr;
 } RESOURCE;
 
 STATIC QWordMemory Qmem[] = {
@@ -77,42 +77,42 @@ STATIC QWordMemory Qmem[] = {
 };
 
 typedef struct {
-  EFI_ACPI_6_0_IO_REMAPPING_NODE          Node;
-  UINT64                                  Base;
-  UINT32                                  Flags;
-  UINT32                                  Reserved;
-  UINT64                                  VatosAddress;
-  UINT32                                  Model;
-  UINT32                                  Event;
-  UINT32                                  Pri;
-  UINT32                                  Gerr;
-  UINT32                                  Sync;
-  UINT32                                  ProximityDomain;
-  UINT32                                  DeviceIdMapping;
+  EFI_ACPI_6_0_IO_REMAPPING_NODE Node;
+  UINT64                         Base;
+  UINT32                         Flags;
+  UINT32                         Reserved;
+  UINT64                         VatosAddress;
+  UINT32                         Model;
+  UINT32                         Event;
+  UINT32                         Pri;
+  UINT32                         Gerr;
+  UINT32                         Sync;
+  UINT32                         ProximityDomain;
+  UINT32                         DeviceIdMapping;
 } EFI_ACPI_6_2_IO_REMAPPING_SMMU3_NODE;
 
 typedef struct {
-  EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE        Node;
-  UINT32                                    ItsIdentifier;
+  EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE Node;
+  UINT32                             ItsIdentifier;
 } AC01_ITS_NODE;
 
 
 typedef struct {
-  EFI_ACPI_6_0_IO_REMAPPING_RC_NODE         Node;
-  EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE        RcIdMapping;
+  EFI_ACPI_6_0_IO_REMAPPING_RC_NODE  Node;
+  EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE RcIdMapping;
 } AC01_RC_NODE;
 
 typedef struct {
-  EFI_ACPI_6_2_IO_REMAPPING_SMMU3_NODE      Node;
-  EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE        InterruptMsiMapping;
-  EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE        InterruptMsiMappingSingle;
+  EFI_ACPI_6_2_IO_REMAPPING_SMMU3_NODE Node;
+  EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE   InterruptMsiMapping;
+  EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE   InterruptMsiMappingSingle;
 } AC01_SMMU_NODE;
 
 typedef struct {
-  EFI_ACPI_6_0_IO_REMAPPING_TABLE           Iort;
-  AC01_ITS_NODE                             ItsNode[2];
-  AC01_RC_NODE                              RcNode[2];
-  AC01_SMMU_NODE                            SmmuNode[2];
+  EFI_ACPI_6_0_IO_REMAPPING_TABLE Iort;
+  AC01_ITS_NODE                   ItsNode[2];
+  AC01_RC_NODE                    RcNode[2];
+  AC01_SMMU_NODE                  SmmuNode[2];
 } AC01_IO_REMAPPING_STRUCTURE;
 
 #define FIELD_OFFSET(type, name)            __builtin_offsetof (type, name)
@@ -131,20 +131,20 @@ AcpiPatchPciMem32 (
   INT8 *PciSegEnabled
   )
 {
-  EFI_ACPI_SDT_PROTOCOL             *AcpiTableProtocol;
-  EFI_STATUS                        Status;
-  UINTN                             Idx, Ix;
-  EFI_ACPI_HANDLE                   TableHandle, SegHandle;
-  CHAR8                             Buffer[MAX_ACPI_NODE_PATH];
-  CHAR8                             *KB, *B;
-  EFI_ACPI_DATA_TYPE                DataType;
-  UINTN                             DataSize, Mem32;
-  RESOURCE                          *Rs;
-  QWordMemory                       *Qm;
-  UINT8                             Segment;
+  EFI_ACPI_SDT_PROTOCOL *AcpiTableProtocol;
+  EFI_STATUS            Status;
+  UINTN                 Idx, Ix;
+  EFI_ACPI_HANDLE       TableHandle, SegHandle;
+  CHAR8                 Buffer[MAX_ACPI_NODE_PATH];
+  CHAR8                 *KB, *B;
+  EFI_ACPI_DATA_TYPE    DataType;
+  UINTN                 DataSize, Mem32;
+  RESOURCE              *Rs;
+  QWordMemory           *Qm;
+  UINT8                 Segment;
 
-  Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID**) &AcpiTableProtocol);
-  if (EFI_ERROR(Status)) {
+  Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID **)&AcpiTableProtocol);
+  if (EFI_ERROR (Status)) {
     PCIE_ERR ("Unable to locate ACPI table protocol Guid\n");
     return Status;
   }
@@ -166,14 +166,19 @@ AcpiPatchPciMem32 (
 
     /* DSDT PCI devices to use Physical segment */
     AsciiSPrint (Buffer, sizeof (Buffer), "\\_SB.PCI%x._CRS.RBUF", PciSegEnabled[Idx]);
-    Status = AcpiTableProtocol->FindPath (TableHandle, (VOID *) Buffer, &SegHandle);
+    Status = AcpiTableProtocol->FindPath (TableHandle, (VOID *)Buffer, &SegHandle);
     if (EFI_ERROR (Status)) {
       continue;
     }
 
     for (Ix = 0; Ix < 3; Ix++) {
-      Status = AcpiTableProtocol->GetOption (SegHandle,
-                                Ix, &DataType, (VOID *) &B, &DataSize);
+      Status = AcpiTableProtocol->GetOption (
+                                    SegHandle,
+                                    Ix,
+                                    &DataType,
+                                    (VOID *)&B,
+                                    &DataSize
+                                    );
       KB = B;
       if (EFI_ERROR (Status)) {
         continue;
@@ -193,12 +198,12 @@ AcpiPatchPciMem32 (
         }
 
         KB += 5; /* Point to Resource type */
-        Rs = (RESOURCE *) KB;
+        Rs = (RESOURCE *)KB;
         Mem32 = 0;
         while ((Mem32 == 0) && ((KB - B) < DataSize)) {
           if (Rs->ResourceType == ACPI_RESOURCE_NAME_ADDRESS16) {
             KB += (Rs->ResourceSize + 3); /* Type + Size */
-            Rs = (RESOURCE *) KB;
+            Rs = (RESOURCE *)KB;
           } else if (Rs->ResourceType == ACPI_RESOURCE_NAME_ADDRESS64) {
 
             if (Rs->Attribute == 0x00) { /* The first QWordMemory */
@@ -208,12 +213,16 @@ AcpiPatchPciMem32 (
               *Qm = Qmem[Segment]; /* Physical segment */
             }
             KB += (Rs->ResourceSize + 3); /* Type + Size */
-            Rs = (RESOURCE *) KB;
+            Rs = (RESOURCE *)KB;
           }
         }
         if (Mem32 != 0) {
-          Status = AcpiTableProtocol->SetOption (SegHandle,
-                                Ix, (VOID *) B, DataSize);
+          Status = AcpiTableProtocol->SetOption (
+                                        SegHandle,
+                                        Ix,
+                                        (VOID *)B,
+                                        DataSize
+                                        );
         }
       }
     }
@@ -227,12 +236,12 @@ AcpiPatchPciMem32 (
 
 VOID
 ConstructMcfg (
-  VOID *McfgPtr,
-  INT8 *PciSegEnabled,
+  VOID   *McfgPtr,
+  INT8   *PciSegEnabled,
   UINT32 McfgCount
   )
 {
-  EFI_MCFG_TABLE_CONFIG            McfgHeader = {
+  EFI_MCFG_TABLE_CONFIG     McfgHeader = {
     {
       EFI_ACPI_6_1_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE,
       McfgCount,
@@ -246,16 +255,16 @@ ConstructMcfg (
     },
     0x0000000000000000,            // Reserved
   };
-  EFI_MCFG_CONFIG_STRUCTURE        TMcfg = {
+  EFI_MCFG_CONFIG_STRUCTURE TMcfg = {
     .ullBaseAddress = 0,
     .usSegGroupNum = 0,
     .ucStartBusNum = 0,
     .ucEndBusNum = 255,
     .Reserved2 = 0,
   };
-  UINT32                           Idx;
-  VOID                             *TMcfgPtr = McfgPtr;
-  AC01_RC                          *Rc;
+  UINT32                    Idx;
+  VOID                      *TMcfgPtr = McfgPtr;
+  AC01_RC                   *Rc;
 
   CopyMem (TMcfgPtr, &McfgHeader, sizeof (EFI_MCFG_TABLE_CONFIG));
   TMcfgPtr += sizeof (EFI_MCFG_TABLE_CONFIG);
@@ -274,23 +283,23 @@ AcpiInstallMcfg (
   INT8 *PciSegEnabled
   )
 {
-  UINT32                            RcCount, McfgCount;
-  EFI_ACPI_TABLE_PROTOCOL           *AcpiTableProtocol;
-  UINTN                             TableKey;
-  EFI_STATUS                        Status;
-  VOID                              *McfgPtr;
+  UINT32                  RcCount, McfgCount;
+  EFI_ACPI_TABLE_PROTOCOL *AcpiTableProtocol;
+  UINTN                   TableKey;
+  EFI_STATUS              Status;
+  VOID                    *McfgPtr;
 
   Status = gBS->LocateProtocol (
                   &gEfiAcpiTableProtocolGuid,
                   NULL,
-                  (VOID **) &AcpiTableProtocol
+                  (VOID **)&AcpiTableProtocol
                   );
   if (EFI_ERROR (Status)) {
     PCIE_ERR ("MCFG: Unable to locate ACPI table entry\n");
     return Status;
   }
-  for (RcCount = 0; PciSegEnabled[RcCount] != -1; RcCount++)
-    ;
+  for (RcCount = 0; PciSegEnabled[RcCount] != -1; RcCount++) {
+  }
   McfgCount = sizeof (EFI_MCFG_TABLE_CONFIG) + sizeof (EFI_MCFG_CONFIG_STRUCTURE) * RcCount;
   McfgPtr = AllocateZeroPool (McfgCount);
   if (McfgPtr == NULL) {
@@ -313,36 +322,38 @@ AcpiInstallMcfg (
 STATIC
 VOID
 ConstructIort (
-  VOID *IortPtr,
+  VOID   *IortPtr,
   UINT32 RcCount,
   UINT32 SmmuPmuAgentCount,
   UINT32 HeaderCount,
-  INT8 *PciSegEnabled
+  INT8   *PciSegEnabled
   )
 {
-  EFI_ACPI_6_0_IO_REMAPPING_TABLE   TIort = {
-    .Header = __ACPI_HEADER (EFI_ACPI_6_0_IO_REMAPPING_TABLE_SIGNATURE,
-               AC01_IO_REMAPPING_STRUCTURE,
-               EFI_ACPI_IO_REMAPPING_TABLE_REVISION),
+  EFI_ACPI_6_0_IO_REMAPPING_TABLE TIort = {
+    .Header = __ACPI_HEADER (
+                EFI_ACPI_6_0_IO_REMAPPING_TABLE_SIGNATURE,
+                AC01_IO_REMAPPING_STRUCTURE,
+                EFI_ACPI_IO_REMAPPING_TABLE_REVISION
+                ),
     .NumNodes = (3 * RcCount) + SmmuPmuAgentCount,
     .NodeOffset = sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE),
     0
   };
 
-  AC01_ITS_NODE                    TItsNode = {
+  AC01_ITS_NODE TItsNode = {
     .Node = {
-          EFI_ACPI_IORT_TYPE_ITS_GROUP,
-          sizeof (EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE) + 4,
-          0x0,
-          0x0,
-          0x0,
-          0x0,
-    .NumItsIdentifiers = 1,
+      EFI_ACPI_IORT_TYPE_ITS_GROUP,
+      sizeof (EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE) + 4,
+      0x0,
+      0x0,
+      0x0,
+      0x0,
+      .NumItsIdentifiers = 1,
     },
     .ItsIdentifier = 1,
   };
 
-  AC01_RC_NODE                     TRcNode = {
+  AC01_RC_NODE TRcNode = {
     {
       {
         EFI_ACPI_IORT_TYPE_ROOT_COMPLEX,
@@ -364,33 +375,33 @@ ConstructIort (
     __AC01_ID_MAPPING (0x0, 0xffff, 0x0, SmmuNode, 0),
   };
 
-  AC01_SMMU_NODE                   TSmmuNode = {
+  AC01_SMMU_NODE TSmmuNode = {
     {
-       {
-          EFI_ACPI_IORT_TYPE_SMMUv3,
-          sizeof (AC01_SMMU_NODE),
-          0x2,  /* Revision */
-          0x0,
-          0x2,  /* Mapping Count */
-          FIELD_OFFSET (AC01_SMMU_NODE, InterruptMsiMapping),
-       },
-       .Base = 0,
-       EFI_ACPI_IORT_SMMUv3_FLAG_COHAC_OVERRIDE,
-       0,
-       0,
-       0,
-       0,
-       0,
-       0x0,
-       0x0,
-       0,
-       .DeviceIdMapping = 1,
+      {
+        EFI_ACPI_IORT_TYPE_SMMUv3,
+        sizeof (AC01_SMMU_NODE),
+        0x2,  /* Revision */
+        0x0,
+        0x2,  /* Mapping Count */
+        FIELD_OFFSET (AC01_SMMU_NODE, InterruptMsiMapping),
+      },
+      .Base = 0,
+      EFI_ACPI_IORT_SMMUv3_FLAG_COHAC_OVERRIDE,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0x0,
+      0x0,
+      0,
+      .DeviceIdMapping = 1,
     },
     __AC01_ID_MAPPING (0x0, 0xffff, 0, SmmuNode, 0),
     __AC01_ID_MAPPING (0x0, 0x1, 0, SmmuNode, 1),
   };
 
-  EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE   TPmcgNode = {
+  EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE TPmcgNode = {
     {
       EFI_ACPI_IORT_TYPE_PMCG,
       sizeof (EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE),
@@ -405,11 +416,11 @@ ConstructIort (
     0, /* Page 1 Base. Need to be filled. */
   };
 
-  UINT32                            Idx, Idx1, SmmuNodeOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
-  VOID                              *TIortPtr = IortPtr, *SmmuPtr, *PmcgPtr;
-  UINT32                            ItsOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
-  AC01_RC                           *Rc;
-  UINTN                             NumTbuPmu;
+  UINT32  Idx, Idx1, SmmuNodeOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
+  VOID    *TIortPtr = IortPtr, *SmmuPtr, *PmcgPtr;
+  UINT32  ItsOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
+  AC01_RC *Rc;
+  UINTN   NumTbuPmu;
 
   TIort.Header.Length = HeaderCount;
   CopyMem (TIortPtr, &TIort, sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE));
@@ -444,7 +455,7 @@ ConstructIort (
     } else {
       NumTbuPmu = RCB_NUM_TBU_PMU;
     }
-    for (Idx1 = 0; Idx1 < NumTbuPmu; Idx1 ++) {
+    for (Idx1 = 0; Idx1 < NumTbuPmu; Idx1++) {
       TPmcgNode.Base = Rc->TcuAddr;
       if (NumTbuPmu == RCA_NUM_TBU_PMU) {
         switch (Idx1) {
@@ -547,16 +558,16 @@ AcpiInstallIort (
   INT8 *PciSegEnabled
   )
 {
-  UINT32                            RcCount, SmmuPmuAgentCount, TotalCount;
-  VOID                              *IortPtr;
-  UINTN                             TableKey;
-  EFI_STATUS                        Status;
-  EFI_ACPI_TABLE_PROTOCOL           *AcpiTableProtocol;
+  UINT32                  RcCount, SmmuPmuAgentCount, TotalCount;
+  VOID                    *IortPtr;
+  UINTN                   TableKey;
+  EFI_STATUS              Status;
+  EFI_ACPI_TABLE_PROTOCOL *AcpiTableProtocol;
 
   Status = gBS->LocateProtocol (
                   &gEfiAcpiTableProtocolGuid,
                   NULL,
-                  (VOID **) &AcpiTableProtocol
+                  (VOID **)&AcpiTableProtocol
                   );
   if (EFI_ERROR (Status)) {
     PCIE_ERR ("IORT: Unable to locate ACPI table entry\n");
@@ -577,8 +588,8 @@ AcpiInstallIort (
   }
 
   TotalCount = sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE) +
-        RcCount * (sizeof (AC01_ITS_NODE) + sizeof (AC01_RC_NODE) + sizeof (AC01_SMMU_NODE)) +
-        SmmuPmuAgentCount * sizeof (EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE);
+               RcCount * (sizeof (AC01_ITS_NODE) + sizeof (AC01_RC_NODE) + sizeof (AC01_SMMU_NODE)) +
+               SmmuPmuAgentCount * sizeof (EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE);
 
   IortPtr = AllocateZeroPool (TotalCount);
   if (IortPtr == NULL) {

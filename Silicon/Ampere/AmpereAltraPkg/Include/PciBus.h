@@ -25,14 +25,14 @@
  *  rtMaxRes        ENUM                Last valid value of this ENUM
  **/
 typedef enum {
-    rtBus=0,
-    rtIo16,        //1
-    rtIo32,        //2
-    rtMmio32,      //3
-    rtMmio32p,     //4
-    rtMmio64,      //5
-    rtMmio64p,     //6
-    rtMaxRes
+  rtBus=0,
+  rtIo16,        // 1
+  rtIo32,        // 2
+  rtMmio32,      // 3
+  rtMmio32p,     // 4
+  rtMmio64,      // 5
+  rtMmio64p,     // 6
+  rtMaxRes
 } MRES_TYPE;
 
 #endif /* PCI_BUS_H_ */

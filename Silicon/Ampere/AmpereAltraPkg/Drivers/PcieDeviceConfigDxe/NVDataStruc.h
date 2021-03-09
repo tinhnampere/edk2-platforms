@@ -28,8 +28,8 @@
 
 #define MAX_DEVICE          40
 
-#define DEFAULT_MPS         0x00  // Section 7.5.3.4
-#define DEFAULT_MRR         0x02  // Section 7.5.3.4
+#define DEFAULT_MPS         0x00 // Section 7.5.3.4
+#define DEFAULT_MRR         0x02 // Section 7.5.3.4
 
 #define PCIE_ADD(Vid, Did, Seg, Bus, Dev) \
         (UINT64)(Vid) << 40 | (UINT64)(Did) << 24 | Seg << 16 | Bus << 8 | Dev;
@@ -46,8 +46,8 @@ typedef struct {
 } SLOT_INFO;
 
 typedef struct {
-  UINT8 MPS[MAX_DEVICE];
-  UINT8 MRR[MAX_DEVICE];
+  UINT8  MPS[MAX_DEVICE];
+  UINT8  MRR[MAX_DEVICE];
   UINT64 SlotInfo[MAX_DEVICE];
 } VARSTORE_DATA;
 

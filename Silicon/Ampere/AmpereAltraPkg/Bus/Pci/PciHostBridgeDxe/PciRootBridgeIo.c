@@ -104,20 +104,20 @@ UINT8 mOutStride[] = {
 EFI_STATUS
 EFIAPI
 RootBridgeIoCheckParameter (
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN OPERATION_TYPE                         OperationType,
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN UINT64                                 Address,
-  IN UINTN                                  Count,
-  IN VOID                                   *Buffer
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN OPERATION_TYPE                        OperationType,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                                Address,
+  IN UINTN                                 Count,
+  IN VOID                                  *Buffer
   )
 {
-  PCI_ROOT_BRIDGE_INSTANCE                     *RootBridgeInstance;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS  *PciRbAddr;
-  UINT64                                       MaxCount;
-  UINT64                                       Base = 0;
-  UINT64                                       Limit = 0;
-  UINT32                                       Size;
+  PCI_ROOT_BRIDGE_INSTANCE                    *RootBridgeInstance;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS *PciRbAddr;
+  UINT64                                      MaxCount;
+  UINT64                                      Base = 0;
+  UINT64                                      Limit = 0;
+  UINT32                                      Size;
 
   //
   // Check to see if Buffer is NULL
@@ -129,7 +129,7 @@ RootBridgeIoCheckParameter (
   //
   // Check to see if Width is in the valid range
   //
-  if ((UINT32) Width >= EfiPciWidthMaximum) {
+  if ((UINT32)Width >= EfiPciWidthMaximum) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -144,7 +144,7 @@ RootBridgeIoCheckParameter (
   //
   // Check to see if Width is in the valid range for I/O Port operations
   //
-  Width = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH) (Width & 0x03);
+  Width = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)(Width & 0x03);
   Size  = 1 << Width;
 
   //
@@ -188,20 +188,22 @@ RootBridgeIoCheckParameter (
       Limit = RootBridgeInstance->RootBridge.PMemAbove4G.Limit;
     }
   } else {
-    PciRbAddr = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS*) &Address;
+    PciRbAddr = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS *)&Address;
     if (PciRbAddr->Bus < RootBridgeInstance->RootBridge.Bus.Base ||
-      PciRbAddr->Bus > RootBridgeInstance->RootBridge.Bus.Limit) {
+        PciRbAddr->Bus > RootBridgeInstance->RootBridge.Bus.Limit)
+    {
       return EFI_INVALID_PARAMETER;
     }
 
     if (PciRbAddr->Device > PCI_MAX_DEVICE ||
-      PciRbAddr->Function > PCI_MAX_FUNC) {
+        PciRbAddr->Function > PCI_MAX_FUNC)
+    {
       return EFI_INVALID_PARAMETER;
     }
 
     Address = (PciRbAddr->ExtendedRegister != 0) ?
-                 PciRbAddr->ExtendedRegister :
-                 PciRbAddr->Register;
+              PciRbAddr->ExtendedRegister :
+              PciRbAddr->Register;
 
     Base = 0;
     Limit = RootBridgeInstance->RootBridge.NoExtendedConfigSpace ? 0xFF : 0xFFF;
@@ -212,7 +214,7 @@ RootBridgeIoCheckParameter (
   // ( Address is derived from  Extended register/Register.
   //   Now we can safely check the alignments )
   //
-  if ((Address & (UINT64) (mInStride[Width] - 1)) != 0) {
+  if ((Address & (UINT64)(mInStride[Width] - 1)) != 0) {
     return EFI_UNSUPPORTED;
   }
 
@@ -258,22 +260,28 @@ RootBridgeIoCheckParameter (
 EFI_STATUS
 EFIAPI
 RootBridgeIoMemRW (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     BOOLEAN                                Write,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 Address,
-  IN     UINTN                                  Count,
-  IN OUT VOID                                   *Buffer
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN     BOOLEAN                               Write,
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN     UINT64                                Address,
+  IN     UINTN                                 Count,
+  IN OUT VOID                                  *Buffer
   )
 {
-  EFI_STATUS                             Status;
-  UINT8                                  InStride;
-  UINT8                                  OutStride;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  OperationWidth;
-  UINT8                                  *Uint8Buffer;
+  EFI_STATUS                            Status;
+  UINT8                                 InStride;
+  UINT8                                 OutStride;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH OperationWidth;
+  UINT8                                 *Uint8Buffer;
 
-  PCIE_MMIO_DEBUG("%a: W: %d, Width: %d, Addr: 0x%lx, Count: %d\n", __FUNCTION__,
-      Write, Width, Address, Count);
+  PCIE_MMIO_DEBUG (
+    "%a: W: %d, Width: %d, Addr: 0x%lx, Count: %d\n",
+    __FUNCTION__,
+    Write,
+    Width,
+    Address,
+    Count
+    );
 
   Status = RootBridgeIoCheckParameter (This, MemOperation, Width, Address, Count, Buffer);
   if (EFI_ERROR (Status)) {
@@ -282,25 +290,25 @@ RootBridgeIoMemRW (
 
   InStride = mInStride[Width];
   OutStride = mOutStride[Width];
-  OperationWidth = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH) (Width & 0x03);
+  OperationWidth = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)(Width & 0x03);
 
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (Write) {
       switch (OperationWidth) {
       case EfiPciWidthUint8:
-        MmioWrite8 ((UINTN) Address, *Uint8Buffer);
+        MmioWrite8 ((UINTN)Address, *Uint8Buffer);
         break;
 
       case EfiPciWidthUint16:
-        MmioWrite16 ((UINTN) Address, *((UINT16 *) Uint8Buffer));
+        MmioWrite16 ((UINTN)Address, *((UINT16 *)Uint8Buffer));
         break;
 
       case EfiPciWidthUint32:
-        MmioWrite32 ((UINTN) Address, *((UINT32 *) Uint8Buffer));
+        MmioWrite32 ((UINTN)Address, *((UINT32 *)Uint8Buffer));
         break;
 
       case EfiPciWidthUint64:
-        MmioWrite64 ((UINTN) Address, *((UINT64 *) Uint8Buffer));
+        MmioWrite64 ((UINTN)Address, *((UINT64 *)Uint8Buffer));
         break;
 
       default:
@@ -314,19 +322,19 @@ RootBridgeIoMemRW (
     } else {
       switch (OperationWidth) {
       case EfiPciWidthUint8:
-        *Uint8Buffer = MmioRead8 ((UINTN) Address);
+        *Uint8Buffer = MmioRead8 ((UINTN)Address);
         break;
 
       case EfiPciWidthUint16:
-        *((UINT16 *) Uint8Buffer) = MmioRead16 ((UINTN) Address);
+        *((UINT16 *)Uint8Buffer) = MmioRead16 ((UINTN)Address);
         break;
 
       case EfiPciWidthUint32:
-        *((UINT32 *) Uint8Buffer) = MmioRead32 ((UINTN) Address);
+        *((UINT32 *)Uint8Buffer) = MmioRead32 ((UINTN)Address);
         break;
 
       case EfiPciWidthUint64:
-        *((UINT64 *) Uint8Buffer) = MmioRead64 ((UINTN) Address);
+        *((UINT64 *)Uint8Buffer) = MmioRead64 ((UINTN)Address);
         break;
 
       default:
@@ -364,22 +372,28 @@ RootBridgeIoMemRW (
 EFI_STATUS
 EFIAPI
 RootBridgeIoIoRW (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     BOOLEAN                                Write,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 Address,
-  IN     UINTN                                  Count,
-  IN OUT VOID                                   *Buffer
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN     BOOLEAN                               Write,
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN     UINT64                                Address,
+  IN     UINTN                                 Count,
+  IN OUT VOID                                  *Buffer
   )
 {
-  EFI_STATUS                             Status;
-  UINT8                                  InStride;
-  UINT8                                  OutStride;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  OperationWidth;
-  UINT8                                  *Uint8Buffer;
+  EFI_STATUS                            Status;
+  UINT8                                 InStride;
+  UINT8                                 OutStride;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH OperationWidth;
+  UINT8                                 *Uint8Buffer;
 
-  PCIE_MMIO_DEBUG ("%a: W: %d, Width: %d, Addr: 0x%lx, Count: %d\n", __FUNCTION__,
-      Write, Width, Address, Count);
+  PCIE_MMIO_DEBUG (
+    "%a: W: %d, Width: %d, Addr: 0x%lx, Count: %d\n",
+    __FUNCTION__,
+    Write,
+    Width,
+    Address,
+    Count
+    );
 
   Status = RootBridgeIoCheckParameter (This, IoOperation, Width, Address, Count, Buffer);
   if (EFI_ERROR (Status)) {
@@ -388,25 +402,25 @@ RootBridgeIoIoRW (
 
   InStride = mInStride[Width];
   OutStride = mOutStride[Width];
-  OperationWidth = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH) (Width & 0x03);
+  OperationWidth = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)(Width & 0x03);
 
   for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
     if (Write) {
       switch (OperationWidth) {
       case EfiPciWidthUint8:
-        MmioWrite8 ((UINTN) Address, *Uint8Buffer);
+        MmioWrite8 ((UINTN)Address, *Uint8Buffer);
         break;
 
       case EfiPciWidthUint16:
-        MmioWrite16 ((UINTN) Address, *((UINT16 *) Uint8Buffer));
+        MmioWrite16 ((UINTN)Address, *((UINT16 *)Uint8Buffer));
         break;
 
       case EfiPciWidthUint32:
-        MmioWrite32 ((UINTN) Address, *((UINT32 *) Uint8Buffer));
+        MmioWrite32 ((UINTN)Address, *((UINT32 *)Uint8Buffer));
         break;
 
       case EfiPciWidthUint64:
-        MmioWrite64 ((UINTN) Address, *((UINT64 *) Uint8Buffer));
+        MmioWrite64 ((UINTN)Address, *((UINT64 *)Uint8Buffer));
         break;
 
       default:
@@ -420,19 +434,19 @@ RootBridgeIoIoRW (
     } else {
       switch (OperationWidth) {
       case EfiPciWidthUint8:
-        *Uint8Buffer = MmioRead8 ((UINTN) Address);
+        *Uint8Buffer = MmioRead8 ((UINTN)Address);
         break;
 
       case EfiPciWidthUint16:
-        *((UINT16 *) Uint8Buffer) = MmioRead16 ((UINTN) Address);
+        *((UINT16 *)Uint8Buffer) = MmioRead16 ((UINTN)Address);
         break;
 
       case EfiPciWidthUint32:
-        *((UINT32 *) Uint8Buffer) = MmioRead32 ((UINTN) Address);
+        *((UINT32 *)Uint8Buffer) = MmioRead32 ((UINTN)Address);
         break;
 
       case EfiPciWidthUint64:
-        *((UINT64 *) Uint8Buffer) = MmioRead64 ((UINTN) Address);
+        *((UINT64 *)Uint8Buffer) = MmioRead64 ((UINTN)Address);
         break;
 
       default:
@@ -470,25 +484,25 @@ RootBridgeIoIoRW (
 EFI_STATUS
 EFIAPI
 RootBridgeIoPciRW (
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN BOOLEAN                                Write,
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN UINT64                                 Address,
-  IN UINTN                                  Count,
-  IN OUT VOID                               *Buffer
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN     BOOLEAN                               Write,
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN     UINT64                                Address,
+  IN     UINTN                                 Count,
+  IN OUT VOID                                  *Buffer
   )
 {
-  EFI_STATUS                                   Status;
-  UINT8                                        InStride;
-  UINT8                                        OutStride;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH        OperationWidth;
-  UINT8                                        *Uint8Buffer;
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS  *PciRbAddr;
-  UINTN                                        PcieRegAddr;
-  PCI_ROOT_BRIDGE_INSTANCE                     *RootBridgeInstance;
+  EFI_STATUS                                  Status;
+  UINT8                                       InStride;
+  UINT8                                       OutStride;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH       OperationWidth;
+  UINT8                                       *Uint8Buffer;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS *PciRbAddr;
+  UINTN                                       PcieRegAddr;
+  PCI_ROOT_BRIDGE_INSTANCE                    *RootBridgeInstance;
 
-  OperationWidth = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH) (Width & 0x03);
-  PciRbAddr = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS*) &Address;
+  OperationWidth = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)(Width & 0x03);
+  PciRbAddr = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS *)&Address;
 
   Status = RootBridgeIoCheckParameter (This, PciOperation, Width, Address, Count, Buffer);
   if (EFI_ERROR (Status)) {
@@ -497,12 +511,12 @@ RootBridgeIoPciRW (
 
   RootBridgeInstance = ROOT_BRIDGE_FROM_THIS (This);
 
-  PcieRegAddr = (UINTN) PCI_LIB_ADDRESS (
-      PciRbAddr->Bus,
-      PciRbAddr->Device,
-      PciRbAddr->Function,
-      (PciRbAddr->ExtendedRegister != 0) ? PciRbAddr->ExtendedRegister : PciRbAddr->Register
-      );
+  PcieRegAddr = (UINTN)PCI_LIB_ADDRESS (
+                         PciRbAddr->Bus,
+                         PciRbAddr->Device,
+                         PciRbAddr->Function,
+                         (PciRbAddr->ExtendedRegister != 0) ? PciRbAddr->ExtendedRegister : PciRbAddr->Register
+                         );
 
   //
   // Select loop based on the width of the transfer
@@ -514,15 +528,15 @@ RootBridgeIoPciRW (
     if (Write) {
       switch (OperationWidth) {
       case EfiPciWidthUint8:
-        PCI_CORE_IO_PCI_RW ((VOID *) &RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 1, Uint8Buffer);
+        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 1, Uint8Buffer);
         break;
 
       case EfiPciWidthUint16:
-        PCI_CORE_IO_PCI_RW ((VOID *) &RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 2, Uint8Buffer);
+        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 2, Uint8Buffer);
         break;
 
       case EfiPciWidthUint32:
-        PCI_CORE_IO_PCI_RW ((VOID *) &RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 4, Uint8Buffer);
+        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 4, Uint8Buffer);
         break;
 
       default:
@@ -536,15 +550,15 @@ RootBridgeIoPciRW (
     } else {
       switch (OperationWidth) {
       case EfiPciWidthUint8:
-        PCI_CORE_IO_PCI_RW ((VOID *) &RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 1, Uint8Buffer);
+        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 1, Uint8Buffer);
         break;
 
       case EfiPciWidthUint16:
-        PCI_CORE_IO_PCI_RW ((VOID *) &RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 2, Uint8Buffer);
+        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 2, Uint8Buffer);
         break;
 
       case EfiPciWidthUint32:
-        PCI_CORE_IO_PCI_RW ((VOID *) &RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 4, Uint8Buffer);
+        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 4, Uint8Buffer);
         break;
 
       default:
@@ -598,20 +612,20 @@ RootBridgeIoPciRW (
 EFI_STATUS
 EFIAPI
 RootBridgeIoPollMem (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN  UINT64                                 Address,
-  IN  UINT64                                 Mask,
-  IN  UINT64                                 Value,
-  IN  UINT64                                 Delay,
-  OUT UINT64                                 *Result
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                Address,
+  IN  UINT64                                Mask,
+  IN  UINT64                                Value,
+  IN  UINT64                                Delay,
+  OUT UINT64                                *Result
   )
 {
-  EFI_STATUS  Status;
-  UINT64      NumberOfTicks;
-  UINT32      Remainder;
+  EFI_STATUS Status;
+  UINT64     NumberOfTicks;
+  UINT32     Remainder;
 
-  if (Result == NULL || (UINT32) Width > EfiPciWidthUint64) {
+  if (Result == NULL || (UINT32)Width > EfiPciWidthUint64) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -633,10 +647,10 @@ RootBridgeIoPollMem (
 
   if (mMetronome == NULL) {
     Status = gBS->LocateProtocol (
-        &gEfiMetronomeArchProtocolGuid,
-        NULL,
-        (VOID **) &mMetronome
-        );
+                    &gEfiMetronomeArchProtocolGuid,
+                    NULL,
+                    (VOID **)&mMetronome
+                    );
     if (EFI_ERROR (Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -651,8 +665,11 @@ RootBridgeIoPollMem (
   // BugBug: overriding mMetronome->TickPeriod with UINT32 until Metronome
   // protocol definition is updated.
   //
-  NumberOfTicks = DivU64x32Remainder (Delay, (UINT32) mMetronome->TickPeriod, \
-                    &Remainder);
+  NumberOfTicks = DivU64x32Remainder (
+                    Delay,
+                    (UINT32)mMetronome->TickPeriod,
+                    &Remainder
+                    );
   if (Remainder != 0) {
     NumberOfTicks += 1;
   }
@@ -712,24 +729,24 @@ RootBridgeIoPollMem (
 EFI_STATUS
 EFIAPI
 RootBridgeIoPollIo (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN  UINT64                                 Address,
-  IN  UINT64                                 Mask,
-  IN  UINT64                                 Value,
-  IN  UINT64                                 Delay,
-  OUT UINT64                                 *Result
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                Address,
+  IN  UINT64                                Mask,
+  IN  UINT64                                Value,
+  IN  UINT64                                Delay,
+  OUT UINT64                                *Result
   )
 {
-  EFI_STATUS  Status;
-  UINT64      NumberOfTicks;
-  UINT32      Remainder;
+  EFI_STATUS Status;
+  UINT64     NumberOfTicks;
+  UINT32     Remainder;
 
   //
   // No matter what, always do a single poll.
   //
 
-  if (Result == NULL || (UINT32) Width > EfiPciWidthUint64) {
+  if (Result == NULL || (UINT32)Width > EfiPciWidthUint64) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -752,8 +769,11 @@ RootBridgeIoPollIo (
   // The "+1" to account for the possibility of the first tick being short
   // because we started in the middle of a tick.
   //
-  NumberOfTicks = DivU64x32Remainder (Delay, (UINT32) mMetronome->TickPeriod, \
-                    &Remainder);
+  NumberOfTicks = DivU64x32Remainder (
+                    Delay,
+                    (UINT32)mMetronome->TickPeriod,
+                    &Remainder
+                    );
   if (Remainder != 0) {
     NumberOfTicks += 1;
   }
@@ -807,11 +827,11 @@ RootBridgeIoPollIo (
 EFI_STATUS
 EFIAPI
 RootBridgeIoMemRead (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 Address,
-  IN     UINTN                                  Count,
-  OUT    VOID                                   *Buffer
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                Address,
+  IN  UINTN                                 Count,
+  OUT VOID                                  *Buffer
   )
 {
   return RootBridgeIoMemRW (This, FALSE, Width, Address, Count, Buffer);
@@ -847,11 +867,11 @@ RootBridgeIoMemRead (
 EFI_STATUS
 EFIAPI
 RootBridgeIoMemWrite (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 Address,
-  IN     UINTN                                  Count,
-  IN     VOID                                   *Buffer
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                                Address,
+  IN UINTN                                 Count,
+  IN VOID                                  *Buffer
   )
 {
   return RootBridgeIoMemRW (This, TRUE, Width, Address, Count, Buffer);
@@ -881,11 +901,11 @@ RootBridgeIoMemWrite (
 EFI_STATUS
 EFIAPI
 RootBridgeIoIoRead (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN     UINT64                                 Address,
-  IN     UINTN                                  Count,
-  OUT    VOID                                   *Buffer
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                Address,
+  IN  UINTN                                 Count,
+  OUT VOID                                  *Buffer
   )
 {
   return RootBridgeIoIoRW (This, FALSE, Width, Address, Count, Buffer);
@@ -915,11 +935,11 @@ RootBridgeIoIoRead (
 EFI_STATUS
 EFIAPI
 RootBridgeIoIoWrite (
-  IN       EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL         *This,
-  IN       EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH   Width,
-  IN       UINT64                                  Address,
-  IN       UINTN                                   Count,
-  IN       VOID                                    *Buffer
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                                Address,
+  IN UINTN                                 Count,
+  IN VOID                                  *Buffer
   )
 {
   return RootBridgeIoIoRW (This, TRUE, Width, Address, Count, Buffer);
@@ -959,20 +979,20 @@ RootBridgeIoIoWrite (
 EFI_STATUS
 EFIAPI
 RootBridgeIoCopyMem (
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL              *This,
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH        Width,
-  IN UINT64                                       DestAddress,
-  IN UINT64                                       SrcAddress,
-  IN UINTN                                        Count
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN UINT64                                DestAddress,
+  IN UINT64                                SrcAddress,
+  IN UINTN                                 Count
   )
 {
-  EFI_STATUS  Status;
-  BOOLEAN     Direction;
-  UINTN       Stride;
-  UINTN       Index;
-  UINT64      Result;
+  EFI_STATUS Status;
+  BOOLEAN    Direction;
+  UINTN      Stride;
+  UINTN      Index;
+  UINT64     Result;
 
-  if ((UINTN) Width > (UINTN) EfiPciWidthUint64) {
+  if ((UINTN)Width > (UINTN)EfiPciWidthUint64) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -980,17 +1000,18 @@ RootBridgeIoCopyMem (
     return EFI_SUCCESS;
   }
 
-  Stride = (UINTN) (1 << Width);
+  Stride = (UINTN)(1 << Width);
 
   Direction = TRUE;
   if ((DestAddress > SrcAddress) &&
-      (DestAddress < (SrcAddress + Count * Stride))) {
+      (DestAddress < (SrcAddress + Count * Stride)))
+  {
     Direction   = FALSE;
     SrcAddress  = SrcAddress  + (Count - 1) * Stride;
     DestAddress = DestAddress + (Count - 1) * Stride;
   }
 
-  for (Index = 0; Index < Count; Index ++) {
+  for (Index = 0; Index < Count; Index++) {
 
     Status = RootBridgeIoMemRead (This, Width, SrcAddress, 1, &Result);
     if (EFI_ERROR (Status)) {
@@ -1031,11 +1052,11 @@ RootBridgeIoCopyMem (
 EFI_STATUS
 EFIAPI
 RootBridgeIoPciRead (
-  IN       EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN       EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN       UINT64                                 Address,
-  IN       UINTN                                  Count,
-  OUT      VOID                                   *Buffer
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN  UINT64                                Address,
+  IN  UINTN                                 Count,
+  OUT VOID                                  *Buffer
   )
 {
   return RootBridgeIoPciRW (This, FALSE, Width, Address, Count, Buffer);
@@ -1058,11 +1079,11 @@ RootBridgeIoPciRead (
 EFI_STATUS
 EFIAPI
 RootBridgeIoPciWrite (
-  IN       EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
-  IN       EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
-  IN       UINT64                                 Address,
-  IN       UINTN                                  Count,
-  IN OUT   VOID                                  *Buffer
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL       *This,
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH Width,
+  IN     UINT64                                Address,
+  IN     UINTN                                 Count,
+  IN OUT VOID                                  *Buffer
   )
 {
   return RootBridgeIoPciRW (This, TRUE, Width, Address, Count, Buffer);
@@ -1092,18 +1113,19 @@ RootBridgeIoPciWrite (
 EFI_STATUS
 EFIAPI
 RootBridgeIoMap (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL            *This,
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_OPERATION  Operation,
-  IN     VOID                                       *HostAddress,
-  IN OUT UINTN                                      *NumberOfBytes,
-  OUT    EFI_PHYSICAL_ADDRESS                       *DeviceAddress,
-  OUT    VOID                                       **Mapping
+  IN      EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL           *This,
+  IN      EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_OPERATION Operation,
+  IN      VOID                                      *HostAddress,
+  IN  OUT UINTN                                     *NumberOfBytes,
+  OUT     EFI_PHYSICAL_ADDRESS                      *DeviceAddress,
+  OUT     VOID                                      **Mapping
   )
 {
-  EFI_PHYSICAL_ADDRESS  PhysicalAddress;
+  EFI_PHYSICAL_ADDRESS PhysicalAddress;
 
   if (HostAddress == NULL || NumberOfBytes == NULL ||
-      DeviceAddress == NULL || Mapping == NULL) {
+      DeviceAddress == NULL || Mapping == NULL)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1115,11 +1137,11 @@ RootBridgeIoMap (
   //
   // Make sure that Operation is valid
   //
-  if ((UINT32) Operation >= EfiPciOperationMaximum) {
+  if ((UINT32)Operation >= EfiPciOperationMaximum) {
     return EFI_INVALID_PARAMETER;
   }
 
-  PhysicalAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) HostAddress;
+  PhysicalAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)HostAddress;
   //
   // The transfer is below 4GB, so the DeviceAddress is simply the HostAddress
   //
@@ -1148,11 +1170,11 @@ RootBridgeIoMap (
 EFI_STATUS
 EFIAPI
 RootBridgeIoUnmap (
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  IN VOID                             *Mapping
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  IN VOID                            *Mapping
   )
 {
-  MAP_INFO    *MapInfo;
+  MAP_INFO *MapInfo;
 
   //
   // See if the Map() operation associated with this Unmap() required a mapping buffer.
@@ -1162,7 +1184,7 @@ RootBridgeIoUnmap (
     //
     // Get the MAP_INFO structure from Mapping
     //
-    MapInfo = (MAP_INFO *) Mapping;
+    MapInfo = (MAP_INFO *)Mapping;
 
     //
     // If this is a write operation from the Bus Master's point of view,
@@ -1170,10 +1192,11 @@ RootBridgeIoUnmap (
     // so the processor can read the contents of the real buffer.
     //
     if (MapInfo->Operation == EfiPciOperationBusMasterWrite ||
-        MapInfo->Operation == EfiPciOperationBusMasterWrite64) {
+        MapInfo->Operation == EfiPciOperationBusMasterWrite64)
+    {
       CopyMem (
-        (VOID *) (UINTN) MapInfo->HostAddress,
-        (VOID *) (UINTN) MapInfo->MappedHostAddress,
+        (VOID *)(UINTN)MapInfo->HostAddress,
+        (VOID *)(UINTN)MapInfo->MappedHostAddress,
         MapInfo->NumberOfBytes
         );
     }
@@ -1217,16 +1240,16 @@ RootBridgeIoUnmap (
 EFI_STATUS
 EFIAPI
 RootBridgeIoAllocateBuffer (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  IN  EFI_ALLOCATE_TYPE                Type,
-  IN  EFI_MEMORY_TYPE                  MemoryType,
-  IN  UINTN                            Pages,
-  OUT VOID                             **HostAddress,
-  IN  UINT64                           Attributes
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  IN  EFI_ALLOCATE_TYPE               Type,
+  IN  EFI_MEMORY_TYPE                 MemoryType,
+  IN  UINTN                           Pages,
+  OUT VOID                            **HostAddress,
+  IN  UINT64                          Attributes
   )
 {
-  EFI_STATUS            Status;
-  EFI_PHYSICAL_ADDRESS  PhysicalAddress;
+  EFI_STATUS           Status;
+  EFI_PHYSICAL_ADDRESS PhysicalAddress;
 
   //
   // Validate Attributes
@@ -1246,11 +1269,12 @@ RootBridgeIoAllocateBuffer (
   // The only valid memory types are EfiBootServicesData and EfiRuntimeServicesData
   //
   if (MemoryType != EfiBootServicesData &&
-      MemoryType != EfiRuntimeServicesData) {
+      MemoryType != EfiRuntimeServicesData)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  PhysicalAddress = (EFI_PHYSICAL_ADDRESS) (0xFFFFFFFFFFFFFFFFULL);
+  PhysicalAddress = (EFI_PHYSICAL_ADDRESS)(0xFFFFFFFFFFFFFFFFULL);
 
   Status = gBS->AllocatePages (
                   AllocateMaxAddress,
@@ -1262,7 +1286,7 @@ RootBridgeIoAllocateBuffer (
     return Status;
   }
 
-  *HostAddress = (VOID *) (UINTN) PhysicalAddress;
+  *HostAddress = (VOID *)(UINTN)PhysicalAddress;
 
   return EFI_SUCCESS;
 }
@@ -1284,12 +1308,12 @@ RootBridgeIoAllocateBuffer (
 EFI_STATUS
 EFIAPI
 RootBridgeIoFreeBuffer (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  IN  UINTN                            Pages,
-  OUT VOID                             *HostAddress
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  IN  UINTN                           Pages,
+  OUT VOID                            *HostAddress
   )
 {
-  return gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) HostAddress, Pages);
+  return gBS->FreePages ((EFI_PHYSICAL_ADDRESS)(UINTN)HostAddress, Pages);
 }
 
 /**
@@ -1316,7 +1340,7 @@ RootBridgeIoFreeBuffer (
 EFI_STATUS
 EFIAPI
 RootBridgeIoFlush (
-  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL           *This
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This
   )
 {
   return EFI_SUCCESS;
@@ -1347,9 +1371,9 @@ RootBridgeIoFlush (
 EFI_STATUS
 EFIAPI
 RootBridgeIoGetAttributes (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  OUT UINT64                           *Supported,
-  OUT UINT64                           *Attributes
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  OUT UINT64                          *Supported,
+  OUT UINT64                          *Attributes
   )
 {
   PCI_ROOT_BRIDGE_INSTANCE *RootBridgeInstance;
@@ -1413,20 +1437,21 @@ RootBridgeIoGetAttributes (
 EFI_STATUS
 EFIAPI
 RootBridgeIoSetAttributes (
-  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL  *This,
-  IN     UINT64                           Attributes,
-  IN OUT UINT64                           *ResourceBase,
-  IN OUT UINT64                           *ResourceLength
+  IN     EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  IN     UINT64                          Attributes,
+  IN OUT UINT64                          *ResourceBase,
+  IN OUT UINT64                          *ResourceLength
   )
 {
-  PCI_ROOT_BRIDGE_INSTANCE            *RootBridgeInstance;
+  PCI_ROOT_BRIDGE_INSTANCE *RootBridgeInstance;
 
   RootBridgeInstance = ROOT_BRIDGE_FROM_THIS (This);
 
   // Then check optional parameters if eligible
   if ((Attributes & (EFI_PCI_ATTRIBUTE_MEMORY_WRITE_COMBINE |
-                    EFI_PCI_ATTRIBUTE_MEMORY_CACHED |
-                    EFI_PCI_ATTRIBUTE_MEMORY_DISABLE)) != 0) {
+                     EFI_PCI_ATTRIBUTE_MEMORY_CACHED |
+                     EFI_PCI_ATTRIBUTE_MEMORY_DISABLE)) != 0)
+  {
     if (ResourceBase == NULL || ResourceLength == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -1479,8 +1504,8 @@ RootBridgeIoSetAttributes (
 EFI_STATUS
 EFIAPI
 RootBridgeIoConfiguration (
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL     *This,
-  OUT VOID                                **Resources
+  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *This,
+  OUT VOID                            **Resources
   )
 {
   PCI_ROOT_BRIDGE_INSTANCE          *RootBridgeInstance;
@@ -1526,21 +1551,21 @@ RootBridgeIoConfiguration (
     case rtMmio32p:
       Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
       Descriptor->SpecificFlag         = (Index == rtMmio32) ? 0 :
-                                           EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
       Descriptor->AddrSpaceGranularity = 32;
-    break;
+      break;
 
     case rtMmio64:
     case rtMmio64p:
       Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
       Descriptor->SpecificFlag         = (Index == rtMmio64) ? 0 :
-                                           EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
       Descriptor->AddrSpaceGranularity = 64;
       break;
 
     default:
       break;
-    };
+    }
 
     Descriptor++;
   }
@@ -1548,7 +1573,7 @@ RootBridgeIoConfiguration (
   //
   // Terminate the entries.
   //
-  End = (EFI_ACPI_END_TAG_DESCRIPTOR *) Descriptor;
+  End = (EFI_ACPI_END_TAG_DESCRIPTOR *)Descriptor;
   End->Desc     = ACPI_END_TAG_DESCRIPTOR;
   End->Checksum = 0x0;
 

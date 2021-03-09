@@ -20,10 +20,10 @@
 
 typedef union {
   struct {
-    UINT8  InterfaceType : 4;
-    UINT8  Reserved : 4;
+    UINT8 InterfaceType : 4;
+    UINT8 Reserved : 4;
   } Bits;
-  UINT8  Uint8;
+  UINT8 Uint8;
 } IPMI_GET_SYSTEM_INTERFACE_CAPABILITIES_REQUEST;
 
 typedef union {
@@ -37,11 +37,11 @@ typedef union {
 } IPMI_SYSTEM_INTERFACE_SSIF_CAPABILITIES;
 
 typedef struct {
-  UINT8  CompletionCode;
-  UINT8  Reserved;
+  UINT8                                   CompletionCode;
+  UINT8                                   Reserved;
   IPMI_SYSTEM_INTERFACE_SSIF_CAPABILITIES InterfaceCap;
-  UINT8  InputMsgSize;
-  UINT8  OutputMsgSize;
+  UINT8                                   InputMsgSize;
+  UINT8                                   OutputMsgSize;
 } IPMI_GET_SYSTEM_INTERFACE_SSIF_CAPABILITIES_RESPONSE;
 
 //

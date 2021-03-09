@@ -38,9 +38,9 @@
 EFI_STATUS
 EFIAPI
 RngGetInfo (
-  IN EFI_RNG_PROTOCOL             *This,
-  IN OUT UINTN                    *RNGAlgorithmListSize,
-  OUT EFI_RNG_ALGORITHM           *RNGAlgorithmList
+  IN     EFI_RNG_PROTOCOL  *This,
+  IN OUT UINTN             *RNGAlgorithmListSize,
+  OUT    EFI_RNG_ALGORITHM *RNGAlgorithmList
   )
 {
   if (This == NULL || RNGAlgorithmListSize == NULL) {
@@ -85,13 +85,13 @@ RngGetInfo (
 EFI_STATUS
 EFIAPI
 RngGetRNG (
-  IN  EFI_RNG_PROTOCOL            *This,
-  IN  EFI_RNG_ALGORITHM           *RNGAlgorithm, OPTIONAL
-  IN  UINTN                       RNGValueLength,
-  OUT UINT8                       *RNGValue
+  IN  EFI_RNG_PROTOCOL  *This,
+  IN  EFI_RNG_ALGORITHM *RNGAlgorithm, OPTIONAL
+  IN  UINTN             RNGValueLength,
+  OUT UINT8             *RNGValue
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS Status;
 
   if (This == NULL || RNGValueLength == 0 || RNGValue == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -111,7 +111,8 @@ RngGetRNG (
     DEBUG ((
       DEBUG_ERROR,
       "%a:%d Failed to generate a random number. \n",
-      __FUNCTION__, __LINE__
+      __FUNCTION__,
+      __LINE__
       ));
     return Status;
   }
@@ -141,12 +142,12 @@ EFI_RNG_PROTOCOL mRng = {
 EFI_STATUS
 EFIAPI
 RngDriverEntry (
-  IN EFI_HANDLE          ImageHandle,
-  IN EFI_SYSTEM_TABLE    *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS             Status;
-  EFI_HANDLE             Handle;
+  EFI_STATUS Status;
+  EFI_HANDLE Handle;
 
   //
   // Install UEFI RNG (Random Number Generator) Protocol

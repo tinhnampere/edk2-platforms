@@ -47,31 +47,31 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define TPM_DEVICE_INTERFACE_MAX       TPM_DEVICE_INTERFACE_PTP_FIFO
 #define TPM_DEVICE_INTERFACE_DEFAULT   TPM_DEVICE_INTERFACE_PTP_CRB
 
-#define TCG2_PPI_VERSION_1_2                    0x322E31  // "1.2"
-#define TCG2_PPI_VERSION_1_3                    0x332E31  // "1.3"
+#define TCG2_PPI_VERSION_1_2                    0x322E31 // "1.2"
+#define TCG2_PPI_VERSION_1_3                    0x332E31 // "1.3"
 
 //
 // Nv Data structure referenced by IFR, TPM device user desired
 //
 typedef struct {
-  UINT8   TpmDevice;
+  UINT8 TpmDevice;
 } TCG2_CONFIGURATION;
 
 typedef struct {
-  UINT64  PpiVersion;
-  UINT8   Tpm2AcpiTableRev;
+  UINT64 PpiVersion;
+  UINT8  Tpm2AcpiTableRev;
 } TCG2_VERSION;
 
 typedef struct {
-  BOOLEAN  Sha1Supported;
-  BOOLEAN  Sha256Supported;
-  BOOLEAN  Sha384Supported;
-  BOOLEAN  Sha512Supported;
-  BOOLEAN  Sm3Supported;
-  UINT8    TpmDeviceInterfaceAttempt;
-  BOOLEAN  TpmDeviceInterfacePtpFifoSupported;
-  BOOLEAN  TpmDeviceInterfacePtpCrbSupported;
-  BOOLEAN  ChangeEPSSupported;
+  BOOLEAN Sha1Supported;
+  BOOLEAN Sha256Supported;
+  BOOLEAN Sha384Supported;
+  BOOLEAN Sha512Supported;
+  BOOLEAN Sm3Supported;
+  UINT8   TpmDeviceInterfaceAttempt;
+  BOOLEAN TpmDeviceInterfacePtpFifoSupported;
+  BOOLEAN TpmDeviceInterfacePtpCrbSupported;
+  BOOLEAN ChangeEPSSupported;
 } TCG2_CONFIGURATION_INFO;
 
 #define TCG2_STORAGE_NAME           L"TCG2_CONFIGURATION"

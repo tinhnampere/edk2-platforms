@@ -12,13 +12,13 @@
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Protocol/PciIo.h>
 
-#include "PcieHelper.h"
 #include "PcieDeviceConfigDxe.h"
+#include "PcieHelper.h"
 
 EFI_STATUS
 WriteMps (
-  PCIE_NODE  *Node,
-  UINT8      Value
+  PCIE_NODE *Node,
+  UINT8     Value
   )
 {
   EFI_PCI_IO_PROTOCOL *PciIo;
@@ -48,7 +48,7 @@ WriteMps (
 
   // Update value and write to device
   TmpValue = (TmpValue & ~(PCIE_MAX_PAYLOAD_MASK << PCIE_CONTROL_MAX_PAYLOAD_OFF))
-              | Value << PCIE_CONTROL_MAX_PAYLOAD_OFF;
+             | Value << PCIE_CONTROL_MAX_PAYLOAD_OFF;
   Status = PciIo->Pci.Write (
                         PciIo,
                         EfiPciIoWidthUint16,
@@ -76,8 +76,8 @@ WriteMps (
 
 EFI_STATUS
 WriteMrr (
-  PCIE_NODE  *Node,
-  UINT8      Value
+  PCIE_NODE *Node,
+  UINT8     Value
   )
 {
   EFI_PCI_IO_PROTOCOL *PciIo;
@@ -107,7 +107,7 @@ WriteMrr (
 
   // Update value and write to device
   TmpValue = (TmpValue & ~(PCIE_MAX_READ_REQUEST_MASK << PCIE_CONTROL_READ_REQUEST_OFF))
-              | Value << PCIE_CONTROL_READ_REQUEST_OFF;
+             | Value << PCIE_CONTROL_READ_REQUEST_OFF;
   Status = PciIo->Pci.Write (
                         PciIo,
                         EfiPciIoWidthUint16,

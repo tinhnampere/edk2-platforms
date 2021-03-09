@@ -21,12 +21,12 @@ STATIC CONST EFI_GUID mJadeAcpiTableFile = { 0x5addbc13, 0x8634, 0x480c, { 0x9b,
  */
 STATIC VOID
 AcpiNotificationEvent (
-  IN  EFI_EVENT                Event,
-  IN  VOID                     *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
-  EFI_STATUS  Status;
-  EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *Rsdp;
+  EFI_STATUS                                   Status;
+  EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp;
 
   Status = LocateAndInstallAcpiFromFv (&mJadeAcpiTableFile);
   ASSERT_EFI_ERROR (Status);
@@ -34,15 +34,16 @@ AcpiNotificationEvent (
   //
   // Find ACPI table RSD_PTR from the system table.
   //
-  Status = EfiGetSystemConfigurationTable (&gEfiAcpiTableGuid, (VOID **) &Rsdp);
+  Status = EfiGetSystemConfigurationTable (&gEfiAcpiTableGuid, (VOID **)&Rsdp);
   if (EFI_ERROR (Status)) {
-    Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **) &Rsdp);
+    Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **)&Rsdp);
   }
 
   if (!EFI_ERROR (Status) &&
       Rsdp != NULL &&
       Rsdp->Revision >= EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_REVISION &&
-      Rsdp->RsdtAddress != 0) {
+      Rsdp->RsdtAddress != 0)
+  {
     // ARM Platforms must set the RSDT address to NULL
     Rsdp->RsdtAddress = 0;
   }
@@ -53,8 +54,8 @@ AcpiNotificationEvent (
 VOID
 EFIAPI
 InstallAcpiOnReadyToBoot (
-  IN EFI_EVENT        Event,
-  IN VOID             *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
   EFI_STATUS Status;
@@ -102,12 +103,12 @@ InstallAcpiOnReadyToBoot (
 
 VOID
 EFIAPI
-UpdateAcpiOnExitBootServices(
-  IN EFI_EVENT        Event,
-  IN VOID             *Context
+UpdateAcpiOnExitBootServices (
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
-  EFI_STATUS  Status;
+  EFI_STATUS Status;
 
   Status = AcpiPatchDsdtTable ();
   if (!EFI_ERROR (Status)) {
@@ -121,7 +122,7 @@ UpdateAcpiOnExitBootServices(
   }
 
   // Configure PCC mailbox base address and unmask interrupt
-  Status = AcpiPcctInit();
+  Status = AcpiPcctInit ();
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "PCCT Table updated!\n"));
   }
@@ -135,13 +136,13 @@ UpdateAcpiOnExitBootServices(
 EFI_STATUS
 EFIAPI
 AcpiPlatformDxeInitialize (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_EVENT             ReadyToBootEvent;
-  EFI_EVENT             ExitBootServicesEvent;
-  EFI_STATUS            Status;
+  EFI_EVENT  ReadyToBootEvent;
+  EFI_EVENT  ExitBootServicesEvent;
+  EFI_STATUS Status;
 
   EfiCreateProtocolNotifyEvent (
     &gEfiAcpiTableProtocolGuid,
@@ -168,7 +169,7 @@ AcpiPlatformDxeInitialize (
                   &gEfiEventReadyToBootGuid,
                   &ReadyToBootEvent
                   );
-  ASSERT_EFI_ERROR(Status);
+  ASSERT_EFI_ERROR (Status);
 
   return EFI_SUCCESS;
 }

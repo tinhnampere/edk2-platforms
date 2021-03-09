@@ -45,7 +45,9 @@ FailSafeGetRegionInfo (
 **/
 EFI_STATUS
 EFIAPI
-FailSafeBootSuccessfully (VOID);
+FailSafeBootSuccessfully (
+  VOID
+  );
 
 /**
   Simulate UEFI boot failure due to config wrong NVPARAM for
@@ -53,6 +55,8 @@ FailSafeBootSuccessfully (VOID);
 **/
 EFI_STATUS
 EFIAPI
-FailSafeTestBootFailure (VOID);
+FailSafeTestBootFailure (
+  VOID
+  );
 
 #endif /* FAILSAFE_LIB_H_ */

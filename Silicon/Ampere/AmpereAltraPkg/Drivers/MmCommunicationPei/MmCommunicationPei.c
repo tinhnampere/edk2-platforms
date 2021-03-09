@@ -24,8 +24,8 @@
 EFI_STATUS
 EFIAPI
 MmCommunicationPeiEntryPoint (
-  IN       EFI_PEI_FILE_HANDLE  FileHandle,
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
   EFI_PHYSICAL_ADDRESS MmBufferBase = PcdGet64 (PcdMmBufferBase);

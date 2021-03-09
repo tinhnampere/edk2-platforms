@@ -18,10 +18,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define EFI_TCG2_EVENT_LOG_FORMAT_ALL   (EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 | EFI_TCG2_EVENT_LOG_FORMAT_TCG_2)
 
-TPM_INSTANCE_ID  mTpmInstanceId[TPM_DEVICE_MAX + 1] = TPM_INSTANCE_ID_LIST;
+TPM_INSTANCE_ID mTpmInstanceId[TPM_DEVICE_MAX + 1] = TPM_INSTANCE_ID_LIST;
 
-TCG2_CONFIG_PRIVATE_DATA         *mTcg2ConfigPrivateDate;
-TCG2_CONFIG_PRIVATE_DATA         mTcg2ConfigPrivateDateTemplate = {
+TCG2_CONFIG_PRIVATE_DATA *mTcg2ConfigPrivateDate;
+TCG2_CONFIG_PRIVATE_DATA mTcg2ConfigPrivateDateTemplate = {
   TCG2_CONFIG_PRIVATE_DATA_SIGNATURE,
   {
     Tcg2ExtractConfig,
@@ -30,14 +30,14 @@ TCG2_CONFIG_PRIVATE_DATA         mTcg2ConfigPrivateDateTemplate = {
   }
 };
 
-HII_VENDOR_DEVICE_PATH          mTcg2HiiVendorDevicePath = {
+HII_VENDOR_DEVICE_PATH mTcg2HiiVendorDevicePath = {
   {
     {
       HARDWARE_DEVICE_PATH,
       HW_VENDOR_DP,
       {
-        (UINT8) (sizeof (VENDOR_DEVICE_PATH)),
-        (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
+        (UINT8)(sizeof (VENDOR_DEVICE_PATH)),
+        (UINT8)((sizeof (VENDOR_DEVICE_PATH)) >> 8)
       }
     },
     TCG2_CONFIG_FORM_SET_GUID
@@ -46,13 +46,13 @@ HII_VENDOR_DEVICE_PATH          mTcg2HiiVendorDevicePath = {
     END_DEVICE_PATH_TYPE,
     END_ENTIRE_DEVICE_PATH_SUBTYPE,
     {
-      (UINT8) (END_DEVICE_PATH_LENGTH),
-      (UINT8) ((END_DEVICE_PATH_LENGTH) >> 8)
+      (UINT8)(END_DEVICE_PATH_LENGTH),
+      (UINT8)((END_DEVICE_PATH_LENGTH) >> 8)
     }
   }
 };
 
-UINT8  mCurrentPpRequest;
+UINT8 mCurrentPpRequest;
 
 /**
   Return if PTP CRB is supported.
@@ -64,7 +64,7 @@ UINT8  mCurrentPpRequest;
 **/
 BOOLEAN
 IsPtpCrbSupported (
-  IN VOID                 *Register
+  IN VOID *Register
   )
 {
   return TRUE;
@@ -80,7 +80,7 @@ IsPtpCrbSupported (
 **/
 BOOLEAN
 IsPtpFifoSupported (
-  IN VOID                 *Register
+  IN VOID *Register
   )
 {
   return FALSE;
@@ -100,23 +100,26 @@ IsPtpFifoSupported (
 **/
 EFI_STATUS
 SetPtpInterface (
-  IN VOID                 *Register,
-  IN UINT8                PtpInterface
+  IN VOID  *Register,
+  IN UINT8 PtpInterface
   )
 {
-  TPM2_PTP_INTERFACE_TYPE       PtpInterfaceCurrent;
+  TPM2_PTP_INTERFACE_TYPE PtpInterfaceCurrent;
 
-  PtpInterfaceCurrent = PcdGet8(PcdActiveTpmInterfaceType);
+  PtpInterfaceCurrent = PcdGet8 (PcdActiveTpmInterfaceType);
   if ((PtpInterfaceCurrent != Tpm2PtpInterfaceFifo) &&
-      (PtpInterfaceCurrent != Tpm2PtpInterfaceCrb)) {
+      (PtpInterfaceCurrent != Tpm2PtpInterfaceCrb))
+  {
     return EFI_UNSUPPORTED;
   }
 
   switch (PtpInterface) {
   case Tpm2PtpInterfaceFifo:
     return EFI_UNSUPPORTED;
+
   case Tpm2PtpInterfaceCrb:
     return EFI_SUCCESS;
+
   default:
     return EFI_INVALID_PARAMETER;
   }
@@ -151,10 +154,10 @@ SetPtpInterface (
 EFI_STATUS
 EFIAPI
 Tcg2ExtractConfig (
-  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL        *This,
-  IN CONST EFI_STRING                            Request,
-       OUT EFI_STRING                            *Progress,
-       OUT EFI_STRING                            *Results
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Request,
+  OUT      EFI_STRING                     *Progress,
+  OUT      EFI_STRING                     *Results
   )
 {
   if (Progress == NULL || Results == NULL) {
@@ -176,11 +179,11 @@ Tcg2ExtractConfig (
 **/
 EFI_STATUS
 SaveTcg2PpRequest (
-  IN UINT8                         PpRequest
+  IN UINT8 PpRequest
   )
 {
-  UINT32      ReturnCode;
-  EFI_STATUS  Status;
+  UINT32     ReturnCode;
+  EFI_STATUS Status;
 
   ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (PpRequest, 0);
   if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_SUCCESS) {
@@ -208,11 +211,11 @@ SaveTcg2PpRequest (
 **/
 EFI_STATUS
 SaveTcg2PpRequestParameter (
-  IN UINT32                        PpRequestParameter
+  IN UINT32 PpRequestParameter
   )
 {
-  UINT32      ReturnCode;
-  EFI_STATUS  Status;
+  UINT32     ReturnCode;
+  EFI_STATUS Status;
 
   ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (mCurrentPpRequest, PpRequestParameter);
   if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_SUCCESS) {
@@ -244,8 +247,8 @@ SaveTcg2PCRBanksRequest (
   IN BOOLEAN Enable
   )
 {
-  UINT32      ReturnCode;
-  EFI_STATUS  Status;
+  UINT32     ReturnCode;
+  EFI_STATUS Status;
 
   if (Enable) {
     mTcg2ConfigPrivateDate->PCRBanksDesired |= (0x1 << PCRBankIndex);
@@ -288,9 +291,9 @@ SaveTcg2PCRBanksRequest (
 EFI_STATUS
 EFIAPI
 Tcg2RouteConfig (
-  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL      *This,
-  IN CONST EFI_STRING                          Configuration,
-       OUT EFI_STRING                          *Progress
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Configuration,
+  OUT      EFI_STRING                     *Progress
   )
 {
   if (Configuration == NULL || Progress == NULL) {
@@ -312,27 +315,27 @@ Tcg2RouteConfig (
 
 **/
 EFI_STATUS
-GetTpm2HID(
+GetTpm2HID (
   IN OUT CHAR8 *Hid,
-  IN     UINTN  Size
+  IN     UINTN Size
   )
 {
-  EFI_STATUS  Status;
-  UINT32      ManufacturerID;
-  UINT32      FirmwareVersion1;
-  UINT32      FirmwareVersion2;
-  BOOLEAN     PnpHID;
+  EFI_STATUS Status;
+  UINT32     ManufacturerID;
+  UINT32     FirmwareVersion1;
+  UINT32     FirmwareVersion2;
+  BOOLEAN    PnpHID;
 
   PnpHID = TRUE;
 
-  ZeroMem(Hid, Size);
+  ZeroMem (Hid, Size);
 
   //
   // Get Manufacturer ID
   //
-  Status = Tpm2GetCapabilityManufactureID(&ManufacturerID);
-  if (!EFI_ERROR(Status)) {
-    DEBUG((DEBUG_INFO, "TPM_PT_MANUFACTURER 0x%08x\n", ManufacturerID));
+  Status = Tpm2GetCapabilityManufactureID (&ManufacturerID);
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "TPM_PT_MANUFACTURER 0x%08x\n", ManufacturerID));
     //
     // ManufacturerID defined in TCG Vendor ID Registry
     // may tailed with 0x00 or 0x20
@@ -342,37 +345,37 @@ GetTpm2HID(
       //  HID containing PNP ID "NNN####"
       //   NNN is uppercase letter for Vendor ID specified by manufacturer
       //
-      CopyMem(Hid, &ManufacturerID, 3);
+      CopyMem (Hid, &ManufacturerID, 3);
     } else {
       //
       //  HID containing ACP ID "NNNN####"
       //   NNNN is uppercase letter for Vendor ID specified by manufacturer
       //
-      CopyMem(Hid, &ManufacturerID, 4);
+      CopyMem (Hid, &ManufacturerID, 4);
       PnpHID = FALSE;
     }
   } else {
     DEBUG ((DEBUG_ERROR, "Get TPM_PT_MANUFACTURER failed %x!\n", Status));
-    ASSERT(FALSE);
+    ASSERT (FALSE);
     return Status;
   }
 
-  Status = Tpm2GetCapabilityFirmwareVersion(&FirmwareVersion1, &FirmwareVersion2);
-  if (!EFI_ERROR(Status)) {
-    DEBUG((DEBUG_INFO, "TPM_PT_FIRMWARE_VERSION_1 0x%x\n", FirmwareVersion1));
-    DEBUG((DEBUG_INFO, "TPM_PT_FIRMWARE_VERSION_2 0x%x\n", FirmwareVersion2));
+  Status = Tpm2GetCapabilityFirmwareVersion (&FirmwareVersion1, &FirmwareVersion2);
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "TPM_PT_FIRMWARE_VERSION_1 0x%x\n", FirmwareVersion1));
+    DEBUG ((DEBUG_INFO, "TPM_PT_FIRMWARE_VERSION_2 0x%x\n", FirmwareVersion2));
     //
     //   #### is Firmware Version 1
     //
     if (PnpHID) {
-      AsciiSPrint(Hid + 3, TPM_HID_PNP_SIZE - 3, "%02d%02d", ((FirmwareVersion1 & 0xFFFF0000) >> 16), (FirmwareVersion1 & 0x0000FFFF));
+      AsciiSPrint (Hid + 3, TPM_HID_PNP_SIZE - 3, "%02d%02d", ((FirmwareVersion1 & 0xFFFF0000) >> 16), (FirmwareVersion1 & 0x0000FFFF));
     } else {
-      AsciiSPrint(Hid + 4, TPM_HID_ACPI_SIZE - 4, "%02d%02d", ((FirmwareVersion1 & 0xFFFF0000) >> 16), (FirmwareVersion1 & 0x0000FFFF));
+      AsciiSPrint (Hid + 4, TPM_HID_ACPI_SIZE - 4, "%02d%02d", ((FirmwareVersion1 & 0xFFFF0000) >> 16), (FirmwareVersion1 & 0x0000FFFF));
     }
 
   } else {
     DEBUG ((DEBUG_ERROR, "Get TPM_PT_FIRMWARE_VERSION_X failed %x!\n", Status));
-    ASSERT(FALSE);
+    ASSERT (FALSE);
     return Status;
   }
 
@@ -397,15 +400,15 @@ GetTpm2HID(
 **/
 EFI_STATUS
 Tcg2VersionInfoCallback (
-  IN EFI_BROWSER_ACTION         Action,
-  IN EFI_QUESTION_ID            QuestionId,
-  IN UINT8                      Type,
-  IN EFI_IFR_TYPE_VALUE         *Value
+  IN EFI_BROWSER_ACTION Action,
+  IN EFI_QUESTION_ID    QuestionId,
+  IN UINT8              Type,
+  IN EFI_IFR_TYPE_VALUE *Value
   )
 {
-  EFI_INPUT_KEY                 Key;
-  UINT64                        PcdTcg2PpiVersion;
-  UINT8                         PcdTpm2AcpiTableRev;
+  EFI_INPUT_KEY Key;
+  UINT64        PcdTcg2PpiVersion;
+  UINT8         PcdTpm2AcpiTableRev;
 
   ASSERT (Action == EFI_BROWSER_ACTION_SUBMITTED);
 
@@ -420,7 +423,7 @@ Tcg2VersionInfoCallback (
     CopyMem (
       &PcdTcg2PpiVersion,
       PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer),
-      AsciiStrSize ((CHAR8 *) PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer))
+      AsciiStrSize ((CHAR8 *)PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer))
       );
     if (PcdTcg2PpiVersion != Value->u64) {
       CreatePopUp (
@@ -431,7 +434,7 @@ Tcg2VersionInfoCallback (
         NULL
         );
     }
-  } else if (QuestionId == KEY_TPM2_ACPI_REVISION){
+  } else if (QuestionId == KEY_TPM2_ACPI_REVISION) {
     //
     // Get the PCD value after EFI_BROWSER_ACTION_SUBMITTED,
     // the SetVariable to TCG2_VERSION_NAME should have been done.
@@ -479,19 +482,19 @@ Tcg2VersionInfoCallback (
 EFI_STATUS
 EFIAPI
 Tcg2Callback (
-  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL      *This,
-  IN     EFI_BROWSER_ACTION                    Action,
-  IN     EFI_QUESTION_ID                       QuestionId,
-  IN     UINT8                                 Type,
-  IN     EFI_IFR_TYPE_VALUE                    *Value,
-     OUT EFI_BROWSER_ACTION_REQUEST            *ActionRequest
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN       EFI_BROWSER_ACTION             Action,
+  IN       EFI_QUESTION_ID                QuestionId,
+  IN       UINT8                          Type,
+  IN       EFI_IFR_TYPE_VALUE             *Value,
+  OUT      EFI_BROWSER_ACTION_REQUEST     *ActionRequest
   )
 {
-  EFI_STATUS                 Status;
-  EFI_INPUT_KEY              Key;
-  CHAR8                      HidStr[16];
-  CHAR16                     UnHidStr[16];
-  TCG2_CONFIG_PRIVATE_DATA   *Private;
+  EFI_STATUS               Status;
+  EFI_INPUT_KEY            Key;
+  CHAR8                    HidStr[16];
+  CHAR16                   UnHidStr[16];
+  TCG2_CONFIG_PRIVATE_DATA *Private;
 
   if ((This == NULL) || (Value == NULL) || (ActionRequest == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -504,15 +507,15 @@ Tcg2Callback (
     // Update TPM2 HID info
     //
     if (QuestionId == KEY_TPM_DEVICE) {
-      Status = GetTpm2HID(HidStr, 16);
+      Status = GetTpm2HID (HidStr, 16);
 
-      if (EFI_ERROR(Status)) {
+      if (EFI_ERROR (Status)) {
         //
         //  Fail to get TPM2 HID
         //
         HiiSetString (Private->HiiHandle, STRING_TOKEN (STR_TPM2_ACPI_HID_CONTENT), L"Unknown", NULL);
       } else {
-        AsciiStrToUnicodeStrS(HidStr, UnHidStr, 16);
+        AsciiStrToUnicodeStrS (HidStr, UnHidStr, 16);
         HiiSetString (Private->HiiHandle, STRING_TOKEN (STR_TPM2_ACPI_HID_CONTENT), UnHidStr, NULL);
       }
     }
@@ -521,7 +524,7 @@ Tcg2Callback (
 
   if (Action == EFI_BROWSER_ACTION_CHANGING) {
     if (QuestionId == KEY_TPM_DEVICE_INTERFACE) {
-      Status = SetPtpInterface ((VOID *) (UINTN) PcdGet64 (PcdTpmBaseAddress), Value->u8);
+      Status = SetPtpInterface ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress), Value->u8);
       if (EFI_ERROR (Status)) {
         CreatePopUp (
           EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
@@ -568,9 +571,9 @@ Tcg2Callback (
 **/
 VOID
 AppendBufferWithTpmAlgHash (
-  IN UINT16  *Buffer,
-  IN UINTN   BufferSize,
-  IN UINT32  TpmAlgHash
+  IN UINT16 *Buffer,
+  IN UINTN  BufferSize,
+  IN UINT32 TpmAlgHash
   )
 {
   switch (TpmAlgHash) {
@@ -580,24 +583,28 @@ AppendBufferWithTpmAlgHash (
     }
     StrCatS (Buffer, BufferSize / sizeof (CHAR16), L"SHA1");
     break;
+
   case TPM_ALG_SHA256:
     if (Buffer[0] != 0) {
       StrCatS (Buffer, BufferSize / sizeof (CHAR16), L", ");
     }
     StrCatS (Buffer, BufferSize / sizeof (CHAR16), L"SHA256");
     break;
+
   case TPM_ALG_SHA384:
     if (Buffer[0] != 0) {
       StrCatS (Buffer, BufferSize / sizeof (CHAR16), L", ");
     }
     StrCatS (Buffer, BufferSize / sizeof (CHAR16), L"SHA384");
     break;
+
   case TPM_ALG_SHA512:
     if (Buffer[0] != 0) {
       StrCatS (Buffer, BufferSize / sizeof (CHAR16), L", ");
     }
     StrCatS (Buffer, BufferSize / sizeof (CHAR16), L"SHA512");
     break;
+
   case TPM_ALG_SM3_256:
     if (Buffer[0] != 0) {
       StrCatS (Buffer, BufferSize / sizeof (CHAR16), L", ");
@@ -617,9 +624,9 @@ AppendBufferWithTpmAlgHash (
 **/
 VOID
 FillBufferWithBootHashAlg (
-  IN UINT16  *Buffer,
-  IN UINTN   BufferSize,
-  IN UINT32  BootHashAlg
+  IN UINT16 *Buffer,
+  IN UINTN  BufferSize,
+  IN UINT32 BootHashAlg
   )
 {
   Buffer[0] = 0;
@@ -664,23 +671,27 @@ FillBufferWithBootHashAlg (
 **/
 VOID
 SetConfigInfo (
-  IN OUT TCG2_CONFIGURATION_INFO         *Tcg2ConfigInfo,
-  IN UINT32                              TpmAlgHash
+  IN OUT TCG2_CONFIGURATION_INFO *Tcg2ConfigInfo,
+  IN     UINT32                  TpmAlgHash
   )
 {
   switch (TpmAlgHash) {
   case TPM_ALG_SHA1:
     Tcg2ConfigInfo->Sha1Supported = TRUE;
     break;
+
   case TPM_ALG_SHA256:
     Tcg2ConfigInfo->Sha256Supported = TRUE;
     break;
+
   case TPM_ALG_SHA384:
     Tcg2ConfigInfo->Sha384Supported = TRUE;
     break;
+
   case TPM_ALG_SHA512:
     Tcg2ConfigInfo->Sha512Supported = TRUE;
     break;
+
   case TPM_ALG_SM3_256:
     Tcg2ConfigInfo->Sm3Supported = TRUE;
     break;
@@ -697,9 +708,9 @@ SetConfigInfo (
 **/
 VOID
 FillBufferWithTCG2EventLogFormat (
-  IN UINT16  *Buffer,
-  IN UINTN   BufferSize,
-  IN UINT32  TCG2EventLogFormat
+  IN UINT16 *Buffer,
+  IN UINTN  BufferSize,
+  IN UINT32 TCG2EventLogFormat
   )
 {
   Buffer[0] = 0;
@@ -735,19 +746,19 @@ FillBufferWithTCG2EventLogFormat (
 **/
 EFI_STATUS
 InstallTcg2ConfigForm (
-  IN OUT TCG2_CONFIG_PRIVATE_DATA  *PrivateData
+  IN OUT TCG2_CONFIG_PRIVATE_DATA *PrivateData
   )
 {
-  EFI_STATUS                      Status;
-  EFI_HII_HANDLE                  HiiHandle;
-  EFI_HANDLE                      DriverHandle;
-  EFI_HII_CONFIG_ACCESS_PROTOCOL  *ConfigAccess;
-  UINTN                           Index;
-  TPML_PCR_SELECTION              Pcrs;
-  CHAR16                          TempBuffer[1024];
-  TCG2_CONFIGURATION_INFO         Tcg2ConfigInfo;
-  TPM2_PTP_INTERFACE_TYPE         TpmDeviceInterfaceDetected;
-  BOOLEAN                         IsCmdImp = FALSE;
+  EFI_STATUS                     Status;
+  EFI_HII_HANDLE                 HiiHandle;
+  EFI_HANDLE                     DriverHandle;
+  EFI_HII_CONFIG_ACCESS_PROTOCOL *ConfigAccess;
+  UINTN                          Index;
+  TPML_PCR_SELECTION             Pcrs;
+  CHAR16                         TempBuffer[1024];
+  TCG2_CONFIGURATION_INFO        Tcg2ConfigInfo;
+  TPM2_PTP_INTERFACE_TYPE        TpmDeviceInterfaceDetected;
+  BOOLEAN                        IsCmdImp = FALSE;
 
   DriverHandle = NULL;
   ConfigAccess = &PrivateData->ConfigAccess;
@@ -797,18 +808,21 @@ InstallTcg2ConfigForm (
   case TPM_DEVICE_NULL:
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_STATE_CONTENT), L"Not Found", NULL);
     break;
+
   case TPM_DEVICE_1_2:
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_STATE_CONTENT), L"TPM 1.2", NULL);
     break;
+
   case TPM_DEVICE_2_0_DTPM:
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_STATE_CONTENT), L"TPM 2.0", NULL);
     break;
+
   default:
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_STATE_CONTENT), L"Unknown", NULL);
     break;
   }
 
-  ZeroMem (&Tcg2ConfigInfo, sizeof(Tcg2ConfigInfo));
+  ZeroMem (&Tcg2ConfigInfo, sizeof (Tcg2ConfigInfo));
   Status = Tpm2GetCapabilityPcrs (&Pcrs);
   if (EFI_ERROR (Status)) {
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_ACTIVE_HASH_ALGO_CONTENT), L"[Unknown]", NULL);
@@ -817,14 +831,14 @@ InstallTcg2ConfigForm (
     TempBuffer[0] = 0;
     for (Index = 0; Index < Pcrs.count; Index++) {
       if (!IsZeroBuffer (Pcrs.pcrSelections[Index].pcrSelect, Pcrs.pcrSelections[Index].sizeofSelect)) {
-        AppendBufferWithTpmAlgHash (TempBuffer, sizeof(TempBuffer), Pcrs.pcrSelections[Index].hash);
+        AppendBufferWithTpmAlgHash (TempBuffer, sizeof (TempBuffer), Pcrs.pcrSelections[Index].hash);
       }
     }
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_ACTIVE_HASH_ALGO_CONTENT), TempBuffer, NULL);
 
     TempBuffer[0] = 0;
     for (Index = 0; Index < Pcrs.count; Index++) {
-      AppendBufferWithTpmAlgHash (TempBuffer, sizeof(TempBuffer), Pcrs.pcrSelections[Index].hash);
+      AppendBufferWithTpmAlgHash (TempBuffer, sizeof (TempBuffer), Pcrs.pcrSelections[Index].hash);
       SetConfigInfo (&Tcg2ConfigInfo, Pcrs.pcrSelections[Index].hash);
     }
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_SUPPORTED_HASH_ALGO_CONTENT), TempBuffer, NULL);
@@ -836,40 +850,43 @@ InstallTcg2ConfigForm (
   }
   Tcg2ConfigInfo.ChangeEPSSupported = IsCmdImp;
 
-  FillBufferWithBootHashAlg (TempBuffer, sizeof(TempBuffer), PcdGet32 (PcdTcg2HashAlgorithmBitmap));
+  FillBufferWithBootHashAlg (TempBuffer, sizeof (TempBuffer), PcdGet32 (PcdTcg2HashAlgorithmBitmap));
   HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_BIOS_HASH_ALGO_CONTENT), TempBuffer, NULL);
 
   //
   // Tcg2 Capability
   //
-  FillBufferWithTCG2EventLogFormat (TempBuffer, sizeof(TempBuffer), PrivateData->ProtocolCapability.SupportedEventLogs);
+  FillBufferWithTCG2EventLogFormat (TempBuffer, sizeof (TempBuffer), PrivateData->ProtocolCapability.SupportedEventLogs);
   HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_SUPPORTED_EVENT_LOG_FORMAT_CONTENT), TempBuffer, NULL);
 
-  FillBufferWithBootHashAlg (TempBuffer, sizeof(TempBuffer), PrivateData->ProtocolCapability.HashAlgorithmBitmap);
+  FillBufferWithBootHashAlg (TempBuffer, sizeof (TempBuffer), PrivateData->ProtocolCapability.HashAlgorithmBitmap);
   HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_HASH_ALGO_BITMAP_CONTENT), TempBuffer, NULL);
 
   UnicodeSPrint (TempBuffer, sizeof (TempBuffer), L"%d", PrivateData->ProtocolCapability.NumberOfPCRBanks);
   HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_NUMBER_OF_PCR_BANKS_CONTENT), TempBuffer, NULL);
 
-  FillBufferWithBootHashAlg (TempBuffer, sizeof(TempBuffer), PrivateData->ProtocolCapability.ActivePcrBanks);
+  FillBufferWithBootHashAlg (TempBuffer, sizeof (TempBuffer), PrivateData->ProtocolCapability.ActivePcrBanks);
   HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_ACTIVE_PCR_BANKS_CONTENT), TempBuffer, NULL);
 
   //
   // Update TPM device interface type
   //
   if (PrivateData->TpmDeviceDetected == TPM_DEVICE_2_0_DTPM) {
-    TpmDeviceInterfaceDetected = PcdGet8(PcdActiveTpmInterfaceType);
+    TpmDeviceInterfaceDetected = PcdGet8 (PcdActiveTpmInterfaceType);
     switch (TpmDeviceInterfaceDetected) {
     case Tpm2PtpInterfaceTis:
       HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT), L"TIS", NULL);
       break;
+
     case Tpm2PtpInterfaceFifo:
       HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT), L"PTP FIFO", NULL);
       break;
+
     case Tpm2PtpInterfaceCrb:
       HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT), L"PTP CRB", NULL);
       break;
-     default:
+
+    default:
       HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT), L"Unknown", NULL);
       break;
     }
@@ -881,25 +898,27 @@ InstallTcg2ConfigForm (
       Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported  = FALSE;
       HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_CAPABILITY_CONTENT), L"TIS", NULL);
       break;
+
     case Tpm2PtpInterfaceFifo:
     case Tpm2PtpInterfaceCrb:
-      Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported = IsPtpFifoSupported((VOID *) (UINTN) PcdGet64 (PcdTpmBaseAddress));
-      Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported  = IsPtpCrbSupported((VOID *) (UINTN) PcdGet64 (PcdTpmBaseAddress));
+      Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported = IsPtpFifoSupported ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+      Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported  = IsPtpCrbSupported ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress));
       TempBuffer[0] = 0;
       if (Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported) {
         if (TempBuffer[0] != 0) {
-          StrCatS (TempBuffer, sizeof(TempBuffer) / sizeof (CHAR16), L", ");
+          StrCatS (TempBuffer, sizeof (TempBuffer) / sizeof (CHAR16), L", ");
         }
-        StrCatS (TempBuffer, sizeof(TempBuffer) / sizeof (CHAR16), L"PTP FIFO");
+        StrCatS (TempBuffer, sizeof (TempBuffer) / sizeof (CHAR16), L"PTP FIFO");
       }
       if (Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported) {
         if (TempBuffer[0] != 0) {
-          StrCatS (TempBuffer, sizeof(TempBuffer) / sizeof (CHAR16), L", ");
+          StrCatS (TempBuffer, sizeof (TempBuffer) / sizeof (CHAR16), L", ");
         }
-        StrCatS (TempBuffer, sizeof(TempBuffer) / sizeof (CHAR16), L"PTP CRB");
+        StrCatS (TempBuffer, sizeof (TempBuffer) / sizeof (CHAR16), L"PTP CRB");
       }
       HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_CAPABILITY_CONTENT), TempBuffer, NULL);
       break;
+
     default:
       Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported = FALSE;
       Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported  = FALSE;
@@ -915,7 +934,7 @@ InstallTcg2ConfigForm (
                   TCG2_STORAGE_INFO_NAME,
                   &gTcg2ConfigFormSetGuid,
                   EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                  sizeof(Tcg2ConfigInfo),
+                  sizeof (Tcg2ConfigInfo),
                   &Tcg2ConfigInfo
                   );
   if (EFI_ERROR (Status)) {
@@ -933,7 +952,7 @@ InstallTcg2ConfigForm (
 **/
 VOID
 UninstallTcg2ConfigForm (
-  IN OUT TCG2_CONFIG_PRIVATE_DATA    *PrivateData
+  IN OUT TCG2_CONFIG_PRIVATE_DATA *PrivateData
   )
 {
   //

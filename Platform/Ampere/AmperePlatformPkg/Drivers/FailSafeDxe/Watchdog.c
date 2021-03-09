@@ -27,14 +27,14 @@
 #define WDT_CTRL_WCV_OFF                      0x10
 #define WS0_INTERRUPT_SOURCE                  FixedPcdGet32 (PcdGenericWatchdogEl2IntrNum)
 
-STATIC UINT64                                 mNumTimerTicks;
-STATIC EFI_HARDWARE_INTERRUPT2_PROTOCOL       *mInterruptProtocol;
-BOOLEAN                                       mInterruptWS0Enabled;
+STATIC UINT64                           mNumTimerTicks;
+STATIC EFI_HARDWARE_INTERRUPT2_PROTOCOL *mInterruptProtocol;
+BOOLEAN                                 mInterruptWS0Enabled;
 
 STATIC
 VOID
 WatchdogTimerWriteOffsetRegister (
-  UINT32  Value
+  UINT32 Value
   )
 {
   MmioWrite32 (WDT_CTRL_BASE_REG + WDT_CTRL_WOR_OFF, Value);
@@ -43,7 +43,7 @@ WatchdogTimerWriteOffsetRegister (
 STATIC
 VOID
 WatchdogTimerWriteCompareRegister (
-  UINT64  Value
+  UINT64 Value
   )
 {
   MmioWrite64 (WDT_CTRL_BASE_REG + WDT_CTRL_WCV_OFF, Value);
@@ -55,23 +55,25 @@ WatchdogTimerEnable (
   IN BOOLEAN Enable
   )
 {
-  UINT32 Val =  MmioRead32 ((UINTN) (WDT_CTRL_BASE_REG + WDT_CTRL_WCS_OFF));
+  UINT32 Val =  MmioRead32 ((UINTN)(WDT_CTRL_BASE_REG + WDT_CTRL_WCS_OFF));
 
   if (Enable) {
     Val |= WDT_CTRL_WCS_ENABLE_MASK;
   } else {
     Val &= ~WDT_CTRL_WCS_ENABLE_MASK;
   }
-  MmioWrite32 ((UINTN) (WDT_CTRL_BASE_REG + WDT_CTRL_WCS_OFF), Val);
+  MmioWrite32 ((UINTN)(WDT_CTRL_BASE_REG + WDT_CTRL_WCS_OFF), Val);
 
   return EFI_SUCCESS;
 }
 
 STATIC
 EFI_STATUS
-WatchdogTimerSetup (VOID)
+WatchdogTimerSetup (
+  VOID
+  )
 {
-  EFI_STATUS  Status;
+  EFI_STATUS Status;
 
   /* Disable Watchdog timer */
   WatchdogTimerEnable (FALSE);
@@ -102,7 +104,7 @@ WatchdogTimerSetup (VOID)
     WatchdogTimerEnable (TRUE);
     WatchdogTimerWriteCompareRegister (ArmGenericTimerGetSystemCount () + mNumTimerTicks);
   } else {
-    WatchdogTimerWriteOffsetRegister ((UINT32) mNumTimerTicks);
+    WatchdogTimerWriteOffsetRegister ((UINT32)mNumTimerTicks);
     WatchdogTimerEnable (TRUE);
   }
 
@@ -116,8 +118,8 @@ WatchdogTimerSetup (VOID)
 VOID
 EFIAPI
 WatchdogTimerInterruptHandler (
-  IN  HARDWARE_INTERRUPT_SOURCE   Source,
-  IN  EFI_SYSTEM_CONTEXT          SystemContext
+  IN HARDWARE_INTERRUPT_SOURCE Source,
+  IN EFI_SYSTEM_CONTEXT        SystemContext
   )
 {
   STATIC CONST CHAR16 ResetString[]= L"The generic Watchdog timer ran out.";
@@ -135,7 +137,7 @@ WatchdogTimerInterruptHandler (
          EfiResetCold,
          EFI_TIMEOUT,
          StrSize (ResetString),
-         (VOID *) &ResetString
+         (VOID *)&ResetString
          );
 
   /* If we got here then the reset didn't work */
@@ -169,8 +171,8 @@ WatchdogTimerInterruptHandler (
 EFI_STATUS
 EFIAPI
 WatchdogTimerRegisterHandler (
-  IN CONST EFI_WATCHDOG_TIMER_ARCH_PROTOCOL   *This,
-  IN EFI_WATCHDOG_TIMER_NOTIFY                NotifyFunction
+  IN CONST EFI_WATCHDOG_TIMER_ARCH_PROTOCOL *This,
+  IN       EFI_WATCHDOG_TIMER_NOTIFY        NotifyFunction
   )
 {
   /* Not support. Watchdog will reset the board */
@@ -196,8 +198,8 @@ WatchdogTimerRegisterHandler (
 EFI_STATUS
 EFIAPI
 WatchdogTimerSetPeriod (
-  IN CONST EFI_WATCHDOG_TIMER_ARCH_PROTOCOL   *This,
-  IN UINT64                                   TimerPeriod   // In 100ns units
+  IN CONST EFI_WATCHDOG_TIMER_ARCH_PROTOCOL *This,
+  IN       UINT64                           TimerPeriod   // In 100ns units
   )
 {
   mNumTimerTicks  = (ArmGenericTimerGetTimerFreq () * TimerPeriod) / TIME_UNITS_PER_SECOND;
@@ -229,8 +231,8 @@ WatchdogTimerSetPeriod (
 EFI_STATUS
 EFIAPI
 WatchdogTimerGetPeriod (
-  IN CONST EFI_WATCHDOG_TIMER_ARCH_PROTOCOL   *This,
-  OUT UINT64                                  *TimerPeriod
+  IN CONST EFI_WATCHDOG_TIMER_ARCH_PROTOCOL *This,
+  OUT      UINT64                           *TimerPeriod
   )
 {
   if (TimerPeriod == NULL) {
@@ -275,9 +277,9 @@ WatchdogTimerGetPeriod (
 
 **/
 STATIC EFI_WATCHDOG_TIMER_ARCH_PROTOCOL gWatchdogTimer = {
-  (EFI_WATCHDOG_TIMER_REGISTER_HANDLER)  WatchdogTimerRegisterHandler,
-  (EFI_WATCHDOG_TIMER_SET_TIMER_PERIOD)  WatchdogTimerSetPeriod,
-  (EFI_WATCHDOG_TIMER_GET_TIMER_PERIOD)  WatchdogTimerGetPeriod
+  (EFI_WATCHDOG_TIMER_REGISTER_HANDLER)WatchdogTimerRegisterHandler,
+  (EFI_WATCHDOG_TIMER_SET_TIMER_PERIOD)WatchdogTimerSetPeriod,
+  (EFI_WATCHDOG_TIMER_GET_TIMER_PERIOD)WatchdogTimerGetPeriod
 };
 
 EFI_STATUS
@@ -286,9 +288,9 @@ WatchdogTimerInstallProtocol (
   EFI_WATCHDOG_TIMER_ARCH_PROTOCOL **WatchdogTimerProtocol
   )
 {
-  EFI_STATUS      Status;
-  EFI_HANDLE      Handle;
-  EFI_TPL         CurrentTpl;
+  EFI_STATUS Status;
+  EFI_HANDLE Handle;
+  EFI_TPL    CurrentTpl;
 
   /* Make sure the Watchdog Timer Architectural Protocol has not been installed
      in the system yet.

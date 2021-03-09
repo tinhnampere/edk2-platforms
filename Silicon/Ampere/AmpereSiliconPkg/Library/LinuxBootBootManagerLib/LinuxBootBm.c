@@ -33,9 +33,9 @@ EFI_GUID mLinuxBootFileGuid = { 0xD834A5AD, 0x459C, 0x4AED, { 0xB0, 0xD0, 0x8C, 
 STATIC
 VOID
 RegisterFvBootOption (
-  CONST EFI_GUID                   *FileGuid,
-  CHAR16                           *Description,
-  UINT32                           Attributes
+  CONST EFI_GUID *FileGuid,
+  CHAR16         *Description,
+  UINT32         Attributes
   )
 {
   EFI_STATUS                        Status;
@@ -50,7 +50,7 @@ RegisterFvBootOption (
   Status = gBS->HandleProtocol (
                   gImageHandle,
                   &gEfiLoadedImageProtocolGuid,
-                  (VOID **) &LoadedImage
+                  (VOID **)&LoadedImage
                   );
   ASSERT_EFI_ERROR (Status);
 
@@ -59,7 +59,7 @@ RegisterFvBootOption (
   ASSERT (DevicePath != NULL);
   DevicePath = AppendDevicePathNode (
                  DevicePath,
-                 (EFI_DEVICE_PATH_PROTOCOL *) &FileNode
+                 (EFI_DEVICE_PATH_PROTOCOL *)&FileNode
                  );
   ASSERT (DevicePath != NULL);
 
@@ -77,11 +77,14 @@ RegisterFvBootOption (
   FreePool (DevicePath);
 
   BootOptions = EfiBootManagerGetLoadOptions (
-                  &BootOptionCount, LoadOptionTypeBoot
+                  &BootOptionCount,
+                  LoadOptionTypeBoot
                   );
 
   OptionIndex = EfiBootManagerFindLoadOption (
-                  &NewOption, BootOptions, BootOptionCount
+                  &NewOption,
+                  BootOptions,
+                  BootOptionCount
                   );
 
   if (OptionIndex == -1) {
@@ -132,7 +135,9 @@ PlatformBootManagerAfterConsole (
   // Register LinuxBoot
   //
   RegisterFvBootOption (
-    &mLinuxBootFileGuid, L"LinuxBoot", LOAD_OPTION_ACTIVE
+    &mLinuxBootFileGuid,
+    L"LinuxBoot",
+    LOAD_OPTION_ACTIVE
     );
 }
 
@@ -145,7 +150,7 @@ PlatformBootManagerAfterConsole (
 VOID
 EFIAPI
 PlatformBootManagerWaitCallback (
-  UINT16          TimeoutRemain
+  UINT16 TimeoutRemain
   )
 {
   return;

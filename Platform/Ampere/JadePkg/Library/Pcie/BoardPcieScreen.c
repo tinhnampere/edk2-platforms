@@ -27,19 +27,19 @@
 CHAR16   VariableName[]     = PCIE_VARSTORE_NAME;
 EFI_GUID gPcieFormSetGuid   = PCIE_FORM_SET_GUID;
 
-EFI_HANDLE                      DriverHandle = NULL;
-PCIE_SCREEN_PRIVATE_DATA        *mPrivateData = NULL;
+EFI_HANDLE               DriverHandle = NULL;
+PCIE_SCREEN_PRIVATE_DATA *mPrivateData = NULL;
 
 AC01_RC RCList[MAX_AC01_PCIE_ROOT_COMPLEX];
 
-HII_VENDOR_DEVICE_PATH  mHiiVendorDevicePath = {
+HII_VENDOR_DEVICE_PATH mHiiVendorDevicePath = {
   {
     {
       HARDWARE_DEVICE_PATH,
       HW_VENDOR_DP,
       {
-        (UINT8) (sizeof (VENDOR_DEVICE_PATH)),
-        (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
+        (UINT8)(sizeof (VENDOR_DEVICE_PATH)),
+        (UINT8)((sizeof (VENDOR_DEVICE_PATH)) >> 8)
       }
     },
     PCIE_FORM_SET_GUID
@@ -48,8 +48,8 @@ HII_VENDOR_DEVICE_PATH  mHiiVendorDevicePath = {
     END_DEVICE_PATH_TYPE,
     END_ENTIRE_DEVICE_PATH_SUBTYPE,
     {
-      (UINT8) (END_DEVICE_PATH_LENGTH),
-      (UINT8) ((END_DEVICE_PATH_LENGTH) >> 8)
+      (UINT8)(END_DEVICE_PATH_LENGTH),
+      (UINT8)((END_DEVICE_PATH_LENGTH) >> 8)
     }
   }
 };
@@ -80,22 +80,22 @@ HII_VENDOR_DEVICE_PATH  mHiiVendorDevicePath = {
 EFI_STATUS
 EFIAPI
 ExtractConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Request,
-  OUT EFI_STRING                             *Progress,
-  OUT EFI_STRING                             *Results
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Request,
+  OUT      EFI_STRING                     *Progress,
+  OUT      EFI_STRING                     *Results
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  PCIE_SCREEN_PRIVATE_DATA         *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
-  EFI_STRING                       ConfigRequest;
-  EFI_STRING                       ConfigRequestHdr;
-  UINTN                            Size;
-  CHAR16                           *StrPointer;
-  BOOLEAN                          AllocatedRequest;
-  PCIE_VARSTORE_DATA               *VarStoreConfig;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  PCIE_SCREEN_PRIVATE_DATA        *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
+  EFI_STRING                      ConfigRequest;
+  EFI_STRING                      ConfigRequestHdr;
+  UINTN                           Size;
+  CHAR16                          *StrPointer;
+  BOOLEAN                         AllocatedRequest;
+  PCIE_VARSTORE_DATA              *VarStoreConfig;
 
   if (Progress == NULL || Results == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -158,7 +158,7 @@ ExtractConfig (
       Size,
       L"%s&OFFSET=0&WIDTH=%016LX",
       ConfigRequestHdr,
-      (UINT64) BufferSize
+      (UINT64)BufferSize
       );
     FreePool (ConfigRequestHdr);
     ConfigRequestHdr = NULL;
@@ -197,7 +197,7 @@ ExtractConfig (
           Size,
           L"%s&OFFSET=0&WIDTH=%016LX",
           Request,
-          (UINT64) BufferSize
+          (UINT64)BufferSize
           );
       }
     }
@@ -218,7 +218,7 @@ ExtractConfig (
     Status = HiiConfigRouting->BlockToConfig (
                                  HiiConfigRouting,
                                  ConfigRequest,
-                                 (UINT8 *) VarStoreConfig,
+                                 (UINT8 *)VarStoreConfig,
                                  BufferSize,
                                  Results,
                                  Progress
@@ -265,16 +265,16 @@ ExtractConfig (
 EFI_STATUS
 EFIAPI
 RouteConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Configuration,
-  OUT EFI_STRING                             *Progress
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Configuration,
+  OUT      EFI_STRING                     *Progress
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  PCIE_SCREEN_PRIVATE_DATA         *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
-  PCIE_VARSTORE_DATA               *VarStoreConfig;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  PCIE_SCREEN_PRIVATE_DATA        *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
+  PCIE_VARSTORE_DATA              *VarStoreConfig;
 
   if (Configuration == NULL || Progress == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -326,7 +326,7 @@ RouteConfig (
   Status = HiiConfigRouting->ConfigToBlock (
                                HiiConfigRouting,
                                Configuration,
-                               (UINT8 *) VarStoreConfig,
+                               (UINT8 *)VarStoreConfig,
                                &BufferSize,
                                Progress
                                );
@@ -341,8 +341,8 @@ RouteConfig (
                   VariableName,
                   &gPcieFormSetGuid,
                   EFI_VARIABLE_NON_VOLATILE |
-                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
-                    EFI_VARIABLE_RUNTIME_ACCESS,
+                  EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                  EFI_VARIABLE_RUNTIME_ACCESS,
                   sizeof (PCIE_VARSTORE_DATA),
                   VarStoreConfig
                   );
@@ -372,22 +372,23 @@ RouteConfig (
 EFI_STATUS
 EFIAPI
 DriverCallback (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  EFI_BROWSER_ACTION                     Action,
-  IN  EFI_QUESTION_ID                        QuestionId,
-  IN  UINT8                                  Type,
-  IN  EFI_IFR_TYPE_VALUE                     *Value,
-  OUT EFI_BROWSER_ACTION_REQUEST             *ActionRequest
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN       EFI_BROWSER_ACTION             Action,
+  IN       EFI_QUESTION_ID                QuestionId,
+  IN       UINT8                          Type,
+  IN       EFI_IFR_TYPE_VALUE             *Value,
+  OUT      EFI_BROWSER_ACTION_REQUEST     *ActionRequest
   )
 {
-  PCIE_VARSTORE_DATA              *VarStoreConfig;
-  PCIE_SCREEN_PRIVATE_DATA        *PrivateData;
-  EFI_STATUS                      Status;
+  PCIE_VARSTORE_DATA       *VarStoreConfig;
+  PCIE_SCREEN_PRIVATE_DATA *PrivateData;
+  EFI_STATUS               Status;
 
   if (((Value == NULL) &&
-         (Action != EFI_BROWSER_ACTION_FORM_OPEN) &&
-         (Action != EFI_BROWSER_ACTION_FORM_CLOSE)) ||
-       (ActionRequest == NULL)) {
+       (Action != EFI_BROWSER_ACTION_FORM_OPEN) &&
+       (Action != EFI_BROWSER_ACTION_FORM_CLOSE)) ||
+      (ActionRequest == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -442,7 +443,7 @@ DriverCallback (
 
 EFI_STATUS
 PcieScreenUnload (
-  IN EFI_HANDLE         ImageHandle
+  IN EFI_HANDLE ImageHandle
   )
 {
   ASSERT (mPrivateData != NULL);
@@ -478,7 +479,7 @@ PcieScreenUnload (
 **/
 UINT8
 PcieRCDevMapLoDefaultSetting (
-  IN UINTN RCIndex,
+  IN UINTN                    RCIndex,
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   )
 {
@@ -496,7 +497,7 @@ PcieRCDevMapLoDefaultSetting (
 **/
 UINT8
 PcieRCDevMapHiDefaultSetting (
-  IN UINTN RCIndex,
+  IN UINTN                    RCIndex,
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   )
 {
@@ -507,13 +508,13 @@ PcieRCDevMapHiDefaultSetting (
 
 BOOLEAN
 PcieRCActiveDefaultSetting (
-  IN UINTN RCIndex,
+  IN UINTN                    RCIndex,
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   )
 {
-  PlatformInfoHob_V2  *PlatformHob;
-  VOID                *Hob;
-  UINT32              Efuse;
+  PlatformInfoHob_V2 *PlatformHob;
+  VOID               *Hob;
+  UINT32             Efuse;
 
   // FIXME: Disable Root Complex 6 (USB and VGA) as default
   if (RCIndex == 6) {
@@ -522,7 +523,7 @@ PcieRCActiveDefaultSetting (
 
   Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob != NULL) {
-    PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+    PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
     Efuse = PlatformHob->RcDisableMask[0] | (PlatformHob->RcDisableMask[1] << RCS_PER_SOCKET);
     return (!(Efuse & BIT (RCIndex))) ? TRUE : FALSE;
   }
@@ -538,22 +539,22 @@ PcieRCActiveDefaultSetting (
 **/
 EFI_STATUS
 PcieRCScreenSetup (
-  IN UINTN RCIndex,
+  IN UINTN                    RCIndex,
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   )
 {
-  VOID                            *StartOpCodeHandle;
-  EFI_IFR_GUID_LABEL              *StartLabel;
-  VOID                            *EndOpCodeHandle;
-  EFI_IFR_GUID_LABEL              *EndLabel;
-  VOID                            *OptionsOpCodeHandle;
-  VOID                            *OptionsHiOpCodeHandle;
-  CHAR16                          Str[MAX_STRING_SIZE];
-  UINT16                          DisabledStatusVarOffset;
-  UINT16                          BifurLoVarOffset;
-  UINT16                          BifurHiVarOffset;
-  UINT8                           QuestionFlags, QuestionFlagsSubItem;
-  AC01_RC                         *RC;
+  VOID               *StartOpCodeHandle;
+  EFI_IFR_GUID_LABEL *StartLabel;
+  VOID               *EndOpCodeHandle;
+  EFI_IFR_GUID_LABEL *EndLabel;
+  VOID               *OptionsOpCodeHandle;
+  VOID               *OptionsHiOpCodeHandle;
+  CHAR16             Str[MAX_STRING_SIZE];
+  UINT16             DisabledStatusVarOffset;
+  UINT16             BifurLoVarOffset;
+  UINT16             BifurHiVarOffset;
+  UINT8              QuestionFlags, QuestionFlagsSubItem;
+  AC01_RC            *RC;
 
   RC = &RCList[RCIndex];
 
@@ -564,22 +565,22 @@ PcieRCScreenSetup (
   ASSERT (EndOpCodeHandle != NULL);
 
   // Create Hii Extend Label OpCode as the start opcode
-  StartLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                        StartOpCodeHandle,
-                                        &gEfiIfrTianoGuid,
-                                        NULL,
-                                        sizeof (EFI_IFR_GUID_LABEL)
-                                        );
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                       StartOpCodeHandle,
+                                       &gEfiIfrTianoGuid,
+                                       NULL,
+                                       sizeof (EFI_IFR_GUID_LABEL)
+                                       );
   StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartLabel->Number       = LABEL_RC0_UPDATE + 2 * RCIndex;
 
   // Create Hii Extend Label OpCode as the end opcode
-  EndLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                      EndOpCodeHandle,
-                                      &gEfiIfrTianoGuid,
-                                      NULL,
-                                      sizeof (EFI_IFR_GUID_LABEL)
-                                      );
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                     EndOpCodeHandle,
+                                     &gEfiIfrTianoGuid,
+                                     NULL,
+                                     sizeof (EFI_IFR_GUID_LABEL)
+                                     );
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_RC0_END + 2 * RCIndex;
 
@@ -594,7 +595,7 @@ PcieRCScreenSetup (
       (RC->Socket) ? L"1" : L"0",
       NULL
       )
-  );
+    );
 
   // Create textbox to tell Root Complex type
   HiiCreateTextOpCode (
@@ -607,16 +608,16 @@ PcieRCScreenSetup (
       (RC->Type == RCA) ? L"Root Complex Type-A" : L"Root Complex Type-B",
       NULL
       )
-  );
+    );
 
-  UnicodeSPrint(Str, sizeof(Str), L"Root Complex #%2d", RCIndex);
+  UnicodeSPrint (Str, sizeof (Str), L"Root Complex #%2d", RCIndex);
 
-  DisabledStatusVarOffset = (UINT16) PCIE_RC0_STATUS_OFFSET +
-                                     sizeof (BOOLEAN) * RCIndex;
-  BifurLoVarOffset = (UINT16) PCIE_RC0_BIFUR_LO_OFFSET +
-                              sizeof (UINT8) * RCIndex;
-  BifurHiVarOffset = (UINT16) PCIE_RC0_BIFUR_HI_OFFSET +
-                              sizeof (UINT8) * RCIndex;
+  DisabledStatusVarOffset = (UINT16)PCIE_RC0_STATUS_OFFSET +
+                            sizeof (BOOLEAN) * RCIndex;
+  BifurLoVarOffset = (UINT16)PCIE_RC0_BIFUR_LO_OFFSET +
+                     sizeof (UINT8) * RCIndex;
+  BifurHiVarOffset = (UINT16)PCIE_RC0_BIFUR_HI_OFFSET +
+                     sizeof (UINT8) * RCIndex;
 
   QuestionFlags = EFI_IFR_FLAG_RESET_REQUIRED | EFI_IFR_FLAG_CALLBACK;
   if (IsEmptyRC (RC)
@@ -630,10 +631,10 @@ PcieRCScreenSetup (
   }
   // Create the RC disabled checkbox
   HiiCreateCheckBoxOpCode (
-    StartOpCodeHandle,                  // Container for dynamic created opcodes
+    StartOpCodeHandle,                        // Container for dynamic created opcodes
     0x8002 + MAX_EDITABLE_ELEMENTS * RCIndex, // QuestionId (or "key")
-    PCIE_VARSTORE_ID,                   // VarStoreId
-    DisabledStatusVarOffset,            // VarOffset in Buffer Storage
+    PCIE_VARSTORE_ID,                         // VarStoreId
+    DisabledStatusVarOffset,                  // VarOffset in Buffer Storage
     HiiSetString (
       PrivateData->HiiHandle,
       0,
@@ -689,16 +690,16 @@ PcieRCScreenSetup (
       );
 
     HiiCreateOneOfOpCode (
-      StartOpCodeHandle,                  // Container for dynamic created opcodes
-      0x8003 + MAX_EDITABLE_ELEMENTS * RCIndex,// Question ID (or call it "key")
-      PCIE_VARSTORE_ID,                      // VarStore ID
-      BifurLoVarOffset,                      // Offset in Buffer Storage
-      STRING_TOKEN (STR_PCIE_RCA_BIFUR),      // Question prompt text
-      STRING_TOKEN (STR_PCIE_RCA_BIFUR_HELP), // Question help text
-      QuestionFlags,                         // Question flag
-      EFI_IFR_NUMERIC_SIZE_1,                // Data type of Question Value
-      OptionsOpCodeHandle,                   // Option Opcode list
-      NULL                                   // Default Opcode is NULl
+      StartOpCodeHandle,                        // Container for dynamic created opcodes
+      0x8003 + MAX_EDITABLE_ELEMENTS * RCIndex, // Question ID (or call it "key")
+      PCIE_VARSTORE_ID,                         // VarStore ID
+      BifurLoVarOffset,                         // Offset in Buffer Storage
+      STRING_TOKEN (STR_PCIE_RCA_BIFUR),        // Question prompt text
+      STRING_TOKEN (STR_PCIE_RCA_BIFUR_HELP),   // Question help text
+      QuestionFlags,                            // Question flag
+      EFI_IFR_NUMERIC_SIZE_1,                   // Data type of Question Value
+      OptionsOpCodeHandle,                      // Option Opcode list
+      NULL                                      // Default Opcode is NULl
       );
   } else {
     // Create Option OpCode to display bifurcation for RCB-Lo
@@ -743,16 +744,16 @@ PcieRCScreenSetup (
       );
 
     HiiCreateOneOfOpCode (
-      StartOpCodeHandle,                  // Container for dynamic created opcodes
-      0x8003 + MAX_EDITABLE_ELEMENTS * RCIndex,// Question ID (or call it "key")
-      PCIE_VARSTORE_ID,                      // VarStore ID
-      BifurLoVarOffset,                      // Offset in Buffer Storage
+      StartOpCodeHandle,                         // Container for dynamic created opcodes
+      0x8003 + MAX_EDITABLE_ELEMENTS * RCIndex,  // Question ID (or call it "key")
+      PCIE_VARSTORE_ID,                          // VarStore ID
+      BifurLoVarOffset,                          // Offset in Buffer Storage
       STRING_TOKEN (STR_PCIE_RCB_LO_BIFUR),      // Question prompt text
       STRING_TOKEN (STR_PCIE_RCB_LO_BIFUR_HELP), // Question help text
-      QuestionFlagsSubItem,                         // Question flag
-      EFI_IFR_NUMERIC_SIZE_1,                // Data type of Question Value
-      OptionsOpCodeHandle,                   // Option Opcode list
-      NULL                                   // Default Opcode is NULl
+      QuestionFlagsSubItem,                      // Question flag
+      EFI_IFR_NUMERIC_SIZE_1,                    // Data type of Question Value
+      OptionsOpCodeHandle,                       // Option Opcode list
+      NULL                                       // Default Opcode is NULl
       );
 
     // Create Option OpCode to display bifurcation for RCB-Hi
@@ -797,25 +798,25 @@ PcieRCScreenSetup (
       );
 
     HiiCreateOneOfOpCode (
-      StartOpCodeHandle,                  // Container for dynamic created opcodes
-      0x8004 + MAX_EDITABLE_ELEMENTS * RCIndex,// Question ID (or call it "key")
-      PCIE_VARSTORE_ID,                      // VarStore ID
-      BifurHiVarOffset,                      // Offset in Buffer Storage
-      STRING_TOKEN (STR_PCIE_RCB_HI_BIFUR),     // Question prompt text
-      STRING_TOKEN (STR_PCIE_RCB_HI_BIFUR_HELP),// Question help text
-      QuestionFlagsSubItem,                         // Question flag
-      EFI_IFR_NUMERIC_SIZE_1,                // Data type of Question Value
-      OptionsHiOpCodeHandle,                 // Option Opcode list
-      NULL                                   // Default Opcode is NULl
+      StartOpCodeHandle,                         // Container for dynamic created opcodes
+      0x8004 + MAX_EDITABLE_ELEMENTS * RCIndex,  // Question ID (or call it "key")
+      PCIE_VARSTORE_ID,                          // VarStore ID
+      BifurHiVarOffset,                          // Offset in Buffer Storage
+      STRING_TOKEN (STR_PCIE_RCB_HI_BIFUR),      // Question prompt text
+      STRING_TOKEN (STR_PCIE_RCB_HI_BIFUR_HELP), // Question help text
+      QuestionFlagsSubItem,                      // Question flag
+      EFI_IFR_NUMERIC_SIZE_1,                    // Data type of Question Value
+      OptionsHiOpCodeHandle,                     // Option Opcode list
+      NULL                                       // Default Opcode is NULl
       );
   }
 
   HiiUpdateForm (
-    PrivateData->HiiHandle,  // HII handle
-    &gPcieFormSetGuid,       // Formset GUID
-    PCIE_RC0_FORM_ID + RCIndex,   // Form ID
-    StartOpCodeHandle,       // Label for where to insert opcodes
-    EndOpCodeHandle          // Insert data
+    PrivateData->HiiHandle,     // HII handle
+    &gPcieFormSetGuid,          // Formset GUID
+    PCIE_RC0_FORM_ID + RCIndex, // Form ID
+    StartOpCodeHandle,          // Label for where to insert opcodes
+    EndOpCodeHandle             // Insert data
     );
 
   HiiFreeOpCodeHandle (StartOpCodeHandle);
@@ -834,14 +835,14 @@ PcieMainScreenSetup (
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   )
 {
-  VOID                            *StartOpCodeHandle;
-  EFI_IFR_GUID_LABEL              *StartLabel;
-  VOID                            *EndOpCodeHandle;
-  EFI_IFR_GUID_LABEL              *EndLabel;
-  CHAR16                          Str[MAX_STRING_SIZE];
-  UINTN                           RC;
-  PCIE_SETUP_GOTO_DATA            *GotoItem = NULL;
-  EFI_QUESTION_ID                 GotoId;
+  VOID                 *StartOpCodeHandle;
+  EFI_IFR_GUID_LABEL   *StartLabel;
+  VOID                 *EndOpCodeHandle;
+  EFI_IFR_GUID_LABEL   *EndLabel;
+  CHAR16               Str[MAX_STRING_SIZE];
+  UINTN                RC;
+  PCIE_SETUP_GOTO_DATA *GotoItem = NULL;
+  EFI_QUESTION_ID      GotoId;
 
   // Initialize the container for dynamic opcodes
   StartOpCodeHandle = HiiAllocateOpCodeHandle ();
@@ -850,31 +851,31 @@ PcieMainScreenSetup (
   ASSERT (EndOpCodeHandle != NULL);
 
   // Create Hii Extend Label OpCode as the start opcode
-  StartLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                        StartOpCodeHandle,
-                                        &gEfiIfrTianoGuid,
-                                        NULL,
-                                        sizeof (EFI_IFR_GUID_LABEL)
-                                        );
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                       StartOpCodeHandle,
+                                       &gEfiIfrTianoGuid,
+                                       NULL,
+                                       sizeof (EFI_IFR_GUID_LABEL)
+                                       );
   StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartLabel->Number       = LABEL_UPDATE;
 
   // Create Hii Extend Label OpCode as the end opcode
-  EndLabel = (EFI_IFR_GUID_LABEL *) HiiCreateGuidOpCode (
-                                      EndOpCodeHandle,
-                                      &gEfiIfrTianoGuid,
-                                      NULL,
-                                      sizeof (EFI_IFR_GUID_LABEL)
-                                      );
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                     EndOpCodeHandle,
+                                     &gEfiIfrTianoGuid,
+                                     NULL,
+                                     sizeof (EFI_IFR_GUID_LABEL)
+                                     );
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
   HiiCreateCheckBoxOpCode (
-    StartOpCodeHandle,                             // Container for dynamic created opcodes
-    0x9000,     // Question ID
-    PCIE_VARSTORE_ID,                                  // VarStore ID
-    (UINT16) PCIE_SMMU_PMU_OFFSET,         // Offset in Buffer Storage
-    STRING_TOKEN (STR_PCIE_SMMU_PMU_PROMPT),        // Question prompt text
+    StartOpCodeHandle,                       // Container for dynamic created opcodes
+    0x9000,                                  // Question ID
+    PCIE_VARSTORE_ID,                        // VarStore ID
+    (UINT16)PCIE_SMMU_PMU_OFFSET,            // Offset in Buffer Storage
+    STRING_TOKEN (STR_PCIE_SMMU_PMU_PROMPT), // Question prompt text
     STRING_TOKEN (STR_PCIE_SMMU_PMU_HELP),   // Question help text
     EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
     0,
@@ -889,26 +890,28 @@ PcieMainScreenSetup (
     STRING_TOKEN (STR_PCIE_FORM_SEPERATE_LINE),
     STRING_TOKEN (STR_PCIE_FORM_SEPERATE_LINE),
     STRING_TOKEN (STR_PCIE_FORM_SEPERATE_LINE)
-  );
+    );
 
   // Create Goto form for each RC
   for (RC = 0; RC < MAX_AC01_PCIE_ROOT_COMPLEX; RC++) {
 
     GotoItem = AllocateZeroPool (sizeof (PCIE_SETUP_GOTO_DATA));
-    if (GotoItem == NULL) return EFI_OUT_OF_RESOURCES;
+    if (GotoItem == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
     GotoItem->PciDevIdx = RC;
 
-    GotoId = PCIE_GOTO_ID_BASE + (UINT16) RC;
+    GotoId = PCIE_GOTO_ID_BASE + (UINT16)RC;
 
     // Update HII string
-    UnicodeSPrint(Str, sizeof(Str), L"Root Complex #%2d", RC);
+    UnicodeSPrint (Str, sizeof (Str), L"Root Complex #%2d", RC);
     GotoItem->GotoStringId = HiiSetString (
                                PrivateData->HiiHandle,
                                0,
                                Str,
                                NULL
                                );
-    GotoItem->GotoHelpStringId = STRING_TOKEN(STR_PCIE_GOTO_HELP);
+    GotoItem->GotoHelpStringId = STRING_TOKEN (STR_PCIE_GOTO_HELP);
     GotoItem->ShowItem = TRUE;
 
     // Add goto control
@@ -938,22 +941,22 @@ PcieMainScreenSetup (
 
 EFI_STATUS
 PcieBoardScreenInitialize (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable,
-  IN AC01_RC            *NewRCList
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable,
+  IN AC01_RC          *NewRCList
   )
 {
-  EFI_STATUS                            Status;
-  EFI_HII_HANDLE                        HiiHandle;
-  EFI_HII_DATABASE_PROTOCOL             *HiiDatabase;
-  EFI_HII_STRING_PROTOCOL               *HiiString;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL       *HiiConfigRouting;
-  EFI_CONFIG_KEYWORD_HANDLER_PROTOCOL   *HiiKeywordHandler;
-  UINTN                                 BufferSize;
-  BOOLEAN                               IsUpdated;
-  PCIE_VARSTORE_DATA                    *VarStoreConfig;
-  UINT8                                 RCIndex;
-  AC01_RC                               *RC;
+  EFI_STATUS                          Status;
+  EFI_HII_HANDLE                      HiiHandle;
+  EFI_HII_DATABASE_PROTOCOL           *HiiDatabase;
+  EFI_HII_STRING_PROTOCOL             *HiiString;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL     *HiiConfigRouting;
+  EFI_CONFIG_KEYWORD_HANDLER_PROTOCOL *HiiKeywordHandler;
+  UINTN                               BufferSize;
+  BOOLEAN                             IsUpdated;
+  PCIE_VARSTORE_DATA                  *VarStoreConfig;
+  UINT8                               RCIndex;
+  AC01_RC                             *RC;
 
   //
   // Initialize driver private data
@@ -975,7 +978,7 @@ PcieBoardScreenInitialize (
   Status = gBS->LocateProtocol (
                   &gEfiHiiDatabaseProtocolGuid,
                   NULL,
-                  (VOID **) &HiiDatabase
+                  (VOID **)&HiiDatabase
                   );
   if (EFI_ERROR (Status)) {
     return Status;
@@ -988,7 +991,7 @@ PcieBoardScreenInitialize (
   Status = gBS->LocateProtocol (
                   &gEfiHiiStringProtocolGuid,
                   NULL,
-                  (VOID **) &HiiString
+                  (VOID **)&HiiString
                   );
   if (EFI_ERROR (Status)) {
     return Status;
@@ -1001,7 +1004,7 @@ PcieBoardScreenInitialize (
   Status = gBS->LocateProtocol (
                   &gEfiHiiConfigRoutingProtocolGuid,
                   NULL,
-                  (VOID **) &HiiConfigRouting
+                  (VOID **)&HiiConfigRouting
                   );
   if (EFI_ERROR (Status)) {
     return Status;
@@ -1014,7 +1017,7 @@ PcieBoardScreenInitialize (
   Status = gBS->LocateProtocol (
                   &gEfiConfigKeywordHandlerProtocolGuid,
                   NULL,
-                  (VOID **) &HiiKeywordHandler
+                  (VOID **)&HiiKeywordHandler
                   );
   if (EFI_ERROR (Status)) {
     return Status;
@@ -1050,7 +1053,7 @@ PcieBoardScreenInitialize (
   mPrivateData->HiiHandle = HiiHandle;
 
   // Make a shadow copy all Root Complexes' properties
-  CopyMem ((VOID *) RCList, (VOID *) NewRCList, sizeof(RCList));
+  CopyMem ((VOID *)RCList, (VOID *)NewRCList, sizeof (RCList));
 
   //
   // Initialize efi varstore configuration data
@@ -1096,8 +1099,8 @@ PcieBoardScreenInitialize (
                     VariableName,
                     &gPcieFormSetGuid,
                     EFI_VARIABLE_NON_VOLATILE |
-                      EFI_VARIABLE_BOOTSERVICE_ACCESS |
-                      EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     sizeof (PCIE_VARSTORE_DATA),
                     VarStoreConfig
                     );

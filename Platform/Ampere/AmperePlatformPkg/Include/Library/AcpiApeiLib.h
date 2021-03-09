@@ -29,19 +29,19 @@
  */
 
 typedef enum {
-    ACPI_APEI_GHES_CPU = 0,
-    ACPI_APEI_GHES_L2C,
-    ACPI_APEI_GHES_L3C,
-    ACPI_APEI_GHES_MCU,
-    ACPI_APEI_GHES_IOB_RBM,
-    ACPI_APEI_GHES_IOB_GLBL,
-    ACPI_APEI_GHES_IOB_TRANS,
-    ACPI_APEI_GHES_XGIC,
-    ACPI_APEI_GHES_SMMU,
-    ACPI_APEI_GHES_SOC,
-    ACPI_APEI_GHES_SOC_MCU,
-    ACPI_APEI_GHES_MPA,
-    ACPI_APEI_GHES_MAX
+  ACPI_APEI_GHES_CPU = 0,
+  ACPI_APEI_GHES_L2C,
+  ACPI_APEI_GHES_L3C,
+  ACPI_APEI_GHES_MCU,
+  ACPI_APEI_GHES_IOB_RBM,
+  ACPI_APEI_GHES_IOB_GLBL,
+  ACPI_APEI_GHES_IOB_TRANS,
+  ACPI_APEI_GHES_XGIC,
+  ACPI_APEI_GHES_SMMU,
+  ACPI_APEI_GHES_SOC,
+  ACPI_APEI_GHES_SOC_MCU,
+  ACPI_APEI_GHES_MPA,
+  ACPI_APEI_GHES_MAX
 } ACPI_APEI_GHES_ENTRY;
 
 /*
@@ -73,9 +73,9 @@ typedef struct {
 #define ACPI_APEI_ESB_FIRMWARE_MEMORY    984
 
 typedef struct {
-  EFI_ACPI_6_3_GENERIC_ERROR_STATUS_STRUCTURE    GES;
-  ACPI_APEI_ERROR_DATA                           data;
-  ACPI_APEI_ERROR_DATA                           info[ACPI_APEI_ESB_MAX_ERROR_INFO];
+  EFI_ACPI_6_3_GENERIC_ERROR_STATUS_STRUCTURE GES;
+  ACPI_APEI_ERROR_DATA                        data;
+  ACPI_APEI_ERROR_DATA                        info[ACPI_APEI_ESB_MAX_ERROR_INFO];
 } ACPI_APEI_ESB;
 
 
@@ -86,34 +86,34 @@ typedef struct {
  */
 
 typedef struct {
-  UINT32                     ErrorDataEntryCount;
-  UINT32                     Length;
-  ACPI_APEI_ESB              ESB[ACPI_APEI_ESB_MAX_BERT_ERRORS];
+  UINT32        ErrorDataEntryCount;
+  UINT32        Length;
+  ACPI_APEI_ESB ESB[ACPI_APEI_ESB_MAX_BERT_ERRORS];
 } RAS_APEI_BERT_DATA;
 
 typedef struct {
-  UINT64                     ErrorStatusAddress;
-  UINT32                     ErrorDataEntryCount;
-  UINT32                     Length;
-  ACPI_APEI_ESB              ESB[ACPI_APEI_ESB_MAX_GHES_ERRORS];
-  UINT32                     Reserved; /* Reserved - keep data 64bit aligned */
-  UINT8                      FirmwareMemory[ACPI_APEI_ESB_FIRMWARE_MEMORY];
+  UINT64        ErrorStatusAddress;
+  UINT32        ErrorDataEntryCount;
+  UINT32        Length;
+  ACPI_APEI_ESB ESB[ACPI_APEI_ESB_MAX_GHES_ERRORS];
+  UINT32        Reserved; /* Reserved - keep data 64bit aligned */
+  UINT8         FirmwareMemory[ACPI_APEI_ESB_FIRMWARE_MEMORY];
 } RAS_APEI_GHES_DATA;
 
 typedef struct {
-  UINT64 Resv1;              /* v1 ErrorStatusAddress set to 0 */
-  UINT64 Resv2;              /* v1 GES set to 0 */
-  UINT32                     TotalLength;
-  UINT32                     ErrorSourceCount;
-  RAS_APEI_BERT_DATA         ErrorSourceData[ACPI_APEI_BERT_MAX];
+  UINT64             Resv1;              /* v1 ErrorStatusAddress set to 0 */
+  UINT64             Resv2;              /* v1 GES set to 0 */
+  UINT32             TotalLength;
+  UINT32             ErrorSourceCount;
+  RAS_APEI_BERT_DATA ErrorSourceData[ACPI_APEI_BERT_MAX];
 } RAS_APEI_BERT_ES;
 
 typedef struct {
-  UINT64 Resv1;              /* v1 ErrorStatusAddress set to 0 */
-  UINT64 Resv2;              /* v1 GES set to 0 */
-  UINT32                     TotalLength;
-  UINT32                     ErrorSourceCount;
-  RAS_APEI_GHES_DATA         ErrorSourceData[ACPI_APEI_GHES_MAX];
+  UINT64             Resv1;              /* v1 ErrorStatusAddress set to 0 */
+  UINT64             Resv2;              /* v1 GES set to 0 */
+  UINT32             TotalLength;
+  UINT32             ErrorSourceCount;
+  RAS_APEI_GHES_DATA ErrorSourceData[ACPI_APEI_GHES_MAX];
 } RAS_APEI_GHES_ES;
 
 /*
@@ -136,12 +136,16 @@ typedef struct {
  */
 
 EFI_STATUS
-AcpiApeiLibInit (VOID);
+AcpiApeiLibInit (
+  VOID
+  );
 
-RAS_APEI_BERT_DATA*
-AcpiApeiLibGetBertData (VOID);
+RAS_APEI_BERT_DATA *
+AcpiApeiLibGetBertData (
+  VOID
+  );
 
-RAS_APEI_GHES_DATA*
+RAS_APEI_GHES_DATA *
 AcpiApeiLibGetGhesData (
   IN UINT32 ErrorSourceIdx
   );

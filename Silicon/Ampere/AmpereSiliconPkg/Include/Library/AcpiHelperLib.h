@@ -17,9 +17,9 @@
 
 
 typedef struct {
-  EFI_ACPI_SDT_HEADER        *Table;
-  EFI_ACPI_TABLE_VERSION      TableVersion;
-  UINTN                       TableKey;
+  EFI_ACPI_SDT_HEADER    *Table;
+  EFI_ACPI_TABLE_VERSION TableVersion;
+  UINTN                  TableKey;
 } ACPI_TABLE_DESCRIPTOR;
 
 /**
@@ -32,8 +32,8 @@ typedef struct {
 VOID
 EFIAPI
 AcpiTableChecksum (
-  IN UINT8      *Buffer,
-  IN UINTN      Size
+  IN UINT8 *Buffer,
+  IN UINTN Size
   );
 
 /**
@@ -45,7 +45,7 @@ AcpiTableChecksum (
 VOID
 EFIAPI
 AcpiDSDTUpdateChecksum (
-  IN EFI_ACPI_SDT_PROTOCOL  *AcpiTableProtocol
+  IN EFI_ACPI_SDT_PROTOCOL *AcpiTableProtocol
   );
 
 /**
@@ -58,8 +58,8 @@ AcpiDSDTUpdateChecksum (
 EFI_STATUS
 EFIAPI
 AcpiDSDTSetNodeStatusValue (
-  IN CHAR8     *AsciiNodePath,
-  IN CHAR8     NodeStatus
+  IN CHAR8 *AsciiNodePath,
+  IN CHAR8 NodeStatus
   );
 
 /**
@@ -72,7 +72,7 @@ AcpiDSDTSetNodeStatusValue (
 EFI_STATUS
 EFIAPI
 AcpiOpenDSDT (
-  IN EFI_ACPI_SDT_PROTOCOL  *AcpiTableProtocol,
+  IN  EFI_ACPI_SDT_PROTOCOL *AcpiTableProtocol,
   OUT EFI_ACPI_HANDLE       *TableHandle
   );
 
@@ -86,9 +86,9 @@ AcpiOpenDSDT (
 EFI_STATUS
 EFIAPI
 AcpiGetTable (
-  IN  EFI_ACPI_SDT_PROTOCOL   *AcpiTableSdtProtocol,
-  IN  UINT32                  TableSignature,
-  OUT ACPI_TABLE_DESCRIPTOR   *TableDescriptor
+  IN  EFI_ACPI_SDT_PROTOCOL *AcpiTableSdtProtocol,
+  IN  UINT32                TableSignature,
+  OUT ACPI_TABLE_DESCRIPTOR *TableDescriptor
   );
 
 /**
@@ -103,7 +103,7 @@ AcpiGetTable (
 BOOLEAN
 EFIAPI
 IsAcpiInstalled (
-  IN  UINT32                  AcpiTableSignature
+  IN UINT32 AcpiTableSignature
   );
 
 #endif /* ACPIHELPERLIB_H_ */

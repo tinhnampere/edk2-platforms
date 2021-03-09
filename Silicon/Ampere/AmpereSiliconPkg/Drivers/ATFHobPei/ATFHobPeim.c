@@ -13,8 +13,8 @@
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/PcdLib.h>
-#include <Library/PeiServicesLib.h>
 #include <Library/PeimEntryPoint.h>
+#include <Library/PeiServicesLib.h>
 #include <PlatformInfoHob.h>
 #include <Uefi/UefiBaseType.h>
 
@@ -23,26 +23,40 @@ BuildPlatformInformationHob (
   VOID
   )
 {
-  VOID  *Hob;
+  VOID *Hob;
 
   /* The ATF HOB handoff base is at PcdSystemMemoryBase */
-  Hob = GetNextGuidHob (&gPlatformHobGuid, (CONST VOID *) FixedPcdGet64 (PcdSystemMemoryBase));
+  Hob = GetNextGuidHob (
+          &gPlatformHobGuid,
+          (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
+          );
   /* Build a GUID to pass them Platform HOB data to DXE phase */
   if (Hob) {
-    BuildGuidDataHob (&gPlatformHobGuid, GET_GUID_HOB_DATA (Hob), GET_GUID_HOB_DATA_SIZE (Hob));
+    BuildGuidDataHob (
+      &gPlatformHobGuid,
+      GET_GUID_HOB_DATA (Hob),
+      GET_GUID_HOB_DATA_SIZE (Hob)
+      );
   }
 
-  Hob = GetNextGuidHob (&gPlatformHobV2Guid, (CONST VOID *) FixedPcdGet64 (PcdSystemMemoryBase));
+  Hob = GetNextGuidHob (
+          &gPlatformHobV2Guid,
+          (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
+          );
   if (Hob) {
-    BuildGuidDataHob (&gPlatformHobV2Guid, GET_GUID_HOB_DATA (Hob), GET_GUID_HOB_DATA_SIZE (Hob));
+    BuildGuidDataHob (
+      &gPlatformHobV2Guid,
+      GET_GUID_HOB_DATA (Hob),
+      GET_GUID_HOB_DATA_SIZE (Hob)
+      );
   }
 }
 
 EFI_STATUS
 EFIAPI
 InitializeATFHobPeim (
-  IN       EFI_PEI_FILE_HANDLE  FileHandle,
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
   BuildPlatformInformationHob ();

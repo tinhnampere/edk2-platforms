@@ -36,11 +36,11 @@ enum {
 **/
 EFI_STATUS
 SMProGetRandomNumber64 (
-  OUT UINT8     *Buffer
+  OUT UINT8 *Buffer
   )
 {
-  UINT32        Message[3];
-  EFI_STATUS    Status;
+  UINT32     Message[3];
+  EFI_STATUS Status;
 
   if (Buffer == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -92,14 +92,14 @@ SMProGetRandomNumber64 (
 EFI_STATUS
 EFIAPI
 GenerateRandomNumbers (
-  OUT UINT8     *Buffer,
-  IN  UINTN     BufferSize
+  OUT UINT8 *Buffer,
+  IN  UINTN BufferSize
   )
 {
-  UINTN         Count;
-  UINTN         RandSize;
-  UINT64        Value;
-  EFI_STATUS    Status;
+  UINTN      Count;
+  UINTN      RandSize;
+  UINT64     Value;
+  EFI_STATUS Status;
 
   if ((BufferSize == 0) || (Buffer == NULL)) {
     return EFI_INVALID_PARAMETER;

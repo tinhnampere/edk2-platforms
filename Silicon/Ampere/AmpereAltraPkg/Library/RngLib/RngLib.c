@@ -26,7 +26,7 @@
 BOOLEAN
 EFIAPI
 GetRandomNumber16 (
-  OUT     UINT16                    *Rand
+  OUT UINT16 *Rand
   )
 {
   EFI_STATUS Status;
@@ -58,7 +58,7 @@ GetRandomNumber16 (
 BOOLEAN
 EFIAPI
 GetRandomNumber32 (
-  OUT     UINT32                    *Rand
+  OUT UINT32 *Rand
   )
 {
   EFI_STATUS Status;
@@ -90,7 +90,7 @@ GetRandomNumber32 (
 BOOLEAN
 EFIAPI
 GetRandomNumber64 (
-  OUT     UINT64                    *Rand
+  OUT UINT64 *Rand
   )
 {
   EFI_STATUS Status;
@@ -122,7 +122,7 @@ GetRandomNumber64 (
 BOOLEAN
 EFIAPI
 GetRandomNumber128 (
-  OUT     UINT64                    *Rand
+  OUT UINT64 *Rand
   )
 {
   EFI_STATUS Status;

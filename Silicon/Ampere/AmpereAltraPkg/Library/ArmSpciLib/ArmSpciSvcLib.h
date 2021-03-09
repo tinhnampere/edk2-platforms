@@ -56,11 +56,11 @@
 #define OEN_SIP_END                     2
 #define OEN_OEM_START                   3
 #define OEN_OEM_END                     3
-#define OEN_STD_START                   4       /* Standard Calls */
+#define OEN_STD_START                   4 /* Standard Calls */
 #define OEN_STD_END                     4
-#define OEN_TAP_START                   48      /* Trusted Applications */
+#define OEN_TAP_START                   48 /* Trusted Applications */
 #define OEN_TAP_END                     49
-#define OEN_TOS_START                   50      /* Trusted OS */
+#define OEN_TOS_START                   50 /* Trusted OS */
 #define OEN_TOS_END                     63
 #define OEN_LIMIT                       64
 

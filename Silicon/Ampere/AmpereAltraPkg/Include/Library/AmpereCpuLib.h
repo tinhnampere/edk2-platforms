@@ -45,7 +45,9 @@
 **/
 UINT8
 EFIAPI
-CpuGetSubNumaMode (VOID);
+CpuGetSubNumaMode (
+  VOID
+  );
 
 /**
   Get the number of SubNUMA region.
@@ -55,7 +57,9 @@ CpuGetSubNumaMode (VOID);
 **/
 UINT8
 EFIAPI
-CpuGetNumOfSubNuma (VOID);
+CpuGetNumOfSubNuma (
+  VOID
+  );
 
 /**
   Get the SubNUMA node of a CPM.
@@ -68,7 +72,7 @@ CpuGetNumOfSubNuma (VOID);
 UINT8
 EFIAPI
 CpuGetSubNumNode (
-  UINT8 Socket,
+  UINT8  Socket,
   UINT32 Cpm
   );
 
@@ -129,7 +133,9 @@ CpuGetCacheSize (
 **/
 UINT32
 EFIAPI
-GetNumberSupportedSockets (VOID);
+GetNumberSupportedSockets (
+  VOID
+  );
 
 /**
   Get the number of active socket.
@@ -139,7 +145,9 @@ GetNumberSupportedSockets (VOID);
 **/
 UINT32
 EFIAPI
-GetNumberActiveSockets (VOID);
+GetNumberActiveSockets (
+  VOID
+  );
 
 /**
   Get the number of active CPM per socket.
@@ -192,7 +200,9 @@ SetConfiguredNumberCPMs (
 **/
 UINT32
 EFIAPI
-GetMaximumNumberOfCores (VOID);
+GetMaximumNumberOfCores (
+  VOID
+  );
 
 /**
   Get the maximum number of CPM per socket. This number
@@ -203,7 +213,9 @@ GetMaximumNumberOfCores (VOID);
 **/
 UINT32
 EFIAPI
-GetMaximumNumberCPMs (VOID);
+GetMaximumNumberCPMs (
+  VOID
+  );
 
 /**
   Get the number of active cores of a sockets.
@@ -225,7 +237,9 @@ GetNumberActiveCoresPerSocket (
 **/
 UINT32
 EFIAPI
-GetNumberActiveCores (VOID);
+GetNumberActiveCores (
+  VOID
+  );
 
 /**
   Check if the logical CPU is enabled or not.
@@ -251,6 +265,8 @@ IsCpuEnabled (
 **/
 BOOLEAN
 EFIAPI
-PlatSlaveSocketPresent (VOID);
+PlatSlaveSocketPresent (
+  VOID
+  );
 
 #endif /* AMPERE_CPU_LIB_H_ */

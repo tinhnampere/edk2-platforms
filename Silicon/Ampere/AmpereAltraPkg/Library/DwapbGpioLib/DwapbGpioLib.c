@@ -9,13 +9,13 @@
 #include <PiDxe.h>
 #include <Uefi.h>
 
-#include <Library/UefiRuntimeLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/IoLib.h>
-#include <Library/DxeServicesTableLib.h>
 #include <Library/DebugLib.h>
-#include <Library/TimerLib.h>
 #include <Library/DwapbGpioLib.h>
+#include <Library/DxeServicesTableLib.h>
+#include <Library/IoLib.h>
+#include <Library/TimerLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeLib.h>
 #include <Platform/Ac01.h>
 
 /* Runtime needs to be 64K alignment */
@@ -31,10 +31,10 @@
 #define GPIO_SWPORTA_DDR_ADDR           0x00000004
 #define GPIO_EXT_PORTA_ADDR             0x00000050
 
-STATIC UINT64       GpioBaseAddr[] = { GPIO_DWAPB_BASE_ADDR } ;
-STATIC UINT64       GpiBaseAddr[] = { GPI_DWAPB_BASE_ADDR } ;
-STATIC BOOLEAN      GpioRuntimeEnableArray[sizeof (GpioBaseAddr) / sizeof (GpioBaseAddr[0])] = { FALSE };
-STATIC EFI_EVENT    mVirtualAddressChangeEvent = NULL;
+STATIC UINT64    GpioBaseAddr[] = { GPIO_DWAPB_BASE_ADDR };
+STATIC UINT64    GpiBaseAddr[] = { GPI_DWAPB_BASE_ADDR };
+STATIC BOOLEAN   GpioRuntimeEnableArray[sizeof (GpioBaseAddr) / sizeof (GpioBaseAddr[0])] = { FALSE };
+STATIC EFI_EVENT mVirtualAddressChangeEvent = NULL;
 
 UINT64
 GetBaseAddr (
@@ -57,12 +57,12 @@ DwapbGpioWrite (
   IN UINT32 Val
   )
 {
-  MmioWrite32 ((UINTN) Base, Val);
+  MmioWrite32 ((UINTN)Base, Val);
 }
 
 VOID
 DwapbGpioRead (
-  IN UINT64 Base,
+  IN  UINT64 Base,
   OUT UINT32 *Val
   )
 {
@@ -140,9 +140,9 @@ DwapbGpioConfig (
   IN UINT32 InOut
   )
 {
-  INTN    GpioPin;
-  UINT32  Val;
-  UINT64  Reg;
+  INTN   GpioPin;
+  UINT32 Val;
+  UINT64 Reg;
 
   /*
    * Caculate GPIO Pin Number for Direction Register
@@ -183,7 +183,8 @@ DwapbGPIOModeConfig (
   if (Mode < GPIO_CONFIG_OUT_LOW
       || Mode >= MAX_GPIO_CONFIG_MODE
       || Pin > NumersOfPins - 1
-      || Pin < 0) {
+      || Pin < 0)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -240,18 +241,18 @@ DwapbGPIOModeConfig (
 VOID
 EFIAPI
 GpioVirtualAddressChangeEvent (
-  IN EFI_EVENT                            Event,
-  IN VOID                                 *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
   UINTN Count;
 
-  EfiConvertPointer (0x0, (VOID**) &GpioBaseAddr);
+  EfiConvertPointer (0x0, (VOID **)&GpioBaseAddr);
   for (Count = 0; Count < sizeof (GpioBaseAddr) / sizeof (GpioBaseAddr[0]); Count++) {
     if (!GpioRuntimeEnableArray[Count]) {
       continue;
     }
-    EfiConvertPointer (0x0, (VOID**) &GpioBaseAddr[Count]);
+    EfiConvertPointer (0x0, (VOID **)&GpioBaseAddr[Count]);
   }
 }
 
@@ -268,8 +269,8 @@ DwapbGPIOSetupRuntime (
   IN UINT32 Pin
   )
 {
-  EFI_STATUS                        Status;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR   Descriptor;
+  EFI_STATUS                      Status;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR Descriptor;
 
   if (GetBaseAddr (Pin) == 0) {
     return EFI_INVALID_PARAMETER;

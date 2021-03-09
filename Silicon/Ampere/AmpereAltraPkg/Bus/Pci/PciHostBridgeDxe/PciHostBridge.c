@@ -51,12 +51,12 @@ EFI_PCI_ROOT_BRIDGE_DEVICE_PATH mPciDevicePathTemplate =
 {
   {
     {
-    ACPI_DEVICE_PATH,
-    ACPI_DP,
-    {
-      (UINT8) (sizeof (ACPI_HID_DEVICE_PATH)),
-      (UINT8) ((sizeof (ACPI_HID_DEVICE_PATH)) >> 8)
-    }
+      ACPI_DEVICE_PATH,
+      ACPI_DP,
+      {
+        (UINT8)(sizeof (ACPI_HID_DEVICE_PATH)),
+        (UINT8)((sizeof (ACPI_HID_DEVICE_PATH)) >> 8)
+      }
     },
     EISA_PNP_ID (0x0A08),
     0
@@ -66,8 +66,8 @@ EFI_PCI_ROOT_BRIDGE_DEVICE_PATH mPciDevicePathTemplate =
     END_DEVICE_PATH_TYPE,
     END_ENTIRE_DEVICE_PATH_SUBTYPE,
     {
-    END_DEVICE_PATH_LENGTH,
-    0
+      END_DEVICE_PATH_LENGTH,
+      0
     }
   }
 };
@@ -85,14 +85,14 @@ GenerateRootBridgeDevicePath (
 
   RootBridgeDevPath = AllocateCopyPool (
                         sizeof (EFI_PCI_ROOT_BRIDGE_DEVICE_PATH),
-                        (VOID *) &mPciDevicePathTemplate
+                        (VOID *)&mPciDevicePathTemplate
                         );
   if (RootBridgeDevPath == NULL) {
     return NULL;
   }
 
   /* We don't expect to have more than 65536 root ports on the same root bridge */
-  RootBridgeDevPath->AcpiDevicePath.UID = (UINT32) ((HostBridgeIdx << 16) + RootBridgeIdx);
+  RootBridgeDevPath->AcpiDevicePath.UID = (UINT32)((HostBridgeIdx << 16) + RootBridgeIdx);
 
   return RootBridgeDevPath;
 }
@@ -109,11 +109,11 @@ VOID
 EFIAPI
 PciHostBridgeReadyToBootEvent (
   EFI_EVENT Event,
-  VOID *Context
+  VOID      *Context
   )
 {
-  UINTN    Idx1, Idx2, Count = 0;
-  CHAR8    NodePath[MAX_ACPI_NODE_PATH];
+  UINTN Idx1, Idx2, Count = 0;
+  CHAR8 NodePath[MAX_ACPI_NODE_PATH];
 
   for (Idx1 = 0; Idx1 < PCI_GET_NUMBER_HOSTBRIDGE (); Idx1++) {
     for (Idx2 = 0; Idx2 < PCI_GET_NUMBER_ROOTBRIDGE (Idx1); Idx2++) {
@@ -148,13 +148,13 @@ STATIC
 EFI_STATUS
 EFIAPI
 RootBridgeConstructor (
-  IN PCI_ROOT_BRIDGE_INSTANCE           *RootBridgeInstance,
-  IN EFI_HANDLE                         HostBridgeHandle,
-  IN UINT64                             Attri,
-  IN UINT32                             Seg
+  IN PCI_ROOT_BRIDGE_INSTANCE *RootBridgeInstance,
+  IN EFI_HANDLE               HostBridgeHandle,
+  IN UINT64                   Attri,
+  IN UINT32                   Seg
   )
 {
-  MRES_TYPE                         Index;
+  MRES_TYPE Index;
 
   //
   // The host to pci bridge, the host memory and io addresses are
@@ -221,31 +221,31 @@ RootBridgeConstructor (
 EFI_STATUS
 EFIAPI
 InitializePciHostBridge (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  STATIC EFI_GUID                 guidReadyToBoot = EFI_EVENT_GROUP_READY_TO_BOOT;
-  EFI_EVENT                       EvtReadyToBoot;
-  EFI_STATUS                      Status;
-  UINTN                           Idx1;
-  UINTN                           Idx2;
-  UINTN                           Count = 0;
-  PCI_HOST_BRIDGE_INSTANCE        *HostBridgeInstance = NULL;
-  PCI_ROOT_BRIDGE_INSTANCE        *RootBridgeInstance = NULL;
-  UINTN                           NumberRootPortInstalled = FALSE;
-  LIST_ENTRY                      *List;
-  UINTN                           SegmentNumber;
+  STATIC EFI_GUID          guidReadyToBoot = EFI_EVENT_GROUP_READY_TO_BOOT;
+  EFI_EVENT                EvtReadyToBoot;
+  EFI_STATUS               Status;
+  UINTN                    Idx1;
+  UINTN                    Idx2;
+  UINTN                    Count = 0;
+  PCI_HOST_BRIDGE_INSTANCE *HostBridgeInstance = NULL;
+  PCI_ROOT_BRIDGE_INSTANCE *RootBridgeInstance = NULL;
+  UINTN                    NumberRootPortInstalled = FALSE;
+  LIST_ENTRY               *List;
+  UINTN                    SegmentNumber;
 
   if (( PCI_CHECK_ROOT_BRIDGE_DISABLED == NULL)
-        || (PCI_CORE_SETUP == NULL)
-        || (PCI_CORE_END == NULL)
-        || (PCI_CORE_SETUP_HOST_BRIDGE == NULL)
-        || (PCI_CORE_SETUP_ROOT_BRIDGE == NULL)
-        || (PCI_CORE_IO_PCI_RW == NULL)
-        || (PCI_GET_NUMBER_HOSTBRIDGE == NULL)
-        || (PCI_GET_NUMBER_ROOTBRIDGE == NULL)
-        || (PCI_GET_ROOTBRIDGE_ATTR == NULL ))
+      || (PCI_CORE_SETUP == NULL)
+      || (PCI_CORE_END == NULL)
+      || (PCI_CORE_SETUP_HOST_BRIDGE == NULL)
+      || (PCI_CORE_SETUP_ROOT_BRIDGE == NULL)
+      || (PCI_CORE_IO_PCI_RW == NULL)
+      || (PCI_GET_NUMBER_HOSTBRIDGE == NULL)
+      || (PCI_GET_NUMBER_ROOTBRIDGE == NULL)
+      || (PCI_GET_ROOTBRIDGE_ATTR == NULL ))
   {
     PCIE_ERR ("PciHostBridge: Invalid Parameters\n");
     return EFI_INVALID_PARAMETER;
@@ -268,7 +268,7 @@ InitializePciHostBridge (
   for (Idx1 = 0; Idx1 < PCI_GET_NUMBER_HOSTBRIDGE (); Idx1++) {
     HostBridgeInstance = AllocateCopyPool (
                            sizeof (PCI_HOST_BRIDGE_INSTANCE),
-                           (VOID *) &mPciHostBridgeInstanceTemplate
+                           (VOID *)&mPciHostBridgeInstanceTemplate
                            );
     if (HostBridgeInstance == NULL) {
       PCIE_ERR ("  HB%d allocation failed!\n", Idx1);
@@ -317,7 +317,7 @@ InitializePciHostBridge (
       }
 
       // Initialize Hardware
-      Status = PCI_CORE_SETUP_ROOT_BRIDGE (Idx1, Idx2, (VOID *) &RootBridgeInstance->RootBridge);
+      Status = PCI_CORE_SETUP_ROOT_BRIDGE (Idx1, Idx2, (VOID *)&RootBridgeInstance->RootBridge);
       if (EFI_ERROR (Status)) {
         FreePool (RootBridgeInstance);
         PCIE_ERR ("    HB%d-RB%d setup failed!\n", Idx1, Idx2);
@@ -344,7 +344,7 @@ InitializePciHostBridge (
 
       RootBridgeInstance->Signature = PCI_ROOT_BRIDGE_SIGNATURE;
       RootBridgeInstance->RootBridge.DevicePath =
-        (EFI_DEVICE_PATH_PROTOCOL *) GenerateRootBridgeDevicePath (Idx1, Idx2);
+        (EFI_DEVICE_PATH_PROTOCOL *)GenerateRootBridgeDevicePath (Idx1, Idx2);
 
       SegmentNumber = Count;
       if (PCI_GET_ROOTBRIDGE_SEGMENTNUMBER) {
@@ -499,19 +499,19 @@ NotifyPhase (
   IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PHASE    Phase
   )
 {
-  PCI_HOST_BRIDGE_INSTANCE              *HostBridgeInstance;
-  PCI_ROOT_BRIDGE_INSTANCE              *RootBridgeInstance;
-  MRES_TYPE                             Index;
-  PCI_RES_NODE                          *ResNode;
-  LIST_ENTRY                            *List;
-  EFI_PHYSICAL_ADDRESS                  AddrBase;
-  EFI_PHYSICAL_ADDRESS                  AddrLimit;
-  UINT64                                AddrLen;
-  UINTN                                 BitsOfAlignment;
-  EFI_STATUS                            Status;
-  EFI_STATUS                            ReturnStatus;
-  EFI_PCI_ROOT_BRIDGE_DEVICE_PATH       *DevPath;
-  UINTN                                 HostBridgeIdx, RootBridgeIdx;
+  PCI_HOST_BRIDGE_INSTANCE        *HostBridgeInstance;
+  PCI_ROOT_BRIDGE_INSTANCE        *RootBridgeInstance;
+  MRES_TYPE                       Index;
+  PCI_RES_NODE                    *ResNode;
+  LIST_ENTRY                      *List;
+  EFI_PHYSICAL_ADDRESS            AddrBase;
+  EFI_PHYSICAL_ADDRESS            AddrLimit;
+  UINT64                          AddrLen;
+  UINTN                           BitsOfAlignment;
+  EFI_STATUS                      Status;
+  EFI_STATUS                      ReturnStatus;
+  EFI_PCI_ROOT_BRIDGE_DEVICE_PATH *DevPath;
+  UINTN                           HostBridgeIdx, RootBridgeIdx;
 
   HostBridgeInstance = PCI_HOST_BRIDGE_FROM_THIS (This);
   ReturnStatus = EFI_SUCCESS;
@@ -626,7 +626,7 @@ NotifyPhase (
         default:
           ASSERT (FALSE);
           break;
-        }; //end switch (Index)
+        } // end switch (Index)
 
         AddrLen = ResNode->Length;
 
@@ -635,7 +635,7 @@ NotifyPhase (
           ResNode->Length = 0;
         } else {
           // Get the number of '1' in Alignment.
-          BitsOfAlignment = (UINTN) (HighBitSet64 (ResNode->Alignment) + 1);
+          BitsOfAlignment = (UINTN)(HighBitSet64 (ResNode->Alignment) + 1);
 
           Status = gDS->AllocateMemorySpace (
                           EfiGcdAllocateAddress,
@@ -648,7 +648,7 @@ NotifyPhase (
                           );
 
           if (!EFI_ERROR (Status)) {
-            ResNode->Base   = (UINTN) AddrBase;
+            ResNode->Base   = (UINTN)AddrBase;
             ResNode->Status = ResAllocated;
           } else {
             ReturnStatus = EFI_OUT_OF_RESOURCES;
@@ -696,7 +696,7 @@ NotifyPhase (
           default:
             ASSERT (FALSE);
             break;
-          }; //end switch (Index)
+          } // end switch (Index)
 
           ResNode->Type      = Index;
           ResNode->Base      = 0;
@@ -732,7 +732,7 @@ NotifyPhase (
 
     // Retrieve the HostBridgeIdx and RootBridgeIdx from UID
     // UID = (UINT32)((HostBridgeIdx << 16) + RootBridgeIdx);
-    DevPath = (EFI_PCI_ROOT_BRIDGE_DEVICE_PATH*) RootBridgeInstance->RootBridge.DevicePath;
+    DevPath = (EFI_PCI_ROOT_BRIDGE_DEVICE_PATH *)RootBridgeInstance->RootBridge.DevicePath;
     HostBridgeIdx = DevPath->AcpiDevicePath.UID / (1<<16);
     RootBridgeIdx = DevPath->AcpiDevicePath.UID % (1<<16);
 
@@ -772,14 +772,14 @@ NotifyPhase (
 EFI_STATUS
 EFIAPI
 GetNextRootBridge (
-  IN       EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL *This,
-  IN OUT   EFI_HANDLE                                       *RootBridgeHandle
+  IN     EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL *This,
+  IN OUT EFI_HANDLE                                       *RootBridgeHandle
   )
 {
-  BOOLEAN                               NoRootBridge;
-  LIST_ENTRY                            *List;
-  PCI_HOST_BRIDGE_INSTANCE              *HostBridgeInstance;
-  PCI_ROOT_BRIDGE_INSTANCE              *RootBridgeInstance;
+  BOOLEAN                  NoRootBridge;
+  LIST_ENTRY               *List;
+  PCI_HOST_BRIDGE_INSTANCE *HostBridgeInstance;
+  PCI_ROOT_BRIDGE_INSTANCE *RootBridgeInstance;
 
   NoRootBridge = TRUE;
   HostBridgeInstance = PCI_HOST_BRIDGE_FROM_THIS (This);
@@ -815,7 +815,7 @@ GetNextRootBridge (
     }
 
     List = List->ForwardLink;
-  } //end while
+  } // end while
 
   return NoRootBridge ? EFI_NOT_FOUND : EFI_INVALID_PARAMETER;
 }
@@ -866,9 +866,9 @@ GetAttributes (
   OUT UINT64                                           *Attributes
   )
 {
-  LIST_ENTRY                            *List;
-  PCI_HOST_BRIDGE_INSTANCE              *HostBridgeInstance;
-  PCI_ROOT_BRIDGE_INSTANCE              *RootBridgeInstance;
+  LIST_ENTRY               *List;
+  PCI_HOST_BRIDGE_INSTANCE *HostBridgeInstance;
+  PCI_ROOT_BRIDGE_INSTANCE *RootBridgeInstance;
 
   if (Attributes == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -918,13 +918,13 @@ StartBusEnumeration (
   OUT VOID                                             **Configuration
   )
 {
-  LIST_ENTRY                            *List;
-  PCI_HOST_BRIDGE_INSTANCE              *HostBridgeInstance;
-  PCI_ROOT_BRIDGE_INSTANCE              *RootBridgeInstance;
-  VOID                                  *Buffer;
-  UINT8                                 *Temp;
-  UINT64                                BusStart;
-  UINT64                                BusEnd;
+  LIST_ENTRY               *List;
+  PCI_HOST_BRIDGE_INSTANCE *HostBridgeInstance;
+  PCI_ROOT_BRIDGE_INSTANCE *RootBridgeInstance;
+  VOID                     *Buffer;
+  UINT8                    *Temp;
+  UINT64                   BusStart;
+  UINT64                   BusEnd;
 
   HostBridgeInstance = PCI_HOST_BRIDGE_FROM_THIS (This);
   List = HostBridgeInstance->Head.ForwardLink;
@@ -943,7 +943,7 @@ StartBusEnumeration (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      Temp = (UINT8 *) Buffer;
+      Temp = (UINT8 *)Buffer;
 
       ((EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Temp)->Desc = ACPI_ADDRESS_SPACE_DESCRIPTOR;
       ((EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Temp)->Len  = sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3;
@@ -1003,14 +1003,14 @@ SetBusNumbers (
   IN VOID                                             *Configuration
   )
 {
-  LIST_ENTRY                            *List;
-  PCI_HOST_BRIDGE_INSTANCE              *HostBridgeInstance;
-  PCI_ROOT_BRIDGE_INSTANCE              *RootBridgeInstance;
-  PCI_RES_NODE                          *ResNode;
-  UINT8                                 *Ptr;
-  UINTN                                 BusStart;
-  UINTN                                 BusEnd;
-  UINTN                                 BusLen;
+  LIST_ENTRY               *List;
+  PCI_HOST_BRIDGE_INSTANCE *HostBridgeInstance;
+  PCI_ROOT_BRIDGE_INSTANCE *RootBridgeInstance;
+  PCI_RES_NODE             *ResNode;
+  UINT8                    *Ptr;
+  UINTN                    BusStart;
+  UINTN                    BusEnd;
+  UINTN                    BusLen;
 
   if (Configuration == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1025,7 +1025,7 @@ SetBusNumbers (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *) Ptr)->ResType != ACPI_ADDRESS_SPACE_TYPE_BUS) {
+  if (((EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Ptr)->ResType != ACPI_ADDRESS_SPACE_TYPE_BUS) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1042,8 +1042,8 @@ SetBusNumbers (
   while (List != &HostBridgeInstance->Head) {
     RootBridgeInstance = ROOT_BRIDGE_FROM_LINK (List);
     if (RootBridgeHandle == RootBridgeInstance->RootBridgeHandle) {
-      BusStart = (UINTN) ((EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *) Ptr)->AddrRangeMin;
-      BusLen = (UINTN) ((EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *) Ptr)->AddrLen;
+      BusStart = (UINTN)((EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Ptr)->AddrRangeMin;
+      BusLen = (UINTN)((EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Ptr)->AddrLen;
       BusEnd = BusStart + BusLen - 1;
 
       if (BusStart > BusEnd) {
@@ -1051,7 +1051,8 @@ SetBusNumbers (
       }
 
       if ((BusStart < RootBridgeInstance->RootBridge.Bus.Base) ||
-          (BusEnd > RootBridgeInstance->RootBridge.Bus.Limit)) {
+          (BusEnd > RootBridgeInstance->RootBridge.Bus.Limit))
+      {
         return EFI_INVALID_PARAMETER;
       }
 
@@ -1105,15 +1106,15 @@ SubmitResources (
   IN VOID                                             *Configuration
   )
 {
-  LIST_ENTRY                            *List;
-  PCI_HOST_BRIDGE_INSTANCE              *HostBridgeInstance;
-  PCI_ROOT_BRIDGE_INSTANCE              *RootBridgeInstance = NULL;
-  PCI_RES_NODE                          *ResNode;
-  UINT8                                 *Temp;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR     *Ptr;
-  UINTN                                 Index = 0;
-  UINTN                                 AddrSpaceCnt = 0;
-  UINTN                                 i;
+  LIST_ENTRY                        *List;
+  PCI_HOST_BRIDGE_INSTANCE          *HostBridgeInstance;
+  PCI_ROOT_BRIDGE_INSTANCE          *RootBridgeInstance = NULL;
+  PCI_RES_NODE                      *ResNode;
+  UINT8                             *Temp;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *Ptr;
+  UINTN                             Index = 0;
+  UINTN                             AddrSpaceCnt = 0;
+  UINTN                             i;
 
   //
   // Check the input parameter: Configuration
@@ -1128,11 +1129,11 @@ SubmitResources (
   //
   // Input resource descriptor must end properly
   //
-  Temp = (UINT8 *) Configuration;
+  Temp = (UINT8 *)Configuration;
   AddrSpaceCnt = 0;
   while (*Temp == ACPI_ADDRESS_SPACE_DESCRIPTOR) {
     Temp += sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR);
-    AddrSpaceCnt ++;
+    AddrSpaceCnt++;
   }
   if (*Temp != ACPI_END_TAG_DESCRIPTOR) {
     return EFI_INVALID_PARAMETER;
@@ -1157,9 +1158,9 @@ SubmitResources (
 
   PCIE_DEBUG ("%a: \n", __FUNCTION__);
 
-  Temp = (UINT8 *) Configuration;
-  for (i = 0; i < AddrSpaceCnt; i ++) {
-    Ptr = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *) Temp ;
+  Temp = (UINT8 *)Configuration;
+  for (i = 0; i < AddrSpaceCnt; i++) {
+    Ptr = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Temp;
 
     PCIE_DEBUG ("Ptr->ResType:%d\n", Ptr->ResType);
     PCIE_DEBUG ("Ptr->Addrlen:0x%llx\n", Ptr->AddrLen);
@@ -1182,12 +1183,12 @@ SubmitResources (
         }
 
         Index = (Ptr->SpecificFlag & EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE) ?
-                   rtMmio32p : rtMmio32;
+                rtMmio32p : rtMmio32;
       }
 
       if (Ptr->AddrSpaceGranularity == 64) {
         Index = (Ptr->SpecificFlag & EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE) ?
-                   rtMmio64p : rtMmio64;
+                rtMmio64p : rtMmio64;
       }
 
       break;
@@ -1207,14 +1208,14 @@ SubmitResources (
     default:
       ASSERT (FALSE);
       break;
-    };
+    }
 
     ResNode = &(RootBridgeInstance->ResAllocNode[Index]);
     ResNode->Length  = Ptr->AddrLen;
     ResNode->Alignment = Ptr->AddrRangeMax;
     ResNode->Status  = ResSubmitted;
 
-    Temp += sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) ;
+    Temp += sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR);
   }
 
   HostBridgeInstance->ResourceSubmited = TRUE;
@@ -1249,14 +1250,14 @@ GetProposedResources (
   OUT VOID                                             **Configuration
   )
 {
-  LIST_ENTRY                            *List = NULL;
-  PCI_HOST_BRIDGE_INSTANCE              *HostBridgeInstance = NULL;
-  PCI_ROOT_BRIDGE_INSTANCE              *RootBridgeInstance = NULL;
-  UINTN                                 Index = 0;
-  VOID                                  *Buffer = NULL;
-  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR     *Descriptor = NULL;
-  EFI_ACPI_END_TAG_DESCRIPTOR           *End = NULL;
-  UINT64                                ResStatus;
+  LIST_ENTRY                        *List = NULL;
+  PCI_HOST_BRIDGE_INSTANCE          *HostBridgeInstance = NULL;
+  PCI_ROOT_BRIDGE_INSTANCE          *RootBridgeInstance = NULL;
+  UINTN                             Index = 0;
+  VOID                              *Buffer = NULL;
+  EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *Descriptor = NULL;
+  EFI_ACPI_END_TAG_DESCRIPTOR       *End = NULL;
+  UINT64                            ResStatus;
 
   Buffer = NULL;
 
@@ -1293,12 +1294,12 @@ GetProposedResources (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Descriptor = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *) Buffer;
+  Descriptor = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Buffer;
   for (Index = rtIo16; Index < rtMaxRes; Index++) {
     ResStatus = RootBridgeInstance->ResAllocNode[Index].Status;
 
     Descriptor->Desc                  = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-    Descriptor->Len                   = sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3;;
+    Descriptor->Len                   = sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3;
     Descriptor->GenFlag               = 0;
     Descriptor->AddrRangeMin          = RootBridgeInstance->ResAllocNode[Index].Base;
     Descriptor->AddrLen               = RootBridgeInstance->ResAllocNode[Index].Length;
@@ -1317,7 +1318,7 @@ GetProposedResources (
     case rtMmio32p:
       Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
       Descriptor->SpecificFlag         = (Index == rtMmio32) ? 0 :
-                                           EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
       Descriptor->AddrSpaceGranularity = 32;
       break;
 
@@ -1325,10 +1326,10 @@ GetProposedResources (
     case rtMmio64p:
       Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
       Descriptor->SpecificFlag         = (Index == rtMmio64) ? 0 :
-                                           EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
       Descriptor->AddrSpaceGranularity = 64;
       break;
-    };
+    }
 
     PCIE_DEBUG ("Descriptor->ResType:%d\n", Descriptor->ResType);
     PCIE_DEBUG ("Descriptor->Addrlen:%llx\n", Descriptor->AddrLen);
@@ -1344,7 +1345,7 @@ GetProposedResources (
   //
   // Terminate the entries.
   //
-  End = (EFI_ACPI_END_TAG_DESCRIPTOR *) Descriptor;
+  End = (EFI_ACPI_END_TAG_DESCRIPTOR *)Descriptor;
   End->Desc      = ACPI_END_TAG_DESCRIPTOR;
   End->Checksum  = 0x0;
 
@@ -1383,15 +1384,15 @@ GetProposedResources (
 EFI_STATUS
 EFIAPI
 PreprocessController (
-  IN  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL          *This,
-  IN  EFI_HANDLE                                                RootBridgeHandle,
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS               PciAddress,
-  IN  EFI_PCI_CONTROLLER_RESOURCE_ALLOCATION_PHASE              Phase
+  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL *This,
+  IN EFI_HANDLE                                       RootBridgeHandle,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS      PciAddress,
+  IN EFI_PCI_CONTROLLER_RESOURCE_ALLOCATION_PHASE     Phase
   )
 {
-  PCI_HOST_BRIDGE_INSTANCE              *HostBridgeInstance;
-  PCI_ROOT_BRIDGE_INSTANCE              *RootBridgeInstance;
-  LIST_ENTRY                            *List;
+  PCI_HOST_BRIDGE_INSTANCE *HostBridgeInstance;
+  PCI_ROOT_BRIDGE_INSTANCE *RootBridgeInstance;
+  LIST_ENTRY               *List;
 
   HostBridgeInstance = PCI_HOST_BRIDGE_FROM_THIS (This);
   List = HostBridgeInstance->Head.ForwardLink;
@@ -1412,7 +1413,7 @@ PreprocessController (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((UINT32) Phase > EfiPciBeforeResourceCollection) {
+  if ((UINT32)Phase > EfiPciBeforeResourceCollection) {
     return EFI_INVALID_PARAMETER;
   }
 

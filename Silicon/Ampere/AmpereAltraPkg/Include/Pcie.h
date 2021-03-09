@@ -138,7 +138,7 @@
 #define ISA_IRQ_MASK          0
 
 
-enum PCIE_LINK_WIDTH{
+enum PCIE_LINK_WIDTH {
   LNKW_NONE = 0,
   LNKW_X1 = 0x1,
   LNKW_X2 = 0x2,
@@ -189,44 +189,44 @@ enum RC_BLOCK {
 };
 
 typedef struct _AC01_PCIE {
-  UINT64        CsrAddr;                // Pointer to CSR Address
-  UINT64        SnpsRamAddr;            // Pointer to Synopsys SRAM address
-  UINT8         MaxGen;                 // Max speed Gen-1/-2/-3/-4
-  UINT8         CurGen;                 // Current speed Gen-1/-2/-3/-4
-  UINT8         MaxWidth;               // Max lanes x2/x4/x8/x16
-  UINT8         CurWidth;               // Current lanes x2/x4/x8/x16
-  UINT8         ID;                     // ID of the controller within Root Complex
-  UINT8         DevNum;                 // Device number as part of Bus:Dev:Func
-  BOOLEAN       Active;                 // Active? Used in bi-furcation mode
-  BOOLEAN       LinkUp;                 // PHY and PCIE linkup
-  BOOLEAN       HotPlug;                // Hotplug support
+  UINT64  CsrAddr;               // Pointer to CSR Address
+  UINT64  SnpsRamAddr;           // Pointer to Synopsys SRAM address
+  UINT8   MaxGen;                // Max speed Gen-1/-2/-3/-4
+  UINT8   CurGen;                // Current speed Gen-1/-2/-3/-4
+  UINT8   MaxWidth;              // Max lanes x2/x4/x8/x16
+  UINT8   CurWidth;              // Current lanes x2/x4/x8/x16
+  UINT8   ID;                    // ID of the controller within Root Complex
+  UINT8   DevNum;                // Device number as part of Bus:Dev:Func
+  BOOLEAN Active;                // Active? Used in bi-furcation mode
+  BOOLEAN LinkUp;                // PHY and PCIE linkup
+  BOOLEAN HotPlug;               // Hotplug support
 } AC01_PCIE;
 
 typedef struct _AC01_RC {
-  UINT64        BaseAddr;
-  UINT64        TcuAddr;
-  UINT64        HBAddr;
-  UINT64        MsgAddr;
-  UINT64        SerdesAddr;
-  UINT64        MmcfgAddr;
-  UINT64        MmioAddr;
-  UINT64        Mmio32Addr;
-  UINT64        IoAddr;
-  AC01_PCIE     Pcie[MAX_PCIE_B];
-  UINT8         MaxPcieController;
-  UINT8         Type;
-  UINT8         ID;
-  UINT8         DevMapHi;               // Copy of High Devmap programmed to Host bridge
-  UINT8         DevMapLo;               // Copy of Low Devmap programmed to Host bridge
-  UINT8         DefaultDevMapHi;        // Default of High devmap based on board settings
-  UINT8         DefaultDevMapLo;        // Default of Low devmap based on board settings
-  UINT8         Socket;
-  BOOLEAN       Active;
-  UINT8         Logical;
-  VOID          *RootBridge;            // Pointer to Stack PCI_ROOT_BRIDGE
-  UINT32        Flags;                  // Flags
-  UINT8         PresetGen3[MAX_PCIE_B]; // Preset for Gen3
-  UINT8         PresetGen4[MAX_PCIE_B]; // Preset for Gen4
+  UINT64    BaseAddr;
+  UINT64    TcuAddr;
+  UINT64    HBAddr;
+  UINT64    MsgAddr;
+  UINT64    SerdesAddr;
+  UINT64    MmcfgAddr;
+  UINT64    MmioAddr;
+  UINT64    Mmio32Addr;
+  UINT64    IoAddr;
+  AC01_PCIE Pcie[MAX_PCIE_B];
+  UINT8     MaxPcieController;
+  UINT8     Type;
+  UINT8     ID;
+  UINT8     DevMapHi;               // Copy of High Devmap programmed to Host bridge
+  UINT8     DevMapLo;               // Copy of Low Devmap programmed to Host bridge
+  UINT8     DefaultDevMapHi;        // Default of High devmap based on board settings
+  UINT8     DefaultDevMapLo;        // Default of Low devmap based on board settings
+  UINT8     Socket;
+  BOOLEAN   Active;
+  UINT8     Logical;
+  VOID      *RootBridge;            // Pointer to Stack PCI_ROOT_BRIDGE
+  UINT32    Flags;                  // Flags
+  UINT8     PresetGen3[MAX_PCIE_B]; // Preset for Gen3
+  UINT8     PresetGen4[MAX_PCIE_B]; // Preset for Gen4
 } AC01_RC;
 
 #endif

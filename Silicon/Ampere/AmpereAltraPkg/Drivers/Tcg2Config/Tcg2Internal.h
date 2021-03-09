@@ -19,8 +19,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 }
 
 typedef struct {
-  GUID       TpmInstanceGuid;
-  UINT8      TpmDevice;
+  GUID  TpmInstanceGuid;
+  UINT8 TpmDevice;
 } TPM_INSTANCE_ID;
 
 #endif

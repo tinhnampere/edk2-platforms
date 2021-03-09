@@ -38,14 +38,14 @@ typedef struct _PCIE_NODE PCIE_NODE;
 
 EFI_STATUS
 WriteMps (
-  PCIE_NODE  *Node,
-  UINT8      Value
+  PCIE_NODE *Node,
+  UINT8     Value
   );
 
 EFI_STATUS
 WriteMrr (
-  PCIE_NODE  *Node,
-  UINT8      Value
+  PCIE_NODE *Node,
+  UINT8     Value
   );
 
 #endif // PCIE_HELPER_H_

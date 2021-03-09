@@ -16,10 +16,10 @@
 #define NEAR_ATOMIC_DISABLE_DEFAULT  0x00 /* Enable Near Atomic */
 #define CPU_SLC_REPLACE_POLICY       0x00 /* eLRU */
 
-CHAR16  CpuVarstoreDataName[] = L"CpuConfigNVData";
+CHAR16 CpuVarstoreDataName[] = L"CpuConfigNVData";
 
-EFI_HANDLE                   mDriverHandle = NULL;
-CPU_CONFIG_PRIVATE_DATA      *mPrivateData = NULL;
+EFI_HANDLE              mDriverHandle = NULL;
+CPU_CONFIG_PRIVATE_DATA *mPrivateData = NULL;
 
 HII_VENDOR_DEVICE_PATH mCpuConfigHiiVendorDevicePath = {
   {
@@ -27,8 +27,8 @@ HII_VENDOR_DEVICE_PATH mCpuConfigHiiVendorDevicePath = {
       HARDWARE_DEVICE_PATH,
       HW_VENDOR_DP,
       {
-        (UINT8) (sizeof (VENDOR_DEVICE_PATH)),
-        (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
+        (UINT8)(sizeof (VENDOR_DEVICE_PATH)),
+        (UINT8)((sizeof (VENDOR_DEVICE_PATH)) >> 8)
       }
     },
     CPU_CONFIGURATION_FORMSET_GUID
@@ -37,8 +37,8 @@ HII_VENDOR_DEVICE_PATH mCpuConfigHiiVendorDevicePath = {
     END_DEVICE_PATH_TYPE,
     END_ENTIRE_DEVICE_PATH_SUBTYPE,
     {
-      (UINT8) (END_DEVICE_PATH_LENGTH),
-      (UINT8) ((END_DEVICE_PATH_LENGTH) >> 8)
+      (UINT8)(END_DEVICE_PATH_LENGTH),
+      (UINT8)((END_DEVICE_PATH_LENGTH) >> 8)
     }
   }
 };
@@ -47,10 +47,10 @@ STATIC
 EFI_STATUS
 CpuNvParamGet (
   OUT CPU_VARSTORE_DATA *Configuration
-)
+  )
 {
-  EFI_STATUS  Status;
-  UINT32      Value;
+  EFI_STATUS Status;
+  UINT32     Value;
 
   ASSERT (Configuration != NULL);
 
@@ -73,10 +73,10 @@ STATIC
 EFI_STATUS
 CpuNvParamSet (
   IN CPU_VARSTORE_DATA *Configuration
-)
+  )
 {
-  EFI_STATUS  Status;
-  UINT32      Value;
+  EFI_STATUS Status;
+  UINT32     Value;
 
   ASSERT (Configuration != NULL);
 
@@ -106,10 +106,12 @@ CpuNvParamSet (
 
 STATIC
 EFI_STATUS
-SetupDefaultSettings (VOID)
+SetupDefaultSettings (
+  VOID
+  )
 {
-  EFI_STATUS  Status;
-  UINT32      Value;
+  EFI_STATUS Status;
+  UINT32     Value;
 
   //
   // Subnuma Mode
@@ -135,11 +137,11 @@ SetupDefaultSettings (VOID)
   // ARM ERRATA 1542419 workaround
   //
   Status = NVParamSet (
-              NV_SI_ERRATUM_1542419_WA,
-              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
-              NV_PERM_BIOS | NV_PERM_MANU,
-              WA_ERRATUM_1542419_DEFAULT
-              );
+             NV_SI_ERRATUM_1542419_WA,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             WA_ERRATUM_1542419_DEFAULT
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -148,11 +150,11 @@ SetupDefaultSettings (VOID)
   // Near atomic
   //
   Status = NVParamSet (
-              NV_SI_NEAR_ATOMIC_DISABLE,
-              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
-              NV_PERM_BIOS | NV_PERM_MANU,
-              NEAR_ATOMIC_DISABLE_DEFAULT
-              );
+             NV_SI_NEAR_ATOMIC_DISABLE,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             NEAR_ATOMIC_DISABLE_DEFAULT
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -161,11 +163,11 @@ SetupDefaultSettings (VOID)
   // SLC Replacement Policy
   //
   Status = NVParamSet (
-              NV_SI_HNF_AUX_CTL_32_63,
-              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
-              NV_PERM_BIOS | NV_PERM_MANU,
-              CPU_SLC_REPLACE_POLICY
-              );
+             NV_SI_HNF_AUX_CTL_32_63,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             CPU_SLC_REPLACE_POLICY
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -202,20 +204,20 @@ SetupDefaultSettings (VOID)
 EFI_STATUS
 EFIAPI
 CpuConfigExtractConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Request,
-  OUT EFI_STRING                             *Progress,
-  OUT EFI_STRING                             *Results
+  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN  CONST EFI_STRING                     Request,
+  OUT EFI_STRING                           *Progress,
+  OUT EFI_STRING                           *Results
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  CPU_CONFIG_PRIVATE_DATA          *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
-  EFI_STRING                       ConfigRequest;
-  EFI_STRING                       ConfigRequestHdr;
-  UINTN                            Size;
-  BOOLEAN                          AllocatedRequest;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  CPU_CONFIG_PRIVATE_DATA         *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
+  EFI_STRING                      ConfigRequest;
+  EFI_STRING                      ConfigRequestHdr;
+  UINTN                           Size;
+  BOOLEAN                         AllocatedRequest;
 
   if (Progress == NULL || Results == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -272,7 +274,7 @@ CpuConfigExtractConfig (
   Status = HiiConfigRouting->BlockToConfig (
                                HiiConfigRouting,
                                ConfigRequest,
-                               (UINT8 *) &PrivateData->Configuration,
+                               (UINT8 *)&PrivateData->Configuration,
                                BufferSize,
                                Results,
                                Progress
@@ -319,15 +321,15 @@ CpuConfigExtractConfig (
 EFI_STATUS
 EFIAPI
 CpuConfigRouteConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Configuration,
-  OUT EFI_STRING                             *Progress
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Configuration,
+  OUT      EFI_STRING                     *Progress
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  CPU_CONFIG_PRIVATE_DATA          *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  CPU_CONFIG_PRIVATE_DATA         *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
 
   if (Configuration == NULL || Progress == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -360,7 +362,7 @@ CpuConfigRouteConfig (
   Status = HiiConfigRouting->ConfigToBlock (
                                HiiConfigRouting,
                                Configuration,
-                               (UINT8 *) &PrivateData->Configuration,
+                               (UINT8 *)&PrivateData->Configuration,
                                &BufferSize,
                                Progress
                                );
@@ -400,12 +402,12 @@ CpuConfigRouteConfig (
 EFI_STATUS
 EFIAPI
 CpuConfigCallback (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  EFI_BROWSER_ACTION                     Action,
-  IN  EFI_QUESTION_ID                        QuestionId,
-  IN  UINT8                                  Type,
-  IN  EFI_IFR_TYPE_VALUE                     *Value,
-  OUT EFI_BROWSER_ACTION_REQUEST             *ActionRequest
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN       EFI_BROWSER_ACTION             Action,
+  IN       EFI_QUESTION_ID                QuestionId,
+  IN       UINT8                          Type,
+  IN       EFI_IFR_TYPE_VALUE             *Value,
+  OUT      EFI_BROWSER_ACTION_REQUEST     *ActionRequest
   )
 {
   if (Action != EFI_BROWSER_ACTION_CHANGING) {
@@ -415,7 +417,8 @@ CpuConfigCallback (
     return EFI_UNSUPPORTED;
   }
   if (((Value == NULL) && (Action != EFI_BROWSER_ACTION_FORM_OPEN) && (Action != EFI_BROWSER_ACTION_FORM_CLOSE))||
-    (ActionRequest == NULL)) {
+      (ActionRequest == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -424,8 +427,8 @@ CpuConfigCallback (
 
 EFI_STATUS
 CpuConfigDxeEntryPoint (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS                      Status;
@@ -449,7 +452,7 @@ CpuConfigDxeEntryPoint (
   //
   // Locate ConfigRouting protocol
   //
-  Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **) &HiiConfigRouting);
+  Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **)&HiiConfigRouting);
   if (EFI_ERROR (Status)) {
     return Status;
   }

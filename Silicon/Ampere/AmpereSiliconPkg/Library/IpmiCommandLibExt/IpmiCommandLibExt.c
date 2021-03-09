@@ -115,7 +115,8 @@ IpmiGetBmcIpAddress (
                );
 
     if (EFI_ERROR (Status)
-        || GetConfigurationParametersResponse->CompletionCode != IPMI_COMP_CODE_NORMAL) {
+        || GetConfigurationParametersResponse->CompletionCode != IPMI_COMP_CODE_NORMAL)
+    {
       DEBUG ((
         DEBUG_ERROR,
         "%a Failed to get IP address of channel %d\n",

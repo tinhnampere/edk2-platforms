@@ -12,19 +12,19 @@
                                  EFI_VARIABLE_RUNTIME_ACCESS     | \
                                  EFI_VARIABLE_NON_VOLATILE
 
-CHAR16  AcpiVarstoreDataName[] = L"AcpiConfigNVData";
+CHAR16 AcpiVarstoreDataName[] = L"AcpiConfigNVData";
 
-EFI_HANDLE                    mDriverHandle = NULL;
-ACPI_CONFIG_PRIVATE_DATA      *mPrivateData = NULL;
+EFI_HANDLE               mDriverHandle = NULL;
+ACPI_CONFIG_PRIVATE_DATA *mPrivateData = NULL;
 
-HII_VENDOR_DEVICE_PATH  mAcpiConfigHiiVendorDevicePath = {
+HII_VENDOR_DEVICE_PATH mAcpiConfigHiiVendorDevicePath = {
   {
     {
       HARDWARE_DEVICE_PATH,
       HW_VENDOR_DP,
       {
-        (UINT8) (sizeof (VENDOR_DEVICE_PATH)),
-        (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
+        (UINT8)(sizeof (VENDOR_DEVICE_PATH)),
+        (UINT8)((sizeof (VENDOR_DEVICE_PATH)) >> 8)
       }
     },
     ACPI_CONFIGURATION_FORMSET_GUID
@@ -33,8 +33,8 @@ HII_VENDOR_DEVICE_PATH  mAcpiConfigHiiVendorDevicePath = {
     END_DEVICE_PATH_TYPE,
     END_ENTIRE_DEVICE_PATH_SUBTYPE,
     {
-      (UINT8) (END_DEVICE_PATH_LENGTH),
-      (UINT8) ((END_DEVICE_PATH_LENGTH) >> 8)
+      (UINT8)(END_DEVICE_PATH_LENGTH),
+      (UINT8)((END_DEVICE_PATH_LENGTH) >> 8)
     }
   }
 };
@@ -68,20 +68,20 @@ HII_VENDOR_DEVICE_PATH  mAcpiConfigHiiVendorDevicePath = {
 EFI_STATUS
 EFIAPI
 ExtractConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Request,
-  OUT EFI_STRING                             *Progress,
-  OUT EFI_STRING                             *Results
+  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN  CONST EFI_STRING                     Request,
+  OUT EFI_STRING                           *Progress,
+  OUT EFI_STRING                           *Results
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  ACPI_CONFIG_PRIVATE_DATA         *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
-  EFI_STRING                       ConfigRequest;
-  EFI_STRING                       ConfigRequestHdr;
-  UINTN                            Size;
-  BOOLEAN                          AllocatedRequest;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  ACPI_CONFIG_PRIVATE_DATA        *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
+  EFI_STRING                      ConfigRequest;
+  EFI_STRING                      ConfigRequestHdr;
+  UINTN                           Size;
+  BOOLEAN                         AllocatedRequest;
 
   if (Progress == NULL || Results == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -151,7 +151,7 @@ ExtractConfig (
   Status = HiiConfigRouting->BlockToConfig (
                                HiiConfigRouting,
                                ConfigRequest,
-                               (UINT8 *) &PrivateData->Configuration,
+                               (UINT8 *)&PrivateData->Configuration,
                                BufferSize,
                                Results,
                                Progress
@@ -198,15 +198,15 @@ ExtractConfig (
 EFI_STATUS
 EFIAPI
 RouteConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Configuration,
-  OUT EFI_STRING                             *Progress
+  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN  CONST EFI_STRING                     Configuration,
+  OUT EFI_STRING                           *Progress
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  ACPI_CONFIG_PRIVATE_DATA         *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  ACPI_CONFIG_PRIVATE_DATA        *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
 
   if (Configuration == NULL || Progress == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -246,7 +246,7 @@ RouteConfig (
   Status = HiiConfigRouting->ConfigToBlock (
                                HiiConfigRouting,
                                Configuration,
-                               (UINT8 *) &PrivateData->Configuration,
+                               (UINT8 *)&PrivateData->Configuration,
                                &BufferSize,
                                Progress
                                );
@@ -257,7 +257,7 @@ RouteConfig (
   //
   // Store Buffer Storage back to EFI variable
   //
-  Status = gRT->SetVariable(
+  Status = gRT->SetVariable (
                   AcpiVarstoreDataName,
                   &gAcpiConfigFormSetGuid,
                   ACPI_VARSTORE_ATTRIBUTES,
@@ -289,12 +289,12 @@ RouteConfig (
 EFI_STATUS
 EFIAPI
 DriverCallback (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  EFI_BROWSER_ACTION                     Action,
-  IN  EFI_QUESTION_ID                        QuestionId,
-  IN  UINT8                                  Type,
-  IN  EFI_IFR_TYPE_VALUE                     *Value,
-  OUT EFI_BROWSER_ACTION_REQUEST             *ActionRequest
+  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN  EFI_BROWSER_ACTION                   Action,
+  IN  EFI_QUESTION_ID                      QuestionId,
+  IN  UINT8                                Type,
+  IN  EFI_IFR_TYPE_VALUE                   *Value,
+  OUT EFI_BROWSER_ACTION_REQUEST           *ActionRequest
   )
 {
   if (Action != EFI_BROWSER_ACTION_CHANGING) {
@@ -304,9 +304,10 @@ DriverCallback (
     return EFI_UNSUPPORTED;
   }
   if (((Value == NULL)
-        && (Action != EFI_BROWSER_ACTION_FORM_OPEN)
-        && (Action != EFI_BROWSER_ACTION_FORM_CLOSE))
-        || (ActionRequest == NULL)) {
+       && (Action != EFI_BROWSER_ACTION_FORM_OPEN)
+       && (Action != EFI_BROWSER_ACTION_FORM_CLOSE))
+      || (ActionRequest == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -319,9 +320,9 @@ AcpiNVDataUpdate (
   IN ACPI_CONFIG_PRIVATE_DATA *PrivateData
   )
 {
-  EFI_STATUS              Status;
-  PlatformInfoHob_V2      *PlatformHob;
-  UINT32                  TurboSupport;
+  EFI_STATUS         Status;
+  PlatformInfoHob_V2 *PlatformHob;
+  UINT32             TurboSupport;
 
   ASSERT (PrivateData != NULL);
 
@@ -356,8 +357,8 @@ UpdateTurboModeConfig (
   IN ACPI_CONFIG_PRIVATE_DATA *PrivateData
   )
 {
-  EFI_STATUS                Status;
-  PlatformInfoHob_V2        *PlatformHob;
+  EFI_STATUS         Status;
+  PlatformInfoHob_V2 *PlatformHob;
 
   ASSERT (PrivateData != NULL);
 
@@ -390,13 +391,13 @@ UpdateCPPCConfig (
   IN ACPI_CONFIG_PRIVATE_DATA *PrivateData
   )
 {
-  EFI_STATUS                     Status;
-  EFI_ACPI_HANDLE                ChildHandle;
-  CHAR8                          Buffer[64];
-  EFI_ACPI_DATA_TYPE             DataType;
-  UINTN                          DataSize;
-  UINT8                          *Data;
-  EFI_ACPI_SDT_PROTOCOL          *AcpiTableProtocol;
+  EFI_STATUS            Status;
+  EFI_ACPI_HANDLE       ChildHandle;
+  CHAR8                 Buffer[64];
+  EFI_ACPI_DATA_TYPE    DataType;
+  UINTN                 DataSize;
+  UINT8                 *Data;
+  EFI_ACPI_SDT_PROTOCOL *AcpiTableProtocol;
 
   ASSERT (PrivateData != NULL);
 
@@ -405,19 +406,20 @@ UpdateCPPCConfig (
   AsciiSPrint (Buffer, sizeof (Buffer), "\\_SB.CPCE");
   Status = AcpiTableProtocol->FindPath (
                                 PrivateData->AcpiTableHandle,
-                                (VOID *) Buffer,
+                                (VOID *)Buffer,
                                 &ChildHandle
                                 );
   if (EFI_ERROR (Status)) {
-    DEBUG((DEBUG_ERROR, "Failed to find path CPCE\n"));
+    DEBUG ((DEBUG_ERROR, "Failed to find path CPCE\n"));
     AcpiTableProtocol->Close (PrivateData->AcpiTableHandle);
     return Status;
   }
 
   Status = AcpiTableProtocol->GetOption (
-                                ChildHandle, 2,
+                                ChildHandle,
+                                2,
                                 &DataType,
-                                (VOID *) &Data,
+                                (VOID *)&Data,
                                 &DataSize
                                 );
   if (EFI_ERROR (Status)) {
@@ -434,13 +436,13 @@ UpdateLPIConfig (
   IN ACPI_CONFIG_PRIVATE_DATA *PrivateData
   )
 {
-  EFI_STATUS                     Status;
-  EFI_ACPI_HANDLE                ChildHandle;
-  CHAR8                          Buffer[64];
-  EFI_ACPI_DATA_TYPE             DataType;
-  UINTN                          DataSize;
-  UINT8                          *Data;
-  EFI_ACPI_SDT_PROTOCOL          *AcpiTableProtocol;
+  EFI_STATUS            Status;
+  EFI_ACPI_HANDLE       ChildHandle;
+  CHAR8                 Buffer[64];
+  EFI_ACPI_DATA_TYPE    DataType;
+  UINTN                 DataSize;
+  UINT8                 *Data;
+  EFI_ACPI_SDT_PROTOCOL *AcpiTableProtocol;
 
   ASSERT (PrivateData != NULL);
 
@@ -449,7 +451,7 @@ UpdateLPIConfig (
   AsciiSPrint (Buffer, sizeof (Buffer), "\\_SB.LPIE");
   Status = AcpiTableProtocol->FindPath (
                                 PrivateData->AcpiTableHandle,
-                                (VOID *) Buffer,
+                                (VOID *)Buffer,
                                 &ChildHandle
                                 );
   if (EFI_ERROR (Status)) {
@@ -459,9 +461,10 @@ UpdateLPIConfig (
   }
 
   Status = AcpiTableProtocol->GetOption (
-                                ChildHandle, 2,
+                                ChildHandle,
+                                2,
                                 &DataType,
-                                (VOID *) &Data,
+                                (VOID *)&Data,
                                 &DataSize
                                 );
   if (EFI_ERROR (Status)) {
@@ -475,13 +478,13 @@ UpdateLPIConfig (
 STATIC
 VOID
 UpdateAcpiOnReadyToBoot (
-  IN EFI_EVENT        Event,
-  IN VOID             *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
-  EFI_STATUS              Status;
-  EFI_ACPI_SDT_PROTOCOL   *AcpiTableProtocol;
-  EFI_ACPI_HANDLE         TableHandle;
+  EFI_STATUS            Status;
+  EFI_ACPI_SDT_PROTOCOL *AcpiTableProtocol;
+  EFI_ACPI_HANDLE       TableHandle;
 
   ASSERT (mPrivateData != NULL);
 
@@ -489,10 +492,10 @@ UpdateAcpiOnReadyToBoot (
   // Find the AcpiTable protocol
   //
   Status = gBS->LocateProtocol (
-             &gEfiAcpiSdtProtocolGuid,
-             NULL,
-             (VOID **) &AcpiTableProtocol
-             );
+                  &gEfiAcpiSdtProtocolGuid,
+                  NULL,
+                  (VOID **)&AcpiTableProtocol
+                  );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to locate ACPI table protocol\n"));
     return;
@@ -564,8 +567,8 @@ AcpiConfigUnload (
 EFI_STATUS
 EFIAPI
 AcpiConfigEntryPoint (
-  IN EFI_HANDLE             ImageHandle,
-  IN EFI_SYSTEM_TABLE       *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS                      Status;
@@ -607,14 +610,14 @@ AcpiConfigEntryPoint (
     AcpiConfigUnload ();
     return EFI_DEVICE_ERROR;
   }
-  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
 
   mPrivateData->PlatformHob = PlatformHob;
 
   //
   // Locate ConfigRouting protocol
   //
-  Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **) &HiiConfigRouting);
+  Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **)&HiiConfigRouting);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -636,12 +639,12 @@ AcpiConfigEntryPoint (
   // Publish our HII data
   //
   HiiHandle = HiiAddPackages (
-                   &gAcpiConfigFormSetGuid,
-                   mDriverHandle,
-                   AcpiConfigDxeStrings,
-                   VfrBin,
-                   NULL
-                   );
+                &gAcpiConfigFormSetGuid,
+                mDriverHandle,
+                AcpiConfigDxeStrings,
+                VfrBin,
+                NULL
+                );
   if (HiiHandle == NULL) {
     gBS->UninstallMultipleProtocolInterfaces (
            mDriverHandle,
@@ -674,7 +677,7 @@ AcpiConfigEntryPoint (
     //
     // Store zero data Buffer Storage to EFI variable
     //
-    Status = gRT->SetVariable(
+    Status = gRT->SetVariable (
                     AcpiVarstoreDataName,
                     &gAcpiConfigFormSetGuid,
                     ACPI_VARSTORE_ATTRIBUTES,

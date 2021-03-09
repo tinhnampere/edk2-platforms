@@ -32,8 +32,8 @@
 VOID
 EFIAPI
 AcpiTableChecksum (
-  IN UINT8      *Buffer,
-  IN UINTN      Size
+  IN UINT8 *Buffer,
+  IN UINTN Size
   )
 {
   UINTN ChecksumOffset;
@@ -62,7 +62,7 @@ AcpiTableChecksum (
 VOID
 EFIAPI
 AcpiDSDTUpdateChecksum (
-  IN EFI_ACPI_SDT_PROTOCOL  *AcpiTableProtocol
+  IN EFI_ACPI_SDT_PROTOCOL *AcpiTableProtocol
   )
 {
   EFI_STATUS                                Status = EFI_SUCCESS;
@@ -77,16 +77,16 @@ AcpiDSDTUpdateChecksum (
     return;
   }
 
-  FadtPtr = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *) TableDescriptor.Table;
+  FadtPtr = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *)TableDescriptor.Table;
 
   if (FadtPtr->Dsdt) {
-    DsdtHdr = (EFI_ACPI_SDT_HEADER *)(UINT64) FadtPtr->Dsdt;
+    DsdtHdr = (EFI_ACPI_SDT_HEADER *)(UINT64)FadtPtr->Dsdt;
   } else if (FadtPtr->XDsdt) {
-    DsdtHdr = (EFI_ACPI_SDT_HEADER *) FadtPtr->XDsdt;
+    DsdtHdr = (EFI_ACPI_SDT_HEADER *)FadtPtr->XDsdt;
   }
 
   if (DsdtHdr != NULL) {
-    AcpiTableChecksum ((UINT8 *) DsdtHdr, DsdtHdr->Length);
+    AcpiTableChecksum ((UINT8 *)DsdtHdr, DsdtHdr->Length);
   }
 }
 
@@ -100,12 +100,12 @@ AcpiDSDTUpdateChecksum (
 EFI_STATUS
 EFIAPI
 AcpiOpenDSDT (
-  IN  EFI_ACPI_SDT_PROTOCOL  *AcpiTableProtocol,
+  IN  EFI_ACPI_SDT_PROTOCOL *AcpiTableProtocol,
   OUT EFI_ACPI_HANDLE       *TableHandle
   )
 {
-  EFI_STATUS                 Status = EFI_SUCCESS;
-  ACPI_TABLE_DESCRIPTOR      TableDescriptor;
+  EFI_STATUS            Status = EFI_SUCCESS;
+  ACPI_TABLE_DESCRIPTOR TableDescriptor;
 
   Status = AcpiGetTable (AcpiTableProtocol, DSDT_SIGNATURE, &TableDescriptor);
   if (!EFI_ERROR (Status) && (TableDescriptor.Table != NULL)) {
@@ -118,20 +118,20 @@ AcpiOpenDSDT (
 EFI_STATUS
 EFIAPI
 AcpiDSDTSetNodeStatusValue (
-  IN CHAR8     *AsciiNodePath,
-  IN CHAR8     NodeStatus
+  IN CHAR8 *AsciiNodePath,
+  IN CHAR8 NodeStatus
   )
 {
-  EFI_STATUS                        Status = EFI_SUCCESS;
-  EFI_ACPI_SDT_PROTOCOL             *AcpiTableProtocol;
-  EFI_ACPI_HANDLE                   TableHandle;
-  EFI_ACPI_HANDLE                   ChildHandle;
-  EFI_ACPI_DATA_TYPE                DataType;
-  CHAR8                             *Buffer;
-  UINTN                             DataSize;
+  EFI_STATUS            Status = EFI_SUCCESS;
+  EFI_ACPI_SDT_PROTOCOL *AcpiTableProtocol;
+  EFI_ACPI_HANDLE       TableHandle;
+  EFI_ACPI_HANDLE       ChildHandle;
+  EFI_ACPI_DATA_TYPE    DataType;
+  CHAR8                 *Buffer;
+  UINTN                 DataSize;
 
-  Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID**) &AcpiTableProtocol);
-  if (EFI_ERROR(Status)) {
+  Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID **)&AcpiTableProtocol);
+  if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to locate ACPI table protocol\n"));
     return Status;
   }
@@ -149,7 +149,7 @@ AcpiDSDTSetNodeStatusValue (
     return EFI_SUCCESS;
   }
 
-  Status = AcpiTableProtocol->GetOption (ChildHandle, 2, &DataType, (VOID *) &Buffer, &DataSize);
+  Status = AcpiTableProtocol->GetOption (ChildHandle, 2, &DataType, (VOID *)&Buffer, &DataSize);
   if (Status == EFI_SUCCESS && Buffer[2] == AML_BYTE_PREFIX) {
     /*
      * Only patch when the initial value is byte object.
@@ -177,13 +177,13 @@ AcpiDSDTSetNodeStatusValue (
 EFI_STATUS
 EFIAPI
 AcpiGetTable (
-  IN  EFI_ACPI_SDT_PROTOCOL   *AcpiTableSdtProtocol,
-  IN  UINT32                  TableSignature,
-  OUT ACPI_TABLE_DESCRIPTOR   *TableDescriptor
+  IN  EFI_ACPI_SDT_PROTOCOL  *AcpiTableSdtProtocol,
+  IN  UINT32                 TableSignature,
+  OUT ACPI_TABLE_DESCRIPTOR  *TableDescriptor
   )
 {
-  EFI_STATUS                  Status = EFI_SUCCESS;
-  UINTN                       TableIndex = 0;
+  EFI_STATUS Status = EFI_SUCCESS;
+  UINTN      TableIndex = 0;
 
   ASSERT (AcpiTableSdtProtocol != NULL);
   ASSERT (TableDescriptor != NULL);
@@ -193,11 +193,11 @@ AcpiGetTable (
    */
   while (!EFI_ERROR (Status)) {
     Status = AcpiTableSdtProtocol->GetAcpiTable (
-                                 TableIndex,
-                                 &(TableDescriptor->Table),
-                                 &(TableDescriptor->TableVersion),
-                                 &(TableDescriptor->TableKey)
-                                 );
+                                     TableIndex,
+                                     &(TableDescriptor->Table),
+                                     &(TableDescriptor->TableVersion),
+                                     &(TableDescriptor->TableKey)
+                                     );
     if (!EFI_ERROR (Status)) {
       TableIndex++;
 
@@ -208,7 +208,7 @@ AcpiGetTable (
   }
 
   /* Nothing was found.  Clear the table descriptor. */
-  ZeroMem(&TableDescriptor, sizeof(TableDescriptor));
+  ZeroMem (&TableDescriptor, sizeof (TableDescriptor));
 
   return EFI_NOT_FOUND;
 }
@@ -225,14 +225,14 @@ AcpiGetTable (
 BOOLEAN
 EFIAPI
 IsAcpiInstalled (
-  IN  UINT32                  AcpiTableSignature
+  IN UINT32 AcpiTableSignature
   )
 {
-  EFI_STATUS                Status;
-  ACPI_TABLE_DESCRIPTOR     TableDescriptor;
-  EFI_ACPI_SDT_PROTOCOL     *AcpiTableSdtProtocol = NULL;
+  EFI_STATUS            Status;
+  ACPI_TABLE_DESCRIPTOR TableDescriptor;
+  EFI_ACPI_SDT_PROTOCOL *AcpiTableSdtProtocol = NULL;
 
-  Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID**) &AcpiTableSdtProtocol);
+  Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID **)&AcpiTableSdtProtocol);
   if (EFI_ERROR (Status)) {
     return Status;
   }

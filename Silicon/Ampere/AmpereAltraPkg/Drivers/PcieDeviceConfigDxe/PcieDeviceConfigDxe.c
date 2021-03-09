@@ -62,11 +62,11 @@ FlushDeviceData (
   IN VOID      *Context
   )
 {
-  EFI_STATUS          Status;
-  PCIE_NODE           *Node;
-  UINT64              BufferSize;
-  UINT8               Index;
-  VARSTORE_DATA       VarStoreConfig;
+  EFI_STATUS    Status;
+  PCIE_NODE     *Node;
+  UINT64        BufferSize;
+  UINT8         Index;
+  VARSTORE_DATA VarStoreConfig;
 
   // Get Variables
   BufferSize = sizeof (VARSTORE_DATA);
@@ -121,8 +121,8 @@ UpdateDeviceForm (
   UINT8 Index
   )
 {
-  CHAR16             Str[MAX_STRING_SIZE];
-  UINT8              MaxMps;
+  CHAR16 Str[MAX_STRING_SIZE];
+  UINT8  MaxMps;
 
   VOID               *StartOpCodeHandle;
   EFI_IFR_GUID_LABEL *StartLabel;
@@ -254,14 +254,14 @@ UpdateDeviceForm (
   // Create MPS OneOf
   HiiCreateOneOfOpCode (
     StartOpCodeHandle,                // Container for dynamic created opcodes
-    (MPS_ONE_OF_KEY + Index),     // Question ID (or call it "key")
+    (MPS_ONE_OF_KEY + Index),         // Question ID (or call it "key")
     VARSTORE_ID,                      // VarStore ID
-    Index,                        // Offset in Buffer Storage
+    Index,                            // Offset in Buffer Storage
     STRING_TOKEN (STR_PCIE_MPS),      // Question prompt text
     STRING_TOKEN (STR_PCIE_MPS_HELP), // Question help text
     EFI_IFR_FLAG_CALLBACK,            // Question flag
     EFI_IFR_NUMERIC_SIZE_1,           // Data type of Question Value
-    MpsOpCodeHandle,              // Option Opcode list
+    MpsOpCodeHandle,                  // Option Opcode list
     NULL                              // Default Opcode is NULl
     );
 
@@ -332,11 +332,11 @@ UpdateDeviceForm (
     );
 
   HiiUpdateForm (
-    mPrivateData->HiiHandle,  // HII handle
-    &gPcieDeviceConfigFormSetGuid,       // Formset GUID
-    DEVICE_FORM_ID,          // Form ID
-    StartOpCodeHandle,       // Label for where to insert opcodes
-    EndOpCodeHandle          // Insert data
+    mPrivateData->HiiHandle,       // HII handle
+    &gPcieDeviceConfigFormSetGuid, // Formset GUID
+    DEVICE_FORM_ID,                // Form ID
+    StartOpCodeHandle,             // Label for where to insert opcodes
+    EndOpCodeHandle                // Insert data
     );
 
   HiiFreeOpCodeHandle (StartOpCodeHandle);
@@ -347,8 +347,8 @@ UpdateDeviceForm (
 
 EFI_STATUS
 StoreNodeInfo (
-  PCIE_NODE  *Node,
-  UINT8      Index
+  PCIE_NODE *Node,
+  UINT8     Index
   )
 {
   EFI_STATUS           Status;
@@ -411,10 +411,10 @@ OnPciIoProtocolNotify (
   UINT8  NextCapPtr;
   UINT16 TmpValue;
 
-  PCIE_NODE         *Node;
-  STATIC PCIE_NODE  *LastNode;
-  STATIC UINT8      Index;
-  STATIC UINT8      LastBus;
+  PCIE_NODE        *Node;
+  STATIC PCIE_NODE *LastNode;
+  STATIC UINT8     Index;
+  STATIC UINT8     LastBus;
 
   while (TRUE) {
     BufferSize = sizeof (EFI_HANDLE);
@@ -610,7 +610,7 @@ UpdateMainForm (
     }
     DEBUG ((DEBUG_INFO, ">> Add item %d\n", Index));
 
-    //TODO: convert and store in SlotID ex:SystemSlot(seg, bus, dev)
+    // TODO: convert and store in SlotID ex:SystemSlot(seg, bus, dev)
     UnicodeSPrint (
       Str,
       sizeof (Str),
@@ -628,12 +628,12 @@ UpdateMainForm (
     // Create a Goto OpCode to device configuration
     //
     HiiCreateGotoOpCode (
-      StartOpCodeHandle,  // Container for dynamic created opcodes
-      DEVICE_FORM_ID,     // Target Form ID
-      StrId,              // Prompt text
+      StartOpCodeHandle,                   // Container for dynamic created opcodes
+      DEVICE_FORM_ID,                      // Target Form ID
+      StrId,                               // Prompt text
       STRING_TOKEN (STR_DEVICE_GOTO_HELP), // Help text
       EFI_IFR_FLAG_CALLBACK,               // Question flag
-      (DEVICE_KEY + Index)  // Question ID
+      (DEVICE_KEY + Index)                 // Question ID
       );
   }
 
@@ -656,8 +656,8 @@ EFIAPI
 ExtractConfig (
   IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
   IN CONST EFI_STRING                     Request,
-  OUT EFI_STRING                          *Progress,
-  OUT EFI_STRING                          *Results
+  OUT      EFI_STRING                     *Progress,
+  OUT      EFI_STRING                     *Results
   )
 {
   EFI_STATUS                      Status;
@@ -832,9 +832,9 @@ ExtractConfig (
 EFI_STATUS
 EFIAPI
 RouteConfig (
-  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
-  IN CONST EFI_STRING                     Configuration,
-  OUT EFI_STRING                          *Progress
+  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN  CONST EFI_STRING                     Configuration,
+  OUT EFI_STRING                           *Progress
   )
 {
   EFI_STATUS                      Status;
@@ -936,14 +936,14 @@ EFI_STATUS
 EFIAPI
 DriverCallback (
   IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
-  IN EFI_BROWSER_ACTION                   Action,
-  IN EFI_QUESTION_ID                      QuestionId,
-  IN UINT8                                Type,
-  IN EFI_IFR_TYPE_VALUE                   *Value,
-  OUT EFI_BROWSER_ACTION_REQUEST          *ActionRequest
+  IN       EFI_BROWSER_ACTION             Action,
+  IN       EFI_QUESTION_ID                QuestionId,
+  IN       UINT8                          Type,
+  IN       EFI_IFR_TYPE_VALUE             *Value,
+  OUT      EFI_BROWSER_ACTION_REQUEST     *ActionRequest
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS Status;
 
   if (((Value == NULL) &&
        (Action != EFI_BROWSER_ACTION_FORM_OPEN) &&

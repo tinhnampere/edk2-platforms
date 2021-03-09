@@ -55,7 +55,7 @@ STATIC CONST CHAR8 BcdPlus[] = {
   ':',
   ',',
   '_'
-  };
+};
 
 //
 // Refer to Section 13. TYPE/LENGTH BYTE FORMAT
@@ -66,15 +66,15 @@ ConvertEncodedDataToString (
   IN OUT UINT16     *StartingOffset
   )
 {
-  UINT8         TypeCode;
-  UINT8         Length;
-  UINT16        Offset;
-  UINT8         Index1;
-  UINT8         Index2;
-  UINT8         Index3;
-  UINT16        DataSize;
-  CHAR8         *String;
-  UINT32        TempData;
+  UINT8  TypeCode;
+  UINT8  Length;
+  UINT16 Offset;
+  UINT8  Index1;
+  UINT8  Index2;
+  UINT8  Index3;
+  UINT16 DataSize;
+  CHAR8  *String;
+  UINT32 TempData;
 
   if (FruData == NULL || StartingOffset == NULL) {
     return NULL;
@@ -192,18 +192,18 @@ ConvertEncodedDataToString (
 
 EFI_STATUS
 InternalReadFruData (
-  IN  UINT16     AreaOffset,
-  IN  UINT8      Length,
-  OUT UINT8      *Data
+  IN  UINT16 AreaOffset,
+  IN  UINT8  Length,
+  OUT UINT8  *Data
   )
 {
-  EFI_STATUS                      Status;
-  IPMI_READ_FRU_DATA_REQUEST      FruDataRequest;
-  IPMI_READ_FRU_DATA_RESPONSE     *FruDataResponse;
-  UINT8                           TempData[IPMI_FRU_RESPONSE_LENGTH_MAX + sizeof (IPMI_READ_FRU_DATA_RESPONSE)];
-  UINT32                          ResponseSize;
-  UINT16                          Offset;
-  UINT16                          Finish;
+  EFI_STATUS                  Status;
+  IPMI_READ_FRU_DATA_REQUEST  FruDataRequest;
+  IPMI_READ_FRU_DATA_RESPONSE *FruDataResponse;
+  UINT8                       TempData[IPMI_FRU_RESPONSE_LENGTH_MAX + sizeof (IPMI_READ_FRU_DATA_RESPONSE)];
+  UINT32                      ResponseSize;
+  UINT16                      Offset;
+  UINT16                      Finish;
 
   ASSERT (Data != NULL);
 
@@ -250,18 +250,20 @@ InternalReadFruData (
 }
 
 EFI_STATUS
-UpdateFruPcds (VOID)
+UpdateFruPcds (
+  VOID
+  )
 {
-  EFI_STATUS                      Status;
-  UINT8                           AreaDataLength;
-  UINT16                          StartingOffset;
-  IPMI_FRU_COMMON_HEADER          *FruCommonHeader;
-  UINT8                           ChassisInfoAreaOffset;
-  UINT8                           BoardInfoAreaOffset;
-  UINT8                           ProductInfoAreaOffset;
-  CHAR8                           *String;
-  UINTN                           StringSize;
-  UINT8                           FruData[FRU_AREA_LENGTH_MAX];
+  EFI_STATUS             Status;
+  UINT8                  AreaDataLength;
+  UINT16                 StartingOffset;
+  IPMI_FRU_COMMON_HEADER *FruCommonHeader;
+  UINT8                  ChassisInfoAreaOffset;
+  UINT8                  BoardInfoAreaOffset;
+  UINT8                  ProductInfoAreaOffset;
+  CHAR8                  *String;
+  UINTN                  StringSize;
+  UINT8                  FruData[FRU_AREA_LENGTH_MAX];
 
   Status = InternalReadFruData (0, sizeof (IPMI_FRU_COMMON_HEADER), FruData);
   if (EFI_ERROR (Status)) {
@@ -494,12 +496,14 @@ UpdateFruPcds (VOID)
 }
 
 EFI_STATUS
-IpmiReadFruInfo (VOID)
+IpmiReadFruInfo (
+  VOID
+  )
 {
-  EFI_STATUS                                 Status;
-  IPMI_GET_DEVICE_ID_RESPONSE                ControllerInfo;
-  IPMI_GET_FRU_INVENTORY_AREA_INFO_REQUEST   GetFruInventoryAreaInfoRequest;
-  IPMI_GET_FRU_INVENTORY_AREA_INFO_RESPONSE  GetFruInventoryAreaInfoResponse;
+  EFI_STATUS                                Status;
+  IPMI_GET_DEVICE_ID_RESPONSE               ControllerInfo;
+  IPMI_GET_FRU_INVENTORY_AREA_INFO_REQUEST  GetFruInventoryAreaInfoRequest;
+  IPMI_GET_FRU_INVENTORY_AREA_INFO_RESPONSE GetFruInventoryAreaInfoResponse;
 
   //
   //  Get all the SDR Records from BMC and retrieve the Record ID from the structure for future use.

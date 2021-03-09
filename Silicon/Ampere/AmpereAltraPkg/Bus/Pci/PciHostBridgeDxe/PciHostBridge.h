@@ -76,11 +76,11 @@ typedef enum {
 // Struct of Resource Node
 //
 typedef struct {
-  MRES_TYPE         Type;
-  UINT64            Base;
-  UINT64            Length;
-  UINT64            Alignment;
-  RES_STATUS        Status;
+  MRES_TYPE  Type;
+  UINT64     Base;
+  UINT64     Length;
+  UINT64     Alignment;
+  RES_STATUS Status;
 } PCI_RES_NODE;
 
 //
@@ -96,46 +96,46 @@ typedef enum {
 // Struct of Device Mapping
 //
 typedef struct {
-  ACPI_HID_DEVICE_PATH              AcpiDevicePath;
-  EFI_DEVICE_PATH_PROTOCOL          EndDevicePath;
+  ACPI_HID_DEVICE_PATH     AcpiDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL EndDevicePath;
 } EFI_PCI_ROOT_BRIDGE_DEVICE_PATH;
 
 //
 // Struct of Root Bridge Instance
 //
 typedef struct {
-  UINT32                            Signature;
-  LIST_ENTRY                        Link;
-  EFI_HANDLE                        RootBridgeHandle;
-  UINT64                            RootBridgeAttrib;
-  VOID                              *ConfigBuffer;
-  PCI_RES_NODE                      ResAllocNode[rtMaxRes];
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL   RbIo;
-  PCI_ROOT_BRIDGE                   RootBridge;
+  UINT32                          Signature;
+  LIST_ENTRY                      Link;
+  EFI_HANDLE                      RootBridgeHandle;
+  UINT64                          RootBridgeAttrib;
+  VOID                            *ConfigBuffer;
+  PCI_RES_NODE                    ResAllocNode[rtMaxRes];
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL RbIo;
+  PCI_ROOT_BRIDGE                 RootBridge;
 } PCI_ROOT_BRIDGE_INSTANCE;
 
 //
 // Struct of Mapping Info
 //
 typedef struct {
-  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_OPERATION  Operation;
-  UINTN                                      NumberOfBytes;
-  UINTN                                      NumberOfPages;
-  EFI_PHYSICAL_ADDRESS                       HostAddress;
-  EFI_PHYSICAL_ADDRESS                       MappedHostAddress;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_OPERATION Operation;
+  UINTN                                     NumberOfBytes;
+  UINTN                                     NumberOfPages;
+  EFI_PHYSICAL_ADDRESS                      HostAddress;
+  EFI_PHYSICAL_ADDRESS                      MappedHostAddress;
 } MAP_INFO;
 
 //
 // Struct of Host Bridge Instance
 //
 typedef struct {
-  UINTN                                             Signature;
-  EFI_HANDLE                                        HostBridgeHandle;
-  UINTN                                             RootBridgeNumber;
-  LIST_ENTRY                                        Head;
-  BOOLEAN                                           ResourceSubmited;
-  BOOLEAN                                           CanRestarted;
-  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL  ResAlloc;
+  UINTN                                            Signature;
+  EFI_HANDLE                                       HostBridgeHandle;
+  UINTN                                            RootBridgeNumber;
+  LIST_ENTRY                                       Head;
+  BOOLEAN                                          ResourceSubmited;
+  BOOLEAN                                          CanRestarted;
+  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL ResAlloc;
 } PCI_HOST_BRIDGE_INSTANCE;
 
 /**
@@ -234,9 +234,9 @@ NotifyPhase (
 EFI_STATUS
 EFIAPI
 GetNextRootBridge (
-   IN       EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL *This,
-   IN OUT   EFI_HANDLE                                       *RootBridgeHandle
-   );
+  IN     EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL *This,
+  IN OUT EFI_HANDLE                                       *RootBridgeHandle
+  );
 
 /**
    Returns the allocation attributes of a PCI root bridge.
@@ -430,10 +430,10 @@ GetProposedResources (
 EFI_STATUS
 EFIAPI
 PreprocessController (
-  IN  EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL  *This,
-  IN  EFI_HANDLE                                        RootBridgeHandle,
-  IN  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS       PciAddress,
-  IN  EFI_PCI_CONTROLLER_RESOURCE_ALLOCATION_PHASE      Phase
+  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL *This,
+  IN EFI_HANDLE                                       RootBridgeHandle,
+  IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS      PciAddress,
+  IN EFI_PCI_CONTROLLER_RESOURCE_ALLOCATION_PHASE     Phase
   );
 
 #endif /* PCI_HOST_BRIDGE_H_ */

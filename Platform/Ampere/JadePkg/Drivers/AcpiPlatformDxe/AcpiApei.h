@@ -9,20 +9,20 @@
 #ifndef ACPIAPEI_H_
 #define ACPIAPEI_H_
 
+#include <AcpiNVDataStruc.h>
 #include <Base.h>
+#include <Guid/AcpiConfigFormSet.h>
 #include <IndustryStandard/Acpi63.h>
 #include <Library/AcpiHelperLib.h>
+#include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <Protocol/AcpiTable.h>
-#include <Guid/AcpiConfigFormSet.h>
-#include <AcpiNVDataStruc.h>
 #include <Platform/Ac01.h>
-#include <Library/AmpereCpuLib.h>
+#include <Protocol/AcpiTable.h>
 
 #pragma pack(1)
 #define BERT_MSG_SIZE                0x2C
@@ -44,46 +44,46 @@
 #define BERT_DDR_OFFSET              0x88230000ULL
 
 typedef struct {
-  UINT32  BlockStatus;
-  UINT32  RawDataOffset;
-  UINT32  RawDataLength;
-  UINT32  DataLength;
-  UINT32  ErrorSeverity;
+  UINT32 BlockStatus;
+  UINT32 RawDataOffset;
+  UINT32 RawDataLength;
+  UINT32 DataLength;
+  UINT32 ErrorSeverity;
 } APEI_GENERIC_ERROR_STATUS;
 
 typedef struct {
-  UINT8   SectionType[16];
-  UINT32  ErrorSeverity;
-  UINT16  Revision;
-  UINT8   ValidationBits;
-  UINT8   Flags;
-  UINT32  ErrorDataLength;
-  UINT8   FruId[16];
-  UINT8   FruText[20];
-  UINT64  Timestamp;
+  UINT8  SectionType[16];
+  UINT32 ErrorSeverity;
+  UINT16 Revision;
+  UINT8  ValidationBits;
+  UINT8  Flags;
+  UINT32 ErrorDataLength;
+  UINT8  FruId[16];
+  UINT8  FruText[20];
+  UINT64 Timestamp;
 } APEI_GENERIC_ERROR_DATA;
 
 typedef struct {
-  UINT8   Type;
-  UINT8   SubType;
-  UINT16  Instance;
-  CHAR8   Msg[BERT_MSG_SIZE];
+  UINT8  Type;
+  UINT8  SubType;
+  UINT16 Instance;
+  CHAR8  Msg[BERT_MSG_SIZE];
 } APEI_BERT_ERROR_DATA;
 
 typedef struct {
   APEI_BERT_ERROR_DATA vendor;
-  UINT8    BertRev;
-  UINT8    S0PmproRegisters[PMPRO_CRASH_SIZE];
-  UINT8    S0SmproRegisters[SMPRO_CRASH_SIZE];
-  UINT8    S1PmproRegisters[PMPRO_CRASH_SIZE];
-  UINT8    S1SmproRegisters[SMPRO_CRASH_SIZE];
-  UINT8    AtfDump[PLATFORM_CPU_MAX_NUM_CORES * PLAT_CRASH_ITERATOR_SIZE];
+  UINT8                BertRev;
+  UINT8                S0PmproRegisters[PMPRO_CRASH_SIZE];
+  UINT8                S0SmproRegisters[SMPRO_CRASH_SIZE];
+  UINT8                S1PmproRegisters[PMPRO_CRASH_SIZE];
+  UINT8                S1SmproRegisters[SMPRO_CRASH_SIZE];
+  UINT8                AtfDump[PLATFORM_CPU_MAX_NUM_CORES * PLAT_CRASH_ITERATOR_SIZE];
 } APEI_CRASH_DUMP_DATA;
 
 typedef struct {
-  APEI_GENERIC_ERROR_STATUS    Ges;
-  APEI_GENERIC_ERROR_DATA      Ged;
-  APEI_CRASH_DUMP_DATA         Bed;
+  APEI_GENERIC_ERROR_STATUS Ges;
+  APEI_GENERIC_ERROR_DATA   Ged;
+  APEI_CRASH_DUMP_DATA      Bed;
 } APEI_CRASH_DUMP_BERT_ERROR;
 #pragma pack()
 
@@ -134,4 +134,3 @@ AcpiPopulateBert (
   );
 
 #endif /* ACPIAPEI_H_ */
-

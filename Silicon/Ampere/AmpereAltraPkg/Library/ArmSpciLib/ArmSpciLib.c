@@ -69,9 +69,9 @@ SpciServiceHandleOpen (
   Uuid1 = Guid.Data1;
   Uuid2 = Guid.Data3 << 16 | Guid.Data2;
   Uuid3 = Guid.Data4[3] << 24 | Guid.Data4[2] << 16 | Guid.Data4[1] << 8 \
-                | Guid.Data4[0];
+          | Guid.Data4[0];
   Uuid4 = Guid.Data4[7] << 24 | Guid.Data4[6] << 16 | Guid.Data4[5] << 8 \
-                | Guid.Data4[4];
+          | Guid.Data4[4];
 
   SmcArgs.Arg0 = SPCI_SERVICE_HANDLE_OPEN;
   SmcArgs.Arg1 = Uuid1;
@@ -130,7 +130,7 @@ SpciServiceHandleClose (
 EFI_STATUS
 EFIAPI
 SpciServiceRequestStart (
-  ARM_SPCI_ARGS  *Args
+  ARM_SPCI_ARGS *Args
   )
 {
   ARM_SMC_ARGS SmcArgs;
@@ -165,7 +165,7 @@ SpciServiceRequestStart (
 EFI_STATUS
 EFIAPI
 SpciServiceRequestResume (
-  ARM_SPCI_ARGS  *Args
+  ARM_SPCI_ARGS *Args
   )
 {
   ARM_SMC_ARGS SmcArgs;
@@ -201,7 +201,7 @@ SpciServiceRequestResume (
 EFI_STATUS
 EFIAPI
 SpciServiceGetResponse (
-  ARM_SPCI_ARGS  *Args
+  ARM_SPCI_ARGS *Args
   )
 {
   ARM_SMC_ARGS SmcArgs;
@@ -237,7 +237,7 @@ SpciServiceGetResponse (
 EFI_STATUS
 EFIAPI
 SpciServiceRequestBlocking (
-  ARM_SPCI_ARGS  *Args
+  ARM_SPCI_ARGS *Args
   )
 {
   ARM_SMC_ARGS SmcArgs;

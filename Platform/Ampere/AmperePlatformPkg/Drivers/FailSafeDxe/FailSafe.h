@@ -13,6 +13,8 @@
 
 BOOLEAN
 EFIAPI
-IsFailSafeOff (VOID);
+IsFailSafeOff (
+  VOID
+  );
 
 #endif /* FAILSAFE_H_ */

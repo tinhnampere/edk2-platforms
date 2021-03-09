@@ -17,7 +17,7 @@
 #include <Protocol/DevicePath.h>
 #include <Protocol/DiskIo.h>
 
-typedef struct _RAMDISK_BLOCKIO_INSTANCE  RAMDISK_BLOCKIO_INSTANCE;
+typedef struct _RAMDISK_BLOCKIO_INSTANCE RAMDISK_BLOCKIO_INSTANCE;
 
 const EFI_GUID gRamBlockIoGuid = { 0xc84d8a80, 0xcc28, 0x4cea, { 0x9b, 0xc5, 0x1f, 0x9a, 0xb5, 0x00, 0xa0, 0x77 } };
 
@@ -32,26 +32,22 @@ const EFI_GUID gRamBlockIoGuid = { 0xc84d8a80, 0xcc28, 0x4cea, { 0x9b, 0xc5, 0x1
 
 
 typedef struct {
-  VENDOR_DEVICE_PATH                  Vendor;
-  EFI_DEVICE_PATH_PROTOCOL            End;
+  VENDOR_DEVICE_PATH       Vendor;
+  EFI_DEVICE_PATH_PROTOCOL End;
 } RAMDISK_BLOCKIO_DEVICE_PATH;
 
 #define RAMDISK_BLOCKIO_SIGNATURE     SIGNATURE_32('r', 'b', 'i', 'o')
 #define INSTANCE_FROM_BLKIO_THIS(a)   CR(a, RAMDISK_BLOCKIO_INSTANCE, BlockIoProtocol, RAMDISK_BLOCKIO_SIGNATURE)
 
 struct _RAMDISK_BLOCKIO_INSTANCE {
-  UINT32                              Signature;
-  EFI_HANDLE                          Handle;
-
-  UINTN                               StartAddress;
-  UINTN                               Size;
-
-  EFI_LBA                             StartLba;
-
-  EFI_BLOCK_IO_PROTOCOL               BlockIoProtocol;
-  EFI_BLOCK_IO_MEDIA                  Media;
-
-  RAMDISK_BLOCKIO_DEVICE_PATH         DevicePath;
+  UINT32                      Signature;
+  EFI_HANDLE                  Handle;
+  UINTN                       StartAddress;
+  UINTN                       Size;
+  EFI_LBA                     StartLba;
+  EFI_BLOCK_IO_PROTOCOL       BlockIoProtocol;
+  EFI_BLOCK_IO_MEDIA          Media;
+  RAMDISK_BLOCKIO_DEVICE_PATH DevicePath;
 };
 
 //
@@ -60,8 +56,8 @@ struct _RAMDISK_BLOCKIO_INSTANCE {
 EFI_STATUS
 EFIAPI
 RamBlockIoReset (
-  IN EFI_BLOCK_IO_PROTOCOL    *This,
-  IN BOOLEAN                  ExtendedVerification
+  IN EFI_BLOCK_IO_PROTOCOL *This,
+  IN BOOLEAN               ExtendedVerification
   );
 
 //
@@ -70,12 +66,12 @@ RamBlockIoReset (
 EFI_STATUS
 EFIAPI
 RamBlockIoReadBlocks (
-  IN  EFI_BLOCK_IO_PROTOCOL   *This,
-  IN  UINT32                  MediaId,
-  IN  EFI_LBA                 Lba,
-  IN  UINTN                   BufferSizeInBytes,
-  OUT VOID                    *Buffer
-);
+  IN  EFI_BLOCK_IO_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN  UINTN                 BufferSizeInBytes,
+  OUT VOID                  *Buffer
+  );
 
 //
 // BlockIO Protocol function EFI_BLOCK_IO_PROTOCOL.WriteBlocks
@@ -83,12 +79,12 @@ RamBlockIoReadBlocks (
 EFI_STATUS
 EFIAPI
 RamBlockIoWriteBlocks (
-  IN  EFI_BLOCK_IO_PROTOCOL   *This,
-  IN  UINT32                  MediaId,
-  IN  EFI_LBA                 Lba,
-  IN  UINTN                   BufferSizeInBytes,
-  IN  VOID                    *Buffer
-);
+  IN EFI_BLOCK_IO_PROTOCOL *This,
+  IN UINT32                MediaId,
+  IN EFI_LBA               Lba,
+  IN UINTN                 BufferSizeInBytes,
+  IN VOID                  *Buffer
+  );
 
 //
 // BlockIO Protocol function EFI_BLOCK_IO_PROTOCOL.FlushBlocks
@@ -96,12 +92,12 @@ RamBlockIoWriteBlocks (
 EFI_STATUS
 EFIAPI
 RamBlockIoFlushBlocks (
-  IN EFI_BLOCK_IO_PROTOCOL    *This
-);
+  IN EFI_BLOCK_IO_PROTOCOL *This
+  );
 
-RAMDISK_BLOCKIO_INSTANCE  mRamBlockIoInstanceTemplate = {
+RAMDISK_BLOCKIO_INSTANCE mRamBlockIoInstanceTemplate = {
   RAMDISK_BLOCKIO_SIGNATURE, // Signature
-  NULL, // Handle ... NEED TO BE FILLED
+  NULL,                      // Handle ... NEED TO BE FILLED
 
   0, // StartAddress ... NEED TO BE FILLED
   0, // Size ... NEED TO BE FILLED
@@ -109,33 +105,33 @@ RAMDISK_BLOCKIO_INSTANCE  mRamBlockIoInstanceTemplate = {
 
   {
     EFI_BLOCK_IO_PROTOCOL_REVISION2, // Revision
-    NULL, // Media ... NEED TO BE FILLED
-    RamBlockIoReset, // Reset;
-    RamBlockIoReadBlocks,          // ReadBlocks
-    RamBlockIoWriteBlocks,         // WriteBlocks
-    RamBlockIoFlushBlocks          // FlushBlocks
-  }, // BlockIoProtocol
+    NULL,                            // Media ... NEED TO BE FILLED
+    RamBlockIoReset,                 // Reset;
+    RamBlockIoReadBlocks,            // ReadBlocks
+    RamBlockIoWriteBlocks,           // WriteBlocks
+    RamBlockIoFlushBlocks            // FlushBlocks
+  },                                 // BlockIoProtocol
 
   {
-    0, // MediaId ... NEED TO BE FILLED
+    0,     // MediaId ... NEED TO BE FILLED
     FALSE, // RemovableMedia
-    TRUE, // MediaPresent
+    TRUE,  // MediaPresent
     FALSE, // LogicalPartition
     FALSE, // ReadOnly
     FALSE, // WriteCaching;
-    0, // BlockSize ... NEED TO BE FILLED
-    4, //  IoAlign
-    0, // LastBlock ... NEED TO BE FILLED
-    0, // LowestAlignedLba
-    1, // LogicalBlocksPerPhysicalBlock
-  }, //Media;
+    0,     // BlockSize ... NEED TO BE FILLED
+    4,     //  IoAlign
+    0,     // LastBlock ... NEED TO BE FILLED
+    0,     // LowestAlignedLba
+    1,     // LogicalBlocksPerPhysicalBlock
+  },       // Media;
 
   {
     {
       {
         HARDWARE_DEVICE_PATH,
         HW_VENDOR_DP,
-        { (UINT8) sizeof (VENDOR_DEVICE_PATH), (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8) }
+        { (UINT8)sizeof (VENDOR_DEVICE_PATH), (UINT8)((sizeof (VENDOR_DEVICE_PATH)) >> 8) }
       },
       { 0x0, 0x0, 0x0, { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 } }, // GUID ... NEED TO BE FILLED
     },
@@ -144,7 +140,7 @@ RAMDISK_BLOCKIO_INSTANCE  mRamBlockIoInstanceTemplate = {
       END_ENTIRE_DEVICE_PATH_SUBTYPE,
       { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
     }
-    } // DevicePath
+  } // DevicePath
 };
 
 //
@@ -153,8 +149,8 @@ RAMDISK_BLOCKIO_INSTANCE  mRamBlockIoInstanceTemplate = {
 EFI_STATUS
 EFIAPI
 RamBlockIoReset (
-  IN EFI_BLOCK_IO_PROTOCOL  *This,
-  IN BOOLEAN                ExtendedVerification
+  IN EFI_BLOCK_IO_PROTOCOL *This,
+  IN BOOLEAN               ExtendedVerification
   )
 {
   return EFI_SUCCESS;
@@ -166,26 +162,28 @@ RamBlockIoReset (
 EFI_STATUS
 EFIAPI
 RamBlockIoReadBlocks (
-  IN  EFI_BLOCK_IO_PROTOCOL   *This,
-  IN  UINT32                  MediaId,
-  IN  EFI_LBA                 Lba,
-  IN  UINTN                   BufferSizeInBytes,
-  OUT VOID                    *Buffer
+  IN  EFI_BLOCK_IO_PROTOCOL *This,
+  IN  UINT32                MediaId,
+  IN  EFI_LBA               Lba,
+  IN  UINTN                 BufferSizeInBytes,
+  OUT VOID                  *Buffer
   )
 {
-  RAMDISK_BLOCKIO_INSTANCE  *Instance;
-  EFI_STATUS                Status;
-  EFI_BLOCK_IO_MEDIA        *Media;
-  UINT32                    NumBlocks;
+  RAMDISK_BLOCKIO_INSTANCE *Instance;
+  EFI_STATUS               Status;
+  EFI_BLOCK_IO_MEDIA       *Media;
+  UINT32                   NumBlocks;
 
-  DEBUG ((DEBUG_BLKIO,
-          "%a (MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n",
-          __FUNCTION__,
-          MediaId,
-          Lba,
-          BufferSizeInBytes,
-          BufferSizeInBytes,
-          Buffer));
+  DEBUG ((
+    DEBUG_BLKIO,
+    "%a (MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n",
+    __FUNCTION__,
+    MediaId,
+    Lba,
+    BufferSizeInBytes,
+    BufferSizeInBytes,
+    Buffer
+    ));
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -209,7 +207,7 @@ RamBlockIoReadBlocks (
   }
 
   // All blocks must be within the device
-  NumBlocks = ((UINT32) BufferSizeInBytes) / Instance->Media.BlockSize ;
+  NumBlocks = ((UINT32)BufferSizeInBytes) / Instance->Media.BlockSize;
 
   if ((Lba + NumBlocks) > (Instance->Media.LastBlock + 1)) {
     DEBUG ((DEBUG_ERROR, "%a: Read will exceed last block\n", __FUNCTION__));
@@ -227,9 +225,12 @@ RamBlockIoReadBlocks (
   } else if ((Media->IoAlign > 2) && (((UINTN)Buffer & (Media->IoAlign - 1)) != 0)) {
     Status = EFI_INVALID_PARAMETER;
   } else {
-    DEBUG ((DEBUG_ERROR, "%a: Read from address %p\n",
-            __FUNCTION__,
-            (VOID *)(Instance->StartAddress + Lba * Instance->Media.BlockSize)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Read from address %p\n",
+      __FUNCTION__,
+      (VOID *)(Instance->StartAddress + Lba * Instance->Media.BlockSize)
+      ));
     CopyMem (Buffer, (VOID *)(Instance->StartAddress + Lba * Instance->Media.BlockSize), BufferSizeInBytes);
     Status = EFI_SUCCESS;
   }
@@ -243,16 +244,16 @@ RamBlockIoReadBlocks (
 EFI_STATUS
 EFIAPI
 RamBlockIoWriteBlocks (
-  IN  EFI_BLOCK_IO_PROTOCOL   *This,
-  IN  UINT32                  MediaId,
-  IN  EFI_LBA                 Lba,
-  IN  UINTN                   BufferSizeInBytes,
-  IN  VOID                    *Buffer
+  IN EFI_BLOCK_IO_PROTOCOL *This,
+  IN UINT32                MediaId,
+  IN EFI_LBA               Lba,
+  IN UINTN                 BufferSizeInBytes,
+  IN VOID                  *Buffer
   )
 {
-  RAMDISK_BLOCKIO_INSTANCE  *Instance;
-  UINT32                    NumBlocks = 0;
-  EFI_STATUS                Status;
+  RAMDISK_BLOCKIO_INSTANCE *Instance;
+  UINT32                   NumBlocks = 0;
+  EFI_STATUS               Status;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -260,12 +261,14 @@ RamBlockIoWriteBlocks (
 
   Instance = INSTANCE_FROM_BLKIO_THIS (This);
 
-  DEBUG((DEBUG_BLKIO,
-        "%a: NumBlocks=%d, LastBlock=%ld, Lba=%ld.\n",
-        __FUNCTION__,
-        NumBlocks,
-        Instance->Media.LastBlock,
-        Lba));
+  DEBUG ((
+    DEBUG_BLKIO,
+    "%a: NumBlocks=%d, LastBlock=%ld, Lba=%ld.\n",
+    __FUNCTION__,
+    NumBlocks,
+    Instance->Media.LastBlock,
+    Lba
+    ));
 
   // The buffer must be valid
   if (Buffer == NULL) {
@@ -289,20 +292,22 @@ RamBlockIoWriteBlocks (
   }
 
   // All blocks must be within the device
-  NumBlocks = ((UINT32)BufferSizeInBytes) / Instance->Media.BlockSize ;
+  NumBlocks = ((UINT32)BufferSizeInBytes) / Instance->Media.BlockSize;
 
   if ((Lba + NumBlocks) > (Instance->Media.LastBlock + 1)) {
     DEBUG ((DEBUG_ERROR, "%a: Write will exceed last block.\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_BLKIO,
-          "%a (MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n",
-          __FUNCTION__,
-          MediaId,
-          Lba,
-          BufferSizeInBytes,
-          Buffer));
+  DEBUG ((
+    DEBUG_BLKIO,
+    "%a (MediaId=0x%x, Lba=%ld, BufferSize=0x%x bytes (%d kB), BufferPtr @ 0x%08x)\n",
+    __FUNCTION__,
+    MediaId,
+    Lba,
+    BufferSizeInBytes,
+    Buffer
+    ));
 
   if(!This->Media->MediaPresent) {
     Status = EFI_NO_MEDIA;
@@ -324,7 +329,7 @@ RamBlockIoWriteBlocks (
 EFI_STATUS
 EFIAPI
 RamBlockIoFlushBlocks (
-  IN EFI_BLOCK_IO_PROTOCOL  *This
+  IN EFI_BLOCK_IO_PROTOCOL *This
   )
 {
   return EFI_SUCCESS;
@@ -332,15 +337,15 @@ RamBlockIoFlushBlocks (
 
 EFI_STATUS
 RamBlockIoCreateInstance (
-  IN UINT32                 MediaId,
-  IN UINT64                 StartAddress,
-  IN UINT32                 Size,
-  IN UINT32                 BlockSize,
-  IN CONST GUID             *Guid
+  IN       UINT32 MediaId,
+  IN       UINT64 StartAddress,
+  IN       UINT32 Size,
+  IN       UINT32 BlockSize,
+  IN CONST GUID   *Guid
   )
 {
-  EFI_STATUS                  Status;
-  RAMDISK_BLOCKIO_INSTANCE*   Instance;
+  EFI_STATUS               Status;
+  RAMDISK_BLOCKIO_INSTANCE *Instance;
 
   Instance = AllocateCopyPool (sizeof (RAMDISK_BLOCKIO_INSTANCE), &mRamBlockIoInstanceTemplate);
   if (Instance == NULL) {
@@ -358,8 +363,10 @@ RamBlockIoCreateInstance (
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Instance->Handle,
-                  &gEfiDevicePathProtocolGuid, &Instance->DevicePath,
-                  &gEfiBlockIoProtocolGuid,  &Instance->BlockIoProtocol,
+                  &gEfiDevicePathProtocolGuid,
+                  &Instance->DevicePath,
+                  &gEfiBlockIoProtocolGuid,
+                  &Instance->BlockIoProtocol,
                   NULL
                   );
   if (EFI_ERROR (Status)) {
@@ -373,11 +380,11 @@ RamBlockIoCreateInstance (
 EFI_STATUS
 EFIAPI
 RamBlockIoInitialise (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS Status;
 
   Status = RamBlockIoCreateInstance (
              0,
@@ -388,9 +395,11 @@ RamBlockIoInitialise (
              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR,
-            "%a: Fail to create instance for Ramdisk BlockIo\n",
-            __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Fail to create instance for Ramdisk BlockIo\n",
+      __FUNCTION__
+      ));
   }
 
   return Status;

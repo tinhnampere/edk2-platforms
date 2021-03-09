@@ -10,17 +10,17 @@
 
 CHAR16 WatchDogConfigVarstoreDataName[] = L"WatchdogConfigNVData";
 
-EFI_HANDLE                        mDriverHandle = NULL;
-WATCHDOG_CONFIG_PRIVATE_DATA      *mPrivateData = NULL;
+EFI_HANDLE                   mDriverHandle = NULL;
+WATCHDOG_CONFIG_PRIVATE_DATA *mPrivateData = NULL;
 
-HII_VENDOR_DEVICE_PATH  mWatchdogConfigHiiVendorDevicePath = {
+HII_VENDOR_DEVICE_PATH mWatchdogConfigHiiVendorDevicePath = {
   {
     {
       HARDWARE_DEVICE_PATH,
       HW_VENDOR_DP,
       {
-        (UINT8) (sizeof (VENDOR_DEVICE_PATH)),
-        (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
+        (UINT8)(sizeof (VENDOR_DEVICE_PATH)),
+        (UINT8)((sizeof (VENDOR_DEVICE_PATH)) >> 8)
       }
     },
     WATCHDOG_CONFIG_FORMSET_GUID
@@ -29,8 +29,8 @@ HII_VENDOR_DEVICE_PATH  mWatchdogConfigHiiVendorDevicePath = {
     END_DEVICE_PATH_TYPE,
     END_ENTIRE_DEVICE_PATH_SUBTYPE,
     {
-      (UINT8) (END_DEVICE_PATH_LENGTH),
-      (UINT8) ((END_DEVICE_PATH_LENGTH) >> 8)
+      (UINT8)(END_DEVICE_PATH_LENGTH),
+      (UINT8)((END_DEVICE_PATH_LENGTH) >> 8)
     }
   }
 };
@@ -40,9 +40,9 @@ WatchdogConfigNvParamGet (
   OUT WATCHDOG_CONFIG_VARSTORE_DATA *VarStoreConfig
   )
 {
-  EFI_STATUS                Status;
-  UINT32                    Value;
-  BOOLEAN                   SetDefault;
+  EFI_STATUS Status;
+  UINT32     Value;
+  BOOLEAN    SetDefault;
 
   SetDefault = FALSE;
   Status = NVParamGet (
@@ -89,8 +89,8 @@ WatchdogConfigNvParamSet (
   IN WATCHDOG_CONFIG_VARSTORE_DATA *VarStoreConfig
   )
 {
-  EFI_STATUS                Status;
-  UINT32                    Value;
+  EFI_STATUS Status;
+  UINT32     Value;
 
   Status = NVParamGet (
              NV_SI_WDT_BIOS_EXP_MINS,
@@ -101,11 +101,11 @@ WatchdogConfigNvParamSet (
       || Value != (VarStoreConfig->WatchdogTimerUEFITimeout / 60))
   {
     Status = NVParamSet (
-                NV_SI_WDT_BIOS_EXP_MINS,
-                NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
-                NV_PERM_BIOS | NV_PERM_MANU,
-                (VarStoreConfig->WatchdogTimerUEFITimeout / 60)
-                );
+               NV_SI_WDT_BIOS_EXP_MINS,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               (VarStoreConfig->WatchdogTimerUEFITimeout / 60)
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -120,11 +120,11 @@ WatchdogConfigNvParamSet (
       || Value != VarStoreConfig->SecureWatchdogTimerTimeout)
   {
     Status = NVParamSet (
-                NV_SI_SEC_WDT_BIOS_EXP_MINS,
-                NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
-                NV_PERM_BIOS | NV_PERM_MANU,
-                VarStoreConfig->SecureWatchdogTimerTimeout
-                );
+               NV_SI_SEC_WDT_BIOS_EXP_MINS,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               VarStoreConfig->SecureWatchdogTimerTimeout
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -162,20 +162,20 @@ WatchdogConfigNvParamSet (
 EFI_STATUS
 EFIAPI
 WatchdogConfigExtractConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Request,
-  OUT EFI_STRING                             *Progress,
-  OUT EFI_STRING                             *Results
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Request,
+  OUT      EFI_STRING                     *Progress,
+  OUT      EFI_STRING                     *Results
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  WATCHDOG_CONFIG_PRIVATE_DATA     *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
-  EFI_STRING                       ConfigRequest;
-  EFI_STRING                       ConfigRequestHdr;
-  UINTN                            Size;
-  BOOLEAN                          AllocatedRequest;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  WATCHDOG_CONFIG_PRIVATE_DATA    *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
+  EFI_STRING                      ConfigRequest;
+  EFI_STRING                      ConfigRequestHdr;
+  UINTN                           Size;
+  BOOLEAN                         AllocatedRequest;
 
   if (Progress == NULL || Results == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -234,7 +234,7 @@ WatchdogConfigExtractConfig (
   Status = HiiConfigRouting->BlockToConfig (
                                HiiConfigRouting,
                                ConfigRequest,
-                               (UINT8 *) &PrivateData->Configuration,
+                               (UINT8 *)&PrivateData->Configuration,
                                BufferSize,
                                Results,
                                Progress
@@ -281,15 +281,15 @@ WatchdogConfigExtractConfig (
 EFI_STATUS
 EFIAPI
 WatchdogConfigRouteConfig (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  CONST EFI_STRING                       Configuration,
-  OUT EFI_STRING                             *Progress
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN CONST EFI_STRING                     Configuration,
+  OUT      EFI_STRING                     *Progress
   )
 {
-  EFI_STATUS                       Status;
-  UINTN                            BufferSize;
-  WATCHDOG_CONFIG_PRIVATE_DATA     *PrivateData;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL  *HiiConfigRouting;
+  EFI_STATUS                      Status;
+  UINTN                           BufferSize;
+  WATCHDOG_CONFIG_PRIVATE_DATA    *PrivateData;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
 
   if (Configuration == NULL || Progress == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -322,7 +322,7 @@ WatchdogConfigRouteConfig (
   Status = HiiConfigRouting->ConfigToBlock (
                                HiiConfigRouting,
                                Configuration,
-                               (UINT8 *) &PrivateData->Configuration,
+                               (UINT8 *)&PrivateData->Configuration,
                                &BufferSize,
                                Progress
                                );
@@ -362,12 +362,12 @@ WatchdogConfigRouteConfig (
 EFI_STATUS
 EFIAPI
 WatchdogConfigCallback (
-  IN  CONST EFI_HII_CONFIG_ACCESS_PROTOCOL   *This,
-  IN  EFI_BROWSER_ACTION                     Action,
-  IN  EFI_QUESTION_ID                        QuestionId,
-  IN  UINT8                                  Type,
-  IN  EFI_IFR_TYPE_VALUE                     *Value,
-  OUT EFI_BROWSER_ACTION_REQUEST             *ActionRequest
+  IN CONST EFI_HII_CONFIG_ACCESS_PROTOCOL *This,
+  IN       EFI_BROWSER_ACTION             Action,
+  IN       EFI_QUESTION_ID                QuestionId,
+  IN       UINT8                          Type,
+  IN       EFI_IFR_TYPE_VALUE             *Value,
+  OUT      EFI_BROWSER_ACTION_REQUEST     *ActionRequest
   )
 {
   if (Action != EFI_BROWSER_ACTION_CHANGING) {
@@ -377,9 +377,9 @@ WatchdogConfigCallback (
     return EFI_UNSUPPORTED;
   }
   if (((Value == NULL)
-        && (Action != EFI_BROWSER_ACTION_FORM_OPEN)
-        && (Action != EFI_BROWSER_ACTION_FORM_CLOSE))
-        || (ActionRequest == NULL))
+       && (Action != EFI_BROWSER_ACTION_FORM_OPEN)
+       && (Action != EFI_BROWSER_ACTION_FORM_CLOSE))
+      || (ActionRequest == NULL))
   {
     return EFI_INVALID_PARAMETER;
   }
@@ -389,8 +389,8 @@ WatchdogConfigCallback (
 
 EFI_STATUS
 WatchdogConfigInitialize (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
   EFI_STATUS                      Status;
@@ -414,7 +414,7 @@ WatchdogConfigInitialize (
   //
   // Locate ConfigRouting protocol
   //
-  Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **) &HiiConfigRouting);
+  Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **)&HiiConfigRouting);
   if (EFI_ERROR (Status)) {
     return Status;
   }

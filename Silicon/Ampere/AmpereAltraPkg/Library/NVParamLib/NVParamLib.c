@@ -13,7 +13,7 @@
 #include <Library/NVParamLib.h>
 #include <MmLib.h>
 
-EFI_MM_COMM_REQUEST     mCommBuffer;
+EFI_MM_COMM_REQUEST mCommBuffer;
 
 STATIC VOID
 UefiMmCreateNVParamReq (
@@ -25,8 +25,8 @@ UefiMmCreateNVParamReq (
   mCommBuffer.EfiMmHdr.MsgLength = Size;
 
   if (Size != 0) {
-    ASSERT(Data);
-    ASSERT(Size <= EFI_MM_MAX_PAYLOAD_SIZE);
+    ASSERT (Data);
+    ASSERT (Size <= EFI_MM_MAX_PAYLOAD_SIZE);
 
     CopyMem (mCommBuffer.PayLoad.Data, Data, Size);
   }
@@ -39,23 +39,23 @@ NVParamGet (
   OUT UINT32 *Val
   )
 {
-  EFI_STATUS                           Status;
-  EFI_MM_COMMUNICATE_NVPARAM_RES       *MmNVParamRes;
-  UINT64                               MmData[5];
-  UINTN                                Size;
+  EFI_STATUS                     Status;
+  EFI_MM_COMMUNICATE_NVPARAM_RES *MmNVParamRes;
+  UINT64                         MmData[5];
+  UINTN                          Size;
 
   MmData[0] = MM_NVPARAM_FUNC_READ;
   MmData[1] = Param;
   MmData[2] = (UINT64)ACLRd;
 
-  UefiMmCreateNVParamReq ((VOID *)&MmData, sizeof(MmData));
+  UefiMmCreateNVParamReq ((VOID *)&MmData, sizeof (MmData));
 
-  Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+  Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
   Status = MmCommunicationCommunicate (
-             (VOID *) &mCommBuffer,
+             (VOID *)&mCommBuffer,
              &Size
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -87,10 +87,10 @@ NVParamSet (
   IN UINT32 Val
   )
 {
-  EFI_STATUS                           Status;
-  EFI_MM_COMMUNICATE_NVPARAM_RES       *MmNVParamRes;
-  UINT64                               MmData[5];
-  UINTN                                Size;
+  EFI_STATUS                     Status;
+  EFI_MM_COMMUNICATE_NVPARAM_RES *MmNVParamRes;
+  UINT64                         MmData[5];
+  UINTN                          Size;
 
   MmData[0] = MM_NVPARAM_FUNC_WRITE;
   MmData[1] = Param;
@@ -98,13 +98,13 @@ NVParamSet (
   MmData[3] = (UINT64)ACLWr;
   MmData[4] = (UINT64)Val;
 
-  UefiMmCreateNVParamReq ((VOID *)&MmData, sizeof(MmData));
-  Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+  UefiMmCreateNVParamReq ((VOID *)&MmData, sizeof (MmData));
+  Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
   Status = MmCommunicationCommunicate (
-             (VOID *) &mCommBuffer,
+             (VOID *)&mCommBuffer,
              &Size
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -130,23 +130,23 @@ NVParamClr (
   IN UINT16 ACLWr
   )
 {
-  EFI_STATUS                           Status;
-  EFI_MM_COMMUNICATE_NVPARAM_RES       *MmNVParamRes;
-  UINT64                               MmData[5];
-  UINTN                                Size;
+  EFI_STATUS                     Status;
+  EFI_MM_COMMUNICATE_NVPARAM_RES *MmNVParamRes;
+  UINT64                         MmData[5];
+  UINTN                          Size;
 
   MmData[0] = MM_NVPARAM_FUNC_CLEAR;
   MmData[1] = Param;
   MmData[2] = 0;
   MmData[3] = (UINT64)ACLWr;
 
-  UefiMmCreateNVParamReq ((VOID *)&MmData, sizeof(MmData));
-  Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+  UefiMmCreateNVParamReq ((VOID *)&MmData, sizeof (MmData));
+  Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
   Status = MmCommunicationCommunicate (
-             (VOID *) &mCommBuffer,
+             (VOID *)&mCommBuffer,
              &Size
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -167,22 +167,24 @@ NVParamClr (
 }
 
 EFI_STATUS
-NVParamClrAll (VOID)
+NVParamClrAll (
+  VOID
+  )
 {
-  EFI_STATUS                           Status;
-  EFI_MM_COMMUNICATE_NVPARAM_RES       *MmNVParamRes;
-  UINT64                               MmData[5];
-  UINTN                                Size;
+  EFI_STATUS                     Status;
+  EFI_MM_COMMUNICATE_NVPARAM_RES *MmNVParamRes;
+  UINT64                         MmData[5];
+  UINTN                          Size;
 
   MmData[0] = MM_NVPARAM_FUNC_CLEAR_ALL;
 
-  UefiMmCreateNVParamReq ((VOID *)&MmData, sizeof(MmData));
-  Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+  UefiMmCreateNVParamReq ((VOID *)&MmData, sizeof (MmData));
+  Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
   Status = MmCommunicationCommunicate (
-             (VOID *) &mCommBuffer,
+             (VOID *)&mCommBuffer,
              &Size
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 

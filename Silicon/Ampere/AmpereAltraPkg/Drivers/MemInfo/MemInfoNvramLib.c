@@ -29,11 +29,11 @@
 **/
 EFI_STATUS
 MemInfoNvparamGet (
-  OUT    MEM_INFO_VARSTORE_DATA      *VarStoreConfig
+  OUT MEM_INFO_VARSTORE_DATA *VarStoreConfig
   )
 {
-  UINT32                    Value;
-  EFI_STATUS                Status;
+  UINT32     Value;
+  EFI_STATUS Status;
 
   ASSERT (VarStoreConfig != NULL);
 
@@ -153,12 +153,12 @@ MemInfoNvparamGet (
 
 **/
 EFI_STATUS
-MemInfoNvparamSet(
-  IN  MEM_INFO_VARSTORE_DATA      *VarStoreConfig
+MemInfoNvparamSet (
+  IN MEM_INFO_VARSTORE_DATA *VarStoreConfig
   )
 {
-  EFI_STATUS                Status;
-  UINT32                    Value, TmpValue, Value2, Update;
+  EFI_STATUS Status;
+  UINT32     Value, TmpValue, Value2, Update;
 
   ASSERT (VarStoreConfig != NULL);
 
@@ -200,7 +200,7 @@ MemInfoNvparamSet(
 
   /* Set ErrCtrl */
   TmpValue = (VarStoreConfig->ErrCtrl_DE << DDR_NVPARAM_ERRCTRL_DE_FIELD_SHIFT) |
-                (VarStoreConfig->ErrCtrl_FI << DDR_NVPARAM_ERRCTRL_FI_FIELD_SHIFT);
+             (VarStoreConfig->ErrCtrl_FI << DDR_NVPARAM_ERRCTRL_FI_FIELD_SHIFT);
   Status = NVParamGet (
              NV_SI_DDR_ERRCTRL,
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU |NV_PERM_BMC,
@@ -334,7 +334,7 @@ MemInfoNvparamSet(
              );
   Value2 = DDR_FGR_MODE_GET (Value);
   if ((EFI_ERROR (Status) && TmpValue != DDR_DEFAULT_FGR_MODE)
-       || Value2 != TmpValue)
+      || Value2 != TmpValue)
   {
     DDR_FGR_MODE_SET (Value, TmpValue);
     Update = 1;
@@ -343,7 +343,7 @@ MemInfoNvparamSet(
   Value2 = DDR_REFRESH_2X_GET (Value);
   TmpValue = VarStoreConfig->Refresh2x;
   if ((EFI_ERROR (Status) && TmpValue != DDR_DEFAULT_REFRESH2X_MODE)
-       || Value2 != TmpValue)
+      || Value2 != TmpValue)
   {
     DDR_REFRESH_2X_SET (Value, TmpValue);
     Update = 1;

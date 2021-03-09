@@ -70,14 +70,16 @@
 #define PCF85063_YEA_DEC(y) (((((y) & 0xf0) >> 4) * 10) + ((y) & 0xf))
 
 /* Buffer pointers to convert Vir2Phys and Phy2Vir */
-STATIC volatile UINT64  RtcBufVir;
-STATIC volatile UINT64  RtcBufPhy;
+STATIC volatile UINT64 RtcBufVir;
+STATIC volatile UINT64 RtcBufPhy;
 
-STATIC volatile UINT64  DBAddr = (UINT64) SMPRO_DB_BASE_REG;
+STATIC volatile UINT64 DBAddr = (UINT64)SMPRO_DB_BASE_REG;
 
 STATIC
 EFI_STATUS
-RtcI2CWaitAccess (VOID)
+RtcI2CWaitAccess (
+  VOID
+  )
 {
   INTN Timeout = RTC_TIMEOUT_WAIT_ACCESS;
 
@@ -100,10 +102,10 @@ RtcI2CRead (
   IN     UINT8  Addr,
   IN OUT UINT64 Data,
   IN     UINT32 DataLen
-)
+  )
 {
-  EFI_STATUS  Status;
-  UINT32      TmpLen;
+  EFI_STATUS Status;
+  UINT32     TmpLen;
 
   if (EFI_ERROR (RtcI2CWaitAccess ())) {
     return EFI_DEVICE_ERROR;
@@ -116,13 +118,13 @@ RtcI2CRead (
 
   /* The first byte is the address */
   TmpLen = 1;
-  Status = I2CWrite (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, (UINT8 *) &Addr, &TmpLen);
+  Status = I2CWrite (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, (UINT8 *)&Addr, &TmpLen);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
 
   /* Read back the date */
-  Status = I2CRead (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, NULL, 0, (UINT8 *) Data, &DataLen);
+  Status = I2CRead (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, NULL, 0, (UINT8 *)Data, &DataLen);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -132,14 +134,14 @@ RtcI2CRead (
 
 EFI_STATUS
 RtcI2CWrite (
-  IN  UINT8   Addr,
-  IN  UINT64  Data,
-  IN  UINT32  DataLen
+  IN UINT8  Addr,
+  IN UINT64 Data,
+  IN UINT32 DataLen
   )
 {
-  EFI_STATUS  Status;
-  UINT8       TmpBuf[RTC_DATA_BUF_LEN + 1];
-  UINT32      TmpLen;
+  EFI_STATUS Status;
+  UINT8      TmpBuf[RTC_DATA_BUF_LEN + 1];
+  UINT32     TmpLen;
 
   if (EFI_ERROR (RtcI2CWaitAccess ())) {
     return EFI_DEVICE_ERROR;
@@ -157,7 +159,7 @@ RtcI2CWrite (
   /* The first byte is the address */
   TmpBuf[0] = Addr;
   TmpLen = DataLen + 1;
-  CopyMem ((VOID *) (TmpBuf + 1), (VOID *) Data, DataLen);
+  CopyMem ((VOID *)(TmpBuf + 1), (VOID *)Data, DataLen);
 
   Status = I2CWrite (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, TmpBuf, &TmpLen);
   if (EFI_ERROR (Status)) {
@@ -183,8 +185,8 @@ PlatformGetTime (
   OUT EFI_TIME *Time
   )
 {
-  EFI_STATUS    Status;
-  UINT8         *Data = (UINT8 *) RtcBufVir;
+  EFI_STATUS Status;
+  UINT8      *Data = (UINT8 *)RtcBufVir;
 
   if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -227,14 +229,15 @@ PlatformSetTime (
   IN EFI_TIME *Time
   )
 {
-  UINT8         *Data = (UINT8 *) RtcBufVir;
+  UINT8 *Data = (UINT8 *)RtcBufVir;
 
   if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   if (Time->Year < RTC_DEFAULT_MIN_YEAR ||
-      Time->Year > RTC_DEFAULT_MAX_YEAR) {
+      Time->Year > RTC_DEFAULT_MAX_YEAR)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -253,10 +256,12 @@ PlatformSetTime (
  */
 VOID
 EFIAPI
-PlatformVirtualAddressChangeEvent (VOID)
+PlatformVirtualAddressChangeEvent (
+  VOID
+  )
 {
-  EfiConvertPointer (0x0, (VOID **) &RtcBufVir);
-  EfiConvertPointer (0x0, (VOID **) &DBAddr);
+  EfiConvertPointer (0x0, (VOID **)&RtcBufVir);
+  EfiConvertPointer (0x0, (VOID **)&DBAddr);
 }
 
 /**
@@ -268,17 +273,19 @@ PlatformVirtualAddressChangeEvent (VOID)
  */
 EFI_STATUS
 EFIAPI
-PlatformInitialize (VOID)
+PlatformInitialize (
+  VOID
+  )
 {
-  EFI_STATUS                        Status;
+  EFI_STATUS Status;
 
   /*
    * Allocate the buffer for RTC data
    * The buffer can be accessible after ExitBootServices
    */
-  RtcBufVir = (UINT64) AllocateRuntimeZeroPool (RTC_DATA_BUF_LEN);
+  RtcBufVir = (UINT64)AllocateRuntimeZeroPool (RTC_DATA_BUF_LEN);
   ASSERT_EFI_ERROR (RtcBufVir);
-  RtcBufPhy = (UINT64) RtcBufVir;
+  RtcBufPhy = (UINT64)RtcBufVir;
 
   Status = I2CSetupRuntime (I2C_RTC_BUS_ADDRESS);
   ASSERT_EFI_ERROR (Status);

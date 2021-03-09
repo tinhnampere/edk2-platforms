@@ -36,7 +36,7 @@
 #define MAILBOX    (FixedPcdGet32 (PcdSmproNsMailboxIndex))
 
 typedef struct {
-  UINT8 Byte;
+  UINT8                 Byte;
   EFI_STATUS_CODE_VALUE Value;
 } STATUS_CODE_TO_CHECKPOINT;
 
@@ -48,55 +48,55 @@ enum BOOT_PROGRESS_STATE {
 };
 
 UINT32 DxeProgressCode[] = {
-  (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_PC_ENTRY_POINT),     // DXE Core is started
-  (EFI_COMPUTING_UNIT_CHIPSET | EFI_CHIPSET_PC_DXE_HB_INIT),    // PCI host bridge initialization
-  (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_PC_HANDOFF_TO_NEXT), // Boot Device Selection (BDS) phase is started 
-  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_BEGIN_CONNECTING_DRIVERS), // Driver connecting is started
-  (EFI_IO_BUS_PCI | EFI_IOB_PC_INIT),            // PCI Bus initialization is started
-  (EFI_IO_BUS_PCI | EFI_IOB_PCI_HPC_INIT),       // PCI Bus Hot Plug Controller Initialization
-  (EFI_IO_BUS_PCI | EFI_IOB_PCI_BUS_ENUM),       // PCI Bus Enumeration
-  (EFI_IO_BUS_PCI | EFI_IOB_PCI_RES_ALLOC),      // PCI Bus Request Resources
-  (EFI_IO_BUS_PCI | EFI_IOB_PC_ENABLE),          // PCI Bus Assign Resources
-  (EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_PC_INIT),// Console Output devices connect
-  (EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_INIT),     // Console input devices connect
-  (EFI_IO_BUS_LPC | EFI_IOB_PC_INIT),            // Super IO Initialization
-  (EFI_IO_BUS_USB | EFI_IOB_PC_INIT),            // USB initialization is started
-  (EFI_IO_BUS_USB | EFI_IOB_PC_RESET),           // USB Reset
-  (EFI_IO_BUS_USB | EFI_IOB_PC_DETECT),          // USB Detect
-  (EFI_IO_BUS_USB | EFI_IOB_PC_ENABLE),          // USB Enable
-  (EFI_IO_BUS_SCSI | EFI_IOB_PC_INIT),           // SCSI initialization is started
-  (EFI_IO_BUS_SCSI | EFI_IOB_PC_RESET),          // SCSI Reset
-  (EFI_IO_BUS_SCSI | EFI_IOB_PC_DETECT),         // SCSI Detect
-  (EFI_IO_BUS_SCSI | EFI_IOB_PC_ENABLE),         // SCSI Enable
-  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_VERIFYING_PASSWORD),          // Setup Verifying Password
-  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_USER_SETUP),                         // Start of Setup
-  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_INPUT_WAIT),                         // Setup Input Wait
-  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_READY_TO_BOOT_EVENT),         // Ready To Boot event
-  (EFI_SOFTWARE_EFI_BOOT_SERVICE | EFI_SW_BS_PC_EXIT_BOOT_SERVICES),           // Exit Boot Services event
-  (EFI_SOFTWARE_EFI_RUNTIME_SERVICE | EFI_SW_RS_PC_SET_VIRTUAL_ADDRESS_MAP),   // Runtime Set Virtual Address MAP Begin
-  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_VIRTUAL_ADDRESS_CHANGE_EVENT),// Runtime Set Virtual Address MAP End
-  (EFI_SOFTWARE_EFI_RUNTIME_SERVICE | EFI_SW_RS_PC_RESET_SYSTEM),              // System Reset
-  (EFI_IO_BUS_USB | EFI_IOB_PC_HOTPLUG),        // USB hot plug
-  (EFI_IO_BUS_PCI | EFI_IOB_PC_HOTPLUG),        // PCI bus hot plug
-  0 // Must ended by 0
+  (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_PC_ENTRY_POINT),                     // DXE Core is started
+  (EFI_COMPUTING_UNIT_CHIPSET | EFI_CHIPSET_PC_DXE_HB_INIT),                    // PCI host bridge initialization
+  (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_PC_HANDOFF_TO_NEXT),                 // Boot Device Selection (BDS) phase is started 
+  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_BEGIN_CONNECTING_DRIVERS),     // Driver connecting is started
+  (EFI_IO_BUS_PCI | EFI_IOB_PC_INIT),                                           // PCI Bus initialization is started
+  (EFI_IO_BUS_PCI | EFI_IOB_PCI_HPC_INIT),                                      // PCI Bus Hot Plug Controller Initialization
+  (EFI_IO_BUS_PCI | EFI_IOB_PCI_BUS_ENUM),                                      // PCI Bus Enumeration
+  (EFI_IO_BUS_PCI | EFI_IOB_PCI_RES_ALLOC),                                     // PCI Bus Request Resources
+  (EFI_IO_BUS_PCI | EFI_IOB_PC_ENABLE),                                         // PCI Bus Assign Resources
+  (EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_PC_INIT),                               // Console Output devices connect
+  (EFI_PERIPHERAL_KEYBOARD | EFI_P_PC_INIT),                                    // Console input devices connect
+  (EFI_IO_BUS_LPC | EFI_IOB_PC_INIT),                                           // Super IO Initialization
+  (EFI_IO_BUS_USB | EFI_IOB_PC_INIT),                                           // USB initialization is started
+  (EFI_IO_BUS_USB | EFI_IOB_PC_RESET),                                          // USB Reset
+  (EFI_IO_BUS_USB | EFI_IOB_PC_DETECT),                                         // USB Detect
+  (EFI_IO_BUS_USB | EFI_IOB_PC_ENABLE),                                         // USB Enable
+  (EFI_IO_BUS_SCSI | EFI_IOB_PC_INIT),                                          // SCSI initialization is started
+  (EFI_IO_BUS_SCSI | EFI_IOB_PC_RESET),                                         // SCSI Reset
+  (EFI_IO_BUS_SCSI | EFI_IOB_PC_DETECT),                                        // SCSI Detect
+  (EFI_IO_BUS_SCSI | EFI_IOB_PC_ENABLE),                                        // SCSI Enable
+  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_VERIFYING_PASSWORD),           // Setup Verifying Password
+  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_USER_SETUP),                          // Start of Setup
+  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_INPUT_WAIT),                          // Setup Input Wait
+  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_READY_TO_BOOT_EVENT),          // Ready To Boot event
+  (EFI_SOFTWARE_EFI_BOOT_SERVICE | EFI_SW_BS_PC_EXIT_BOOT_SERVICES),            // Exit Boot Services event
+  (EFI_SOFTWARE_EFI_RUNTIME_SERVICE | EFI_SW_RS_PC_SET_VIRTUAL_ADDRESS_MAP),    // Runtime Set Virtual Address MAP Begin
+  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_VIRTUAL_ADDRESS_CHANGE_EVENT), // Runtime Set Virtual Address MAP End
+  (EFI_SOFTWARE_EFI_RUNTIME_SERVICE | EFI_SW_RS_PC_RESET_SYSTEM),               // System Reset
+  (EFI_IO_BUS_USB | EFI_IOB_PC_HOTPLUG),                                        // USB hot plug
+  (EFI_IO_BUS_PCI | EFI_IOB_PC_HOTPLUG),                                        // PCI bus hot plug
+  0                                                                             // Must ended by 0
 };
 
 UINT32 DxeErrorCode[] = {
-  (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_EC_NO_ARCH),  // Some of the Architectural Protocols are not available
-  (EFI_IO_BUS_PCI | EFI_IOB_EC_RESOURCE_CONFLICT),       // PCI resource allocation error. Out of Resources
-  (EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_NOT_DETECTED),// No Console Output Devices are found
-  (EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_NOT_DETECTED),     // No Console Input Devices are found
-  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_EC_INVALID_PASSWORD),      // Invalid password
-  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_EC_BOOT_OPTION_LOAD_ERROR),// Error loading Boot Option (LoadImage returned error)
-  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_EC_BOOT_OPTION_FAILED),    // Boot Option is failed (StartImage returned error)
-  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_UPDATE_FAIL),            // Flash update is failed
-  (EFI_SOFTWARE_EFI_RUNTIME_SERVICE | EFI_SW_PS_EC_RESET_NOT_AVAILABLE), // Reset protocol is not available
-  0 // Must end by 0
+  (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_EC_NO_ARCH),                   // Some of the Architectural Protocols are not available
+  (EFI_IO_BUS_PCI | EFI_IOB_EC_RESOURCE_CONFLICT),                        // PCI resource allocation error. Out of Resources
+  (EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_NOT_DETECTED),                 // No Console Output Devices are found
+  (EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_NOT_DETECTED),                      // No Console Input Devices are found
+  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_EC_INVALID_PASSWORD),       // Invalid password
+  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_EC_BOOT_OPTION_LOAD_ERROR), // Error loading Boot Option (LoadImage returned error)
+  (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_EC_BOOT_OPTION_FAILED),     // Boot Option is failed (StartImage returned error)
+  (EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_UPDATE_FAIL),             // Flash update is failed
+  (EFI_SOFTWARE_EFI_RUNTIME_SERVICE | EFI_SW_PS_EC_RESET_NOT_AVAILABLE),  // Reset protocol is not available
+  0                                                                       // Must end by 0
 };
 
 EFI_RSC_HANDLER_PROTOCOL *mRscHandlerProtocol = NULL;
 
-STATIC UINT8             mBootstate = BOOT_START;
+STATIC UINT8 mBootstate = BOOT_START;
 
 STATIC
 BOOLEAN
@@ -105,7 +105,7 @@ StatusCodeFilter (
   EFI_STATUS_CODE_VALUE Value
   )
 {
-  UINTN    Index = 0;
+  UINTN Index = 0;
 
   while (Map[Index] != 0) {
     if (Map[Index] == Value) {
@@ -132,10 +132,10 @@ BootProgressSendSMpro (
   IN UINT32 Data2
   )
 {
-  UINT32      NumSockets;
-  UINT32      Msg;
-  EFI_STATUS  Status;
-  UINT32      Index;
+  UINT32     NumSockets;
+  UINT32     Msg;
+  EFI_STATUS Status;
+  UINT32     Index;
 
   Msg = SMPRO_BOOT_PROCESS_ENCODE_MSG (BIOS_BOOT_PROG_SET, BIOS_BOOT_STAGE);
 
@@ -171,23 +171,21 @@ BootProgressSendSMpro (
 EFI_STATUS
 EFIAPI
 BootProgressListenerDxe (
-  IN EFI_STATUS_CODE_TYPE     CodeType,
-  IN EFI_STATUS_CODE_VALUE    Value,
-  IN UINT32                   Instance,
-  IN EFI_GUID                 *CallerId,
-  IN EFI_STATUS_CODE_DATA     *Data
+  IN EFI_STATUS_CODE_TYPE  CodeType,
+  IN EFI_STATUS_CODE_VALUE Value,
+  IN UINT32                Instance,
+  IN EFI_GUID              *CallerId,
+  IN EFI_STATUS_CODE_DATA  *Data
   )
 {
-  BOOLEAN                     IsProgress = FALSE;
-  BOOLEAN                     IsError = FALSE;
+  BOOLEAN IsProgress = FALSE;
+  BOOLEAN IsError = FALSE;
 
   if ((CodeType & EFI_STATUS_CODE_TYPE_MASK) == EFI_PROGRESS_CODE) {
     IsProgress= StatusCodeFilter (DxeProgressCode, Value);
-  }
-  else if ((CodeType & EFI_STATUS_CODE_TYPE_MASK) == EFI_ERROR_CODE) {
+  } else if ((CodeType & EFI_STATUS_CODE_TYPE_MASK) == EFI_ERROR_CODE) {
     IsError = StatusCodeFilter (DxeErrorCode, Value);
-  }
-  else {
+  } else {
     return EFI_SUCCESS;
   }
 
@@ -195,26 +193,31 @@ BootProgressListenerDxe (
     return EFI_SUCCESS;
   }
 
-  DEBUG ((DEBUG_INFO,
+  DEBUG ((
+    DEBUG_INFO,
     "BootProgressDxe: CodeType=0x%X Value=0x%X Instance=0x%X CallerIdGuid=%g Data=%p\n",
-    CodeType, Value, Instance, CallerId, Data
+    CodeType,
+    Value,
+    Instance,
+    CallerId,
+    Data
     ));
 
   if (IsError) {
     mBootstate = BOOT_FAILED;
-  }
-  else if (Value == (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_READY_TO_BOOT_EVENT)) {
+  } else if (Value == (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_READY_TO_BOOT_EVENT)) {
     /* Set boot complete when reach to ReadyToBoot event */
     mBootstate = BOOT_COMPLETE;
   }
 
   BootProgressSendSMpro (
-    (((UINT32) mBootstate << BOOT_STATE_SHIFT) & BOOT_STATE_MASK) | (((UINT32) Value << STATUS_SHIFT) & STATUS_MASK),
+    (((UINT32)mBootstate << BOOT_STATE_SHIFT) & BOOT_STATE_MASK) | (((UINT32)Value << STATUS_SHIFT) & STATUS_MASK),
     Value >> STATUS_SHIFT
-  );
+    );
 
   if (Value == (EFI_SOFTWARE_EFI_BOOT_SERVICE | EFI_SW_BS_PC_EXIT_BOOT_SERVICES) &&
-      mRscHandlerProtocol != NULL) {
+      mRscHandlerProtocol != NULL)
+  {
     mRscHandlerProtocol->Unregister (BootProgressListenerDxe);
   }
 
@@ -235,16 +238,16 @@ BootProgressListenerDxe (
 EFI_STATUS
 EFIAPI
 BootProgressDxeEntryPoint (
-  IN EFI_HANDLE          ImageHandle,
-  IN EFI_SYSTEM_TABLE    *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS               Status;
+  EFI_STATUS Status;
 
   //
   // Get Report Status Code Handler Protocol.
   //
-  Status = gBS->LocateProtocol (&gEfiRscHandlerProtocolGuid, NULL, (VOID **) &mRscHandlerProtocol);
+  Status = gBS->LocateProtocol (&gEfiRscHandlerProtocolGuid, NULL, (VOID **)&mRscHandlerProtocol);
   ASSERT_EFI_ERROR (Status);
 
   //

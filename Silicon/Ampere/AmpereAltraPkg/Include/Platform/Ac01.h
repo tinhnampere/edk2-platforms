@@ -65,7 +65,7 @@
 #define PMPRO_DB0_IRQ_NUM              56
 
 /* Non-secure Doorbell Mailbox to use between ARMv8 and SMpro */
-//#define SMPRO_NS_MAILBOX_INDEX  1
+// #define SMPRO_NS_MAILBOX_INDEX  1
 
 /* Non-secure Doorbell Mailbox to use between ARMv8 and SMpro */
 #define SMPRO_NS_RNG_MAILBOX_INDEX     6
@@ -100,20 +100,20 @@
 #define PCC_MAX_SUBSPACES              ((SMPRO_MAX_DB + PMPRO_MAX_DB) * PLATFORM_CPU_MAX_SOCKET)
 #define PCC_SUBSPACE_SHARED_MEM_SIZE   0x4000
 
-#define PCC_NOMINAL_LATENCY                  10000   /* 10 ms */
-#define PCC_CPPC_NOMINAL_LATENCY             1000    /* 1 ms */
-#define PCC_MAX_PERIOD_ACCESS                0       /* unlimited */
-#define PCC_MIN_REQ_TURNAROUND_TIME          0       /* unlimited */
-#define PCC_CMD_POLL_UDELAY                  10      /* us */
-#define PCC_CPPC_MIN_REQ_TURNAROUND_TIME     110      /* 110 us */
+#define PCC_NOMINAL_LATENCY                  10000 /* 10 ms */
+#define PCC_CPPC_NOMINAL_LATENCY             1000  /* 1 ms */
+#define PCC_MAX_PERIOD_ACCESS                0     /* unlimited */
+#define PCC_MIN_REQ_TURNAROUND_TIME          0     /* unlimited */
+#define PCC_CMD_POLL_UDELAY                  10    /* us */
+#define PCC_CPPC_MIN_REQ_TURNAROUND_TIME     110   /* 110 us */
 
 #define PCC_SIGNATURE_MASK                   0x50424300
-#define PCC_CPPC_SUBSPACE                    2      /* Doorbell 2 of PMPro */
+#define PCC_CPPC_SUBSPACE                    2 /* Doorbell 2 of PMPro */
 #define PCC_MSG                              0x53000040
 #define PCC_CPPC_MSG                         0x00000100
 #define PCC_CPPC_URG_MSG                     0x00800000
 #define PCC_256_ALIGN_ADDR                   0x00000040
-#define PCC_MSG_SIZE                         12      /* Num of Bytes */
+#define PCC_MSG_SIZE                         12 /* Num of Bytes */
 #define PCP_MSG_UPPER_ADDR_MASK              0xF
 
 

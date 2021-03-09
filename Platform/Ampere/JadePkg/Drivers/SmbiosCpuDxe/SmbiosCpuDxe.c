@@ -36,7 +36,7 @@
   "NotSet\0"                         /* part number */
 
 #define TYPE7_ADDITIONAL_STRINGS                                  \
-  "L1 Cache\0"                       /* L1 Cache  */
+  "L1 Cache\0" /* L1 Cache  */
 
 //
 // Type definition and contents of the default SMBIOS table.
@@ -46,12 +46,12 @@
 #pragma pack(1)
 typedef struct {
   SMBIOS_TABLE_TYPE4 Base;
-  CHAR8              Strings[sizeof(TYPE4_ADDITIONAL_STRINGS)];
+  CHAR8              Strings[sizeof (TYPE4_ADDITIONAL_STRINGS)];
 } ARM_TYPE4;
 
 typedef struct {
   SMBIOS_TABLE_TYPE7 Base;
-  CHAR8              Strings[sizeof(TYPE7_ADDITIONAL_STRINGS)];
+  CHAR8              Strings[sizeof (TYPE7_ADDITIONAL_STRINGS)];
 } ARM_TYPE7;
 
 #pragma pack()
@@ -74,34 +74,34 @@ enum {
 // Type 4 Processor Socket 0
 STATIC ARM_TYPE4 mArmDefaultType4Sk0 = {
   {
-    { // SMBIOS_STRUCTURE Hdr
+    {                                        // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, // UINT8 Type
       sizeof (SMBIOS_TABLE_TYPE4),           // UINT8 Length
       SMBIOS_HANDLE_PI_RESERVED,
     },
-    ADDITIONAL_STR_INDEX_1, //socket type
-    3,                      //processor type CPU
-    ProcessorFamilyIndicatorFamily2, //processor family, acquire from field2
-    ADDITIONAL_STR_INDEX_2, //manufacturer
-    {{0,},{0.}},            //processor id
-    ADDITIONAL_STR_INDEX_3, //version
-    {0,0,0,0,0,1},          //voltage
-    0,                      //external clock
-    3000,                   //max speed
-    3000,                   //current speed
-    0x41,                   //status
+    ADDITIONAL_STR_INDEX_1,          // socket type
+    3,                               // processor type CPU
+    ProcessorFamilyIndicatorFamily2, // processor family, acquire from field2
+    ADDITIONAL_STR_INDEX_2,          // manufacturer
+    {{0,},{0.}},                     // processor id
+    ADDITIONAL_STR_INDEX_3,          // version
+    {0,0,0,0,0,1},                   // voltage
+    0,                               // external clock
+    3000,                            // max speed
+    3000,                            // current speed
+    0x41,                            // status
     ProcessorUpgradeOther,
-    0xFFFF,                 //l1 cache handle
-    0xFFFF,                 //l2 cache handle
-    0xFFFF,                 //l3 cache handle
-    0,                      //serial not set
-    0,                      //asset not set
-    ADDITIONAL_STR_INDEX_4, //part number
-    80,                     //core count in socket
-    80,                     //enabled core count in socket
-    0,                      //threads per socket
+    0xFFFF,                 // l1 cache handle
+    0xFFFF,                 // l2 cache handle
+    0xFFFF,                 // l3 cache handle
+    0,                      // serial not set
+    0,                      // asset not set
+    ADDITIONAL_STR_INDEX_4, // part number
+    80,                     // core count in socket
+    80,                     // enabled core count in socket
+    0,                      // threads per socket
     0xEC,                   // processor characteristics
-    ProcessorFamilyARMv8,   //ARM core
+    ProcessorFamilyARMv8,   // ARM core
   },
   TYPE4_ADDITIONAL_STRINGS
 };
@@ -109,34 +109,34 @@ STATIC ARM_TYPE4 mArmDefaultType4Sk0 = {
 // Type 4 Processor Socket 1
 STATIC ARM_TYPE4 mArmDefaultType4Sk1 = {
   {
-    { // SMBIOS_STRUCTURE Hdr
+    {                                        // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, // UINT8 Type
       sizeof (SMBIOS_TABLE_TYPE4),           // UINT8 Length
       SMBIOS_HANDLE_PI_RESERVED,
     },
-    ADDITIONAL_STR_INDEX_1, //socket type
-    3,                      //processor type CPU
-    ProcessorFamilyIndicatorFamily2, //processor family, acquire from field2
-    ADDITIONAL_STR_INDEX_2, //manufacturer
-    {{0,},{0.}},            //processor id
-    ADDITIONAL_STR_INDEX_3, //version
-    {0,0,0,0,0,1},          //voltage
-    0,                      //external clock
-    3000,                   //max speed
-    3000,                   //current speed
-    0x41,                   //status
+    ADDITIONAL_STR_INDEX_1,          // socket type
+    3,                               // processor type CPU
+    ProcessorFamilyIndicatorFamily2, // processor family, acquire from field2
+    ADDITIONAL_STR_INDEX_2,          // manufacturer
+    {{0,},{0.}},                     // processor id
+    ADDITIONAL_STR_INDEX_3,          // version
+    {0,0,0,0,0,1},                   // voltage
+    0,                               // external clock
+    3000,                            // max speed
+    3000,                            // current speed
+    0x41,                            // status
     ProcessorUpgradeOther,
-    0xFFFF,                 //l1 cache handle
-    0xFFFF,                 //l2 cache handle
-    0xFFFF,                 //l3 cache handle
-    0,                      //serial not set
-    0,                      //asset not set
-    ADDITIONAL_STR_INDEX_4, //part number
-    80,                     //core count in socket
-    80,                     //enabled core count in socket
-    0,                      //threads per socket
+    0xFFFF,                 // l1 cache handle
+    0xFFFF,                 // l2 cache handle
+    0xFFFF,                 // l3 cache handle
+    0,                      // serial not set
+    0,                      // asset not set
+    ADDITIONAL_STR_INDEX_4, // part number
+    80,                     // core count in socket
+    80,                     // enabled core count in socket
+    0,                      // threads per socket
     0xEC,                   // processor characteristics
-    ProcessorFamilyARMv8,   //ARM core
+    ProcessorFamilyARMv8,   // ARM core
   },
   TYPE4_ADDITIONAL_STRINGS
 };
@@ -144,20 +144,20 @@ STATIC ARM_TYPE4 mArmDefaultType4Sk1 = {
 // Type 7 Cache Information
 STATIC ARM_TYPE7 mArmDefaultType7Sk0L1 = {
   {
-    { // SMBIOS_STRUCTURE Hdr
+    {                                    // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
       sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x180,              //L1 enabled, Write Back
-    0x8001,             //64k i cache max
-    0x8001,             //64k installed
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    0,                  //unkown speed
-    CacheErrorParity,   //parity checking
-    CacheTypeUnified,   //Unified cache
+    0x180,                  // L1 enabled, Write Back
+    0x8001,                 // 64k i cache max
+    0x8001,                 // 64k installed
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    0,                      // unkown speed
+    CacheErrorParity,       // parity checking
+    CacheTypeUnified,       // Unified cache
     CacheAssociativity4Way, // 4-way
   },
   "L1 Cache\0"
@@ -166,21 +166,21 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L1 = {
 // Type 7 Cache Information
 STATIC ARM_TYPE7 mArmDefaultType7Sk0L2 = {
   {
-    { // SMBIOS_STRUCTURE Hdr
+    {                                    // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
       sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x181,              //L2 enabled, Write Back
-    0x8010,             //1M cache max
-    0x8010,             //1M installed
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    0,                  //unkown speed
-    CacheErrorSingleBit,//single bit ECC
-    CacheTypeUnified,   //Unified cache
-    CacheAssociativity8Way, //8-way
+    0x181,                  // L2 enabled, Write Back
+    0x8010,                 // 1M cache max
+    0x8010,                 // 1M installed
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    0,                      // unkown speed
+    CacheErrorSingleBit,    // single bit ECC
+    CacheTypeUnified,       // Unified cache
+    CacheAssociativity8Way, // 8-way
   },
   "L2 Cache\0"
 };
@@ -188,20 +188,20 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L2 = {
 // Type 7 Cache Information
 STATIC ARM_TYPE7 mArmDefaultType7Sk0L3 = {
   {
-    { // SMBIOS_STRUCTURE Hdr
+    {                                    // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
       sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x182,              //L3 enabled, Write Back
-    0x8200,             //32M cache max
-    0x8200,             //32M installed
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    0,                  //unkown speed
-    CacheErrorParity,   //parity checking
-    CacheTypeUnified,   //Unified cache
+    0x182,                   // L3 enabled, Write Back
+    0x8200,                  // 32M cache max
+    0x8200,                  // 32M installed
+    {0, 0, 0, 0, 0, 1},      // SRAM type
+    {0, 0, 0, 0, 0, 1},      // SRAM type
+    0,                       // unkown speed
+    CacheErrorParity,        // parity checking
+    CacheTypeUnified,        // Unified cache
     CacheAssociativity32Way, // 32-way
   },
   "L3 Cache\0"
@@ -210,21 +210,21 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L3 = {
 // Type 7 Cache Information
 STATIC ARM_TYPE7 mArmDefaultType7Sk1L1 = {
   {
-    { // SMBIOS_STRUCTURE Hdr
+    {                                    // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
       sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x180,             //L1 enabled, Write Back
-    0x8001,            //64k i cache max
-    0x8001,            //64k installed
-    {0, 0, 0, 0, 0, 1},//SRAM type
-    {0, 0, 0, 0, 0, 1},//SRAM type
-    0,                 //unkown speed
-    CacheErrorParity,  //parity checking
-    CacheTypeUnified,  //Unified cache
-    CacheAssociativity4Way, //4-way
+    0x180,                  // L1 enabled, Write Back
+    0x8001,                 // 64k i cache max
+    0x8001,                 // 64k installed
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    0,                      // unkown speed
+    CacheErrorParity,       // parity checking
+    CacheTypeUnified,       // Unified cache
+    CacheAssociativity4Way, // 4-way
   },
   "L1 Cache\0"
 };
@@ -232,21 +232,21 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L1 = {
 // Type 7 Cache Information
 STATIC ARM_TYPE7 mArmDefaultType7Sk1L2 = {
   {
-    { // SMBIOS_STRUCTURE Hdr
+    {                                    // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
       sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x181,              //L2 enabled, Write Back
-    0x8010,             //1M cache max
-    0x8010,             //1M installed
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    0,                  //unkown speed
-    CacheErrorSingleBit,//single bit ECC
-    CacheTypeUnified,   //Unified cache
-    CacheAssociativity8Way, //8-way
+    0x181,                  // L2 enabled, Write Back
+    0x8010,                 // 1M cache max
+    0x8010,                 // 1M installed
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    0,                      // unkown speed
+    CacheErrorSingleBit,    // single bit ECC
+    CacheTypeUnified,       // Unified cache
+    CacheAssociativity8Way, // 8-way
   },
   "L2 Cache\0"
 };
@@ -254,33 +254,33 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L2 = {
 // Type 7 Cache Information
 STATIC ARM_TYPE7 mArmDefaultType7Sk1L3 = {
   {
-    { // SMBIOS_STRUCTURE Hdr
+    {                                    // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
       sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x182,              //L3 enabled, Write Back
-    0x8200,             //32M cache max
-    0x8200,             //32M installed
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    {0, 0, 0, 0, 0, 1}, //SRAM type
-    0,                  //unkown speed
-    CacheErrorParity,   //parity checking
-    CacheTypeUnified,   //Unified cache
+    0x182,                   // L3 enabled, Write Back
+    0x8200,                  // 32M cache max
+    0x8200,                  // 32M installed
+    {0, 0, 0, 0, 0, 1},      // SRAM type
+    {0, 0, 0, 0, 0, 1},      // SRAM type
+    0,                       // unkown speed
+    CacheErrorParity,        // parity checking
+    CacheTypeUnified,        // Unified cache
     CacheAssociativity32Way, // 32-way
   },
   "L3 Cache\0"
 };
 
-STATIC CONST VOID* DefaultCommonTables[] =
+STATIC CONST VOID *DefaultCommonTables[] =
 {
   &mArmDefaultType4Sk0,
   &mArmDefaultType4Sk1,
   NULL
 };
 
-STATIC CONST VOID* DefaultType7Sk0Tables[] =
+STATIC CONST VOID *DefaultType7Sk0Tables[] =
 {
   &mArmDefaultType7Sk0L1,
   &mArmDefaultType7Sk0L2,
@@ -288,7 +288,7 @@ STATIC CONST VOID* DefaultType7Sk0Tables[] =
   NULL
 };
 
-STATIC CONST VOID* DefaultType7Sk1Tables[] =
+STATIC CONST VOID *DefaultType7Sk1Tables[] =
 {
   &mArmDefaultType7Sk1L1,
   &mArmDefaultType7Sk1L2,
@@ -302,7 +302,7 @@ GetCacheConfig (
   UINTN Level
   )
 {
-  UINT64 Val;
+  UINT64  Val;
   BOOLEAN SupportWB;
   BOOLEAN SupportWT;
 
@@ -326,8 +326,8 @@ GetStringPackSize (
   CHAR8 *StringPack
   )
 {
-  UINTN     StrCount;
-  CHAR8     *StrStart;
+  UINTN StrCount;
+  CHAR8 *StrStart;
 
   if ((*StringPack == 0) && (*(StringPack + 1) == 0)) {
     return 0;
@@ -335,7 +335,9 @@ GetStringPackSize (
 
   // String section ends in double-null (0000h)
   for (StrCount = 0, StrStart = StringPack;
-        ((*StrStart != 0) || (*(StrStart + 1) != 0)); StrStart++, StrCount++) {};
+       ((*StrStart != 0) || (*(StrStart + 1) != 0)); StrStart++, StrCount++)
+  {
+  }
 
   return StrCount + 2; // Included the double NULL
 }
@@ -343,17 +345,17 @@ GetStringPackSize (
 // Update String at String number to String Pack
 EFI_STATUS
 UpdateStringPack (
-  CHAR8             *StringPack,
-  CHAR8             *String,
-  UINTN             StringNumber
+  CHAR8 *StringPack,
+  CHAR8 *String,
+  UINTN StringNumber
   )
 {
-  CHAR8                     *StrStart;
-  UINTN                     StrIndex;
-  UINTN                     InputStrLen;
-  UINTN                     TargetStrLen;
-  UINTN                     BufferSize;
-  CHAR8                     *Buffer;
+  CHAR8 *StrStart;
+  UINTN StrIndex;
+  UINTN InputStrLen;
+  UINTN TargetStrLen;
+  UINTN BufferSize;
+  CHAR8 *Buffer;
 
   StrStart = StringPack;
   for (StrIndex = 1; StrIndex < StringNumber; StrStart++) {
@@ -403,10 +405,10 @@ UpdateSmbiosType4 (
   PlatformInfoHob_V2 *PlatformHob
   )
 {
-  UINTN                       Index;
-  CHAR8                       Str[40];
-  CHAR8                       *StringPack;
-  SMBIOS_TABLE_TYPE4          *Table;
+  UINTN              Index;
+  CHAR8              Str[40];
+  CHAR8              *StringPack;
+  SMBIOS_TABLE_TYPE4 *Table;
 
   ASSERT (PlatformHob != NULL);
 
@@ -422,16 +424,16 @@ UpdateSmbiosType4 (
     AsciiSPrint (Str, sizeof (Str), "CPU %d", Index);
     UpdateStringPack (StringPack, Str, ADDITIONAL_STR_INDEX_1);
 
-    Table->CoreCount = (UINT16) GetMaximumNumberOfCores ();
-    Table->ThreadCount = (UINT16) GetMaximumNumberOfCores ();
-    Table->EnabledCoreCount = (UINT16) (GetNumberActiveCoresPerSocket (Index));
+    Table->CoreCount = (UINT16)GetMaximumNumberOfCores ();
+    Table->ThreadCount = (UINT16)GetMaximumNumberOfCores ();
+    Table->EnabledCoreCount = (UINT16)(GetNumberActiveCoresPerSocket (Index));
 
     if (Table->EnabledCoreCount) {
-      Table->CurrentSpeed = (UINT16) (PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
-      Table->ExternalClock = (UINT16) (PlatformHob->PcpClk / MHZ_SCALE_FACTOR);
-      Table->MaxSpeed = (UINT16) (PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
+      Table->CurrentSpeed = (UINT16)(PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
+      Table->ExternalClock = (UINT16)(PlatformHob->PcpClk / MHZ_SCALE_FACTOR);
+      Table->MaxSpeed = (UINT16)(PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
       if (PlatformHob->TurboCapability[Index]) {
-        Table->MaxSpeed = (UINT16) (PlatformHob->TurboFrequency[Index]);
+        Table->MaxSpeed = (UINT16)(PlatformHob->TurboFrequency[Index]);
       }
     } else {
       Table->CurrentSpeed = 0;
@@ -440,22 +442,31 @@ UpdateSmbiosType4 (
       Table->Status = 0;
     }
 
-    *((UINT32*) &Table->ProcessorId) = (UINT32) ArmReadMidr ();
-    *((UINT32*) &Table->ProcessorId + 1) = 0;
-    *((UINT8*) &Table->Voltage) = 0x80 | PlatformHob->CoreVoltage[Index] / 100;
+    *((UINT32 *)&Table->ProcessorId) = (UINT32)ArmReadMidr ();
+    *((UINT32 *)&Table->ProcessorId + 1) = 0;
+    *((UINT8 *)&Table->Voltage) = 0x80 | PlatformHob->CoreVoltage[Index] / 100;
 
     /* Type 4 Part number */
     if (Table->EnabledCoreCount) {
       if ((PlatformHob->ScuProductId[Index] & 0xff) == 0x01) {
-        AsciiSPrint (Str, sizeof (Str), "Q%02d-%02X",
-          PlatformHob->SkuMaxCore[Index], PlatformHob->SkuMaxTurbo[Index]);
-      }
-      else {
-        AsciiSPrint (Str, sizeof (Str), "M%02d%02X",
-          PlatformHob->SkuMaxCore[Index], PlatformHob->SkuMaxTurbo[Index]);
+        AsciiSPrint (
+          Str,
+          sizeof (Str),
+          "Q%02d-%02X",
+          PlatformHob->SkuMaxCore[Index],
+          PlatformHob->SkuMaxTurbo[Index]
+          );
+      } else {
+        AsciiSPrint (
+          Str,
+          sizeof (Str),
+          "M%02d%02X",
+          PlatformHob->SkuMaxCore[Index],
+          PlatformHob->SkuMaxTurbo[Index]
+          );
       }
 
-    UpdateStringPack (StringPack, Str, ADDITIONAL_STR_INDEX_4);
+      UpdateStringPack (StringPack, Str, ADDITIONAL_STR_INDEX_4);
     }
   }
 }
@@ -466,8 +477,8 @@ UpdateSmbiosType7 (
   PlatformInfoHob_V2 *PlatformHob
   )
 {
-  UINTN                       Index;
-  SMBIOS_TABLE_TYPE7          *Table;
+  UINTN              Index;
+  SMBIOS_TABLE_TYPE7 *Table;
 
   ASSERT (PlatformHob != NULL);
 
@@ -478,7 +489,7 @@ UpdateSmbiosType7 (
       Table = &mArmDefaultType7Sk1L1.Base;
     }
 
-    Table->Associativity = (UINT8) CpuGetAssociativity (1);
+    Table->Associativity = (UINT8)CpuGetAssociativity (1);
     Table->CacheConfiguration = (1 << 7 | GetCacheConfig (1) << 8); /* Enabled, Internal, L1 */
     Table->MaximumCacheSize  = CACHE_SIZE (CpuGetCacheSize (1));
     Table->InstalledSize     = CACHE_SIZE (CpuGetCacheSize (1));
@@ -491,7 +502,7 @@ UpdateSmbiosType7 (
       Table = &mArmDefaultType7Sk1L2.Base;
     }
 
-    Table->Associativity = (UINT8) CpuGetAssociativity (2);
+    Table->Associativity = (UINT8)CpuGetAssociativity (2);
     Table->CacheConfiguration = (1 << 7 | GetCacheConfig (2) << 8 | 1); /* Enabled, Internal, L2 */
     Table->MaximumCacheSize  = CACHE_SIZE (CpuGetCacheSize (2));
     Table->InstalledSize     = CACHE_SIZE (CpuGetCacheSize (2));
@@ -528,8 +539,8 @@ UpdateSmbiosInfo (
   VOID
   )
 {
-  VOID                        *Hob;
-  PlatformInfoHob_V2          *PlatformHob;
+  VOID               *Hob;
+  PlatformInfoHob_V2 *PlatformHob;
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
@@ -538,7 +549,7 @@ UpdateSmbiosInfo (
     return;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
 
   UpdateSmbiosType4 (PlatformHob);
   UpdateSmbiosType7 (PlatformHob);
@@ -551,15 +562,15 @@ UpdateSmbiosInfo (
 **/
 EFI_STATUS
 InstallType7Structures (
-  IN EFI_SMBIOS_PROTOCOL  *Smbios
+  IN EFI_SMBIOS_PROTOCOL *Smbios
   )
 {
-  EFI_STATUS          Status = EFI_SUCCESS;
-  EFI_SMBIOS_HANDLE   SmbiosHandle;
-  SMBIOS_TABLE_TYPE4  *Type4Table;
-  CONST VOID          **Tables;
-  UINTN               Index;
-  UINTN               Level;
+  EFI_STATUS         Status = EFI_SUCCESS;
+  EFI_SMBIOS_HANDLE  SmbiosHandle;
+  SMBIOS_TABLE_TYPE4 *Type4Table;
+  CONST VOID         **Tables;
+  UINTN              Index;
+  UINTN              Level;
 
   for ( Index = 0; Index < GetNumberSupportedSockets (); Index++ ) {
     if ( Index == 0) {
@@ -571,29 +582,31 @@ InstallType7Structures (
     }
 
     for (Level = 0; Level < CPU_CACHE_LEVEL_MAX; Level++ ) {
-      SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*) Tables[Level])->Handle;
+      SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER *)Tables[Level])->Handle;
       Status = Smbios->Add (
                          Smbios,
                          NULL,
                          &SmbiosHandle,
-                         (EFI_SMBIOS_TABLE_HEADER*) Tables[Level]
+                         (EFI_SMBIOS_TABLE_HEADER *)Tables[Level]
                          );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR,
-                "%a: adding SMBIOS type 7 Socket %d L%d cache failed\n",
-                __FUNCTION__,
-                Index,
-                Level + 1));
-        //stop adding rather than continuing
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a: adding SMBIOS type 7 Socket %d L%d cache failed\n",
+          __FUNCTION__,
+          Index,
+          Level + 1
+          ));
+        // stop adding rather than continuing
         return Status;
       }
 
       // Save handle to Type 4
-      if (Level == 0) { //L1 cache
+      if (Level == 0) { // L1 cache
         Type4Table->L1CacheHandle = SmbiosHandle;
-      } else if (Level == 1) { //L2 cache
+      } else if (Level == 1) { // L2 cache
         Type4Table->L2CacheHandle = SmbiosHandle;
-      } else if (Level == 2) { //L3 cache
+      } else if (Level == 2) { // L3 cache
         Type4Table->L3CacheHandle = SmbiosHandle;
       }
     }
@@ -610,26 +623,26 @@ InstallType7Structures (
 **/
 EFI_STATUS
 InstallStructures (
-  IN EFI_SMBIOS_PROTOCOL  *Smbios,
-  IN CONST VOID           *DefaultTables[]
+  IN       EFI_SMBIOS_PROTOCOL *Smbios,
+  IN CONST VOID                *DefaultTables[]
   )
 {
-  EFI_STATUS          Status = EFI_SUCCESS;
-  EFI_SMBIOS_HANDLE   SmbiosHandle;
-  UINTN               Index;
+  EFI_STATUS        Status = EFI_SUCCESS;
+  EFI_SMBIOS_HANDLE SmbiosHandle;
+  UINTN             Index;
 
   for (Index = 0; Index < GetNumberSupportedSockets () && DefaultTables[Index] != NULL; Index++) {
-    SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER*) DefaultTables[Index])->Handle;
+    SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER *)DefaultTables[Index])->Handle;
     Status = Smbios->Add (
                        Smbios,
                        NULL,
                        &SmbiosHandle,
-                       (EFI_SMBIOS_TABLE_HEADER*) DefaultTables[Index]
+                       (EFI_SMBIOS_TABLE_HEADER *)DefaultTables[Index]
                        );
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "%a: adding %d failed\n", __FUNCTION__, Index));
 
-      //stop adding rather than continuing
+      // stop adding rather than continuing
       return Status;
     }
   }
@@ -645,7 +658,7 @@ InstallStructures (
 **/
 EFI_STATUS
 InstallAllStructures (
-  IN EFI_SMBIOS_PROTOCOL  *Smbios
+  IN EFI_SMBIOS_PROTOCOL *Smbios
   )
 {
   EFI_STATUS Status = EFI_SUCCESS;
@@ -666,12 +679,12 @@ InstallAllStructures (
 EFI_STATUS
 EFIAPI
 SmbiosCpuDxeEntry (
-  IN EFI_HANDLE             ImageHandle,
-  IN EFI_SYSTEM_TABLE       *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS            Status;
-  EFI_SMBIOS_PROTOCOL   *Smbios;
+  EFI_STATUS          Status;
+  EFI_SMBIOS_PROTOCOL *Smbios;
 
   //
   // Find the SMBIOS protocol
@@ -679,7 +692,7 @@ SmbiosCpuDxeEntry (
   Status = gBS->LocateProtocol (
                   &gEfiSmbiosProtocolGuid,
                   NULL,
-                  (VOID**) &Smbios
+                  (VOID **)&Smbios
                   );
 
   if (EFI_ERROR (Status)) {

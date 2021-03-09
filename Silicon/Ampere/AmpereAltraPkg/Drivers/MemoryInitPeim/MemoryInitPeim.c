@@ -16,8 +16,8 @@
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/PcdLib.h>
-#include <Library/PeiServicesLib.h>
 #include <Library/PeimEntryPoint.h>
+#include <Library/PeiServicesLib.h>
 #include <PlatformInfoHob.h>
 #include <Ppi/BootInRecoveryMode.h>
 #include <Ppi/MasterBootMode.h>
@@ -25,8 +25,8 @@
 EFI_STATUS
 EFIAPI
 MemoryPeim (
-  IN EFI_PHYSICAL_ADDRESS               UefiMemoryBase,
-  IN UINT64                             UefiMemorySize
+  IN EFI_PHYSICAL_ADDRESS UefiMemoryBase,
+  IN UINT64               UefiMemorySize
   );
 
 VOID
@@ -34,7 +34,7 @@ BuildMemoryTypeInformationHob (
   VOID
   )
 {
-  EFI_MEMORY_TYPE_INFORMATION   Info[10];
+  EFI_MEMORY_TYPE_INFORMATION Info[10];
 
   Info[0].Type          = EfiACPIReclaimMemory;
   Info[0].NumberOfPages = PcdGet32 (PcdMemoryTypeEfiACPIReclaimMemory);
@@ -65,19 +65,19 @@ BuildMemoryTypeInformationHob (
 EFI_STATUS
 EFIAPI
 InitializeMemory (
-  IN       EFI_PEI_FILE_HANDLE  FileHandle,
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
-  EFI_STATUS                            Status;
-  UINTN                                 SystemMemoryBase;
-  UINTN                                 SystemMemoryTop;
-  UINTN                                 FdBase;
-  UINTN                                 FdTop;
-  UINTN                                 UefiMemoryBase;
-  UINTN                                 Index;
-  VOID                                  *Hob;
-  PlatformInfoHob_V2                    *PlatformHob;
+  EFI_STATUS         Status;
+  UINTN              SystemMemoryBase;
+  UINTN              SystemMemoryTop;
+  UINTN              FdBase;
+  UINTN              FdTop;
+  UINTN              UefiMemoryBase;
+  UINTN              Index;
+  VOID               *Hob;
+  PlatformInfoHob_V2 *PlatformHob;
 
   DEBUG ((DEBUG_INFO, "Memory Init PEIM Loaded\n"));
 
@@ -86,28 +86,30 @@ InitializeMemory (
     return EFI_DEVICE_ERROR;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
 
   /* Find system memory top of the first node */
   SystemMemoryTop = 0;
   for (Index = 0; Index < PlatformHob->DramInfo.NumRegion; Index++) {
     if (SystemMemoryTop <= PlatformHob->DramInfo.Base[Index] &&
-            PlatformHob->DramInfo.Node[Index] == 0 &&
-            (PlatformHob->DramInfo.Base[Index] + PlatformHob->DramInfo.Size[Index] - 1) <= 0xFFFFFFFF) {
+        PlatformHob->DramInfo.Node[Index] == 0 &&
+        (PlatformHob->DramInfo.Base[Index] +
+         PlatformHob->DramInfo.Size[Index] - 1) <= 0xFFFFFFFF)
+    {
       SystemMemoryTop = PlatformHob->DramInfo.Base[Index] + PlatformHob->DramInfo.Size[Index];
     }
   }
 
   DEBUG ((DEBUG_INFO, "PEIM memory configuration.\n"));
 
-  SystemMemoryBase = (UINTN) FixedPcdGet64 (PcdSystemMemoryBase);
-  FdBase = (UINTN) PcdGet64 (PcdFdBaseAddress);
+  SystemMemoryBase = (UINTN)FixedPcdGet64 (PcdSystemMemoryBase);
+  FdBase = (UINTN)PcdGet64 (PcdFdBaseAddress);
   FdTop = FdBase + (UINTN)PcdGet32 (PcdFdSize);
 
   // In case the firmware has been shadowed in the System Memory
   if ((FdBase >= SystemMemoryBase) && (FdTop <= SystemMemoryTop)) {
     //
-    //Check if there is enough space between the top of the system memory and the top of the
+    // Check if there is enough space between the top of the system memory and the top of the
     // firmware to place the UEFI memory (for PEI & DXE phases)
     //
     if (SystemMemoryTop - FdTop >= FixedPcdGet32 (PcdSystemMemoryUefiRegionSize)) {
@@ -126,7 +128,10 @@ InitializeMemory (
     UefiMemoryBase = SystemMemoryTop - FixedPcdGet32 (PcdSystemMemoryUefiRegionSize);
   }
 
-  Status = PeiServicesInstallPeiMemory (UefiMemoryBase, FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
+  Status = PeiServicesInstallPeiMemory (
+             UefiMemoryBase,
+             FixedPcdGet32 (PcdSystemMemoryUefiRegionSize)
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Error: Failed to install Pei Memory\n"));
   } else {

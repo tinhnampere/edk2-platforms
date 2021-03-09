@@ -46,31 +46,31 @@ SpciServiceHandleOpen (
 EFI_STATUS
 EFIAPI
 SpciServiceHandleClose (
-  UINT32  HandleId
+  UINT32 HandleId
   );
 
 EFI_STATUS
 EFIAPI
 SpciServiceRequestStart (
-  ARM_SPCI_ARGS  *Args
+  ARM_SPCI_ARGS *Args
   );
 
 EFI_STATUS
 EFIAPI
 SpciServiceRequestResume (
-  ARM_SPCI_ARGS  *Args
+  ARM_SPCI_ARGS *Args
   );
 
 EFI_STATUS
 EFIAPI
 SpciServiceGetResponse (
-  ARM_SPCI_ARGS  *Args
+  ARM_SPCI_ARGS *Args
   );
 
 EFI_STATUS
 EFIAPI
 SpciServiceRequestBlocking (
-  ARM_SPCI_ARGS  *Args
+  ARM_SPCI_ARGS *Args
   );
 
 #endif

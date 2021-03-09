@@ -41,7 +41,7 @@ PcieHotPlugStart (
   ZeroMem (&Args, sizeof (Args));
   Args.HandleId = HandleId;
   Args.X1 = GPIOMAP_CMD;
-  Args.X2 = PcdGet8(gPcieHotPlugGpioResetMap);
+  Args.X2 = PcdGet8 (gPcieHotPlugGpioResetMap);
   Status = SpciServiceRequestBlocking (&Args);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "SPM HotPlug gpio reset map failed. Returned: %d\n", Status));

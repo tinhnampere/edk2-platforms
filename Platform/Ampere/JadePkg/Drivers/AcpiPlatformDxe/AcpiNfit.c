@@ -12,13 +12,13 @@
 EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE NfitSPATemplate = {
   EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE_TYPE,
   sizeof (EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE),
-  0, // The uniue index - need to be filled.
-  0, // The flags - need to be filled.
-  0, // Reserved.
-  0, // Proximity domain - need to be filled.
+  0,                                                                // The uniue index - need to be filled.
+  0,                                                                // The flags - need to be filled.
+  0,                                                                // Reserved.
+  0,                                                                // Proximity domain - need to be filled.
   EFI_ACPI_6_3_NFIT_GUID_BYTE_ADDRESSABLE_PERSISTENT_MEMORY_REGION, // PM range type.
-  0, // Start address - need to be filled.
-  0, // Size - need to be filled.
+  0,                                                                // Start address - need to be filled.
+  0,                                                                // Size - need to be filled.
   EFI_MEMORY_UC | EFI_MEMORY_WC | EFI_MEMORY_WT | EFI_MEMORY_WB |
   EFI_MEMORY_WP | EFI_MEMORY_UCE, // attribute - need to be filled.
 };
@@ -26,26 +26,26 @@ EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE NfitSPATemplate = {
 EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE NvdimmControlRegionTemplate = {
   EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE_TYPE,
   sizeof (EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE),
-  0, // The unique index - need to be filled.
-  0, // The vendor id - need to be filled.
-  0, // The device id - need to be filled.
-  0, // The revision - need to be filled.
-  0, // The subsystem nvdimm id - need to be filled.
-  0, // The subsystem nvdimm device id - need to be filled.
-  0, // The subsystem revision - need to be filled.
-  0, // The valid field.
-  0, // The manufacturing location - not valid.
-  0, // The manufacturing date - not valid.
+  0,   // The unique index - need to be filled.
+  0,   // The vendor id - need to be filled.
+  0,   // The device id - need to be filled.
+  0,   // The revision - need to be filled.
+  0,   // The subsystem nvdimm id - need to be filled.
+  0,   // The subsystem nvdimm device id - need to be filled.
+  0,   // The subsystem revision - need to be filled.
+  0,   // The valid field.
+  0,   // The manufacturing location - not valid.
+  0,   // The manufacturing date - not valid.
   {0}, // Reserved.
-  0, // The serial number - need to be filled.
-  0, // The region format interface code - dummy value.
-  0, // The number of block control windows.
-  0, // The size of block control windows.
-  0, // The Command Register Offset in Block Control Window.
-  0, // The Size of Command Register in Block Control Windows.
-  0, // The Status Register Offset in Block Control Window.
-  0, // Size of Status Register in Block Control Windows.
-  0, // The NVDIMM Control Region Flag.
+  0,   // The serial number - need to be filled.
+  0,   // The region format interface code - dummy value.
+  0,   // The number of block control windows.
+  0,   // The size of block control windows.
+  0,   // The Command Register Offset in Block Control Window.
+  0,   // The Size of Command Register in Block Control Windows.
+  0,   // The Status Register Offset in Block Control Window.
+  0,   // Size of Status Register in Block Control Windows.
+  0,   // The NVDIMM Control Region Flag.
   {0}, // Reserved.
 };
 
@@ -53,17 +53,17 @@ EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE NvdimmRegionMappingTemplate = 
   EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE_TYPE,
   sizeof (EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE),
   {0}, // _ADR of the NVDIMM device - need to be filled.
-  0, // Dimm smbios handle index - need to be filled.
-  0, // The unique region index - need to be filled.
-  0, // The SPA range index - need to be filled.
-  0, // The control region index - need to be filled.
-  0, // The region size - need to be filled.
-  0, // The region offset - need to be filled.
-  0, // The region base - need to be filled.
-  0, // The interleave structure index - need to be filled.
-  0, // The interleave ways - need to be filled.
-  0, // NVDIMM flags - need to be filled.
-  0, // Reserved.
+  0,   // Dimm smbios handle index - need to be filled.
+  0,   // The unique region index - need to be filled.
+  0,   // The SPA range index - need to be filled.
+  0,   // The control region index - need to be filled.
+  0,   // The region size - need to be filled.
+  0,   // The region offset - need to be filled.
+  0,   // The region base - need to be filled.
+  0,   // The interleave structure index - need to be filled.
+  0,   // The interleave ways - need to be filled.
+  0,   // NVDIMM flags - need to be filled.
+  0,   // Reserved.
 };
 
 EFI_ACPI_6_3_NVDIMM_FIRMWARE_INTERFACE_TABLE NFITTableHeaderTemplate = {
@@ -71,7 +71,7 @@ EFI_ACPI_6_3_NVDIMM_FIRMWARE_INTERFACE_TABLE NFITTableHeaderTemplate = {
     EFI_ACPI_6_3_NVDIMM_FIRMWARE_INTERFACE_TABLE_STRUCTURE_SIGNATURE,
     0, /* need fill in */
     EFI_ACPI_6_3_NVDIMM_FIRMWARE_INTERFACE_TABLE_REVISION
-  ),
+    ),
   0x00000000, // Reserved
 };
 
@@ -80,7 +80,7 @@ NVDIMM_DATA NvdData[PLATFORM_CPU_MAX_SOCKET] = { 0 };
 EFI_STATUS
 AcpiNvdInfoInit (
   IN OUT NVDIMM_INFO *NvdInfoPtr,
-  IN UINTN           NvdId
+  IN     UINTN       NvdId
   )
 {
   PlatformInfoHob_V2 *PlatformHob;
@@ -237,9 +237,9 @@ AcpiNvdDataInit (
 VOID
 AcpiNfitFillSPA (
   IN OUT EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *NfitSpaPointer,
-  IN UINTN                                                         NvdRegionIndex,
-  IN UINT64                                                        NvdRegionBase,
-  IN UINT64                                                        NvdRegionSize
+  IN     UINTN                                                     NvdRegionIndex,
+  IN     UINT64                                                    NvdRegionBase,
+  IN     UINT64                                                    NvdRegionSize
   )
 {
   ASSERT (NfitSpaPointer != NULL);
@@ -253,8 +253,8 @@ AcpiNfitFillSPA (
 VOID
 NfitFillControlRegion (
   IN OUT EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE *NfitControlRegionPointer,
-  IN NVDIMM_INFO                                           *NvdInfo,
-  IN UINTN                                                 NvdControlRegionIndex
+  IN     NVDIMM_INFO                                       *NvdInfo,
+  IN     UINTN                                             NvdControlRegionIndex
   )
 {
   ASSERT (
@@ -263,7 +263,7 @@ NfitFillControlRegion (
     );
 
   NfitControlRegionPointer->NVDIMMControlRegionStructureIndex =
-                                          NvdControlRegionIndex;
+    NvdControlRegionIndex;
   NfitControlRegionPointer->VendorID = NvdInfo->VendorId;
   NfitControlRegionPointer->DeviceID = NvdInfo->DeviceId;
   NfitControlRegionPointer->RevisionID = NvdInfo->RevisionId;
@@ -275,11 +275,11 @@ NfitFillControlRegion (
 
 VOID
 NfitFillRegionMapping (
-  IN OUT EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE     *NfitRegionMappingPointer,
-  IN EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE         *NfitControlRegionPointer,
-  IN EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *NfitSpaPointer,
-  IN NVDIMM_INFO                                               *NvdInfo,
-  IN UINTN                                                     NvdRegionID
+  IN OUT EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE         *NfitRegionMappingPointer,
+  IN     EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE         *NfitControlRegionPointer,
+  IN     EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *NfitSpaPointer,
+  IN     NVDIMM_INFO                                               *NvdInfo,
+  IN     UINTN                                                     NvdRegionID
   )
 {
   ASSERT (
@@ -313,20 +313,20 @@ NfitFillRegionMapping (
 
 EFI_STATUS
 AcpiNfitFillTableBySK (
-  IN EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE     *NfitSpaPointerStart,
+  IN     EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *NfitSpaPointerStart,
   IN OUT EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE **NfitSpaPointerNext,
-  IN UINTN                                                         Socket
+  IN     UINTN                                                     Socket
   )
 {
   EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *NfitSpaPointer;
-  EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE *NfitControlRegionPointer;
-  EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE *NfitRegionMappingPointer;
-  PlatformInfoHob_V2 *PlatformHob;
-  VOID               *Hob;
-  UINT64             NvdRegionBase,
-                     NvdRegionSize;
-  UINTN              NvdCount, MaxNvdCount, RegionCount;
-  UINTN              RegionId, NvdRegionIndex, NvdIndex;
+  EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE         *NfitControlRegionPointer;
+  EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE         *NfitRegionMappingPointer;
+  PlatformInfoHob_V2                                        *PlatformHob;
+  VOID                                                      *Hob;
+  UINT64                                                    NvdRegionBase,
+                                                            NvdRegionSize;
+  UINTN NvdCount, MaxNvdCount, RegionCount;
+  UINTN RegionId, NvdRegionIndex, NvdIndex;
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
@@ -431,7 +431,7 @@ AcpiNfitFillTableBySK (
         (NfitSpaPointer + 1);
       NvdCount = ((NvdRegionBase == PLATFORM_NVDIMM_SK0_NHASHED_REGION0) ||
                   (NvdRegionBase == PLATFORM_NVDIMM_SK1_NHASHED_REGION0)) ?
-                  0 : PLATFORM_NVDIMM_NUM_MAX_PER_MCU;
+                 0 : PLATFORM_NVDIMM_NUM_MAX_PER_MCU;
       MaxNvdCount = NvdCount + PLATFORM_NVDIMM_NUM_MAX_PER_MCU;
       for (; NvdCount < MaxNvdCount; NvdCount++) {
         if (!NvdData[Socket].NvdInfo[NvdCount].Enabled) {
@@ -496,7 +496,7 @@ AcpiNfitFillTable (
   }
 
   NfitSpaPointerNext = (EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *)
-                   (NfitTablePointer + 1);
+                       (NfitTablePointer + 1);
 
   if (NvdData[NVDIMM_SK0].NvdRegionNum != 0) {
     AcpiNfitFillTableBySK (NfitSpaPointerNext, &NfitSpaPointerNext, NVDIMM_SK0);

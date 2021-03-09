@@ -96,19 +96,19 @@ typedef struct {
  * @MmioWr: Writes 32-bit unsigned integer
  */
 typedef struct {
-  VOID  (*Puts)(CONST CHAR8 *Msg);
-  VOID  (*PutInt)(UINT32 Val);
-  VOID  (*PutHex)(UINT32 Val);
-  VOID  (*PutHex64)(UINT64 Val);
+  VOID (*Puts)(CONST CHAR8 *Msg);
+  VOID (*PutInt)(UINT32 Val);
+  VOID (*PutHex)(UINT32 Val);
+  VOID (*PutHex64)(UINT64 Val);
   INT32 (*DebugPrint)(CONST CHAR8 *Fmt, ...);
-  VOID  (*MmioRd)(UINT64 Addr, UINT32 *Val);
-  VOID  (*MmioWr)(UINT64 Addr, UINT32 Val);
-  VOID  (*UsDelay)(UINT32 Val);
+  VOID (*MmioRd)(UINT64 Addr, UINT32 *Val);
+  VOID (*MmioWr)(UINT64 Addr, UINT32 Val);
+  VOID (*UsDelay)(UINT32 Val);
 } PHY_PLAT_RESOURCE;
 
 typedef struct {
-  UINT64            SdsAddr;          /* PHY base address */
-  UINT64            PcieCtrlInfo;     /* PCIe controller related information
+  UINT64 SdsAddr;                     /* PHY base address */
+  UINT64 PcieCtrlInfo;                /* PCIe controller related information
                                        * BIT0-1: SoC revision
                                        *      0: Ampere Altra, 1: Ampere Altra Max, 2: Siryn
                                        * BIT2  : SocketID (0: Socket0, 1: Socket1)

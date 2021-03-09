@@ -34,7 +34,7 @@
 #define IPMI_SSIF_SLAVE_ADDRESS       (FixedPcdGet8 (PcdBmcSlaveAddr))
 #define IPMI_SSIF_RETRY_DELAY         (FixedPcdGet32 (PcdIpmiSsifRetryDelay))
 #define IPMI_SSIF_BLOCK_LEN           0x20
-#define IPMI_SSIF_MAX_REQUEST_RETRY   5     // 12.17 SSIF Timing
+#define IPMI_SSIF_MAX_REQUEST_RETRY   5 // 12.17 SSIF Timing
 
 #define SSIF_SINGLE_PART_RW           0x0
 #define SSIF_START_END_RW             0x1

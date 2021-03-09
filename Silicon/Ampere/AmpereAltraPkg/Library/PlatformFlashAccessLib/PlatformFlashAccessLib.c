@@ -39,8 +39,8 @@ typedef struct {
 } EFI_MM_COMM_FWU_PAYLOAD;
 
 typedef struct {
-  EFI_MM_COMM_HEADER_NOPAYLOAD  EfiMmHdr;
-  EFI_MM_COMM_FWU_PAYLOAD       PayLoad;
+  EFI_MM_COMM_HEADER_NOPAYLOAD EfiMmHdr;
+  EFI_MM_COMM_FWU_PAYLOAD      PayLoad;
 } EFI_MM_COMM_REQUEST;
 
 EFI_MM_COMM_REQUEST mEfiMmSysFwuReq;
@@ -82,8 +82,8 @@ typedef struct {
 
 VOID
 UefiMmCreateSysFwuReq (
-  VOID    *Data,
-  UINT64  Size
+  VOID   *Data,
+  UINT64 Size
   )
 {
   CopyGuid (&mEfiMmSysFwuReq.EfiMmHdr.HeaderGuid, &mFwuMmGuid);
@@ -99,33 +99,40 @@ UefiMmCreateSysFwuReq (
 
 EFI_STATUS
 MmFlashUpdate (
-  IN UINT32                                         ImageType,
-  IN VOID                                           *FirmwareImage,
-  IN UINT64                                         ImageSize,
-  IN EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,
-  IN UINTN                                          StartPercentage,
-  IN UINTN                                          EndPercentage
+  IN UINT32                                        ImageType,
+  IN VOID                                          *FirmwareImage,
+  IN UINT64                                        ImageSize,
+  IN EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS Progress,
+  IN UINTN                                         StartPercentage,
+  IN UINTN                                         EndPercentage
   )
 {
-  EFI_MM_COMMUNICATE_FWU_RES  *MmFwuStatus;
-  UINTN                       ProgressUpdate = StartPercentage;
-  UINTN                       Size;
-  UINT64                      MmData[5];
-  EFI_STATUS                  Status;
+  EFI_MM_COMMUNICATE_FWU_RES *MmFwuStatus;
+  UINTN                      ProgressUpdate = StartPercentage;
+  UINTN                      Size;
+  UINT64                     MmData[5];
+  EFI_STATUS                 Status;
 
   if (FirmwareImage == NULL) {
     DEBUG ((DEBUG_ERROR, "%a:%d Invalid inputs.\n", __FUNCTION__, __LINE__));
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_INFO, "%a:%d Image: %p Size 0x%lx\n",
-          __FUNCTION__, __LINE__, FirmwareImage, ImageSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a:%d Image: %p Size 0x%lx\n",
+    __FUNCTION__,
+    __LINE__,
+    FirmwareImage,
+    ImageSize
+    ));
 
   if (mMmCommunication == NULL) {
-    Status = gBS->LocateProtocol(
+    Status = gBS->LocateProtocol (
                     &gEfiMmCommunicationProtocolGuid,
                     NULL,
-                    (VOID **) &mMmCommunication);
+                    (VOID **)&mMmCommunication
+                    );
 
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "%a: Can't locate gEfiMmCommunicationProtocolGuid.\n", __FUNCTION__));
@@ -135,33 +142,38 @@ MmFlashUpdate (
 
   MmData[0] = ImageType;
   MmData[1] = ImageSize;
-  MmData[2] = (UINT64) FirmwareImage;
+  MmData[2] = (UINT64)FirmwareImage;
   MmData[3] = 1; // MM yield for progress reporting.
 
   while (TRUE) {
-    UefiMmCreateSysFwuReq ((VOID *) &MmData, sizeof (MmData));
+    UefiMmCreateSysFwuReq ((VOID *)&MmData, sizeof (MmData));
 
     Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
     Status = mMmCommunication->Communicate (
                                  mMmCommunication,
-                                 (VOID *) &mEfiMmSysFwuReq,
+                                 (VOID *)&mEfiMmSysFwuReq,
                                  &Size
                                  );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a:%d MM communication error - %r\n",
-              __FUNCTION__, __LINE__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a:%d MM communication error - %r\n",
+        __FUNCTION__,
+        __LINE__,
+        Status
+        ));
       return EFI_DEVICE_ERROR;
     }
 
     /* Return data in the first double word of payload */
-    MmFwuStatus = (EFI_MM_COMMUNICATE_FWU_RES *) mEfiMmSysFwuReq.PayLoad.Data;
+    MmFwuStatus = (EFI_MM_COMMUNICATE_FWU_RES *)mEfiMmSysFwuReq.PayLoad.Data;
     if (MmFwuStatus->Status == FWU_MM_RES_IN_PROGRESS) {
       if (NULL != Progress) {
         Progress (ProgressUpdate);
       }
 
       ProgressUpdate = StartPercentage +
-          (((EndPercentage - StartPercentage) * (MmFwuStatus->Progress)) / 100);
+                       (((EndPercentage - StartPercentage) * (MmFwuStatus->Progress)) / 100);
       continue;
     }
     break;
@@ -176,26 +188,41 @@ MmFlashUpdate (
     break;
 
   case FWU_MM_RES_SECURITY_VIOLATION:
-    DEBUG ((DEBUG_ERROR, "%a:%d Failed to update - Security Violation!\n",
-            __FUNCTION__, __LINE__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a:%d Failed to update - Security Violation!\n",
+      __FUNCTION__,
+      __LINE__
+      ));
     Status = EFI_SECURITY_VIOLATION;
     break;
 
   case FWU_MM_RES_OUT_OF_RESOURCES:
-    DEBUG ((DEBUG_ERROR, "%a:%d Failed to update - Insufficient resources!\n",
-            __FUNCTION__, __LINE__));
+    DEBUG ((
+      DEBUG_ERROR, "%a:%d Failed to update - Insufficient resources!\n",
+      __FUNCTION__,
+      __LINE__
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     break;
 
   case FWU_MM_RES_IO_ERROR:
-    DEBUG ((DEBUG_ERROR, "%a:%d Failed to update - IO Error!\n",
-            __FUNCTION__, __LINE__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a:%d Failed to update - IO Error!\n",
+      __FUNCTION__,
+      __LINE__
+      ));
     Status = EFI_DEVICE_ERROR;
     break;
 
   default:
-    DEBUG ((DEBUG_ERROR, "%a:%d Failed to update - Unknown Error!\n",
-            __FUNCTION__, __LINE__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a:%d Failed to update - Unknown Error!\n",
+      __FUNCTION__,
+      __LINE__
+      ));
     Status = EFI_INVALID_PARAMETER;
     break;
   }
@@ -236,14 +263,14 @@ MmFlashUpdate (
 EFI_STATUS
 EFIAPI
 PerformFlashWriteWithProgress (
-  IN PLATFORM_FIRMWARE_TYPE                         FirmwareType,
-  IN EFI_PHYSICAL_ADDRESS                           FlashAddress,
-  IN FLASH_ADDRESS_TYPE                             FlashAddressType,
-  IN VOID                                           *Buffer,
-  IN UINTN                                          Length,
-  IN EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,        OPTIONAL
-  IN UINTN                                          StartPercentage,
-  IN UINTN                                          EndPercentage
+  IN PLATFORM_FIRMWARE_TYPE                        FirmwareType,
+  IN EFI_PHYSICAL_ADDRESS                          FlashAddress,
+  IN FLASH_ADDRESS_TYPE                            FlashAddressType,
+  IN VOID                                          *Buffer,
+  IN UINTN                                         Length,
+  IN EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS Progress, OPTIONAL
+  IN UINTN                                         StartPercentage,
+  IN UINTN                                         EndPercentage
   )
 {
   UINT32 ImageType;
@@ -259,8 +286,12 @@ PerformFlashWriteWithProgress (
    * before writing.
    */
   if (Length <= FIRMWARE_DESCRIPTOR_SIZE) {
-    DEBUG ((DEBUG_ERROR, "%a %d The length of firmware image is invalid.\n",
-            __FUNCTION__, __LINE__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a %d The length of firmware image is invalid.\n",
+      __FUNCTION__,
+      __LINE__
+      ));
     return EFI_INVALID_PARAMETER;
   }
   Length -= FIRMWARE_DESCRIPTOR_SIZE;
@@ -298,11 +329,11 @@ PerformFlashWriteWithProgress (
 EFI_STATUS
 EFIAPI
 PerformFlashWrite (
-  IN PLATFORM_FIRMWARE_TYPE       FirmwareType,
-  IN EFI_PHYSICAL_ADDRESS         FlashAddress,
-  IN FLASH_ADDRESS_TYPE           FlashAddressType,
-  IN VOID                         *Buffer,
-  IN UINTN                        Length
+  IN PLATFORM_FIRMWARE_TYPE FirmwareType,
+  IN EFI_PHYSICAL_ADDRESS   FlashAddress,
+  IN FLASH_ADDRESS_TYPE     FlashAddressType,
+  IN VOID                   *Buffer,
+  IN UINTN                  Length
   )
 {
   return PerformFlashWriteWithProgress (

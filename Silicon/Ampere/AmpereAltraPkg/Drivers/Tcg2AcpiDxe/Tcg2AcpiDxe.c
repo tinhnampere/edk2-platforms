@@ -9,8 +9,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "Tcg2AcpiDxe.h"
 
-PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS  mPlatformTpm2InterfaceParams;
-PLATFORM_TPM2_CONFIG_DATA               mPlatformTpm2ConfigData;
+PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS mPlatformTpm2InterfaceParams;
+PLATFORM_TPM2_CONFIG_DATA              mPlatformTpm2ConfigData;
 
 #pragma pack(1)
 
@@ -19,11 +19,11 @@ PLATFORM_TPM2_CONFIG_DATA               mPlatformTpm2ConfigData;
 // Refer to Table 9: Start Method Specific Parameters for ARM SMC
 //
 typedef struct {
-  UINT32   Interrupt;
-  UINT8    Flags;
-  UINT8    OperationFlags;
-  UINT8    Reserved[2];
-  UINT32   SmcFunctionId;
+  UINT32 Interrupt;
+  UINT8  Flags;
+  UINT8  OperationFlags;
+  UINT8  Reserved[2];
+  UINT32 SmcFunctionId;
 } TPM2_ACPI_START_METHOD_SPECIFIC_PARAMETERS_ARM_SMC;
 
 typedef struct {
@@ -31,17 +31,17 @@ typedef struct {
   // Flags field is replaced in version 4 and above
   //    BIT0~15:  PlatformClass      This field is only valid for version 4 and above
   //    BIT16~31: Reserved
-  UINT32                      Flags;
-  UINT64                      AddressOfControlArea;
-  UINT32                      StartMethod;
-  TPM2_ACPI_START_METHOD_SPECIFIC_PARAMETERS_ARM_SMC   PlatformSpecificParameters;
-  UINT32                      Laml;                          // Optional
-  UINT64                      Lasa;                          // Optional
+  UINT32                                             Flags;
+  UINT64                                             AddressOfControlArea;
+  UINT32                                             StartMethod;
+  TPM2_ACPI_START_METHOD_SPECIFIC_PARAMETERS_ARM_SMC PlatformSpecificParameters;
+  UINT32                                             Laml;                          // Optional
+  UINT64                                             Lasa;                          // Optional
 } TPM2_ACPI_TABLE_ARM_SMC;
 
 #pragma pack()
 
-TPM2_ACPI_TABLE_ARM_SMC  mTpm2AcpiTemplate = {
+TPM2_ACPI_TABLE_ARM_SMC mTpm2AcpiTemplate = {
   {
     EFI_ACPI_6_3_TRUSTED_COMPUTING_PLATFORM_2_TABLE_SIGNATURE,
     sizeof (mTpm2AcpiTemplate),
@@ -53,22 +53,22 @@ TPM2_ACPI_TABLE_ARM_SMC  mTpm2AcpiTemplate = {
   },
   1, // BIT0~15:  PlatformClass
      // BIT16~31: Reserved
-  0, // Control Area
+  0,                                    // Control Area
   EFI_TPM2_ACPI_TABLE_START_METHOD_TIS, // StartMethod
 };
 
 EFI_STATUS
 UpdateHID (
-  EFI_ACPI_DESCRIPTION_HEADER    *Table
+  EFI_ACPI_DESCRIPTION_HEADER *Table
   )
 {
-  EFI_STATUS  Status;
-  UINT8       *DataPtr;
-  CHAR8       Hid[TPM_HID_ACPI_SIZE];
-  UINT32      ManufacturerID;
-  UINT32      FirmwareVersion1;
-  UINT32      FirmwareVersion2;
-  BOOLEAN     PnpHID;
+  EFI_STATUS Status;
+  UINT8      *DataPtr;
+  CHAR8      Hid[TPM_HID_ACPI_SIZE];
+  UINT32     ManufacturerID;
+  UINT32     FirmwareVersion1;
+  UINT32     FirmwareVersion2;
+  BOOLEAN    PnpHID;
 
   PnpHID = TRUE;
 
@@ -116,14 +116,16 @@ UpdateHID (
     //
     if (PnpHID) {
       AsciiSPrint (
-        Hid + 3, TPM_HID_PNP_SIZE - 3,
+        Hid + 3,
+        TPM_HID_PNP_SIZE - 3,
         "%02d%02d",
         ((FirmwareVersion1 & 0xFFFF0000) >> 16),
         (FirmwareVersion1 & 0x0000FFFF)
         );
     } else {
       AsciiSPrint (
-        Hid + 4, TPM_HID_ACPI_SIZE - 4,
+        Hid + 4,
+        TPM_HID_ACPI_SIZE - 4,
         "%02d%02d",
         ((FirmwareVersion1 & 0xFFFF0000) >> 16),
         (FirmwareVersion1 & 0x0000FFFF)
@@ -141,7 +143,8 @@ UpdateHID (
   //
   for (DataPtr  = (UINT8 *)(Table + 1);
        DataPtr <= (UINT8 *)((UINT8 *)Table + Table->Length - TPM_HID_PNP_SIZE);
-       DataPtr += 1) {
+       DataPtr += 1)
+  {
     if (AsciiStrCmp ((CHAR8 *)DataPtr,  TPM_HID_TAG) == 0) {
       if (PnpHID) {
         CopyMem (DataPtr, Hid, TPM_HID_PNP_SIZE);
@@ -164,17 +167,17 @@ UpdateHID (
 
 EFI_STATUS
 UpdateAmlObject (
-  EFI_ACPI_SDT_PROTOCOL  *AcpiTableSdtProtocol,
-  EFI_ACPI_HANDLE        TableHandle,
-  VOID                   *AslObjectPath,
-  UINT32                 Data
+  EFI_ACPI_SDT_PROTOCOL *AcpiTableSdtProtocol,
+  EFI_ACPI_HANDLE       TableHandle,
+  VOID                  *AslObjectPath,
+  UINT32                Data
   )
 {
-  EFI_STATUS             Status;
-  EFI_ACPI_HANDLE        ChildHandle;
-  EFI_ACPI_DATA_TYPE     DataType;
-  CHAR8                  *Buffer;
-  UINTN                  DataSize;
+  EFI_STATUS         Status;
+  EFI_ACPI_HANDLE    ChildHandle;
+  EFI_ACPI_DATA_TYPE DataType;
+  CHAR8              *Buffer;
+  UINTN              DataSize;
 
   Status = AcpiTableSdtProtocol->FindPath (
                                    TableHandle,
@@ -216,12 +219,15 @@ UpdateAmlObject (
       case AML_ONE_OP:
         Buffer[5] = (UINT8)Data;
         break;
+
       case AML_BYTE_PREFIX:
         Buffer[6] = (UINT8)Data;
         break;
+
       case AML_DWORD_PREFIX:
         CopyMem ((VOID *)&Buffer[6], (VOID *)&Data, sizeof (UINT32));
         break;
+
       default:
         return EFI_UNSUPPORTED;
         break;
@@ -237,15 +243,15 @@ UpdateAcpiTpm2Device (
   VOID
   )
 {
-  CHAR8                       ObjectPath[TPM_ACPI_OBJECT_PATH_LENGTH_MAX];
-  EFI_STATUS                  Status;
-  EFI_ACPI_SDT_PROTOCOL       *AcpiTableSdtProtocol;
-  EFI_ACPI_SDT_HEADER         *Table;
-  UINTN                       TableIndex;
-  EFI_ACPI_TABLE_VERSION      TableVersion;
-  UINTN                       TableKey;
-  EFI_ACPI_HANDLE             TableHandle;
-  BOOLEAN                     Tpm2DeviceStatus;
+  CHAR8                  ObjectPath[TPM_ACPI_OBJECT_PATH_LENGTH_MAX];
+  EFI_STATUS             Status;
+  EFI_ACPI_SDT_PROTOCOL  *AcpiTableSdtProtocol;
+  EFI_ACPI_SDT_HEADER    *Table;
+  UINTN                  TableIndex;
+  EFI_ACPI_TABLE_VERSION TableVersion;
+  UINTN                  TableKey;
+  EFI_ACPI_HANDLE        TableHandle;
+  BOOLEAN                Tpm2DeviceStatus;
 
   //
   // By default, the TPM status is set to TRUE in the ACPI TPM device.
@@ -256,7 +262,7 @@ UpdateAcpiTpm2Device (
   Status = gBS->LocateProtocol (
                   &gEfiAcpiSdtProtocolGuid,
                   NULL,
-                  (VOID**)&AcpiTableSdtProtocol
+                  (VOID **)&AcpiTableSdtProtocol
                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to locate ACPI table protocol\n"));
@@ -298,7 +304,7 @@ UpdateAcpiTpm2Device (
   // Otherwise, the PCR record would be different after TPM FW update
   // or the PCD configuration change.
   //
-  TpmMeasureAndLogData(
+  TpmMeasureAndLogData (
     0,
     EV_POST_CODE,
     EV_POSTCODE_INFO_ACPI_DATA,
@@ -379,9 +385,9 @@ PublishTpm2 (
   VOID
   )
 {
-  EFI_STATUS                     Status;
-  EFI_ACPI_TABLE_PROTOCOL        *AcpiTable;
-  UINTN                          TableKey;
+  EFI_STATUS              Status;
+  EFI_ACPI_TABLE_PROTOCOL *AcpiTable;
+  UINTN                   TableKey;
 
   //
   // Measure to PCR[0] with event EV_POST_CODE ACPI DATA.
@@ -414,7 +420,8 @@ PublishTpm2 (
   mTpm2AcpiTemplate.Laml = PcdGet32 (PcdTpm2AcpiTableLaml);
   mTpm2AcpiTemplate.Lasa = PcdGet64 (PcdTpm2AcpiTableLasa);
   if ((mTpm2AcpiTemplate.Header.Revision < EFI_TPM2_ACPI_TABLE_REVISION_4) ||
-      (mTpm2AcpiTemplate.Laml == 0) || (mTpm2AcpiTemplate.Lasa == 0)) {
+      (mTpm2AcpiTemplate.Laml == 0) || (mTpm2AcpiTemplate.Lasa == 0))
+  {
     //
     // If version is smaller than 4 or Laml/Lasa is not valid, rollback to original Length.
     //
@@ -437,7 +444,7 @@ PublishTpm2 (
   //
   // Construct ACPI table
   //
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **) &AcpiTable);
+  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **)&AcpiTable);
   ASSERT_EFI_ERROR (Status);
 
   Status = AcpiTable->InstallAcpiTable (
@@ -464,15 +471,15 @@ PublishTpm2 (
 EFI_STATUS
 EFIAPI
 Tcg2AcpiEntryPoint (
-  IN EFI_HANDLE                  ImageHandle,
-  IN EFI_SYSTEM_TABLE            *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS                 Status;
-  VOID                       *GuidHob;
-  PlatformInfoHob_V2         *PlatformHob;
+  EFI_STATUS         Status;
+  VOID               *GuidHob;
+  PlatformInfoHob_V2 *PlatformHob;
 
-  if (!CompareGuid (PcdGetPtr(PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm20DtpmGuid)){
+  if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm20DtpmGuid)) {
     DEBUG ((DEBUG_ERROR, "No TPM2 DTPM instance required!\n"));
     return EFI_UNSUPPORTED;
   }

@@ -25,17 +25,19 @@
 #define SUBNUMA_CPM_REGION_SIZE        4
 #define NUM_OF_CPM_PER_MESH_ROW        8
 
-STATIC PlatformInfoHob_V2*
-GetPlatformHob (VOID)
+STATIC PlatformInfoHob_V2 *
+GetPlatformHob (
+  VOID
+  )
 {
-  VOID                *Hob;
+  VOID *Hob;
 
   Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return NULL;
   }
 
-  return (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+  return (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
 }
 
 /**
@@ -46,7 +48,9 @@ GetPlatformHob (VOID)
 **/
 UINT8
 EFIAPI
-CpuGetSubNumaMode (VOID)
+CpuGetSubNumaMode (
+  VOID
+  )
 {
   PlatformInfoHob_V2 *PlatformHob;
 
@@ -66,15 +70,19 @@ CpuGetSubNumaMode (VOID)
 **/
 UINT8
 EFIAPI
-CpuGetNumOfSubNuma (VOID)
+CpuGetNumOfSubNuma (
+  VOID
+  )
 {
-  UINT8 SubNumaMode = CpuGetSubNumaMode();
+  UINT8 SubNumaMode = CpuGetSubNumaMode ();
 
   switch (SubNumaMode) {
   case SUBNUMA_MODE_MONOLITHIC:
     return MONOLITIC_NUM_OF_REGION;
+
   case SUBNUMA_MODE_HEMISPHERE:
     return HEMISPHERE_NUM_OF_REGION;
+
   case SUBNUMA_MODE_QUADRANT:
     return QUADRANT_NUM_OF_REGION;
   }
@@ -97,11 +105,11 @@ CpuGetSubNumNode (
   UINT32 Cpm
   )
 {
-  UINT8               MaxNumOfCPM = GetMaximumNumberCPMs();
-  UINT8               SubNumaMode = CpuGetSubNumaMode();
-  INTN                Ret = 0;
-  UINT8               AsymMesh = 0;
-  UINT8               AsymMeshRow = 0;
+  UINT8 MaxNumOfCPM = GetMaximumNumberCPMs ();
+  UINT8 SubNumaMode = CpuGetSubNumaMode ();
+  INTN  Ret = 0;
+  UINT8 AsymMesh = 0;
+  UINT8 AsymMeshRow = 0;
 
   switch (SubNumaMode) {
   case SUBNUMA_MODE_MONOLITHIC:
@@ -139,12 +147,15 @@ CpuGetSubNumNode (
       case 0:
         Ret = 0;
         break;
+
       case 1:
         Ret = 1;
         break;
+
       case 2:
         Ret = 3;
         break;
+
       case 3:
         Ret = 2;
         break;
@@ -182,11 +193,13 @@ CpuGetSubNumNode (
 **/
 UINT64
 EFIAPI
-AArch64ReadCLIDRReg (VOID)
+AArch64ReadCLIDRReg (
+  VOID
+  )
 {
   UINT64 Value;
 
-  asm volatile("mrs %x0, clidr_el1 " : "=r" (Value));
+  asm volatile ("mrs %x0, clidr_el1 " : "=r" (Value));
 
   return Value;
 }
@@ -206,8 +219,8 @@ AArch64ReadCCSIDRReg (
 {
   UINT64 Value;
 
-  asm volatile("msr csselr_el1, %x0 " : : "rZ" (Level));
-  asm volatile("mrs %x0, ccsidr_el1 " : "=r" (Value));
+  asm volatile ("msr csselr_el1, %x0 " : : "rZ" (Level));
+  asm volatile ("mrs %x0, ccsidr_el1 " : "=r" (Value));
 
   return Value;
 }
@@ -227,7 +240,7 @@ CpuGetAssociativity (
 {
   UINT64 CacheCCSIDR;
   UINT64 CacheCLIDR = AArch64ReadCLIDRReg ();
-  UINT32  Value = 0x2; /* Unknown Set-Associativity */
+  UINT32 Value = 0x2; /* Unknown Set-Associativity */
 
   if (!CLIDR_CTYPE (CacheCLIDR, Level)) {
     return Value;
@@ -239,42 +252,52 @@ CpuGetAssociativity (
     /* Direct mapped */
     Value = 0x3;
     break;
+
   case 1:
     /* 2-way Set-Associativity */
     Value = 0x4;
     break;
+
   case 3:
     /* 4-way Set-Associativity */
     Value = 0x5;
     break;
+
   case 7:
     /* 8-way Set-Associativity */
     Value = 0x7;
     break;
+
   case 15:
     /* 16-way Set-Associativity */
     Value = 0x8;
     break;
+
   case 11:
     /* 12-way Set-Associativity */
     Value = 0x9;
     break;
+
   case 23:
     /* 24-way Set-Associativity */
     Value = 0xA;
     break;
+
   case 31:
     /* 32-way Set-Associativity */
     Value = 0xB;
     break;
+
   case 47:
     /* 48-way Set-Associativity */
     Value = 0xC;
     break;
+
   case 63:
     /* 64-way Set-Associativity */
     Value = 0xD;
     break;
+
   case 19:
     /* 20-way Set-Associativity */
     Value = 0xE;
@@ -326,13 +349,15 @@ CpuGetCacheSize (
 **/
 UINT32
 EFIAPI
-GetNumberSupportedSockets (VOID)
+GetNumberSupportedSockets (
+  VOID
+  )
 {
-  PlatformInfoHob_V2   *PlatformHob;
+  PlatformInfoHob_V2 *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
-      return 0;
+    return 0;
   }
 
   return (sizeof (PlatformHob->ClusterEn) / sizeof (PlatformClusterEn));
@@ -346,15 +371,17 @@ GetNumberSupportedSockets (VOID)
 **/
 UINT32
 EFIAPI
-GetNumberActiveSockets (VOID)
+GetNumberActiveSockets (
+  VOID
+  )
 {
-  UINTN                NumberActiveSockets, Count, Index, Index1;
-  PlatformClusterEn    *Socket;
-  PlatformInfoHob_V2   *PlatformHob;
+  UINTN              NumberActiveSockets, Count, Index, Index1;
+  PlatformClusterEn  *Socket;
+  PlatformInfoHob_V2 *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
-      return 0;
+    return 0;
   }
 
   NumberActiveSockets = 0;
@@ -386,14 +413,14 @@ GetNumberActiveCPMsPerSocket (
   UINT32 SocketId
   )
 {
-  UINTN                NumberCPMs, Count, Index;
-  UINT32               Val32;
-  PlatformClusterEn    *Socket;
-  PlatformInfoHob_V2   *PlatformHob;
+  UINTN              NumberCPMs, Count, Index;
+  UINT32             Val32;
+  PlatformClusterEn  *Socket;
+  PlatformInfoHob_V2 *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
-      return 0;
+    return 0;
   }
 
   if (SocketId >= GetNumberSupportedSockets ()) {
@@ -430,10 +457,10 @@ GetConfiguredNumberCPMs (
   UINTN SocketId
   )
 {
-  EFI_STATUS  Status;
-  UINT32      Value;
-  UINT32      Param, ParamStart, ParamEnd;
-  INTN        Count;
+  EFI_STATUS Status;
+  UINT32     Value;
+  UINT32     Param, ParamStart, ParamEnd;
+  INTN       Count;
 
   Count = 0;
   ParamStart = NV_SI_S0_PCP_ACTIVECPM_0_31 + SocketId * NV_PARAM_ENTRYSIZE * (PLATFORM_CPU_MAX_CPM / 32);
@@ -474,10 +501,10 @@ SetConfiguredNumberCPMs (
   UINTN Number
   )
 {
-  EFI_STATUS  Status = EFI_SUCCESS;
-  UINT32      Value;
-  UINT32      Param, ParamStart, ParamEnd;
-  BOOLEAN     IsClear = FALSE;
+  EFI_STATUS Status = EFI_SUCCESS;
+  UINT32     Value;
+  UINT32     Param, ParamStart, ParamEnd;
+  BOOLEAN    IsClear = FALSE;
 
   if (Number == 0) {
     IsClear = TRUE;
@@ -522,14 +549,16 @@ SetConfiguredNumberCPMs (
 **/
 UINT32
 EFIAPI
-GetMaximumNumberOfCores (VOID)
+GetMaximumNumberOfCores (
+  VOID
+  )
 {
 
-  PlatformInfoHob_V2   *PlatformHob;
+  PlatformInfoHob_V2 *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
-      return 0;
+    return 0;
   }
 
   return PlatformHob->MaxNumOfCore[0];
@@ -544,9 +573,11 @@ GetMaximumNumberOfCores (VOID)
 **/
 UINT32
 EFIAPI
-GetMaximumNumberCPMs (VOID)
+GetMaximumNumberCPMs (
+  VOID
+  )
 {
-  return GetMaximumNumberOfCores() / PLATFORM_CPU_NUM_CORES_PER_CPM;
+  return GetMaximumNumberOfCores () / PLATFORM_CPU_NUM_CORES_PER_CPM;
 }
 
 /**
@@ -573,10 +604,12 @@ GetNumberActiveCoresPerSocket (
 **/
 UINT32
 EFIAPI
-GetNumberActiveCores (VOID)
+GetNumberActiveCores (
+  VOID
+  )
 {
-  UINTN   NumberActiveCores;
-  UINTN   Index;
+  UINTN NumberActiveCores;
+  UINTN Index;
 
   NumberActiveCores = 0;
 
@@ -601,17 +634,17 @@ IsCpuEnabled (
   UINTN CpuId
   )
 {
-  PlatformClusterEn    *Socket;
-  PlatformInfoHob_V2   *PlatformHob;
-  UINT32               SocketId;
-  UINT32               ClusterId;
+  PlatformClusterEn  *Socket;
+  PlatformInfoHob_V2 *PlatformHob;
+  UINT32             SocketId;
+  UINT32             ClusterId;
 
   SocketId = SOCKET_ID (CpuId);
   ClusterId = CLUSTER_ID (CpuId);
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
-      return FALSE;
+    return FALSE;
   }
 
   if (SocketId >= GetNumberSupportedSockets ()) {
@@ -635,7 +668,9 @@ IsCpuEnabled (
 **/
 BOOLEAN
 EFIAPI
-PlatSlaveSocketPresent (VOID)
+PlatSlaveSocketPresent (
+  VOID
+  )
 {
   UINT32 Value;
 

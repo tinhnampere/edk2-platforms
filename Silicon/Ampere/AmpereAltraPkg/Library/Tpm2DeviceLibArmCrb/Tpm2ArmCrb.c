@@ -29,14 +29,14 @@ typedef enum {
   TPM2_CRB_INTERFACE
 } PLATFORM_TPM2_INTERFACE_TYPE;
 
-PLATFORM_TPM2_CONFIG_DATA               PlatformTpm2Config;
-PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS  PlatformTpm2InterfaceParams;
+PLATFORM_TPM2_CONFIG_DATA              PlatformTpm2Config;
+PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS PlatformTpm2InterfaceParams;
 
 //
 // Execution of the command may take from several seconds to minutes for certain
 // commands, such as key generation.
 //
-#define CRB_TIMEOUT_MAX             (90000 * 1000)  // 90s
+#define CRB_TIMEOUT_MAX             (90000 * 1000) // 90s
 
 /**
   Check whether the value of a TPM chip register satisfies the input BIT setting.
@@ -51,16 +51,16 @@ PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS  PlatformTpm2InterfaceParams;
 **/
 EFI_STATUS
 Tpm2ArmCrbWaitRegisterBits (
-  IN      UINT32                    *Register,
-  IN      UINT32                    BitSet,
-  IN      UINT32                    BitClear,
-  IN      UINT32                    TimeOut
+  IN UINT32 *Register,
+  IN UINT32 BitSet,
+  IN UINT32 BitClear,
+  IN UINT32 TimeOut
   )
 {
-  UINT32                            RegRead;
-  UINT32                            WaitTime;
+  UINT32 RegRead;
+  UINT32 WaitTime;
 
-  for (WaitTime = 0; WaitTime < TimeOut; WaitTime += 30){
+  for (WaitTime = 0; WaitTime < TimeOut; WaitTime += 30) {
     RegRead = MmioRead32 ((UINTN)Register);
     if ((RegRead & BitSet) == BitSet && (RegRead & BitClear) == 0) {
       return EFI_SUCCESS;
@@ -76,7 +76,7 @@ Tpm2ArmCrbInvokeTpmService (
   VOID
   )
 {
-  ARM_SMC_ARGS  ArmSmcArgs;
+  ARM_SMC_ARGS ArmSmcArgs;
 
   ZeroMem (&ArmSmcArgs, sizeof (ARM_SMC_ARGS));
   ArmSmcArgs.Arg0 = PlatformTpm2InterfaceParams.SmcFunctionId;
@@ -111,23 +111,23 @@ Tpm2ArmCrbInvokeTpmService (
 EFI_STATUS
 EFIAPI
 Tpm2ArmCrbSubmitCommand (
-  IN UINT32            InputParameterBlockSize,
-  IN UINT8             *InputParameterBlock,
-  IN OUT UINT32        *OutputParameterBlockSize,
-  IN UINT8             *OutputParameterBlock
+  IN     UINT32 InputParameterBlockSize,
+  IN     UINT8  *InputParameterBlock,
+  IN OUT UINT32 *OutputParameterBlockSize,
+  IN     UINT8  *OutputParameterBlock
   )
 {
-  EFI_STATUS                        Status;
-  PLATFORM_TPM2_CONTROL_AREA_PTR    Tpm2ControlArea;
-  UINTN                             CommandBuffer;
-  UINTN                             ResponseBuffer;
-  UINT32                            Index;
-  UINT32                            TpmOutSize;
-  UINT16                            Data16;
-  UINT32                            Data32;
+  EFI_STATUS                     Status;
+  PLATFORM_TPM2_CONTROL_AREA_PTR Tpm2ControlArea;
+  UINTN                          CommandBuffer;
+  UINTN                          ResponseBuffer;
+  UINT32                         Index;
+  UINT32                         TpmOutSize;
+  UINT16                         Data16;
+  UINT32                         Data32;
 
   DEBUG_CODE (
-    UINTN  DebugSize;
+    UINTN DebugSize;
 
     DEBUG ((DEBUG_VERBOSE, "ArmCrbTpmCommand Send - "));
     if (InputParameterBlockSize > 0x100) {
@@ -145,7 +145,7 @@ Tpm2ArmCrbSubmitCommand (
       }
     }
     DEBUG ((DEBUG_VERBOSE, "\n"));
-  );
+    );
   TpmOutSize         = 0;
 
   Tpm2ControlArea =
@@ -155,13 +155,13 @@ Tpm2ArmCrbSubmitCommand (
   // Write CRB Command Buffer
   //
   CommandBuffer = (UINTN)((UINTN)(Tpm2ControlArea->CrbControlCommandAddressHigh) << 32
-                                | Tpm2ControlArea->CrbControlCommandAddressLow);
+                          | Tpm2ControlArea->CrbControlCommandAddressLow);
   MmioWriteBuffer8 (CommandBuffer, InputParameterBlockSize, InputParameterBlock);
 
   //
   // Set Start bit
   //
-  MmioWrite32((UINTN)&Tpm2ControlArea->CrbControlStart, CRB_CONTROL_START);
+  MmioWrite32 ((UINTN)&Tpm2ControlArea->CrbControlStart, CRB_CONTROL_START);
 
   //
   // The UEFI needs to make a SMC Service Call to invoke TPM Service Handler
@@ -198,7 +198,7 @@ Tpm2ArmCrbSubmitCommand (
       DEBUG ((DEBUG_VERBOSE, "%02x ", OutputParameterBlock[Index]));
     }
     DEBUG ((DEBUG_VERBOSE, "\n"));
-  );
+    );
 
   //
   // Check the response data header (tag, parasize and returncode)
@@ -233,7 +233,7 @@ Tpm2ArmCrbSubmitCommand (
       DEBUG ((DEBUG_VERBOSE, "%02x ", OutputParameterBlock[Index]));
     }
     DEBUG ((DEBUG_VERBOSE, "\n"));
-  );
+    );
 
 GoIdle_Exit:
   //
@@ -267,8 +267,8 @@ Tpm2ArmCrbRequestUseTpm (
     (PLATFORM_TPM2_CONTROL_AREA_PTR)(UINTN)(PlatformTpm2InterfaceParams.AddressOfControlArea);
 
   if (ControlAreaPtr->CrbControlCommandAddressLow == 0
-    || ControlAreaPtr->CrbControlCommandAddressLow == 0xFFFFFFFF
-    || (ControlAreaPtr->CrbControlStatus & CRB_CONTROL_AREA_STATUS_TPM_STATUS) == 1)
+      || ControlAreaPtr->CrbControlCommandAddressLow == 0xFFFFFFFF
+      || (ControlAreaPtr->CrbControlStatus & CRB_CONTROL_AREA_STATUS_TPM_STATUS) == 1)
   {
     return EFI_DEVICE_ERROR;
   }
@@ -282,8 +282,8 @@ Tpm2ArmCrbInitialize (
   VOID
   )
 {
-  VOID                       *GuidHob;
-  PlatformInfoHob_V2         *PlatformHob;
+  VOID               *GuidHob;
+  PlatformInfoHob_V2 *PlatformHob;
 
   GuidHob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (GuidHob == NULL) {

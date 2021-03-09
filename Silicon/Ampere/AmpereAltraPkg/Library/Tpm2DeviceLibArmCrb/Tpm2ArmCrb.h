@@ -28,47 +28,47 @@
 // Register set map as specified in Section 3
 //
 typedef struct {
-  UINT32                            CrbControlRequest;         // 00h
+  UINT32 CrbControlRequest;        // 00h
   ///
   /// Register used by the TPM to provide status of the CRB interface.
   ///
-  UINT32                            CrbControlStatus;          // 04h
+  UINT32 CrbControlStatus;         // 04h
   ///
   /// Register used by software to cancel command processing.
   ///
-  UINT32                            CrbControlCancel;          // 08h
+  UINT32 CrbControlCancel;         // 08h
   ///
   /// Register used to indicate presence of command or response data in the CRB buffer.
   ///
-  UINT32                            CrbControlStart;           // 0Ch
+  UINT32 CrbControlStart;          // 0Ch
   ///
   /// Register used to configure and respond to interrupts.
   ///
-  UINT32                            CrbInterruptEnable;        // 10h
-  UINT32                            CrbInterruptStatus;        // 14h
+  UINT32 CrbInterruptEnable;       // 10h
+  UINT32 CrbInterruptStatus;       // 14h
   ///
   /// Size of the Command buffer.
   ///
-  UINT32                            CrbControlCommandSize;     // 18h
+  UINT32 CrbControlCommandSize;    // 18h
   ///
   /// Command buffer start address
   ///
-  UINT32                            CrbControlCommandAddressLow;   // 1Ch
-  UINT32                            CrbControlCommandAddressHigh;  // 20h
+  UINT32 CrbControlCommandAddressLow;  // 1Ch
+  UINT32 CrbControlCommandAddressHigh; // 20h
   ///
   /// Size of the Response buffer
   ///
-  UINT32                            CrbControlResponseSize;    // 24h
+  UINT32 CrbControlResponseSize;   // 24h
   ///
   /// Address of the start of the Response buffer
   ///
-  UINT64                            CrbControlResponseAddrss;  // 28h
+  UINT64 CrbControlResponseAddrss; // 28h
 } PLATFORM_TPM2_CONTROL_AREA;
 
 //
 // Define pointer types used to access TPM2 Control Area
 //
-typedef PLATFORM_TPM2_CONTROL_AREA  *PLATFORM_TPM2_CONTROL_AREA_PTR;
+typedef PLATFORM_TPM2_CONTROL_AREA *PLATFORM_TPM2_CONTROL_AREA_PTR;
 
 //
 // Define bits of CRB Control Area Request Register
@@ -151,10 +151,10 @@ typedef PLATFORM_TPM2_CONTROL_AREA  *PLATFORM_TPM2_CONTROL_AREA_PTR;
 EFI_STATUS
 EFIAPI
 Tpm2ArmCrbSubmitCommand (
-  IN UINT32            InputParameterBlockSize,
-  IN UINT8             *InputParameterBlock,
-  IN OUT UINT32        *OutputParameterBlockSize,
-  IN UINT8             *OutputParameterBlock
+  IN     UINT32 InputParameterBlockSize,
+  IN     UINT8  *InputParameterBlock,
+  IN OUT UINT32 *OutputParameterBlockSize,
+  IN     UINT8  *OutputParameterBlock
   );
 
 /**

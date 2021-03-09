@@ -35,14 +35,14 @@
 // This data array is ready to be used as input of HiiAddPackages() to
 // create a packagelist (which contains Form packages, String packages, etc).
 //
-extern UINT8  VfrBin[];
+extern UINT8 VfrBin[];
 
 //
 // This is the generated String package data for all .UNI files.
 // This data array is ready to be used as input of HiiAddPackages() to
 // create a packagelist (which contains Form packages, String packages, etc).
 //
-extern UINT8  PcieDxeStrings[];
+extern UINT8 PcieDxeStrings[];
 
 #define MAX_EDITABLE_ELEMENTS 3
 #define PCIE_RC0_STATUS_OFFSET  \
@@ -57,48 +57,48 @@ extern UINT8  PcieDxeStrings[];
 #define PCIE_SCREEN_PRIVATE_DATA_SIGNATURE SIGNATURE_32 ('P', 'C', 'I', 'E')
 
 typedef struct {
-  UINTN                                 Signature;
+  UINTN Signature;
 
-  EFI_HANDLE                            DriverHandle;
-  EFI_HII_HANDLE                        HiiHandle;
-  PCIE_VARSTORE_DATA                    VarStoreConfig;
+  EFI_HANDLE         DriverHandle;
+  EFI_HII_HANDLE     HiiHandle;
+  PCIE_VARSTORE_DATA VarStoreConfig;
 
   //
   // Consumed protocol
   //
-  EFI_HII_DATABASE_PROTOCOL             *HiiDatabase;
-  EFI_HII_STRING_PROTOCOL               *HiiString;
-  EFI_HII_CONFIG_ROUTING_PROTOCOL       *HiiConfigRouting;
-  EFI_CONFIG_KEYWORD_HANDLER_PROTOCOL   *HiiKeywordHandler;
+  EFI_HII_DATABASE_PROTOCOL           *HiiDatabase;
+  EFI_HII_STRING_PROTOCOL             *HiiString;
+  EFI_HII_CONFIG_ROUTING_PROTOCOL     *HiiConfigRouting;
+  EFI_CONFIG_KEYWORD_HANDLER_PROTOCOL *HiiKeywordHandler;
 
   //
   // Produced protocol
   //
-  EFI_HII_CONFIG_ACCESS_PROTOCOL        ConfigAccess;
+  EFI_HII_CONFIG_ACCESS_PROTOCOL ConfigAccess;
 } PCIE_SCREEN_PRIVATE_DATA;
 
 typedef union {
-    UINT16    VAR_ID;
-    struct _PCIE_VAR_ID {
-        UINT16    PciDevIndex     :12;
-        UINT16    DataType        :3;
-        UINT16    Always1         :1;
-    } IdField;
+  UINT16 VAR_ID;
+  struct _PCIE_VAR_ID {
+    UINT16 PciDevIndex     : 12;
+    UINT16 DataType        : 3;
+    UINT16 Always1         : 1;
+  } IdField;
 } PCIE_VAR_ID;
 
 typedef struct {
-    UINTN                       PciDevIdx;
-    EFI_STRING_ID               GotoStringId;
-    EFI_STRING_ID               GotoHelpStringId;
-    UINT16                      GotoKey;
-    BOOLEAN                     ShowItem;
+  UINTN         PciDevIdx;
+  EFI_STRING_ID GotoStringId;
+  EFI_STRING_ID GotoHelpStringId;
+  UINT16        GotoKey;
+  BOOLEAN       ShowItem;
 } PCIE_SETUP_GOTO_DATA;
 
 typedef struct {
-    VOID                    *StartOpCodeHandle;
-    VOID                    *EndOpCodeHandle;
-    EFI_IFR_GUID_LABEL      *StartLabel;
-    EFI_IFR_GUID_LABEL      *EndLabel;
+  VOID               *StartOpCodeHandle;
+  VOID               *EndOpCodeHandle;
+  EFI_IFR_GUID_LABEL *StartLabel;
+  EFI_IFR_GUID_LABEL *EndLabel;
 
 } PCIE_IFR_INFO;
 
@@ -111,27 +111,27 @@ typedef struct {
 /// HII specific Vendor Device Path definition.
 ///
 typedef struct {
-  VENDOR_DEVICE_PATH             VendorDevicePath;
-  EFI_DEVICE_PATH_PROTOCOL       End;
+  VENDOR_DEVICE_PATH       VendorDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL End;
 } HII_VENDOR_DEVICE_PATH;
 
 #pragma pack()
 
 UINT8
 PcieRCDevMapLoDefaultSetting (
-  IN UINTN RCIndex,
+  IN UINTN                    RCIndex,
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   );
 
 UINT8
 PcieRCDevMapHiDefaultSetting (
-  IN UINTN RCIndex,
+  IN UINTN                    RCIndex,
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   );
 
 BOOLEAN
 PcieRCActiveDefaultSetting (
-  IN UINTN RCIndex,
+  IN UINTN                    RCIndex,
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   );
 

@@ -19,7 +19,7 @@
 
 #include "Tpm2ArmCrb.h"
 
-TPM2_DEVICE_INTERFACE  mTpm2InternalTpm2Device = {
+TPM2_DEVICE_INTERFACE mTpm2InternalTpm2Device = {
   TPM_DEVICE_INTERFACE_TPM20_DTPM,
   Tpm2ArmCrbSubmitCommand,
   Tpm2ArmCrbRequestUseTpm,
@@ -37,12 +37,15 @@ Tpm2InstanceLibArmCrbConstructor (
   VOID
   )
 {
-  EFI_STATUS               Status;
+  EFI_STATUS Status;
 
   Status = Tpm2ArmCrbInitialize ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a:%d Failed to initialize TPM2 CRB interface.\n",
-      __FUNCTION__,__LINE__
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a:%d Failed to initialize TPM2 CRB interface.\n",
+      __FUNCTION__,
+      __LINE__
       ));
 
     return Status;
@@ -50,8 +53,11 @@ Tpm2InstanceLibArmCrbConstructor (
 
   Status = Tpm2RegisterTpm2DeviceLib (&mTpm2InternalTpm2Device);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a:%d Failed to register TPM2 Device.\n",
-      __FUNCTION__, __LINE__
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a:%d Failed to register TPM2 Device.\n",
+      __FUNCTION__,
+      __LINE__
       ));
 
     return Status;

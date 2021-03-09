@@ -212,4 +212,3 @@ BmcInfoScreenEntry (
 
   return Status;
 }
-

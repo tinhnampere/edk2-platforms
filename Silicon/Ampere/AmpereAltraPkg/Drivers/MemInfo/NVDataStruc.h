@@ -23,17 +23,17 @@
 // NV data structure definition
 //
 typedef struct {
-  UINT32      DDRSpeedSel;
-  UINT32      EccMode;
-  UINT32      ErrCtrl_DE;
-  UINT32      ErrCtrl_FI;
-  UINT32      Slave32bit;
-  UINT32      ScrubPatrol;
-  UINT32      DemandScrub;
-  UINT32      WriteCrc;
-  UINT32      FGRMode;
-  UINT32      Refresh2x;
-  UINT32      NvdimmModeSel;
+  UINT32 DDRSpeedSel;
+  UINT32 EccMode;
+  UINT32 ErrCtrl_DE;
+  UINT32 ErrCtrl_FI;
+  UINT32 Slave32bit;
+  UINT32 ScrubPatrol;
+  UINT32 DemandScrub;
+  UINT32 WriteCrc;
+  UINT32 FGRMode;
+  UINT32 Refresh2x;
+  UINT32 NvdimmModeSel;
 } MEM_INFO_VARSTORE_DATA;
 
 //
@@ -45,4 +45,3 @@ typedef struct {
 #pragma pack()
 
 #endif
-

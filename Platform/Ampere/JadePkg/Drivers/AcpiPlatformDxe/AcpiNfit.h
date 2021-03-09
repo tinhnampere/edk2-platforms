@@ -39,10 +39,10 @@ typedef struct {
 } NVDIMM_INFO;
 
 typedef struct {
-  UINT8 NvdRegionNum;
-  UINT8 NvdRegionId[PLATFORM_NVDIMM_REGION_MAX_PER_SK];
-  UINT8 NvdMode;
-  UINT8 NvdNum;
+  UINT8       NvdRegionNum;
+  UINT8       NvdRegionId[PLATFORM_NVDIMM_REGION_MAX_PER_SK];
+  UINT8       NvdMode;
+  UINT8       NvdNum;
   NVDIMM_INFO NvdInfo[NVDIMM_NUM_PER_SK];
 } NVDIMM_DATA;
 

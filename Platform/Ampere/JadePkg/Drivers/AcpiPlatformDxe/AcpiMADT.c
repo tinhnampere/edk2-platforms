@@ -22,17 +22,17 @@ EFI_ACPI_6_3_GICR_STRUCTURE GicRTemplate = {
   sizeof (EFI_ACPI_6_3_GICR_STRUCTURE),
   EFI_ACPI_RESERVED_WORD,
   GICR_MASTER_BASE_REG, /* DiscoveryRangeBaseAddress */
-  0x1000000, /* DiscoveryRangeLength */
+  0x1000000,            /* DiscoveryRangeLength */
 };
 
 EFI_ACPI_6_3_GIC_DISTRIBUTOR_STRUCTURE GicDTemplate = {
   EFI_ACPI_6_3_GICD,
   sizeof (EFI_ACPI_6_3_GIC_DISTRIBUTOR_STRUCTURE),
   EFI_ACPI_RESERVED_WORD,
-  0, /* GicDistHwId */
+  0,             /* GicDistHwId */
   GICD_BASE_REG, /* GicDistBase */
-  0, /* GicDistVector */
-  0x3, /* GicVersion */
+  0,             /* GicDistVector */
+  0x3,           /* GicVersion */
   {EFI_ACPI_RESERVED_BYTE, EFI_ACPI_RESERVED_BYTE, EFI_ACPI_RESERVED_BYTE}
 };
 
@@ -50,10 +50,10 @@ EFI_ACPI_6_3_GIC_STRUCTURE GiccTemplate = {
   0,
   0,
   25, /* GsivId */
-  0, /* GicRBase */
-  0, /* Mpidr */
-  0, /* ProcessorPowerEfficiencyClass */
-  0, /* Reserved2 */
+  0,  /* GicRBase */
+  0,  /* Mpidr */
+  0,  /* ProcessorPowerEfficiencyClass */
+  0,  /* Reserved2 */
   21, /* SPE irq */
 };
 
@@ -62,7 +62,7 @@ EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER MADTTableHeaderTemplate = {
     EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE,
     0, /* need fill in */
     EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_REVISION
-  ),
+    ),
 };
 
 UINT32 Ac01CoreOrderMonolithic[PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM] = {
@@ -107,40 +107,44 @@ UINT32 Ac01CoreOrderQuadrant[PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_C
 EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER *MadtTablePointer;
 
 STATIC UINT32 *
-CpuGetCoreOrder (VOID)
+CpuGetCoreOrder (
+  VOID
+  )
 {
-  PlatformInfoHob_V2          *PlatformHob;
-  VOID                        *Hob;
-  UINT32                      SubNumaMode;
-  UINT8                       Ac01Chip = 1;
+  PlatformInfoHob_V2 *PlatformHob;
+  VOID               *Hob;
+  UINT32             SubNumaMode;
+  UINT8              Ac01Chip = 1;
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return SUBNUMA_MODE_MONOLITHIC;
   }
-  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
   Ac01Chip = ((PlatformHob->ScuProductId[0] & 0xFF) == 0x1) ? 1 : 0;
 
-  SubNumaMode = CpuGetSubNumaMode();
+  SubNumaMode = CpuGetSubNumaMode ();
   switch (SubNumaMode) {
   case SUBNUMA_MODE_MONOLITHIC:
     if (Ac01Chip != 0) {
-      return (UINT32 *) &Ac01CoreOrderMonolithic;
+      return (UINT32 *)&Ac01CoreOrderMonolithic;
     }
+
   case SUBNUMA_MODE_HEMISPHERE:
     if (Ac01Chip != 0) {
-      return (UINT32 *) &Ac01CoreOrderHemisphere;
+      return (UINT32 *)&Ac01CoreOrderHemisphere;
     }
-    return (UINT32 *) &Ac01CoreOrderHemisphere;
+    return (UINT32 *)&Ac01CoreOrderHemisphere;
+
   case SUBNUMA_MODE_QUADRANT:
     if (Ac01Chip != 0) {
-      return (UINT32 *) &Ac01CoreOrderQuadrant;
+      return (UINT32 *)&Ac01CoreOrderQuadrant;
     }
   }
 
   if (Ac01Chip != 0) {
-    return (UINT32 *) &Ac01CoreOrderMonolithic;
+    return (UINT32 *)&Ac01CoreOrderMonolithic;
   }
 
   return NULL;
@@ -148,14 +152,14 @@ CpuGetCoreOrder (VOID)
 
 STATIC UINT32
 AcpiInstallMadtProcessorNode (
-  VOID *EntryPointer,
+  VOID   *EntryPointer,
   UINT32 CpuId
   )
 {
-  EFI_ACPI_6_3_GIC_STRUCTURE   *MadtProcessorEntryPointer = EntryPointer;
-  UINT32                        SocketId;
-  UINT32                        ClusterId;
-  UINTN                         Size;
+  EFI_ACPI_6_3_GIC_STRUCTURE *MadtProcessorEntryPointer = EntryPointer;
+  UINT32                     SocketId;
+  UINT32                     ClusterId;
+  UINTN                      Size;
 
   Size = sizeof (GiccTemplate);
   CopyMem (MadtProcessorEntryPointer, &GiccTemplate, Size);
@@ -173,8 +177,8 @@ AcpiInstallMadtProcessorNode (
     (ClusterId << 8) + (CpuId  % PLATFORM_CPU_NUM_CORES_PER_CPM);
   MadtProcessorEntryPointer->Flags = 1;
   MadtProcessorEntryPointer->MPIDR =
-    (((ClusterId << 8) + (CpuId  % PLATFORM_CPU_NUM_CORES_PER_CPM)) << 8) ;
-  MadtProcessorEntryPointer->MPIDR += (((UINT64) SocketId) << 32);
+    (((ClusterId << 8) + (CpuId  % PLATFORM_CPU_NUM_CORES_PER_CPM)) << 8);
+  MadtProcessorEntryPointer->MPIDR += (((UINT64)SocketId) << 32);
 
   return Size;
 }
@@ -185,7 +189,7 @@ AcpiInstallMadtGicD (
   )
 {
   EFI_ACPI_6_3_GIC_DISTRIBUTOR_STRUCTURE *GicDEntryPointer = EntryPointer;
-  UINTN Size;
+  UINTN                                  Size;
 
   Size = sizeof (GicDTemplate);
   CopyMem (GicDEntryPointer, &GicDTemplate, Size);
@@ -195,12 +199,12 @@ AcpiInstallMadtGicD (
 
 STATIC UINT32
 AcpiInstallMadtGicR (
-  VOID *EntryPointer,
+  VOID   *EntryPointer,
   UINT32 SocketId
   )
 {
-  EFI_ACPI_6_3_GICR_STRUCTURE   *GicREntryPointer = EntryPointer;
-  UINTN                         Size;
+  EFI_ACPI_6_3_GICR_STRUCTURE *GicREntryPointer = EntryPointer;
+  UINTN                       Size;
 
   /*
    * If the Slave socket is not present, discard the Slave socket
@@ -222,7 +226,7 @@ AcpiInstallMadtGicR (
 
 STATIC UINT32
 AcpiInstallMadtGicIts (
-  VOID *EntryPointer,
+  VOID   *EntryPointer,
   UINT32 Index
   )
 {
@@ -235,7 +239,7 @@ AcpiInstallMadtGicIts (
     GicBase = GICD_SLAVE_BASE_REG;
     Index -= (SOCKET0_LAST_RC + 1); /* Socket 1, Index:8 -> RCA0 */
   }
-  Size = sizeof(GicItsTemplate);
+  Size = sizeof (GicItsTemplate);
   CopyMem (GicItsEntryPointer, &GicItsTemplate, Size);
   Offset = 0x40000 + Index * 0x20000;
   GicItsEntryPointer->GicItsId = ItsId;
@@ -248,26 +252,31 @@ AcpiInstallMadtGicIts (
  *  Install MADT table.
  */
 EFI_STATUS
-AcpiInstallMadtTable (VOID)
+AcpiInstallMadtTable (
+  VOID
+  )
 {
-  EFI_ACPI_6_3_GIC_STRUCTURE    *GiccEntryPointer = NULL;
-  EFI_ACPI_TABLE_PROTOCOL       *AcpiTableProtocol;
-  UINTN                         MadtTableKey  = 0;
-  INTN                          Count, Index;
-  EFI_STATUS                    Status;
-  UINTN                         Size;
-  UINT32                        *CoreOrder;
-  UINT32                        SktMaxCoreNum;
+  EFI_ACPI_6_3_GIC_STRUCTURE *GiccEntryPointer = NULL;
+  EFI_ACPI_TABLE_PROTOCOL    *AcpiTableProtocol;
+  UINTN                      MadtTableKey  = 0;
+  INTN                       Count, Index;
+  EFI_STATUS                 Status;
+  UINTN                      Size;
+  UINT32                     *CoreOrder;
+  UINT32                     SktMaxCoreNum;
 
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid,
-                  NULL, (VOID **) &AcpiTableProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiTableProtocolGuid,
+                  NULL,
+                  (VOID **)&AcpiTableProtocol
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   for (Count = 0; Count < gST->NumberOfTableEntries; Count++) {
     if (CompareGuid (&gArmMpCoreInfoGuid, &(gST->ConfigurationTable[Count].VendorGuid))) {
-      Size = sizeof(MADTTableHeaderTemplate) +
+      Size = sizeof (MADTTableHeaderTemplate) +
              (PLATFORM_CPU_MAX_NUM_CORES * sizeof (GiccTemplate)) +
              sizeof (GicDTemplate) +
              (PLATFORM_CPU_MAX_SOCKET * sizeof (GicRTemplate)) +
@@ -275,18 +284,18 @@ AcpiInstallMadtTable (VOID)
       if (GetNumberActiveSockets () > 1) {
         Size += ((SOCKET1_LAST_RC - SOCKET1_FIRST_RC +  1) * sizeof (GicItsTemplate));
       } else if (!PlatSlaveSocketPresent ()) {
-        Size += 2 * sizeof(GicItsTemplate); /* RCA0/1 */
+        Size += 2 * sizeof (GicItsTemplate); /* RCA0/1 */
       }
 
       MadtTablePointer =
-        (EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER *) AllocateZeroPool(Size);
+        (EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER *)AllocateZeroPool (Size);
       if (MadtTablePointer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
       GiccEntryPointer =
-          (EFI_ACPI_6_3_GIC_STRUCTURE *) ((UINT64) MadtTablePointer +
-          sizeof (MADTTableHeaderTemplate));
+        (EFI_ACPI_6_3_GIC_STRUCTURE *)((UINT64)MadtTablePointer +
+                                       sizeof (MADTTableHeaderTemplate));
 
       /* Install Gic interface for each processor */
       Size = 0;
@@ -295,40 +304,43 @@ AcpiInstallMadtTable (VOID)
       SktMaxCoreNum = PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM;
       for (Index = 0; Index < SktMaxCoreNum; Index++) {
         if (IsCpuEnabled (CoreOrder[Index])) {
-          Size += AcpiInstallMadtProcessorNode ((VOID *) ((UINT64) GiccEntryPointer + Size), CoreOrder[Index]);
+          Size += AcpiInstallMadtProcessorNode ((VOID *)((UINT64)GiccEntryPointer + Size), CoreOrder[Index]);
         }
       }
 
       for (Index = 0; Index < SktMaxCoreNum; Index++) {
         if (IsCpuEnabled (CoreOrder[Index] + SktMaxCoreNum)) {
-          Size += AcpiInstallMadtProcessorNode ((VOID *) ((UINT64) GiccEntryPointer + Size), CoreOrder[Index] + SktMaxCoreNum);
+          Size += AcpiInstallMadtProcessorNode ((VOID *)((UINT64)GiccEntryPointer + Size), CoreOrder[Index] + SktMaxCoreNum);
         }
       }
 
       /* Install Gic Distributor */
-      Size += AcpiInstallMadtGicD ((VOID *) ((UINT64) GiccEntryPointer + Size));
+      Size += AcpiInstallMadtGicD ((VOID *)((UINT64)GiccEntryPointer + Size));
 
       /* Install Gic Redistributor */
       for (Index = 0; Index < PLATFORM_CPU_MAX_SOCKET; Index++) {
-        Size += AcpiInstallMadtGicR ((VOID *) ((UINT64) GiccEntryPointer + Size), Index);
+        Size += AcpiInstallMadtGicR ((VOID *)((UINT64)GiccEntryPointer + Size), Index);
       }
 
       /* Install Gic ITS */
       if (!PlatSlaveSocketPresent ()) {
         for (Index = 0; Index <= 1; Index++) { /* RCA0/1 */
-          Size += AcpiInstallMadtGicIts ((VOID *) ((UINT64) GiccEntryPointer + Size), Index);
+          Size += AcpiInstallMadtGicIts ((VOID *)((UINT64)GiccEntryPointer + Size), Index);
         }
       }
       for (Index = SOCKET0_FIRST_RC; Index <= SOCKET0_LAST_RC; Index++) {
-        Size += AcpiInstallMadtGicIts ((VOID *) ((UINT64) GiccEntryPointer + Size), Index);
+        Size += AcpiInstallMadtGicIts ((VOID *)((UINT64)GiccEntryPointer + Size), Index);
       }
       if (GetNumberActiveSockets () > 1) {
         for (Index = SOCKET1_FIRST_RC; Index <= SOCKET1_LAST_RC; Index++) {
-          Size += AcpiInstallMadtGicIts ((VOID *) ((UINT64) GiccEntryPointer + Size), Index);
+          Size += AcpiInstallMadtGicIts ((VOID *)((UINT64)GiccEntryPointer + Size), Index);
         }
       }
-      CopyMem (MadtTablePointer, &MADTTableHeaderTemplate,
-              sizeof (MADTTableHeaderTemplate));
+      CopyMem (
+        MadtTablePointer,
+        &MADTTableHeaderTemplate,
+        sizeof (MADTTableHeaderTemplate)
+        );
 
       Size += sizeof (MADTTableHeaderTemplate);
       MadtTablePointer->Header.Length = Size;
@@ -342,16 +354,18 @@ AcpiInstallMadtTable (VOID)
       MadtTablePointer->Header.CreatorId = EFI_ACPI_CREATOR_ID;
       MadtTablePointer->Header.CreatorRevision = EFI_ACPI_CREATOR_REVISION;
 
-      AcpiTableChecksum ((UINT8 *) MadtTablePointer,
-                        MadtTablePointer->Header.Length);
+      AcpiTableChecksum (
+        (UINT8 *)MadtTablePointer,
+        MadtTablePointer->Header.Length
+        );
 
       Status = AcpiTableProtocol->InstallAcpiTable (
                                     AcpiTableProtocol,
-                                    (VOID *) MadtTablePointer,
+                                    (VOID *)MadtTablePointer,
                                     MadtTablePointer->Header.Length,
                                     &MadtTableKey
                                     );
-      FreePool ((VOID *) MadtTablePointer);
+      FreePool ((VOID *)MadtTablePointer);
       if (EFI_ERROR (Status)) {
         return Status;
       }

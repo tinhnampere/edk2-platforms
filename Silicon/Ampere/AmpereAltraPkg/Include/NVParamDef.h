@@ -289,11 +289,11 @@ typedef enum {
   NV_BOARD_PARAM_START                      = 0x00C000,
   NV_SI_RO_BOARD_VENDOR                     = (0 * 8) + NV_BOARD_PARAM_START, /* Default: 0x0000CD3A - Follow BMC FRU format */
   NV_PMPRO_REGION4_LOAD_START               = NV_SI_RO_BOARD_VENDOR,
-  NV_SI_RO_BOARD_TYPE                       = (1 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 - Follow BMC FRU format */
-  NV_SI_RO_BOARD_REV                        = (2 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 Follow BMC FRU format */
-  NV_SI_RO_BOARD_CFG                        = (3 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 Follow BMC FRU format */
-  NV_SI_RO_BOARD_S0_DIMM_AVAIL              = (4 * 8) + NV_BOARD_PARAM_START, /* Default: 0x0000FFFF */
-  NV_SI_RO_BOARD_S1_DIMM_AVAIL              = (5 * 8) + NV_BOARD_PARAM_START, /* Default: 0x0000FFFF */
+  NV_SI_RO_BOARD_TYPE                       = (1 * 8) + NV_BOARD_PARAM_START,  /* Default: 0x00000000 - Follow BMC FRU format */
+  NV_SI_RO_BOARD_REV                        = (2 * 8) + NV_BOARD_PARAM_START,  /* Default: 0x00000000 Follow BMC FRU format */
+  NV_SI_RO_BOARD_CFG                        = (3 * 8) + NV_BOARD_PARAM_START,  /* Default: 0x00000000 Follow BMC FRU format */
+  NV_SI_RO_BOARD_S0_DIMM_AVAIL              = (4 * 8) + NV_BOARD_PARAM_START,  /* Default: 0x0000FFFF */
+  NV_SI_RO_BOARD_S1_DIMM_AVAIL              = (5 * 8) + NV_BOARD_PARAM_START,  /* Default: 0x0000FFFF */
   NV_SI_RO_BOARD_SPI0CS0_FREQ_KHZ           = (6 * 8) + NV_BOARD_PARAM_START,  /* Default: 33000 */
   NV_SI_RO_BOARD_SPI0CS1_FREQ_KHZ           = (7 * 8) + NV_BOARD_PARAM_START,  /* Default: 33000 */
   NV_SI_RO_BOARD_SPI1CS0_FREQ_KHZ           = (8 * 8) + NV_BOARD_PARAM_START,  /* Default: 10000 */
@@ -480,7 +480,7 @@ typedef enum {
   NV_SI_RO_BOARD_SX_RCA1_TXRX_25GPRESET             = (185 * 8) + NV_BOARD_PARAM_START,
   NV_SI_RO_BOARD_SX_RCA2_TXRX_25GPRESET             = (186 * 8) + NV_BOARD_PARAM_START,
   NV_SI_RO_BOARD_SX_RCA3_TXRX_25GPRESET             = (187 * 8) + NV_BOARD_PARAM_START,
-   NV_SI_RO_BOARD_DDR_2X_REFRESH_TEMP_THRESHOLD     = (188 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00550055 */
+  NV_SI_RO_BOARD_DDR_2X_REFRESH_TEMP_THRESHOLD      = (188 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00550055 */
   NV_SI_RO_BOARD_PCP_VRD_VOUT_WAIT_US               = (189 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000064 */
   NV_SI_RO_BOARD_PCP_VRD_VOUT_RESOLUTION_MV         = (190 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000005 */
   NV_SI_RO_BOARD_DVFS_VOLT_READ_BACK_EN             = (191 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000001 */

@@ -44,18 +44,18 @@
 #define SEC_PER_MONTH                  ((UINTN)  2,592,000)
 #define SEC_PER_YEAR                   ((UINTN) 31,536,000)
 
-STATIC EFI_RUNTIME_SERVICES   *mRT;
-STATIC EFI_EVENT              mVirtualAddressChangeEvent = NULL;
+STATIC EFI_RUNTIME_SERVICES *mRT;
+STATIC EFI_EVENT            mVirtualAddressChangeEvent = NULL;
 
-STATIC UINT64                 mLastSavedSystemCount = 0;
-STATIC UINT64                 mLastSavedTimeEpoch = 0;
-STATIC CONST CHAR16           mTimeZoneVariableName[] = L"RtcTimeZone";
-STATIC CONST CHAR16           mDaylightVariableName[] = L"RtcDaylight";
+STATIC UINT64       mLastSavedSystemCount = 0;
+STATIC UINT64       mLastSavedTimeEpoch = 0;
+STATIC CONST CHAR16 mTimeZoneVariableName[] = L"RtcTimeZone";
+STATIC CONST CHAR16 mDaylightVariableName[] = L"RtcDaylight";
 
 STATIC
 BOOLEAN
 IsLeapYear (
-  IN EFI_TIME   *Time
+  IN EFI_TIME *Time
   )
 {
   if (Time->Year % 4 == 0) {
@@ -76,10 +76,10 @@ IsLeapYear (
 STATIC
 BOOLEAN
 DayValid (
-  IN  EFI_TIME  *Time
+  IN EFI_TIME *Time
   )
 {
-  INTN  DayOfMonth[12];
+  INTN DayOfMonth[12];
 
   DayOfMonth[0] = 31;
   DayOfMonth[1] = 29;
@@ -96,8 +96,8 @@ DayValid (
 
   if (Time->Day < 1 ||
       Time->Day > DayOfMonth[Time->Month - 1] ||
-      (Time->Month == 2 && (!IsLeapYear (Time) && Time->Day > 28))
-     ) {
+      (Time->Month == 2 && (!IsLeapYear (Time) && Time->Day > 28)))
+  {
     return FALSE;
   }
 
@@ -118,7 +118,8 @@ RtcTimeFieldsValid (
       Time->Second > 59 ||
       Time->Nanosecond > 999999999 ||
       (!(Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE || (Time->TimeZone >= -1440 && Time->TimeZone <= 1440))) ||
-      ((Time->Daylight & (~(EFI_TIME_ADJUST_DAYLIGHT | EFI_TIME_IN_DAYLIGHT))) != 0)) {
+      ((Time->Daylight & (~(EFI_TIME_ADJUST_DAYLIGHT | EFI_TIME_IN_DAYLIGHT))) != 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -138,7 +139,7 @@ Bin2Bcd (
  */
 STATIC UINTN
 EfiTimeToEpoch (
-  IN  EFI_TIME  *Time
+  IN EFI_TIME *Time
   )
 {
   UINTN a;
@@ -148,7 +149,7 @@ EfiTimeToEpoch (
   UINTN EpochDays;
   UINTN EpochSeconds;
 
-  a = (14 - Time->Month) / 12 ;
+  a = (14 - Time->Month) / 12;
   y = Time->Year + 4800 - a;
   m = Time->Month + (12*a) - 3;
 
@@ -168,26 +169,26 @@ EfiTimeToEpoch (
 STATIC
 VOID
 EpochToEfiTime (
-  IN  UINTN     EpochSeconds,
-  OUT EFI_TIME  *Time
+  IN  UINTN    EpochSeconds,
+  OUT EFI_TIME *Time
   )
 {
-  INTN         a;
-  INTN         b;
-  INTN         c;
-  INTN         d;
-  INTN         g;
-  INTN         j;
-  INTN         m;
-  INTN         y;
-  INTN         da;
-  INTN         db;
-  INTN         dc;
-  INTN         dg;
-  INTN         hh;
-  INTN         mm;
-  INTN         ss;
-  INTN         J;
+  INTN a;
+  INTN b;
+  INTN c;
+  INTN d;
+  INTN g;
+  INTN j;
+  INTN m;
+  INTN y;
+  INTN da;
+  INTN db;
+  INTN dc;
+  INTN dg;
+  INTN hh;
+  INTN mm;
+  INTN ss;
+  INTN J;
 
   J  = (EpochSeconds / 86400) + 2440588;
   j  = J + 32044;
@@ -235,18 +236,18 @@ EpochToEfiTime (
 EFI_STATUS
 EFIAPI
 LibGetTime (
-  OUT EFI_TIME                *Time,
-  OUT  EFI_TIME_CAPABILITIES  *Capabilities
+  OUT EFI_TIME              *Time,
+  OUT EFI_TIME_CAPABILITIES *Capabilities
   )
 
 {
-  EFI_STATUS    Status;
-  UINT64        CurrentSystemCount;
-  UINT64        TimeElapsed;
-  INT16         TimeZone;
-  UINT8         Daylight;
-  UINTN         Size;
-  UINTN         EpochSeconds;
+  EFI_STATUS Status;
+  UINT64     CurrentSystemCount;
+  UINT64     TimeElapsed;
+  INT16      TimeZone;
+  UINT8      Daylight;
+  UINTN      Size;
+  UINTN      EpochSeconds;
 
   if (Time == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -285,24 +286,24 @@ LibGetTime (
   /* Get the current time zone information from non-volatile storage */
   Size = sizeof (TimeZone);
   Status = mRT->GetVariable (
-                  (CHAR16 *) mTimeZoneVariableName,
+                  (CHAR16 *)mTimeZoneVariableName,
                   &gEfiCallerIdGuid,
                   NULL,
                   &Size,
-                  (VOID *) &TimeZone
+                  (VOID *)&TimeZone
                   );
   if (EFI_ERROR (Status)) {
     /* The time zone variable does not exist in non-volatile storage, so create it. */
     Time->TimeZone = TIMEZONE_0;
     /* Store it */
     Status = mRT->SetVariable (
-                    (CHAR16 *) mTimeZoneVariableName,
+                    (CHAR16 *)mTimeZoneVariableName,
                     &gEfiCallerIdGuid,
                     EFI_VARIABLE_NON_VOLATILE
-                      | EFI_VARIABLE_BOOTSERVICE_ACCESS
-                      | EFI_VARIABLE_RUNTIME_ACCESS,
+                    | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                    | EFI_VARIABLE_RUNTIME_ACCESS,
                     Size,
-                    (VOID *) &(Time->TimeZone)
+                    (VOID *)&(Time->TimeZone)
                     );
     if (EFI_ERROR (Status)) {
       DEBUG ((
@@ -320,7 +321,8 @@ LibGetTime (
 
     /* Check TimeZone bounds:   -1440 to 1440 or 2047 */
     if (((Time->TimeZone < -1440) || (Time->TimeZone > 1440))
-        && (Time->TimeZone != EFI_UNSPECIFIED_TIMEZONE)) {
+        && (Time->TimeZone != EFI_UNSPECIFIED_TIMEZONE))
+    {
       Time->TimeZone = EFI_UNSPECIFIED_TIMEZONE;
     }
 
@@ -333,7 +335,7 @@ LibGetTime (
   /* Get the current daylight information from non-volatile storage */
   Size = sizeof (Daylight);
   Status = mRT->GetVariable (
-                  (CHAR16 *) mDaylightVariableName,
+                  (CHAR16 *)mDaylightVariableName,
                   &gEfiCallerIdGuid,
                   NULL,
                   &Size,
@@ -345,13 +347,13 @@ LibGetTime (
     Time->Daylight = 0;
     /* Store it */
     Status = mRT->SetVariable (
-                    (CHAR16 *) mDaylightVariableName,
+                    (CHAR16 *)mDaylightVariableName,
                     &gEfiCallerIdGuid,
                     EFI_VARIABLE_NON_VOLATILE
-                      | EFI_VARIABLE_BOOTSERVICE_ACCESS
-                      | EFI_VARIABLE_RUNTIME_ACCESS,
+                    | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                    | EFI_VARIABLE_RUNTIME_ACCESS,
                     Size,
-                    (VOID *) &(Time->Daylight)
+                    (VOID *)&(Time->Daylight)
                     );
     if (EFI_ERROR (Status)) {
       DEBUG ((
@@ -390,11 +392,11 @@ LibGetTime (
 EFI_STATUS
 EFIAPI
 LibSetTime (
-  IN EFI_TIME                *Time
+  IN EFI_TIME *Time
   )
 {
-  EFI_STATUS    Status;
-  UINTN         EpochSeconds;
+  EFI_STATUS Status;
+  UINTN      EpochSeconds;
 
   if ((Time == NULL) || (RtcTimeFieldsValid (Time) != EFI_SUCCESS)) {
     return EFI_INVALID_PARAMETER;
@@ -422,33 +424,33 @@ LibSetTime (
 
   /* Save the current time zone information into non-volatile storage */
   Status = mRT->SetVariable (
-                  (CHAR16 *) mTimeZoneVariableName,
+                  (CHAR16 *)mTimeZoneVariableName,
                   &gEfiCallerIdGuid,
                   EFI_VARIABLE_NON_VOLATILE
-                    | EFI_VARIABLE_BOOTSERVICE_ACCESS
-                    | EFI_VARIABLE_RUNTIME_ACCESS,
+                  | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                  | EFI_VARIABLE_RUNTIME_ACCESS,
                   sizeof (Time->TimeZone),
                   (VOID *)&(Time->TimeZone)
                   );
   if (EFI_ERROR (Status)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "%a: Failed to save %s variable to non-volatile storage, Status = %r\n",
-        __FUNCTION__,
-        mTimeZoneVariableName,
-        Status
-        ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Failed to save %s variable to non-volatile storage, Status = %r\n",
+      __FUNCTION__,
+      mTimeZoneVariableName,
+      Status
+      ));
     return Status;
   }
 
   /* Save the current daylight information into non-volatile storage */
   Status = mRT->SetVariable (
-                  (CHAR16 *) mDaylightVariableName,
+                  (CHAR16 *)mDaylightVariableName,
                   &gEfiCallerIdGuid,
                   EFI_VARIABLE_NON_VOLATILE
-                    | EFI_VARIABLE_BOOTSERVICE_ACCESS
-                    | EFI_VARIABLE_RUNTIME_ACCESS,
-                  sizeof(Time->Daylight),
+                  | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                  | EFI_VARIABLE_RUNTIME_ACCESS,
+                  sizeof (Time->Daylight),
                   (VOID *)&(Time->Daylight)
                   );
   if (EFI_ERROR (Status)) {
@@ -493,9 +495,9 @@ LibSetTime (
 EFI_STATUS
 EFIAPI
 LibGetWakeupTime (
-  OUT BOOLEAN     *Enabled,
-  OUT BOOLEAN     *Pending,
-  OUT EFI_TIME    *Time
+  OUT BOOLEAN  *Enabled,
+  OUT BOOLEAN  *Pending,
+  OUT EFI_TIME *Time
   )
 {
   return EFI_UNSUPPORTED;
@@ -516,8 +518,8 @@ LibGetWakeupTime (
 EFI_STATUS
 EFIAPI
 LibSetWakeupTime (
-  IN BOOLEAN      Enabled,
-  OUT EFI_TIME    *Time
+  IN  BOOLEAN  Enabled,
+  OUT EFI_TIME *Time
   )
 {
   return EFI_UNSUPPORTED;
@@ -536,11 +538,11 @@ STATIC
 VOID
 EFIAPI
 VirtualAddressChangeEvent (
-  IN EFI_EVENT                            Event,
-  IN VOID                                 *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
-  EfiConvertPointer (0x0, (VOID**) &mRT);
+  EfiConvertPointer (0x0, (VOID **)&mRT);
   PlatformVirtualAddressChangeEvent ();
 }
 
@@ -556,12 +558,12 @@ VirtualAddressChangeEvent (
 EFI_STATUS
 EFIAPI
 LibRtcInitialize (
-  IN EFI_HANDLE                            ImageHandle,
-  IN EFI_SYSTEM_TABLE                      *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS    Status;
-  EFI_HANDLE    Handle;
+  EFI_STATUS Status;
+  EFI_HANDLE Handle;
 
   Status = PlatformInitialize ();
   if (EFI_ERROR (Status)) {
@@ -596,9 +598,10 @@ LibRtcInitialize (
   Handle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Handle,
-                  &gEfiRealTimeClockArchProtocolGuid,  NULL,
+                  &gEfiRealTimeClockArchProtocolGuid,
+                  NULL,
                   NULL
-                 );
+                  );
   ASSERT_EFI_ERROR (Status);
 
   return EFI_SUCCESS;

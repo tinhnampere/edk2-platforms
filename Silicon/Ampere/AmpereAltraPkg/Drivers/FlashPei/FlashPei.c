@@ -34,7 +34,7 @@ STATIC CHAR8 mStoredUuid[sizeof (UEFI_UUID_BUILD)];
 STATIC
 EFI_STATUS
 UefiMmCreateSpiNorReq (
-  VOID *Data,
+  VOID   *Data,
   UINT64 Size
   )
 {
@@ -63,8 +63,8 @@ UefiMmCreateSpiNorReq (
 EFI_STATUS
 EFIAPI
 FlashPeiEntryPoint (
-  IN       EFI_PEI_FILE_HANDLE  FileHandle,
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
   UINT64                               FWNvRamStartOffset;
@@ -81,7 +81,7 @@ FlashPeiEntryPoint (
   UINT64                               NV2Base, NV2Size;
 #endif
 
-  NvRamAddress = (VOID *) PcdGet64 (PcdFlashNvStorageVariableBase64);
+  NvRamAddress = (VOID *)PcdGet64 (PcdFlashNvStorageVariableBase64);
   NvRamSize = FixedPcdGet32 (PcdFlashNvStorageVariableSize) +
               FixedPcdGet32 (PcdFlashNvStorageFtwWorkingSize) +
               FixedPcdGet32 (PcdFlashNvStorageFtwSpareSize);
@@ -89,14 +89,14 @@ FlashPeiEntryPoint (
   /* Find out about the start offset of NVRAM to be passed to SMC */
   ZeroMem ((VOID *)MmData, sizeof (MmData));
   MmData[0] = MM_SPINOR_FUNC_GET_NVRAM_INFO;
-  UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
+  UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
-  Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+  Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
   Status = MmCommunicationCommunicate (
-             (VOID *) &mEfiMmSpiNorReq,
+             (VOID *)&mEfiMmSpiNorReq,
              &Size
              );
-  ASSERT_EFI_ERROR(Status);
+  ASSERT_EFI_ERROR (Status);
 
   MmSpiNorNVInfoRes = (EFI_MM_COMMUNICATE_SPINOR_NVINFO_RES *)&mEfiMmSpiNorReq.PayLoad;
   if (MmSpiNorNVInfoRes->Status != MM_SPINOR_RES_SUCCESS) {
@@ -105,7 +105,7 @@ FlashPeiEntryPoint (
   }
   FWNvRamStartOffset = MmSpiNorNVInfoRes->NVBase;
 
-  CopyMem ((VOID *) mBuildUuid, (VOID *) UEFI_UUID_BUILD, sizeof (UEFI_UUID_BUILD));
+  CopyMem ((VOID *)mBuildUuid, (VOID *)UEFI_UUID_BUILD, sizeof (UEFI_UUID_BUILD));
   if (MmSpiNorNVInfoRes->NVSize < (NvRamSize * 2 + sizeof (mBuildUuid))) {
     /* NVRAM size provided by FW is not enough */
     return EFI_INVALID_PARAMETER;
@@ -114,33 +114,33 @@ FlashPeiEntryPoint (
   /* We stored BIOS UUID build at the offset NVRAM_SIZE * 2 */
   ZeroMem ((VOID *)MmData, sizeof (MmData));
   MmData[0] = MM_SPINOR_FUNC_READ;
-  MmData[1] = (UINT64) (FWNvRamStartOffset + NvRamSize * 2);
-  MmData[2] = (UINT64) sizeof (mStoredUuid);
-  MmData[3] = (UINT64) mStoredUuid;
-  UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
+  MmData[1] = (UINT64)(FWNvRamStartOffset + NvRamSize * 2);
+  MmData[2] = (UINT64)sizeof (mStoredUuid);
+  MmData[3] = (UINT64)mStoredUuid;
+  UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
-  Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+  Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
   Status = MmCommunicationCommunicate (
-             (VOID *) &mEfiMmSpiNorReq,
+             (VOID *)&mEfiMmSpiNorReq,
              &Size
              );
-  ASSERT_EFI_ERROR(Status);
+  ASSERT_EFI_ERROR (Status);
 
   MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *)&mEfiMmSpiNorReq.PayLoad;
   if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
     return Status;
   }
 
-  if (CompareMem ((VOID *) mStoredUuid, (VOID *) mBuildUuid, sizeof (mBuildUuid))) {
+  if (CompareMem ((VOID *)mStoredUuid, (VOID *)mBuildUuid, sizeof (mBuildUuid))) {
     ZeroMem ((VOID *)MmData, sizeof (MmData));
     MmData[0] = MM_SPINOR_FUNC_ERASE;
-    MmData[1] = (UINT64) FWNvRamStartOffset;
-    MmData[2] = (UINT64) (NvRamSize * 2);
-    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
+    MmData[1] = (UINT64)FWNvRamStartOffset;
+    MmData[2] = (UINT64)(NvRamSize * 2);
+    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
-    Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+    Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
     Status = MmCommunicationCommunicate (
-               (VOID *) &mEfiMmSpiNorReq,
+               (VOID *)&mEfiMmSpiNorReq,
                &Size
                );
     ASSERT_EFI_ERROR (Status);
@@ -152,14 +152,14 @@ FlashPeiEntryPoint (
 
     ZeroMem ((VOID *)MmData, sizeof (MmData));
     MmData[0] = MM_SPINOR_FUNC_WRITE;
-    MmData[1] = (UINT64) FWNvRamStartOffset;
-    MmData[2] = (UINT64) (NvRamSize * 2);
-    MmData[3] = (UINT64) NvRamAddress;
-    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
+    MmData[1] = (UINT64)FWNvRamStartOffset;
+    MmData[2] = (UINT64)(NvRamSize * 2);
+    MmData[3] = (UINT64)NvRamAddress;
+    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
-    Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+    Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
     Status = MmCommunicationCommunicate (
-               (VOID *) &mEfiMmSpiNorReq,
+               (VOID *)&mEfiMmSpiNorReq,
                &Size
                );
     ASSERT_EFI_ERROR (Status);
@@ -172,32 +172,13 @@ FlashPeiEntryPoint (
     /* Update UUID */
     ZeroMem ((VOID *)MmData, sizeof (MmData));
     MmData[0] = MM_SPINOR_FUNC_ERASE;
-    MmData[1] = (UINT64) (FWNvRamStartOffset + NvRamSize * 2);
-    MmData[2] = (UINT64) sizeof (mBuildUuid);
-    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
+    MmData[1] = (UINT64)(FWNvRamStartOffset + NvRamSize * 2);
+    MmData[2] = (UINT64)sizeof (mBuildUuid);
+    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
-    Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
-    Status = MmCommunicationCommunicate(
-               (VOID *) &mEfiMmSpiNorReq,
-               &Size
-               );
-    ASSERT_EFI_ERROR(Status);
-
-    MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *)&mEfiMmSpiNorReq.PayLoad;
-    if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
-      return Status;
-    }
-
-    ZeroMem ((VOID *)MmData, sizeof (MmData));
-    MmData[0] = MM_SPINOR_FUNC_WRITE;
-    MmData[1] = (UINT64) (FWNvRamStartOffset + NvRamSize * 2);
-    MmData[2] = (UINT64) sizeof (mBuildUuid);
-    MmData[3] = (UINT64) mBuildUuid;
-    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
-
-    Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+    Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
     Status = MmCommunicationCommunicate (
-               (VOID *) &mEfiMmSpiNorReq,
+               (VOID *)&mEfiMmSpiNorReq,
                &Size
                );
     ASSERT_EFI_ERROR (Status);
@@ -206,7 +187,26 @@ FlashPeiEntryPoint (
     if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
       return Status;
     }
-    DEBUG((DEBUG_INFO, "UUID Changed, Update Storage with FV NVRAM\n"));
+
+    ZeroMem ((VOID *)MmData, sizeof (MmData));
+    MmData[0] = MM_SPINOR_FUNC_WRITE;
+    MmData[1] = (UINT64)(FWNvRamStartOffset + NvRamSize * 2);
+    MmData[2] = (UINT64)sizeof (mBuildUuid);
+    MmData[3] = (UINT64)mBuildUuid;
+    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
+
+    Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
+    Status = MmCommunicationCommunicate (
+               (VOID *)&mEfiMmSpiNorReq,
+               &Size
+               );
+    ASSERT_EFI_ERROR (Status);
+
+    MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *)&mEfiMmSpiNorReq.PayLoad;
+    if (MmSpiNorRes->Status != MM_SPINOR_RES_SUCCESS) {
+      return Status;
+    }
+    DEBUG ((DEBUG_INFO, "UUID Changed, Update Storage with FV NVRAM\n"));
 
     /* Indicate that NVRAM was cleared */
     PcdSetBoolS (PcdNvramErased, TRUE);
@@ -214,14 +214,14 @@ FlashPeiEntryPoint (
     /* Copy the stored NVRAM to RAM */
     ZeroMem ((VOID *)MmData, sizeof (MmData));
     MmData[0] = MM_SPINOR_FUNC_READ;
-    MmData[1] = (UINT64) FWNvRamStartOffset;
-    MmData[2] = (UINT64) (NvRamSize * 2);
-    MmData[3] = (UINT64) NvRamAddress;
-    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
+    MmData[1] = (UINT64)FWNvRamStartOffset;
+    MmData[2] = (UINT64)(NvRamSize * 2);
+    MmData[3] = (UINT64)NvRamAddress;
+    UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
-    Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+    Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
     Status = MmCommunicationCommunicate (
-               (VOID *) &mEfiMmSpiNorReq,
+               (VOID *)&mEfiMmSpiNorReq,
                &Size
                );
     ASSERT_EFI_ERROR (Status);
@@ -237,18 +237,17 @@ FlashPeiEntryPoint (
   /* Find out about the start offset of NVRAM2 to be passed to SMC */
   ZeroMem ((VOID *)MmData, sizeof (MmData));
   MmData[0] = MM_SPINOR_FUNC_GET_NVRAM2_INFO;
-  UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
+  UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
-  Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+  Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
   Status = MmCommunicationCommunicate (
-             (VOID *) &mEfiMmSpiNorReq,
+             (VOID *)&mEfiMmSpiNorReq,
              &Size
              );
   ASSERT_EFI_ERROR (Status);
 
   MmSpiNorNV2InfoRes = (EFI_MM_COMMUNICATE_SPINOR_NVINFO_RES *)&mEfiMmSpiNorReq.PayLoad;
-  if (MmSpiNorNV2InfoRes->Status == MM_SPINOR_RES_SUCCESS)
-  {
+  if (MmSpiNorNV2InfoRes->Status == MM_SPINOR_RES_SUCCESS) {
     NV2Base = MmSpiNorNV2InfoRes->NVBase;
     NV2Size = MmSpiNorNV2InfoRes->NVSize;
     /* Make sure the requested size is smaller than allocated */
@@ -256,24 +255,27 @@ FlashPeiEntryPoint (
       /* Copy the ramdisk image to RAM */
       ZeroMem ((VOID *)MmData, sizeof (MmData));
       MmData[0] = MM_SPINOR_FUNC_READ;
-      MmData[1] = (UINT64) NV2Base; /* Start virtual address */
-      MmData[2] = (UINT64) RAM_BLOCKIO_SIZE;
-      MmData[3] = (UINT64) RAM_BLOCKIO_START_ADDRESS;
-      UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof(MmData));
+      MmData[1] = (UINT64)NV2Base; /* Start virtual address */
+      MmData[2] = (UINT64)RAM_BLOCKIO_SIZE;
+      MmData[3] = (UINT64)RAM_BLOCKIO_START_ADDRESS;
+      UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
-      Size = sizeof(EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof(MmData);
+      Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
       Status = MmCommunicationCommunicate (
                  (VOID *)&mEfiMmSpiNorReq,
                  &Size
                  );
-      ASSERT_EFI_ERROR(Status);
+      ASSERT_EFI_ERROR (Status);
 
       MmSpiNorRes = (EFI_MM_COMMUNICATE_SPINOR_RES *)&mEfiMmSpiNorReq.PayLoad;
       ASSERT (MmSpiNorRes->Status == MM_SPINOR_RES_SUCCESS);
     }
 
-    BuildMemoryAllocationHob ((EFI_PHYSICAL_ADDRESS) RAM_BLOCKIO_START_ADDRESS,
-      EFI_SIZE_TO_PAGES (RAM_BLOCKIO_SIZE) * EFI_PAGE_SIZE, EfiLoaderData);
+    BuildMemoryAllocationHob (
+      (EFI_PHYSICAL_ADDRESS)RAM_BLOCKIO_START_ADDRESS,
+      EFI_SIZE_TO_PAGES (RAM_BLOCKIO_SIZE) * EFI_PAGE_SIZE,
+      EfiLoaderData
+      );
   }
 #endif
 

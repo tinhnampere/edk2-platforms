@@ -32,7 +32,7 @@ UINT8   mTransactionSupport = SSIF_SINGLE_PART_RW;
 //
 // Handle to install SMBus Host Controller protocol.
 //
-EFI_HANDLE    mIpmiHandle = NULL;
+EFI_HANDLE mIpmiHandle = NULL;
 
 /**
   Write SSIF request to BMC.
@@ -143,7 +143,7 @@ Exit:
 **/
 EFI_STATUS
 SsifReadResponse (
-  OUT UINT8     *ResponseData,
+  OUT    UINT8  *ResponseData,
   IN OUT UINT32 *ResponseDataSize
   )
 {
@@ -270,13 +270,13 @@ Exit:
 **/
 EFI_STATUS
 IpmiSsifCmd (
-  IN IPMI_PROTOCOL *This,
-  IN UINT8         NetFunction,
-  IN UINT8         Command,
-  IN UINT8         *RequestData,
-  IN UINT32        RequestDataSize,
-  OUT UINT8        *ResponseData,
-  IN OUT UINT32    *ResponseDataSize
+  IN     IPMI_PROTOCOL *This,
+  IN     UINT8         NetFunction,
+  IN     UINT8         Command,
+  IN     UINT8         *RequestData,
+  IN     UINT32        RequestDataSize,
+  OUT    UINT8         *ResponseData,
+  IN OUT UINT32        *ResponseDataSize
   )
 {
   EFI_STATUS Status;

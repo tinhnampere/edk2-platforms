@@ -37,7 +37,7 @@
 //
 // Handle to install SMBus Host Controller protocol.
 //
-EFI_HANDLE  mSmbusHcHandle = NULL;
+EFI_HANDLE mSmbusHcHandle = NULL;
 
 /**
   Incremental calculate Pec base on previous Pec value and CRC8 of data array
@@ -50,7 +50,8 @@ EFI_HANDLE  mSmbusHcHandle = NULL;
   @retval Pec
 
 **/
-UINT8 CalculatePec (
+UINT8
+CalculatePec (
   UINT8  Pec,
   UINT8  *Buffer,
   UINT32 Length
@@ -123,13 +124,13 @@ UINT8 CalculatePec (
 EFI_STATUS
 EFIAPI
 SmbusHcExcute (
-  IN CONST EFI_SMBUS_HC_PROTOCOL *This,
-  IN EFI_SMBUS_DEVICE_ADDRESS    SlaveAddress,
-  IN EFI_SMBUS_DEVICE_COMMAND    Command,
-  IN EFI_SMBUS_OPERATION         Operation,
-  IN BOOLEAN                     PecCheck,
-  IN OUT UINTN                   *Length,
-  IN OUT VOID                    *Buffer
+  IN CONST EFI_SMBUS_HC_PROTOCOL    *This,
+  IN       EFI_SMBUS_DEVICE_ADDRESS SlaveAddress,
+  IN       EFI_SMBUS_DEVICE_COMMAND Command,
+  IN       EFI_SMBUS_OPERATION      Operation,
+  IN       BOOLEAN                  PecCheck,
+  IN OUT   UINTN                    *Length,
+  IN OUT   VOID                     *Buffer
   )
 {
   EFI_STATUS Status;
@@ -142,7 +143,7 @@ SmbusHcExcute (
   ASSERT (This != NULL);
 
   if ((Operation != EfiSmbusQuickRead
-      && Operation != EfiSmbusQuickWrite)
+       && Operation != EfiSmbusQuickWrite)
       && (Length == NULL || Buffer == NULL))
   {
     return EFI_INVALID_PARAMETER;
@@ -336,10 +337,10 @@ SmbusHcExcute (
 EFI_STATUS
 EFIAPI
 SmbusHcArpDevice (
-  IN CONST  EFI_SMBUS_HC_PROTOCOL     *This,
-  IN        BOOLEAN                   ArpAll,
-  IN        EFI_SMBUS_UDID            *SmbusUdid,   OPTIONAL
-  IN OUT    EFI_SMBUS_DEVICE_ADDRESS  *SlaveAddress OPTIONAL
+  IN CONST EFI_SMBUS_HC_PROTOCOL    *This,
+  IN       BOOLEAN                  ArpAll,
+  IN       EFI_SMBUS_UDID           *SmbusUdid, OPTIONAL
+  IN OUT   EFI_SMBUS_DEVICE_ADDRESS *SlaveAddress OPTIONAL
   )
 {
   //
@@ -370,9 +371,9 @@ SmbusHcArpDevice (
 EFI_STATUS
 EFIAPI
 SmbusHcGetArpMap (
-  IN CONST  EFI_SMBUS_HC_PROTOCOL   *This,
-  IN OUT    UINTN                   *Length,
-  IN OUT    EFI_SMBUS_DEVICE_MAP    **SmbusDeviceMap
+  IN CONST EFI_SMBUS_HC_PROTOCOL *This,
+  IN OUT   UINTN                 *Length,
+  IN OUT   EFI_SMBUS_DEVICE_MAP  **SmbusDeviceMap
   )
 {
   //
@@ -409,10 +410,10 @@ SmbusHcGetArpMap (
 EFI_STATUS
 EFIAPI
 SmbusHcNotify (
-  IN CONST  EFI_SMBUS_HC_PROTOCOL     *This,
-  IN        EFI_SMBUS_DEVICE_ADDRESS  SlaveAddress,
-  IN        UINTN                     Data,
-  IN        EFI_SMBUS_NOTIFY_FUNCTION NotifyFunction
+  IN CONST EFI_SMBUS_HC_PROTOCOL     *This,
+  IN       EFI_SMBUS_DEVICE_ADDRESS  SlaveAddress,
+  IN       UINTN                     Data,
+  IN       EFI_SMBUS_NOTIFY_FUNCTION NotifyFunction
   )
 {
   //
@@ -452,11 +453,11 @@ InitializeSmbus (
   // Install Smbus protocol
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
-                &mSmbusHcHandle,
-                &gEfiSmbusHcProtocolGuid,
-                &mSmbusHcProtocol,
-                NULL
-                );
+                  &mSmbusHcHandle,
+                  &gEfiSmbusHcProtocolGuid,
+                  &mSmbusHcProtocol,
+                  NULL
+                  );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

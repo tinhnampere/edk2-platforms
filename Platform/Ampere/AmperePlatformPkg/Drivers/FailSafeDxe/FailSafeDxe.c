@@ -21,18 +21,22 @@
 #include "FailSafe.h"
 #include "Watchdog.h"
 
-STATIC UINTN                              gWatchdogOSTimeout;
-STATIC BOOLEAN                            gFailSafeOff;
-STATIC EFI_WATCHDOG_TIMER_ARCH_PROTOCOL   *gWatchdogTimer;
+STATIC UINTN                            gWatchdogOSTimeout;
+STATIC BOOLEAN                          gFailSafeOff;
+STATIC EFI_WATCHDOG_TIMER_ARCH_PROTOCOL *gWatchdogTimer;
 
 EFI_STATUS
 EFIAPI
-FailSafeTestBootFailure (VOID);
+FailSafeTestBootFailure (
+  VOID
+  );
 
 STATIC VOID
-FailSafeTurnOff (VOID)
+FailSafeTurnOff (
+  VOID
+  )
 {
-  EFI_STATUS  Status;
+  EFI_STATUS Status;
 
   if (IsFailSafeOff ()) {
     return;
@@ -49,7 +53,9 @@ FailSafeTurnOff (VOID)
 
 BOOLEAN
 EFIAPI
-IsFailSafeOff (VOID)
+IsFailSafeOff (
+  VOID
+  )
 {
   return gFailSafeOff;
 }
@@ -59,8 +65,8 @@ IsFailSafeOff (VOID)
  **/
 VOID
 WdtTimerEnterSetupScreenCallback (
-  IN EFI_EVENT  Event,
-  IN VOID       *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
   /* Make sure FailSafe is turned off */
@@ -72,8 +78,8 @@ WdtTimerEnterSetupScreenCallback (
  **/
 VOID
 WdtTimerBeforeBootCallback (
-  IN EFI_EVENT  Event,
-  IN VOID       *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
   /*
@@ -92,8 +98,8 @@ WdtTimerBeforeBootCallback (
  **/
 VOID
 WdtTimerExitBootServiceCallback (
-  IN EFI_EVENT  Event,
-  IN VOID       *Context
+  IN EFI_EVENT Event,
+  IN VOID      *Context
   )
 {
 
@@ -120,8 +126,8 @@ WdtTimerExitBootServiceCallback (
 **/
 VOID
 LoadNVRAMDefaultConfig (
-  IN VOID   *Defaults,
-  IN UINTN  Data
+  IN VOID  *Defaults,
+  IN UINTN Data
   )
 {
   NVParamClrAll ();
@@ -139,12 +145,12 @@ LoadNVRAMDefaultConfig (
 EFI_STATUS
 EFIAPI
 FailSafeDxeEntryPoint (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_EVENT                 ExitBootServicesEvent;
-  EFI_STATUS                Status;
+  EFI_EVENT  ExitBootServicesEvent;
+  EFI_STATUS Status;
 
   gFailSafeOff = FALSE;
 

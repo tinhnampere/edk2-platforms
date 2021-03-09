@@ -39,7 +39,9 @@ PcieBoardGetRCSegmentNumber (
 
 **/
 BOOLEAN
-PcieBoardCheckSmmuPmuEnabled (VOID);
+PcieBoardCheckSmmuPmuEnabled (
+  VOID
+  );
 
 /**
 
@@ -54,40 +56,41 @@ PcieBoardCheckSmmuPmuEnabled (VOID);
 **/
 EFI_STATUS
 PcieBoardScreenInitialize (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable,
-  IN AC01_RC            *RCList
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable,
+  IN AC01_RC          *RCList
   );
 
-BOOLEAN IsEmptyRC (
-  IN   AC01_RC *RC
+BOOLEAN
+IsEmptyRC (
+  IN AC01_RC *RC
   );
 
 VOID
 PcieBoardSetupDevmap (
-  IN   AC01_RC *RC
+  IN AC01_RC *RC
   );
 
 VOID
 PcieBoardGetLaneAllocation (
-  IN   AC01_RC *RC
+  IN AC01_RC *RC
   );
 
 VOID
 PcieBoardGetSpeed (
-  IN   AC01_RC *RC
+  IN AC01_RC *RC
   );
 
 VOID
 PcieBoardParseRCParams (
-  IN   AC01_RC *RC
+  IN AC01_RC *RC
   );
 
 VOID
 PcieBoardAssertPerst (
   AC01_RC *RC,
-  UINT32 PcieIndex,
-  UINT8 Bifurcation,
+  UINT32  PcieIndex,
+  UINT8   Bifurcation,
   BOOLEAN isPullToHigh
   );
 

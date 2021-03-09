@@ -20,8 +20,8 @@
 #include <Library/TimerLib.h>
 #include <Library/UefiLib.h>
 
-#include "PcieCoreCapCfg.h"
 #include "Pcie.h"
+#include "PcieCoreCapCfg.h"
 
 #ifndef BIT
 #define BIT(nr)                         (1 << (nr))
@@ -40,8 +40,8 @@
 #define AC01_PCIE_BRIDGE_DEVICEID_RCA    0xE101
 #define AC01_PCIE_BRIDGE_DEVICEID_RCB    0xE111
 
-#define PCIE_MEMRDY_TIMEOUT     10       // 10 us
-#define PCIE_PIPE_CLOCK_TIMEOUT 20000    // 20,000 us
+#define PCIE_MEMRDY_TIMEOUT     10            // 10 us
+#define PCIE_PIPE_CLOCK_TIMEOUT 20000         // 20,000 us
 #define PCIE_RETRAIN_TRANSITION_TIMEOUT 20000 // 20,000 us
 
 #define LINK_POLL_US_TIMER      1
@@ -540,10 +540,10 @@ Ac01PcieClearConfigPort (
   AC01_RC *RC
   );
 
-AC01_RC
-*GetRCList (
+AC01_RC *
+GetRCList (
   UINT8 Idx
-);
+  );
 
 VOID
 Ac01PcieCoreBuildRCStruct (
@@ -551,32 +551,32 @@ Ac01PcieCoreBuildRCStruct (
   UINT64  RegBase,
   UINT64  MmioBase,
   UINT64  Mmio32Base
-);
+  );
 
 INT32
 Ac01PcieCoreSetupRC (
   IN AC01_RC *RC,
   IN UINT8   ReInit,
   IN UINT8   ReInitPcieIndex
-);
+  );
 
 VOID
 Ac01PcieCoreUpdateLink (
-  IN AC01_RC  *RC,
+  IN  AC01_RC *RC,
   OUT BOOLEAN *IsNextRoundNeeded,
   OUT INT8    *FailedPciePtr,
   OUT INT8    *FailedPcieCount
-);
+  );
 
 VOID
 Ac01PcieCoreEndEnumeration (
   AC01_RC *RC
-);
+  );
 
 INT32
 Ac01PcieCoreQoSLinkCheckRecovery (
-  IN AC01_RC   *RC,
-  IN INTN      PcieIndex
-);
+  IN AC01_RC *RC,
+  IN INTN    PcieIndex
+  );
 
 #endif /* PCIECORE_H_ */

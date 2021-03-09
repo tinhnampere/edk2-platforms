@@ -12,9 +12,9 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/PciHostBridgeLib.h>
 #include <Library/PcieBoardLib.h>
 #include <Library/PcieHotPlug.h>
+#include <Library/PciHostBridgeLib.h>
 #include <Library/PrintLib.h>
 #include <Library/SerialPortLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -25,26 +25,26 @@
 #include <Protocol/PciHostBridgeResourceAllocation.h>
 #include <string.h>
 
-STATIC UINT64 RCRegBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_REGISTER_BASE };
-STATIC UINT64 RCMmioBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO_BASE };
-STATIC UINT64 RCMmio32Base[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO32_BASE };
-STATIC UINT64 RCMmio32Base1P[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO32_BASE_1P };
+STATIC UINT64  RCRegBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_REGISTER_BASE };
+STATIC UINT64  RCMmioBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO_BASE };
+STATIC UINT64  RCMmio32Base[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO32_BASE };
+STATIC UINT64  RCMmio32Base1P[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO32_BASE_1P };
 STATIC AC01_RC RCList[MAX_AC01_PCIE_ROOT_COMPLEX];
-STATIC INT8 PciList[MAX_AC01_PCIE_ROOT_COMPLEX];
+STATIC INT8    PciList[MAX_AC01_PCIE_ROOT_COMPLEX];
 
 STATIC
 VOID
 SerialPrint (
-  IN  CONST CHAR8  *FormatString,
+  IN CONST CHAR8 *FormatString,
   ...
   )
 {
-  UINT8     Buf[64];
-  VA_LIST   Marker;
-  UINTN     NumberOfPrinted;
+  UINT8   Buf[64];
+  VA_LIST Marker;
+  UINTN   NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = AsciiVSPrint ((CHAR8 *) Buf, sizeof (Buf), FormatString, Marker);
+  NumberOfPrinted = AsciiVSPrint ((CHAR8 *)Buf, sizeof (Buf), FormatString, Marker);
   SerialPortWrite (Buf, NumberOfPrinted);
   VA_END (Marker);
 }
@@ -85,18 +85,18 @@ GetRCIndex (
 **/
 EFI_STATUS
 Ac01PcieSetup (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  AC01_RC       *RC;
-  INTN          RCIndex;
+  AC01_RC *RC;
+  INTN    RCIndex;
 
   ZeroMem (&RCList, sizeof (AC01_RC) * MAX_AC01_PCIE_ROOT_COMPLEX);
 
   // Adjust MMIO32 base address 1P vs 2P
   if (!PlatSlaveSocketPresent ()) {
-    CopyMem ((VOID *) &RCMmio32Base, (VOID *) &RCMmio32Base1P, sizeof (UINT64) * MAX_AC01_PCIE_ROOT_COMPLEX);
+    CopyMem ((VOID *)&RCMmio32Base, (VOID *)&RCMmio32Base1P, sizeof (UINT64) * MAX_AC01_PCIE_ROOT_COMPLEX);
   }
 
   for (RCIndex = 0; RCIndex < MAX_AC01_PCIE_ROOT_COMPLEX; RCIndex++) {
@@ -114,7 +114,9 @@ Ac01PcieSetup (
 }
 
 UINT8
-Ac01PcieGetTotalHBs (VOID)
+Ac01PcieGetTotalHBs (
+  VOID
+  )
 {
   return 16;
 }
@@ -142,9 +144,9 @@ Ac01PcieGetRootBridgeSegmentNumber (
   IN UINTN RBIndex
   )
 {
-  UINTN RCIndex;
+  UINTN   RCIndex;
   AC01_RC *RC;
-  UINTN SegmentNumber;
+  UINTN   SegmentNumber;
 
   RCIndex = GetRCIndex (HBIndex, RBIndex);
   RC = &RCList[RCIndex];
@@ -163,7 +165,7 @@ SortPciList (
   INT8 *PciList
   )
 {
-  INT8     Idx1, Idx2;
+  INT8 Idx1, Idx2;
 
   for (Idx2 = 0, Idx1 = 0; Idx2 < MAX_AC01_PCIE_ROOT_COMPLEX; Idx2++) {
     if (PciList[Idx2] < 0) {
@@ -193,8 +195,8 @@ Ac01PcieCheckRootBridgeDisabled (
   IN UINTN RBIndex
   )
 {
-  UINTN         RCIndex;
-  INT8          Ret;
+  UINTN RCIndex;
+  INT8  Ret;
 
   RCIndex = HBIndex;
   Ret = !RCList[RCIndex].Active;
@@ -239,14 +241,14 @@ Ac01PcieSetupHostBridge (
 **/
 EFI_STATUS
 Ac01PcieSetupRootBridge (
-  IN UINTN HBIndex,
-  IN UINTN RBIndex,
+  IN UINTN           HBIndex,
+  IN UINTN           RBIndex,
   IN PCI_ROOT_BRIDGE *RootBridge
   )
 {
-  UINTN                     RCIndex;
-  AC01_RC                   *RC;
-  UINT32                    Result;
+  UINTN   RCIndex;
+  AC01_RC *RC;
+  UINT32  Result;
 
   RCIndex = GetRCIndex (HBIndex, RBIndex);
   RC = &RCList[RCIndex];
@@ -254,7 +256,7 @@ Ac01PcieSetupRootBridge (
     return EFI_DEVICE_ERROR;
   }
 
-  RC->RootBridge = (VOID *) RootBridge;
+  RC->RootBridge = (VOID *)RootBridge;
 
   // Initialize Root Complex and underneath controllers
   Result = Ac01PcieCoreSetupRC (RC, 0, 0);
@@ -310,16 +312,17 @@ Error:
 
 EFI_STATUS
 Ac01PcieConfigRW (
-  IN      VOID      *RootInstance,
-  IN      UINT64    Address,
-  IN      BOOLEAN   Write,
-  IN      UINTN     Width,
-  IN OUT  VOID      *Data)
+  IN     VOID    *RootInstance,
+  IN     UINT64  Address,
+  IN     BOOLEAN Write,
+  IN     UINTN   Width,
+  IN OUT VOID    *Data
+  )
 {
-  AC01_RC           *RC = NULL;
-  VOID              *CfgBase = NULL;
-  UINTN             RCIndex;
-  UINT32            Reg;
+  AC01_RC *RC = NULL;
+  VOID    *CfgBase = NULL;
+  UINTN   RCIndex;
+  UINT32  Reg;
 
   ASSERT (Address <= 0x0FFFFFFF);
 
@@ -331,25 +334,25 @@ Ac01PcieConfigRW (
   }
 
   if ((RCIndex == MAX_AC01_PCIE_ROOT_COMPLEX) || (RC == NULL)) {
-    PCIE_ERR("Can't find Root Bridge instance:%p\n", RootInstance);
+    PCIE_ERR ("Can't find Root Bridge instance:%p\n", RootInstance);
     return EFI_INVALID_PARAMETER;
   }
 
   Reg = Address & 0xFFF;
 
-  CfgBase = (VOID *) ((UINT64) RC->MmcfgAddr + (Address & 0x0FFFF000));
+  CfgBase = (VOID *)((UINT64)RC->MmcfgAddr + (Address & 0x0FFFF000));
   if (Write) {
     switch (Width) {
     case 1:
-      Ac01PcieCfgOut8 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), *((UINT8 *) Data));
+      Ac01PcieCfgOut8 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), *((UINT8 *)Data));
       break;
 
     case 2:
-      Ac01PcieCfgOut16 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), *((UINT16 *) Data));
+      Ac01PcieCfgOut16 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), *((UINT16 *)Data));
       break;
 
     case 4:
-      Ac01PcieCfgOut32 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), *((UINT32 *) Data));
+      Ac01PcieCfgOut32 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), *((UINT32 *)Data));
       break;
 
     default:
@@ -358,20 +361,21 @@ Ac01PcieConfigRW (
   } else {
     switch (Width) {
     case 1:
-      Ac01PcieCfgIn8 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), (UINT8 *) Data);
+      Ac01PcieCfgIn8 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), (UINT8 *)Data);
       break;
 
     case 2:
-      Ac01PcieCfgIn16 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), (UINT16 *) Data);
-      if (Reg == 0xAE && (*((UINT16 *) Data)) == 0xFFFF) {
+      Ac01PcieCfgIn16 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), (UINT16 *)Data);
+      if (Reg == 0xAE && (*((UINT16 *)Data)) == 0xFFFF) {
         SerialPrint ("PANIC due to PCIE RC:%d link issue\n", RC->ID);
         // Loop forever waiting for failsafe/watch dog time out
-        do {} while (1);
+        do {
+        } while (1);
       }
       break;
 
     case 4:
-      Ac01PcieCfgIn32 ((VOID *) (CfgBase + (Reg & (~(Width - 1)))), (UINT32 *) Data);
+      Ac01PcieCfgIn32 ((VOID *)(CfgBase + (Reg & (~(Width - 1)))), (UINT32 *)Data);
       break;
 
     default:
@@ -383,15 +387,17 @@ Ac01PcieConfigRW (
 }
 
 VOID
-Ac01PcieCorePollLinkUp (VOID)
+Ac01PcieCorePollLinkUp (
+  VOID
+  )
 {
-  INTN          RCIndex, PcieIndex, i;
-  BOOLEAN       IsNextRoundNeeded = FALSE, NextRoundNeeded;
-  UINT64        PrevTick, CurrTick, ElapsedCycle;
-  UINT64        TimerTicks64;
-  UINT8         ReInit;
-  INT8          FailedPciePtr[MAX_PCIE_B];
-  INT8          FailedPcieCount;
+  INTN    RCIndex, PcieIndex, i;
+  BOOLEAN IsNextRoundNeeded = FALSE, NextRoundNeeded;
+  UINT64  PrevTick, CurrTick, ElapsedCycle;
+  UINT64  TimerTicks64;
+  UINT8   ReInit;
+  INT8    FailedPciePtr[MAX_PCIE_B];
+  INT8    FailedPcieCount;
 
   ReInit = 0;
 
@@ -449,7 +455,9 @@ _link_polling:
    Prepare to end PCIE core BSP driver
 **/
 VOID
-Ac01PcieEnd (VOID)
+Ac01PcieEnd (
+  VOID
+  )
 {
   Ac01PcieCorePollLinkUp ();
 
@@ -465,13 +473,13 @@ Ac01PcieEnd (VOID)
 **/
 VOID
 Ac01PcieHostBridgeNotifyPhase (
-  IN UINTN HBIndex,
-  IN UINTN RBIndex,
-  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PHASE    Phase
+  IN UINTN                                         HBIndex,
+  IN UINTN                                         RBIndex,
+  IN EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PHASE Phase
   )
 {
   AC01_RC *RC;
-  UINTN RCIndex;
+  UINTN   RCIndex;
 
   RCIndex = GetRCIndex (HBIndex, RBIndex);
   RC = &RCList[RCIndex];

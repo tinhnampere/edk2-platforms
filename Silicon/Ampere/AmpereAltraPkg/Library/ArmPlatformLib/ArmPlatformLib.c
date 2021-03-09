@@ -9,16 +9,16 @@
 #include <Uefi.h>
 
 #include <Guid/PlatformInfoHobGuid.h>
-#include <Library/ArmLib.h>
 #include <Library/AmpereCpuLib.h>
+#include <Library/ArmLib.h>
 #include <Library/ArmPlatformLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/PL011UartLib.h>
 #include <Library/PcdLib.h>
+#include <Library/PL011UartLib.h>
 #include <Library/SerialPortLib.h>
 #include <Platform/Ac01.h>
 #include <PlatformInfoHob.h>
@@ -29,10 +29,13 @@ ARM_CORE_INFO mArmPlatformMpCoreInfoTable[PLATFORM_CPU_MAX_NUM_CORES];
 
 STATIC
 UINTN
-ArmPlatformCpuIsEnabled(PlatformInfoHob_V2 *Hob, UINT32 CpuId)
+ArmPlatformCpuIsEnabled (
+  PlatformInfoHob_V2 *Hob,
+  UINT32             CpuId
+  )
 {
-  UINT32                        ClusterId;
-  UINT32                        SocketId;
+  UINT32 ClusterId;
+  UINT32 SocketId;
 
   SocketId = SOCKET_ID (CpuId);
   ClusterId = CLUSTER_ID (CpuId);
@@ -69,15 +72,15 @@ ArmPlatformGetBootMode (
 **/
 RETURN_STATUS
 ArmPlatformInitialize (
-  IN  UINTN MpId
+  IN UINTN MpId
   )
 {
-  RETURN_STATUS       Status;
-  UINT64              BaudRate;
-  UINT32              ReceiveFifoDepth;
-  EFI_PARITY_TYPE     Parity;
-  UINT8               DataBits;
-  EFI_STOP_BITS_TYPE  StopBits;
+  RETURN_STATUS      Status;
+  UINT64             BaudRate;
+  UINT32             ReceiveFifoDepth;
+  EFI_PARITY_TYPE    Parity;
+  UINT8              DataBits;
+  EFI_STOP_BITS_TYPE StopBits;
 
   Status = RETURN_SUCCESS;
 
@@ -91,14 +94,14 @@ ArmPlatformInitialize (
 
     /* Initialize uart debug port */
     Status = PL011UartInitializePort (
-                (UINTN)FixedPcdGet64 (PcdSerialRegisterBase),
-                FixedPcdGet32 (PL011UartClkInHz),
-                &BaudRate,
-                &ReceiveFifoDepth,
-                &Parity,
-                &DataBits,
-                &StopBits
-                );
+               (UINTN)FixedPcdGet64 (PcdSerialRegisterBase),
+               FixedPcdGet32 (PL011UartClkInHz),
+               &BaudRate,
+               &ReceiveFifoDepth,
+               &Parity,
+               &DataBits,
+               &StopBits
+               );
   }
 
   return Status;
@@ -110,28 +113,30 @@ PrePeiCoreGetMpCoreInfo (
   OUT ARM_CORE_INFO **ArmCoreTable
   )
 {
-  UINTN                         mArmPlatformCoreCount;
-  PlatformInfoHob_V2            *PlatformHob;
-  UINTN                         ClusterId;
-  UINTN                         SocketId;
-  UINTN                         Index;
-  VOID                          *Hob;
+  UINTN              mArmPlatformCoreCount;
+  PlatformInfoHob_V2 *PlatformHob;
+  UINTN              ClusterId;
+  UINTN              SocketId;
+  UINTN              Index;
+  VOID               *Hob;
 
   ASSERT (CoreCount != NULL);
   ASSERT (ArmCoreTable != NULL);
   ASSERT (*ArmCoreTable != NULL);
 
-  Hob = GetNextGuidHob (&gPlatformHobV2Guid,
-                        (CONST VOID *) FixedPcdGet64 (PcdSystemMemoryBase));
+  Hob = GetNextGuidHob (
+          &gPlatformHobV2Guid,
+          (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
+          );
   if (!Hob) {
     return EFI_UNSUPPORTED;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
 
   mArmPlatformCoreCount = 0;
   for  (Index = 0; Index < PLATFORM_CPU_MAX_NUM_CORES; Index++) {
-    if (ArmPlatformCpuIsEnabled(PlatformHob, Index) == 0) {
+    if (ArmPlatformCpuIsEnabled (PlatformHob, Index) == 0) {
       continue;
     }
     SocketId = SOCKET_ID (Index);
@@ -149,16 +154,16 @@ PrePeiCoreGetMpCoreInfo (
   *CoreCount    = mArmPlatformCoreCount;
 
   *ArmCoreTable = mArmPlatformMpCoreInfoTable;
-  ASSERT(*ArmCoreTable);
+  ASSERT (*ArmCoreTable);
 
   return EFI_SUCCESS;
 }
 
 // Needs to be declared in the file. Otherwise gArmMpCoreInfoPpiGuid is undefined in the contect of PrePeiCore
-EFI_GUID mArmMpCoreInfoPpiGuid = ARM_MP_CORE_INFO_PPI_GUID;
+EFI_GUID             mArmMpCoreInfoPpiGuid = ARM_MP_CORE_INFO_PPI_GUID;
 ARM_MP_CORE_INFO_PPI mMpCoreInfoPpi = { PrePeiCoreGetMpCoreInfo };
 
-EFI_PEI_PPI_DESCRIPTOR      gPlatformPpiTable[] = {
+EFI_PEI_PPI_DESCRIPTOR gPlatformPpiTable[] = {
   {
     EFI_PEI_PPI_DESCRIPTOR_PPI,
     &mArmMpCoreInfoPpiGuid,
@@ -178,8 +183,8 @@ EFI_PEI_PPI_DESCRIPTOR      gPlatformPpiTable[] = {
 **/
 VOID
 ArmPlatformGetPlatformPpiList (
-  OUT UINTN                   *PpiListSize,
-  OUT EFI_PEI_PPI_DESCRIPTOR  **PpiList
+  OUT UINTN                  *PpiListSize,
+  OUT EFI_PEI_PPI_DESCRIPTOR **PpiList
   )
 {
   ASSERT (PpiListSize != NULL);
@@ -187,7 +192,7 @@ ArmPlatformGetPlatformPpiList (
   ASSERT (*PpiList != NULL);
 
   if (ArmIsMpCore ()) {
-    *PpiListSize = sizeof(gPlatformPpiTable);
+    *PpiListSize = sizeof (gPlatformPpiTable);
     *PpiList = gPlatformPpiTable;
   } else {
     *PpiListSize = 0;

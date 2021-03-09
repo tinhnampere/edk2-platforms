@@ -22,7 +22,7 @@
 //
 // Global variable to cache pointer to Smbus protocol.
 //
-EFI_SMBUS_HC_PROTOCOL      *mSmbus = NULL;
+EFI_SMBUS_HC_PROTOCOL *mSmbus = NULL;
 
 /**
   The constructor function caches the pointer to Smbus protocol.
@@ -39,13 +39,13 @@ EFI_SMBUS_HC_PROTOCOL      *mSmbus = NULL;
 EFI_STATUS
 EFIAPI
 SmbusLibConstructor (
-  IN EFI_HANDLE                ImageHandle,
-  IN EFI_SYSTEM_TABLE          *SystemTable
+  IN EFI_HANDLE       ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS  Status;
+  EFI_STATUS Status;
 
-  Status = gBS->LocateProtocol (&gEfiSmbusHcProtocolGuid, NULL, (VOID**) &mSmbus);
+  Status = gBS->LocateProtocol (&gEfiSmbusHcProtocolGuid, NULL, (VOID **)&mSmbus);
   ASSERT_EFI_ERROR (Status);
   ASSERT (mSmbus != NULL);
 
@@ -77,15 +77,15 @@ SmbusLibConstructor (
 **/
 UINTN
 InternalSmBusExec (
-  IN     EFI_SMBUS_OPERATION        SmbusOperation,
-  IN     UINTN                      SmBusAddress,
-  IN     UINTN                      Length,
-  IN OUT VOID                       *Buffer,
-     OUT RETURN_STATUS              *Status        OPTIONAL
+  IN     EFI_SMBUS_OPERATION SmbusOperation,
+  IN     UINTN               SmBusAddress,
+  IN     UINTN               Length,
+  IN OUT VOID                *Buffer,
+  OUT    RETURN_STATUS       *Status OPTIONAL
   )
 {
-  RETURN_STATUS             ReturnStatus;
-  EFI_SMBUS_DEVICE_ADDRESS  SmbusDeviceAddress;
+  RETURN_STATUS            ReturnStatus;
+  EFI_SMBUS_DEVICE_ADDRESS SmbusDeviceAddress;
 
   SmbusDeviceAddress.SmbusDeviceAddress = SMBUS_LIB_SLAVE_ADDRESS (SmBusAddress);
 

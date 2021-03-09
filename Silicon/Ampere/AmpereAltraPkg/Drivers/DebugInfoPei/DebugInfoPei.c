@@ -16,12 +16,12 @@
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
 #include <Library/NVParamLib.h>
+#include <Library/PeimEntryPoint.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/PeiServicesTablePointerLib.h>
-#include <Library/PeimEntryPoint.h>
 #include <Library/PrintLib.h>
-#include <Library/SMProLib.h>
 #include <Library/SerialPortLib.h>
+#include <Library/SMProLib.h>
 #include <NVParamDef.h>
 #include <Pcie.h>
 #include <PlatformInfoHob.h>
@@ -35,17 +35,17 @@
 
 STATIC VOID
 SerialPrint (
-  IN  CONST CHAR8  *FormatString,
+  IN CONST CHAR8 *FormatString,
   ...
   )
 {
-  CHAR8     Buf[MAX_PRINT_LEN];
-  VA_LIST   Marker;
-  UINTN     NumberOfPrinted;
+  CHAR8   Buf[MAX_PRINT_LEN];
+  VA_LIST Marker;
+  UINTN   NumberOfPrinted;
 
   VA_START (Marker, FormatString);
   NumberOfPrinted = AsciiVSPrint (Buf, sizeof (Buf), FormatString, Marker);
-  SerialPortWrite ((UINT8 *) Buf, NumberOfPrinted);
+  SerialPortWrite ((UINT8 *)Buf, NumberOfPrinted);
   VA_END (Marker);
 }
 
@@ -57,11 +57,11 @@ PrintNVRAM (
   VOID
   )
 {
-  EFI_STATUS  Status;
-  NVPARAM     Idx;
-  UINT32      Val;
-  UINT16      ACLRd = NV_PERM_ALL;
-  BOOLEAN     Flag;
+  EFI_STATUS Status;
+  NVPARAM    Idx;
+  UINT32     Val;
+  UINT16     ACLRd = NV_PERM_ALL;
+  BOOLEAN    Flag;
 
   Flag = FALSE;
   for (Idx = NV_PREBOOT_PARAM_START; Idx <= NV_PREBOOT_PARAM_MAX; Idx += NVPARAM_SIZE) {
@@ -71,7 +71,7 @@ PrintNVRAM (
         SerialPrint ("Pre-boot Configuration Setting:\n");
         Flag = TRUE;
       }
-      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32) Idx, Val, Val);
+      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
     }
   }
 
@@ -83,7 +83,7 @@ PrintNVRAM (
         SerialPrint ("Manufacturer Configuration Setting:\n");
         Flag = TRUE;
       }
-      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32) Idx, Val, Val);
+      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
     }
   }
 
@@ -95,7 +95,7 @@ PrintNVRAM (
         SerialPrint ("User Configuration Setting:\n");
         Flag = TRUE;
       }
-      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32) Idx, Val, Val);
+      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
     }
   }
 
@@ -107,7 +107,7 @@ PrintNVRAM (
         SerialPrint ("Board Configuration Setting:\n");
         Flag = TRUE;
       }
-      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32) Idx, Val, Val);
+      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
     }
   }
 }
@@ -150,19 +150,19 @@ PrintSystemInfo (
   VOID
   )
 {
-  UINTN               Idx;
-  VOID                *Hob;
-  PlatformInfoHob_V2  *PlatformHob;
+  UINTN              Idx;
+  VOID               *Hob;
+  PlatformInfoHob_V2 *PlatformHob;
 
   Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
   if (Hob == NULL) {
     return;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *) GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
 
-  SerialPrint ("SCP FW version    : %a\n", (const CHAR8 *) PlatformHob->SmPmProVer);
-  SerialPrint ("SCP FW build date : %a\n", (const CHAR8 *) PlatformHob->SmPmProBuild);
+  SerialPrint ("SCP FW version    : %a\n", (const CHAR8 *)PlatformHob->SmPmProVer);
+  SerialPrint ("SCP FW build date : %a\n", (const CHAR8 *)PlatformHob->SmPmProBuild);
 
   SerialPrint ("Failsafe status                 : %d\n", PlatformHob->FailSafeStatus);
   SerialPrint ("Reset status                    : %d\n", PlatformHob->ResetStatus);
@@ -172,12 +172,18 @@ PrintSystemInfo (
   SerialPrint ("    Number of active sockets    : %d\n", GetNumberActiveSockets ());
   SerialPrint ("    Number of active cores      : %d\n", GetNumberActiveCores ());
   if (GetNumberActiveSockets () > 1) {
-    SerialPrint ("    Inter Socket Connection 0   : Width: x%d / Speed %a\n",
-            PlatformHob->Link2PWidth[0], GetCCIXLinkSpeed (PlatformHob->Link2PSpeed[0]));
-    SerialPrint ("    Inter Socket Connection 1   : Width: x%d / Speed %a\n",
-            PlatformHob->Link2PWidth[1], GetCCIXLinkSpeed (PlatformHob->Link2PSpeed[1]));
+    SerialPrint (
+      "    Inter Socket Connection 0   : Width: x%d / Speed %a\n",
+      PlatformHob->Link2PWidth[0],
+      GetCCIXLinkSpeed (PlatformHob->Link2PSpeed[0])
+      );
+    SerialPrint (
+      "    Inter Socket Connection 1   : Width: x%d / Speed %a\n",
+      PlatformHob->Link2PWidth[1],
+      GetCCIXLinkSpeed (PlatformHob->Link2PSpeed[1])
+      );
   }
-  for (Idx = 0; Idx < GetNumberActiveSockets (); Idx ++) {
+  for (Idx = 0; Idx < GetNumberActiveSockets (); Idx++) {
     SerialPrint ("    Socket[%d]: Core voltage     : %d\n", Idx, PlatformHob->CoreVoltage[Idx]);
     SerialPrint ("    Socket[%d]: SCU ProductID    : %X\n", Idx, PlatformHob->ScuProductId[Idx]);
     SerialPrint ("    Socket[%d]: Max cores        : %d\n", Idx, PlatformHob->MaxNumOfCore[Idx]);
@@ -190,7 +196,7 @@ PrintSystemInfo (
 
   SerialPrint ("SOC info\n");
   SerialPrint ("    DDR Frequency               : %d MHz\n", PlatformHob->DramInfo.MaxSpeed);
-  for (Idx = 0; Idx < GetNumberActiveSockets (); Idx ++) {
+  for (Idx = 0; Idx < GetNumberActiveSockets (); Idx++) {
     SerialPrint ("    Socket[%d]: Soc voltage      : %d\n", Idx, PlatformHob->SocVoltage[Idx]);
     SerialPrint ("    Socket[%d]: DIMM1 voltage    : %d\n", Idx, PlatformHob->Dimm1Voltage[Idx]);
     SerialPrint ("    Socket[%d]: DIMM2 voltage    : %d\n", Idx, PlatformHob->Dimm2Voltage[Idx]);
@@ -214,8 +220,8 @@ PrintSystemInfo (
 EFI_STATUS
 EFIAPI
 DebugInfoPeiEntryPoint (
-  IN       EFI_PEI_FILE_HANDLE  FileHandle,
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN       EFI_PEI_FILE_HANDLE FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
   PrintSystemInfo ();

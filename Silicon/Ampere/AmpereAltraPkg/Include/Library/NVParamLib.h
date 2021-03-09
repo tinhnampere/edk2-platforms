@@ -41,12 +41,12 @@
 #define NV_PARAM_MAX_SIZE   (64 * 1024)
 #define NV_PARAM_ENTRYSIZE  8
 
-#define NV_PERM_ALL     0xFFFF  /* Allowed for all */
-#define NV_PERM_ATF     0x0001  /* Allowed for EL3 code */
-#define NV_PERM_OPTEE   0x0004  /* Allowed for secure El1 */
-#define NV_PERM_BIOS    0x0008  /* Allowed for EL2 non-secure */
-#define NV_PERM_MANU    0x0010  /* Allowed for manufactory interface */
-#define NV_PERM_BMC     0x0020  /* Allowed for BMC interface */
+#define NV_PERM_ALL     0xFFFF /* Allowed for all */
+#define NV_PERM_ATF     0x0001 /* Allowed for EL3 code */
+#define NV_PERM_OPTEE   0x0004 /* Allowed for secure El1 */
+#define NV_PERM_BIOS    0x0008 /* Allowed for EL2 non-secure */
+#define NV_PERM_MANU    0x0010 /* Allowed for manufactory interface */
+#define NV_PERM_BMC     0x0020 /* Allowed for BMC interface */
 
 #define NVPARAM_SIZE    0x8
 
@@ -126,6 +126,8 @@ NVParamClr (
  *              Otherwise, 0 for success
  */
 EFI_STATUS
-NVParamClrAll (VOID);
+NVParamClrAll (
+  VOID
+  );
 
 #endif /* NV_PARAM_LIB_H_ */

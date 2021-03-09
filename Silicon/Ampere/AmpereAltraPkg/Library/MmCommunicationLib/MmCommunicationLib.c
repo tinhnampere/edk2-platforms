@@ -19,7 +19,7 @@
 // Address, Length of the pre-allocated buffer for communication with the secure
 // world.
 //
-STATIC ARM_MEMORY_REGION_DESCRIPTOR  mNsCommBuffMemRegion;
+STATIC ARM_MEMORY_REGION_DESCRIPTOR mNsCommBuffMemRegion;
 
 EFI_STATUS
 EFIAPI
@@ -63,14 +63,14 @@ MmCommunicationLibConstructor (
 EFI_STATUS
 EFIAPI
 MmCommunicationCommunicate (
-  IN OUT VOID                             *CommBuffer,
-  IN OUT UINTN                            *CommSize OPTIONAL
+  IN OUT VOID  *CommBuffer,
+  IN OUT UINTN *CommSize OPTIONAL
   )
 {
-  EFI_MM_COMMUNICATE_HEADER   *CommunicateHeader;
-  ARM_SMC_ARGS                CommunicateSmcArgs;
-  EFI_STATUS                  Status;
-  UINTN                       BufferSize;
+  EFI_MM_COMMUNICATE_HEADER *CommunicateHeader;
+  ARM_SMC_ARGS              CommunicateSmcArgs;
+  EFI_STATUS                Status;
+  UINTN                     BufferSize;
 
   Status = EFI_ACCESS_DENIED;
   BufferSize = 0;
@@ -98,7 +98,8 @@ MmCommunicationCommunicate (
     // This case can be used by the consumer of this driver to find out the
     // max size that can be used for allocating CommBuffer.
     if ((*CommSize == 0) ||
-        (*CommSize > mNsCommBuffMemRegion.Length)) {
+        (*CommSize > mNsCommBuffMemRegion.Length))
+    {
       *CommSize = mNsCommBuffMemRegion.Length;
       return EFI_BAD_BUFFER_SIZE;
     }
@@ -106,7 +107,7 @@ MmCommunicationCommunicate (
     // CommSize must match MessageLength + sizeof (EFI_MM_COMMUNICATE_HEADER);
     //
     if (*CommSize != BufferSize) {
-        return EFI_INVALID_PARAMETER;
+      return EFI_INVALID_PARAMETER;
     }
   }
 
@@ -115,7 +116,8 @@ MmCommunicationCommunicate (
   // environment then return the expected size.
   //
   if ((BufferSize == 0) ||
-      (BufferSize > mNsCommBuffMemRegion.Length)) {
+      (BufferSize > mNsCommBuffMemRegion.Length))
+  {
     CommunicateHeader->MessageLength = mNsCommBuffMemRegion.Length -
                                        sizeof (CommunicateHeader->HeaderGuid) -
                                        sizeof (CommunicateHeader->MessageLength);
