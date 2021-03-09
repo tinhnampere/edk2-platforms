@@ -42,7 +42,7 @@
 **/
 UINT8
 EFIAPI
-CPUGetSubNumaMode (VOID);
+CpuGetSubNumaMode (VOID);
 
 /**
   Get the number of SubNUMA region.
@@ -52,7 +52,7 @@ CPUGetSubNumaMode (VOID);
 **/
 UINT8
 EFIAPI
-CPUGetNumOfSubNuma (VOID);
+CpuGetNumOfSubNuma (VOID);
 
 /**
   Get the SubNUMA node of a CPM.
@@ -64,7 +64,7 @@ CPUGetNumOfSubNuma (VOID);
 **/
 UINT8
 EFIAPI
-CPUGetSubNumNode (
+CpuGetSubNumNode (
   UINT8 Socket,
   UINT32 Cpm
   );

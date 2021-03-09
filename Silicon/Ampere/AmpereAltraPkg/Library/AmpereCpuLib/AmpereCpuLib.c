@@ -46,7 +46,7 @@ GetPlatformHob (VOID)
 **/
 UINT8
 EFIAPI
-CPUGetSubNumaMode (VOID)
+CpuGetSubNumaMode (VOID)
 {
   PlatformInfoHob_V2 *PlatformHob;
 
@@ -66,9 +66,9 @@ CPUGetSubNumaMode (VOID)
 **/
 UINT8
 EFIAPI
-CPUGetNumOfSubNuma (VOID)
+CpuGetNumOfSubNuma (VOID)
 {
-  UINT8 SubNumaMode = CPUGetSubNumaMode();
+  UINT8 SubNumaMode = CpuGetSubNumaMode();
 
   switch (SubNumaMode) {
   case SUBNUMA_MODE_MONOLITHIC:
@@ -92,13 +92,13 @@ CPUGetNumOfSubNuma (VOID)
 **/
 UINT8
 EFIAPI
-CPUGetSubNumNode (
+CpuGetSubNumNode (
   UINT8  SocketId,
   UINT32 Cpm
   )
 {
   UINT8               MaxNumOfCPM = GetMaximumNumberCPMs();
-  UINT8               SubNumaMode = CPUGetSubNumaMode();
+  UINT8               SubNumaMode = CpuGetSubNumaMode();
   INTN                Ret = 0;
   UINT8               AsymMesh = 0;
   UINT8               AsymMeshRow = 0;

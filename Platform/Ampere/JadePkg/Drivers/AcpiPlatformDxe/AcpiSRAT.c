@@ -137,7 +137,7 @@ SratAddGiccAffinity (
     for (Idx = 0; Idx < ArmProcessorTable->NumberOfEntries; Idx++ ) {
       Socket = ArmCoreInfoTable[Idx].ClusterId;
       Cpm = (ArmCoreInfoTable[Idx].CoreId >> PLATFORM_CPM_UID_BIT_OFFSET);
-      if (CPUGetSubNumNode (Socket, Cpm) != NumNode) {
+      if (CpuGetSubNumNode (Socket, Cpm) != NumNode) {
         /* We add nodes based on ProximityDomain order */
         continue;
       }
@@ -148,7 +148,7 @@ SratAddGiccAffinity (
       SratGiccAffinity[Count].Flags = 1;
       SratGiccAffinity[Count].Length = sizeof (EFI_ACPI_6_3_GICC_AFFINITY_STRUCTURE);
       SratGiccAffinity[Count].Type = EFI_ACPI_6_3_GICC_AFFINITY;
-      SratGiccAffinity[Count].ProximityDomain = CPUGetSubNumNode (Socket, Cpm);
+      SratGiccAffinity[Count].ProximityDomain = CpuGetSubNumNode (Socket, Cpm);
       Count++;
     }
     NumNode++;
