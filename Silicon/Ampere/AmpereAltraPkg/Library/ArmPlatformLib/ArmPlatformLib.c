@@ -27,8 +27,7 @@
 
 ARM_CORE_INFO mArmPlatformMpCoreInfoTable[PLATFORM_CPU_MAX_NUM_CORES];
 
-STATIC
-UINTN
+BOOLEAN
 ArmPlatformCpuIsEnabled (
   PlatformInfoHob_V2 *Hob,
   UINT32             CpuId
@@ -41,10 +40,10 @@ ArmPlatformCpuIsEnabled (
   ClusterId = CLUSTER_ID (CpuId);
 
   if (Hob->ClusterEn[SocketId].EnableMask[ClusterId / 32] & (1 << (ClusterId % 32))) {
-    return 1;
+    return TRUE;
   }
 
-  return 0;
+  return FALSE;
 }
 
 /**
@@ -70,7 +69,7 @@ ArmPlatformGetBootMode (
   in the PEI phase.
 
 **/
-RETURN_STATUS
+EFI_STATUS
 ArmPlatformInitialize (
   IN UINTN MpId
   )
@@ -82,9 +81,9 @@ ArmPlatformInitialize (
   UINT8              DataBits;
   EFI_STOP_BITS_TYPE StopBits;
 
-  Status = RETURN_SUCCESS;
+  Status = EFI_SUCCESS;
 
-  if (FixedPcdGet64 (PcdSerialRegisterBase)) {
+  if (FixedPcdGet64 (PcdSerialRegisterBase) != 0) {
     /* Debug port should use the same parameters with console */
     BaudRate = FixedPcdGet64 (PcdUartDefaultBaudRate);
     ReceiveFifoDepth = FixedPcdGet32 (PcdUartDefaultReceiveFifoDepth);
@@ -128,7 +127,7 @@ PrePeiCoreGetMpCoreInfo (
           &gPlatformHobV2Guid,
           (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
           );
-  if (!Hob) {
+  if (Hob == NULL) {
     return EFI_UNSUPPORTED;
   }
 
@@ -136,7 +135,7 @@ PrePeiCoreGetMpCoreInfo (
 
   mArmPlatformCoreCount = 0;
   for  (Index = 0; Index < PLATFORM_CPU_MAX_NUM_CORES; Index++) {
-    if (ArmPlatformCpuIsEnabled (PlatformHob, Index) == 0) {
+    if (!ArmPlatformCpuIsEnabled (PlatformHob, Index)) {
       continue;
     }
     SocketId = SOCKET_ID (Index);
@@ -151,10 +150,10 @@ PrePeiCoreGetMpCoreInfo (
     mArmPlatformCoreCount++;
   }
 
-  *CoreCount    = mArmPlatformCoreCount;
+  *CoreCount = mArmPlatformCoreCount;
 
   *ArmCoreTable = mArmPlatformMpCoreInfoTable;
-  ASSERT (*ArmCoreTable);
+  ASSERT (*ArmCoreTable != NULL);
 
   return EFI_SUCCESS;
 }
