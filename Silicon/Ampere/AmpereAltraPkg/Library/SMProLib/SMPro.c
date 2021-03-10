@@ -155,33 +155,6 @@ SMProDBWr (
 
 EFI_STATUS
 EFIAPI
-SMProAPEISetupCheck (
-  UINT32 UAddress,
-  UINT32 LAddress
-  )
-{
-  UINT32 Msg = IPP_ENCODE_RAS_MSG (IPP_RAS_MSG_SETUP_CHECK, 0);
-  return SMProDBWr (SMPRO_DB, Msg, UAddress, LAddress, SMPRO_DB_BASE_REG);
-}
-
-EFI_STATUS
-EFIAPI
-SMProAPEIEnable (
-  UINT8 Enable
-  )
-{
-  UINT32 Msg;
-
-  if (Enable != 0) {
-    Msg = IPP_ENCODE_RAS_MSG (IPP_RAS_MSG_START, 0);
-  } else {
-    Msg = IPP_ENCODE_RAS_MSG (IPP_RAS_MSG_STOP, 0);
-  }
-  return SMProDBWr (SMPRO_DB, Msg, 0, 0, SMPRO_DB_BASE_REG);
-}
-
-EFI_STATUS
-EFIAPI
 SMProRegRd (
   UINT8  Socket,
   UINT64 Addr,

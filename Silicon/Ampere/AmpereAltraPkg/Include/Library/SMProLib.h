@@ -46,41 +46,6 @@ SMProDBWr (
   );
 
 /*
- * Send an APEI Check Message to SMPro
- *
- * UAddress     Upper 32-bit of a 64-bit register for the APEI table pointer
- * LAddress     Lower 32-bit of a 64-bit register for the APEI table pointer
- */
-EFI_STATUS
-EFIAPI
-SMProAPEISetupCheck (
-  UINT32 UAddress,
-  UINT32 LAddress
-  );
-
-/*
- * Send an APEI Clear Message to SMPro
- *
- * UAddress     Upper 32-bit of a 64-bit register for the APEI table pointer
- * LAddress     Lower 32-bit of a 64-bit register for the APEI table pointer
- */
-EFI_STATUS
-EFIAPI
-SMProAPEISetupClear (
-  UINT32 UAddress,
-  UINT32 LAddress
-  );
-
-/*
- * Enable/Disable APEI with SMPro
- */
-EFI_STATUS
-EFIAPI
-SMProAPEIEnable (
-  UINT8 Enable
-  );
-
-/*
  * Read register from SMPro
  */
 EFI_STATUS
