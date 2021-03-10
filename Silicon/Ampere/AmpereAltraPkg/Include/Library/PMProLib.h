@@ -41,32 +41,4 @@ PMProTurboEnable (
   UINT8 Enable
   );
 
-/*
- * Send PSCI Statistic address to ACL
- * Socket   Socket to send address to
- * AdrHi    Upper 32 bits of the address
- * AdrLo    Lower 32 bits of the address
- */
-EFI_STATUS
-EFIAPI
-PMProAclAdd (
-  UINT8  Socket,
-  UINT32 AdrHi,
-  UINT32 AdrLo
-  );
-
-/*
- * Send PSCI Statistic address to PMPro
- * Socket   Socket to send address to
- * AdrHi    Upper 32 bits of the address
- * AdrLo    Lower 32 bits of the address
- */
-EFI_STATUS
-EFIAPI
-PMProSendPSCIAddr (
-  UINT8  Socket,
-  UINT32 AdrHi,
-  UINT32 AdrLo
-  );
-
 #endif /* PMPRO_LIB_H_*/

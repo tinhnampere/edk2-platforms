@@ -52,29 +52,7 @@
 #define DB_TURBO_CMD                    20
 #define DB_TURBO_ENABLE_SUBCMD          0
 
-#define DB_ACL_CMD                      30
-#define DB_ACL_ADD4K_SUBCMD             2
-#define DB_ACL_RDWR_FLAG                4
-#define DB_ACL_LOCK_SUBCMD              1
-#define DB_ACL_ENCODE_CMD(cmd, flags)   (((cmd) & 0xF) | (((flags) & 0xF)<< 4))
-#define DB_ACL_SET_HADDR(x)             ((x << 12) | 1)
-
-/* Power management message */
-#define DB_PSCI                         0x5
-#define DB_PWRMGMT_MSG                  0x9
-#define DB_MSG_TYPE_MASK                0xF0000000
-#define DB_PWRMGMT_MSG_HNDL_MASK        0x0F000000
-#define DB_PWRMGMT_MSG_HNDL_SHIFT       24
-#define DB_PWRMGMT_PSCI_STA_SUBCMD      2
-#define DB_PWRMGMT_PSCI_CMD             2
-#define DB_ENCODE_PWRMGMT_MSG(hndl, cb, type) \
-          ((DB_PWRMGMT_MSG << DB_MSG_TYPE_SHIFT) | \
-          (((hndl) << DB_PWRMGMT_MSG_HNDL_SHIFT) & DB_PWRMGMT_MSG_HNDL_MASK) | \
-          (((cb) << DB_MSG_CONTROL_BYTE_SHIFT) & DB_MSG_CONTROL_BYTE_MASK) |   \
-          (type))
-
 #define MB_POLL_INTERVALus              1000
-#define MB_READ_DELAYus                 1000
 #define MB_TIMEOUTus                    10000000
 
 STATIC
@@ -152,59 +130,6 @@ PMProTurboEnable (
            Msg,
            Enable,
            0,
-           PMproGetDBBase (Socket, PMPRO_DB_BASE_REG)
-           );
-}
-
-EFI_STATUS
-EFIAPI
-PMProAclAdd (
-  UINT8  Socket,
-  UINT32 AdrHi,
-  UINT32 AdrLo
-  )
-{
-  UINT32 Msg;
-
-  Msg = DB_ENCODE_USER_MSG (
-          DB_CONFIG_SET_HDLR,
-          0,
-          DB_ACL_CMD,
-          DB_ACL_ENCODE_CMD (DB_ACL_ADD4K_SUBCMD, DB_ACL_RDWR_FLAG)
-          );
-
-  AdrHi = DB_ACL_SET_HADDR (AdrHi);
-
-  return PMProDBWr (
-           PMPRO_DB,
-           Msg,
-           AdrHi,
-           AdrLo,
-           PMproGetDBBase (Socket, PMPRO_DB_BASE_REG)
-           );
-}
-
-EFI_STATUS
-EFIAPI
-PMProSendPSCIAddr (
-  UINT8  Socket,
-  UINT32 AdrHi,
-  UINT32 AdrLo
-  )
-{
-  UINT32 Msg;
-
-  Msg = DB_ENCODE_PWRMGMT_MSG (
-          DB_PWRMGMT_PSCI_CMD,
-          DB_PWRMGMT_PSCI_STA_SUBCMD,
-          0
-          );
-
-  return PMProDBWr (
-           DB_PSCI,
-           Msg,
-           AdrHi,
-           AdrLo,
            PMproGetDBBase (Socket, PMPRO_DB_BASE_REG)
            );
 }
