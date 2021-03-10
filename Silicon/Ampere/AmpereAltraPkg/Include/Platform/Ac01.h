@@ -48,11 +48,6 @@
 /* The first SPI interrupt number of the Slave socket */
 #define PLATFORM_SLAVE_SOCKET_SPI_INTERRUPT_START  352
 
-/* **PORTING NEEDED** Total number of Super IO serial ports present. */
-#define TOTAL_SIO_SERIAL_PORTS         1
-
-#define SerialIo_SUPPORT               0
-
 /* The base register of AHBC */
 #define AHBC_REGISTER_BASE             0x1f10c000
 

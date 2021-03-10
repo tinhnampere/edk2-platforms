@@ -459,7 +459,6 @@
   gArmPlatformTokenSpaceGuid.PcdSerialDbgRegisterBase|0x100002620000
   gArmPlatformTokenSpaceGuid.PcdSerialDbgUartBaudRate|115200
 
-  # RunAxf support via Dynamic Shell Command protocol
   # We want to use the Shell Libraries but don't want it to initialise
   # automatically. We initialise the libraries when the command is called by the
   # Shell.
@@ -538,7 +537,7 @@
 
 [PcdsDynamicDefault.common]
   # Fist DRAM Memory region under 4GB address range
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0x90000000
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0x70000000
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0x0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64|0x0
@@ -824,8 +823,3 @@
 !ifdef $(INCLUDE_TFTP_COMMAND)
   ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
 !endif #$(INCLUDE_TFTP_COMMAND)
-
-  #
-  # EBC
-  #
-  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
