@@ -15,6 +15,8 @@ Silicon code is located under Silicon/Ampere/Ampere{SoC Name}Pkg.
 
 Please follow top-level Readme.md for build instructions.
 
+**Note:** Append the "PACKAGES_PATH" environment variable with edk2-platforms/Features/Intel to use the IpmiCommandLib in the OutOfBandManagement/IpmiFeaturePkg package.
+
 ## Additional build tools
 
 Ampere provides additional tools and documentation for automating the manual process described as described in the top-level README.md,
