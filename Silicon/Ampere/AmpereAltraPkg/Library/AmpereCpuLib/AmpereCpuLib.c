@@ -19,12 +19,6 @@
 #include <Platform/Ac01.h>
 #include <PlatformInfoHob.h>
 
-#define MONOLITIC_NUM_OF_REGION        1
-#define HEMISPHERE_NUM_OF_REGION       2
-#define QUADRANT_NUM_OF_REGION         4
-#define SUBNUMA_CPM_REGION_SIZE        4
-#define NUM_OF_CPM_PER_MESH_ROW        8
-
 STATIC PlatformInfoHob_V2 *
 GetPlatformHob (
   VOID
@@ -105,75 +99,64 @@ CpuGetSubNumNode (
   UINT32 Cpm
   )
 {
-  UINT8 MaxNumOfCPM = GetMaximumNumberCPMs ();
-  UINT8 SubNumaMode = CpuGetSubNumaMode ();
-  INTN  Ret = 0;
-  UINT8 AsymMesh = 0;
-  UINT8 AsymMeshRow = 0;
+  BOOLEAN IsAsymMesh;
+  INTN    Ret;
+  UINT8   MaxNumOfCPM;
+  UINT8   MiddleRow;
+  UINT8   QuadrantHigherRowNodeNumber[NUM_OF_CPM_PER_MESH_ROW] = {1, 1, 1, 1, 3, 3, 3, 3};
+  UINT8   QuadrantLowerRowNodeNumber[NUM_OF_CPM_PER_MESH_ROW]  = {0, 0, 0, 0, 2, 2, 2, 2};
+  UINT8   QuadrantMiddleRowNodeNumber[NUM_OF_CPM_PER_MESH_ROW] = {0, 0, 1, 1, 3, 3, 2, 2};
+  UINT8   SubNumaMode;
+
+  MaxNumOfCPM = GetMaximumNumberCPMs ();
+  SubNumaMode = CpuGetSubNumaMode ();
 
   switch (SubNumaMode) {
   case SUBNUMA_MODE_MONOLITHIC:
-    if (SocketId == 0) {
-      Ret = 0;
-    } else {
-      Ret = 1;
-    }
+    Ret = (SocketId == 0) ? 0 : 1;
     break;
 
   case SUBNUMA_MODE_HEMISPHERE:
-    if (((Cpm % NUM_OF_CPM_PER_MESH_ROW) / SUBNUMA_CPM_REGION_SIZE) != 0) {
+    if (CPM_PER_ROW_OFFSET (Cpm) >= SUBNUMA_CPM_REGION_SIZE) {
       Ret = 1;
     } else {
       Ret = 0;
     }
+
     if (SocketId == 1) {
       Ret += HEMISPHERE_NUM_OF_REGION;
     }
     break;
 
   case SUBNUMA_MODE_QUADRANT:
-    // For asymmetric mesh, the CPM at the middle row is distributed
-    // equally to each node. As each mesh row has 8 CPMs,
-    //   First pair of CPMs: Node 0
-    //   Second pair of CPMs: Node 1
-    //   Third pair of CPMs: Node 3
-    //   Forth paif of CPMs: Node 2
-    AsymMesh = (MaxNumOfCPM / NUM_OF_CPM_PER_MESH_ROW) % 2;
-    if (AsymMesh != 0) {
-      AsymMeshRow = (MaxNumOfCPM / NUM_OF_CPM_PER_MESH_ROW) / 2;
-    }
-    if ((AsymMesh != 0) && ((Cpm / NUM_OF_CPM_PER_MESH_ROW) == AsymMeshRow)) {
-      switch ((Cpm % NUM_OF_CPM_PER_MESH_ROW) / 2) {
-      case 0:
-        Ret = 0;
-        break;
+    //
+    // CPM Mesh Rows
+    //
+    // |---------------------------------------|
+    // | 00 ----------- 03 | 04 ----------- 07 | Row 0
+    // |-------------------|-------------------|
+    // | 08 ----------- 11 | 12 ----------- 15 | Row 1
+    // |-------------------|-------------------|
+    // | 16 - 17 | 18 - 19 | 20 - 21 | 22 - 23 | Middle Row
+    // |-------------------|-------------------|
+    // | 24 ----------- 27 | 28 ----------- 31 | Row 3
+    // |-------------------|-------------------|
+    // | 32 ----------- 35 | 36 ----------- 39 | Row 4
+    // |---------------------------------------|
+    //
 
-      case 1:
-        Ret = 1;
-        break;
+    IsAsymMesh = (BOOLEAN)(CPM_ROW_NUMBER (MaxNumOfCPM) % 2 != 0);
+    MiddleRow = CPM_ROW_NUMBER (MaxNumOfCPM) / 2;
+    if (IsAsymMesh
+        && CPM_ROW_NUMBER (Cpm) == MiddleRow)
+    {
+      Ret = QuadrantMiddleRowNodeNumber[CPM_PER_ROW_OFFSET (Cpm)];
 
-      case 2:
-        Ret = 3;
-        break;
+    } else if (CPM_ROW_NUMBER (Cpm) >= MiddleRow) {
+      Ret = QuadrantHigherRowNodeNumber[CPM_PER_ROW_OFFSET (Cpm)];
 
-      case 3:
-        Ret = 2;
-        break;
-      }
     } else {
-      if (Cpm < (MaxNumOfCPM / 2)) {
-        if (((Cpm % NUM_OF_CPM_PER_MESH_ROW) / SUBNUMA_CPM_REGION_SIZE) != 0) {
-          Ret = 2;
-        } else {
-          Ret = 0;
-        }
-      } else {
-        if (((Cpm % NUM_OF_CPM_PER_MESH_ROW) / SUBNUMA_CPM_REGION_SIZE) != 0) {
-          Ret = 3;
-        } else {
-          Ret = 1;
-        }
-      }
+      Ret = QuadrantLowerRowNodeNumber[CPM_PER_ROW_OFFSET (Cpm)];
     }
 
     if (SocketId == 1) {
