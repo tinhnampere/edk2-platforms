@@ -128,6 +128,16 @@ APRIORI DXE {
   INF Silicon/Ampere/AmpereAltraPkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
 
   #
+  # SMBus
+  #
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcDxe/SmbusHcDxe.inf
+
+  #
+  # IPMI
+  #
+  INF Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsifDxe/IpmiSsifDxe.inf
+
+  #
   # Linuxboot in Flash Support
   #
   INF Platform/Ampere/LinuxBootPkg/LinuxBoot.inf

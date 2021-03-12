@@ -47,6 +47,43 @@
   #
   FailSafeLib|Platform/Ampere/AmperePlatformPkg/Library/FailSafeLib/FailSafeLib.inf
 
+[LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION, LibraryClasses.common.DXE_RUNTIME_DRIVER, LibraryClasses.common.DXE_DRIVER]
+  SmbusLib|Platform/Ampere/JadePkg/Library/DxePlatformSmbusLib/DxePlatformSmbusLib.inf
+
+[PcdsDynamicDefault.common.DEFAULT]
+  # SMBIOS Type 0 - BIOS Information
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVendor|"Ampere(R)"
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVersion|"TianoCore EDKII"
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate|"MM/DD/YYYY"
+
+  # SMBIOS Type 1 - System Information
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemManufacturer|"Ampere(R)"
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemProductName|"Mt Jade"
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemVersion|"0.3"
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSerialNumber|"0123-4567-89AB-CDEF"
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSkuNumber|"01234567"
+
+  # FRU Chassis Information
+  gAmpereTokenSpaceGuid.PcdFruChassisPartNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruChassisSerialNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruChassisExtra|"To be filled by O.E.M.                             "
+
+  # FRU Board Information
+  gAmpereTokenSpaceGuid.PcdFruBoardManufacturerName|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruBoardProductName|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruBoardSerialNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruBoardPartNumber|"To be filled by O.E.M.                             "
+
+  # FRU Product Information
+  gAmpereTokenSpaceGuid.PcdFruProductManufacturerName|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductName|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductPartNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductVersion|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductSerialNumber|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductAssetTag|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductFruFileId|"To be filled by O.E.M.                             "
+  gAmpereTokenSpaceGuid.PcdFruProductExtra|"To be filled by O.E.M.                             "
+
 #
 # Specific Platform Component
 #
