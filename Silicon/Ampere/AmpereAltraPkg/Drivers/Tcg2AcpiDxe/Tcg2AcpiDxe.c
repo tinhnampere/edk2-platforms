@@ -14,18 +14,6 @@ PLATFORM_TPM2_CONFIG_DATA              mPlatformTpm2ConfigData;
 
 #pragma pack(1)
 
-//
-// Start Method Specific Parameters for ARM SMC Start Method (11)
-// Refer to Table 9: Start Method Specific Parameters for ARM SMC
-//
-typedef struct {
-  UINT32 Interrupt;
-  UINT8  Flags;
-  UINT8  OperationFlags;
-  UINT8  Reserved[2];
-  UINT32 SmcFunctionId;
-} TPM2_ACPI_START_METHOD_SPECIFIC_PARAMETERS_ARM_SMC;
-
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   // Flags field is replaced in version 4 and above
@@ -34,7 +22,7 @@ typedef struct {
   UINT32                                             Flags;
   UINT64                                             AddressOfControlArea;
   UINT32                                             StartMethod;
-  TPM2_ACPI_START_METHOD_SPECIFIC_PARAMETERS_ARM_SMC PlatformSpecificParameters;
+  EFI_TPM2_ACPI_START_METHOD_SPECIFIC_PARAMETERS_ARM_SMC PlatformSpecificParameters;
   UINT32                                             Laml;                          // Optional
   UINT64                                             Lasa;                          // Optional
 } TPM2_ACPI_TABLE_ARM_SMC;
