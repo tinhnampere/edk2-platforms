@@ -13,7 +13,6 @@
 #include <Library/PciePhyLib.h>
 #include <Library/SMProLib.h>
 #include <PlatformInfoHob.h>
-#include <string.h>
 
 #include "Pcie.h"
 #include "PcieCore.h"

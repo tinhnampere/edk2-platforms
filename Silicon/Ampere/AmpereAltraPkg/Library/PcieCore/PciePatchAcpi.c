@@ -20,7 +20,6 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Platform/Ac01.h>
 #include <Protocol/AcpiTable.h>
-#include <string.h>
 
 #include "Pcie.h"
 #include "PcieCore.h"

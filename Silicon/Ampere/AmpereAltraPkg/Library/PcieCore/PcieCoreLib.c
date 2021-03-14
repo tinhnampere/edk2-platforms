@@ -23,7 +23,6 @@
 #include <PcieCore.h>
 #include <PciePatchAcpi.h>
 #include <Protocol/PciHostBridgeResourceAllocation.h>
-#include <string.h>
 
 STATIC UINT64  RCRegBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_REGISTER_BASE };
 STATIC UINT64  RCMmioBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO_BASE };
