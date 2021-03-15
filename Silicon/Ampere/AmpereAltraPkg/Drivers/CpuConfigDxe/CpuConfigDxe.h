@@ -14,6 +14,7 @@
 #include <Guid/CpuConfigHii.h>
 #include <Guid/MdeModuleHii.h>
 #include <Guid/PlatformManagerHii.h>
+#include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -57,10 +58,6 @@ typedef struct {
 } CPU_CONFIG_PRIVATE_DATA;
 
 #define CPU_CONFIG_PRIVATE_FROM_THIS(a)  CR (a, CPU_CONFIG_PRIVATE_DATA, ConfigAccess, CPU_CONFIG_PRIVATE_SIGNATURE)
-
-#define SUBNUMA_MODE_MONOLITHIC 0x0
-#define SUBNUMA_MODE_HEMISPHERE 0x1
-#define SUBNUMA_MODE_QUADRANT   0x2
 
 #pragma pack(1)
 

@@ -9,10 +9,6 @@
 #include "AcpiNfit.h"
 #include "AcpiPlatform.h"
 
-#define SUBNUMA_MODE_MONOLITHIC        0
-#define SUBNUMA_MODE_HEMISPHERE        1
-#define SUBNUMA_MODE_QUADRANT          2
-
 STATIC VOID
 AcpiPatchCmn600 (
   VOID
