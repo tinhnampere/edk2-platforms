@@ -164,7 +164,7 @@ AcpiPatchPciMem32 (
     }
 
     /* DSDT PCI devices to use Physical segment */
-    AsciiSPrint (Buffer, sizeof (Buffer), "\\_SB.PCI%x._CRS.RBUF", PciSegEnabled[Idx]);
+    AsciiSPrint (Buffer, sizeof (Buffer), "\\_SB.PCI%x.RBUF", PciSegEnabled[Idx]);
     Status = AcpiTableProtocol->FindPath (TableHandle, (VOID *)Buffer, &SegHandle);
     if (EFI_ERROR (Status)) {
       continue;

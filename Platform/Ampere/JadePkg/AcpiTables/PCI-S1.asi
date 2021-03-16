@@ -105,75 +105,73 @@
       Return (0x7BFFF0000000)
     }
 
+    //
+    // Declare a ResourceTemplate buffer to return the resource
+    // requirements from _CRS.
+    // Section 19.5.109
+    //
+
+    Name (RBUF, ResourceTemplate () {
+
+      //
+      // Declare the range of bus numbers assigned to this root
+      // complex. In this example, the minimum bus number will be
+      // 0, the maximum bus number will be 0xFF, supporting
+      // 256 busses total.
+      // Section 19.5.141
+      //
+
+      WordBusNumber (
+        ResourceProducer,
+        MinFixed,   // IsMinFixed
+        MaxFixed,   // IsMaxFixed
+        PosDecode,  // Decode
+        0,          // AddressGranularity
+        0,          // AddressMinimum - Minimum Bus Number
+        255,        // AddressMaximum - Maximum Bus Number
+        0,          // AddressTranslation - Set to 0
+        256)        // RangeLength - Number of Busses
+
+      //
+      // Declare the memory range to be used for BAR memory
+      // windows. This declares a 4GB region starting at
+      // 0x4000000000.
+      // Section 19.5.80
+      //
+      // Memory32Fixed (ReadWrite, 0x1FF80000, 0x10000, )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000000070000000,   // AddressMinimum - MIN
+        0x0000000077FFFFFF,   // AddressMinimum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x0000000008000000    // RangeLength - LEN
+      )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000780000000000,   // AddressMinimum - MIN
+        0x00007BFFDFFFFFFF,   // AddressMaximum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x000003FFE0000000    // RangeLength - LEN
+      )
+    })
+
     Method (_CRS, 0, Serialized) {
-
-      //
-      // Declare a ResourceTemplate buffer to return the resource
-      // requirements from _CRS.
-      // Section 19.5.109
-      //
-
-      Name (RBUF, ResourceTemplate () {
-
-        //
-        // Declare the range of bus numbers assigned to this root
-        // complex. In this example, the minimum bus number will be
-        // 0, the maximum bus number will be 0xFF, supporting
-        // 256 busses total.
-        // Section 19.5.141
-        //
-
-        WordBusNumber (
-          ResourceProducer,
-          MinFixed,   // IsMinFixed
-          MaxFixed,   // IsMaxFixed
-          PosDecode,  // Decode
-          0,          // AddressGranularity
-          0,          // AddressMinimum - Minimum Bus Number
-          255,        // AddressMaximum - Maximum Bus Number
-          0,          // AddressTranslation - Set to 0
-          256)        // RangeLength - Number of Busses
-
-        //
-        // Declare the memory range to be used for BAR memory
-        // windows. This declares a 4GB region starting at
-        // 0x4000000000.
-        // Section 19.5.80
-        //
-        // Memory32Fixed (ReadWrite, 0x1FF80000, 0x10000, )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000000070000000,   // AddressMinimum - MIN
-          0x0000000077FFFFFF,   // AddressMinimum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x0000000008000000    // RangeLength - LEN
-        )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000780000000000,   // AddressMinimum - MIN
-          0x00007BFFDFFFFFFF,   // AddressMaximum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x000003FFE0000000    // RangeLength - LEN
-        )
-      })
-
       Return (RBUF)
     }
-
 
     //
     // Declare an _OSC (OS Control Handoff) method which takes 4 arguments.
@@ -653,75 +651,73 @@
       Return (0x7FFFF0000000)
     }
 
+    //
+    // Declare a ResourceTemplate buffer to return the resource
+    // requirements from _CRS.
+    // Section 19.5.109
+    //
+
+    Name (RBUF, ResourceTemplate () {
+
+      //
+      // Declare the range of bus numbers assigned to this root
+      // complex. In this example, the minimum bus number will be
+      // 0, the maximum bus number will be 0xFF, supporting
+      // 256 busses total.
+      // Section 19.5.141
+      //
+
+      WordBusNumber (
+        ResourceProducer,
+        MinFixed,   // IsMinFixed
+        MaxFixed,   // IsMaxFixed
+        PosDecode,  // Decode
+        0,          // AddressGranularity
+        0,          // AddressMinimum - Minimum Bus Number
+        255,        // AddressMaximum - Maximum Bus Number
+        0,          // AddressTranslation - Set to 0
+        256)        // RangeLength - Number of Busses
+
+      //
+      // Declare the memory range to be used for BAR memory
+      // windows. This declares a 4GB region starting at
+      // 0x4000000000.
+      // Section 19.5.80
+      //
+      // Memory32Fixed (ReadWrite, 0x1FFC0000, 0x10000, )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000000078000000,   // AddressMinimum - MIN
+        0x000000007FFFFFFF,   // AddressMinimum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x0000000008000000    // RangeLength - LEN
+      )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x00007C0000000000,   // AddressMinimum - MIN
+        0x00007FFFDFFFFFFF,   // AddressMaximum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x000003FFE0000000    // RangeLength - LEN
+      )
+    })
+
     Method (_CRS, 0, Serialized) {
-
-      //
-      // Declare a ResourceTemplate buffer to return the resource
-      // requirements from _CRS.
-      // Section 19.5.109
-      //
-
-      Name (RBUF, ResourceTemplate () {
-
-        //
-        // Declare the range of bus numbers assigned to this root
-        // complex. In this example, the minimum bus number will be
-        // 0, the maximum bus number will be 0xFF, supporting
-        // 256 busses total.
-        // Section 19.5.141
-        //
-
-        WordBusNumber (
-          ResourceProducer,
-          MinFixed,   // IsMinFixed
-          MaxFixed,   // IsMaxFixed
-          PosDecode,  // Decode
-          0,          // AddressGranularity
-          0,          // AddressMinimum - Minimum Bus Number
-          255,        // AddressMaximum - Maximum Bus Number
-          0,          // AddressTranslation - Set to 0
-          256)        // RangeLength - Number of Busses
-
-        //
-        // Declare the memory range to be used for BAR memory
-        // windows. This declares a 4GB region starting at
-        // 0x4000000000.
-        // Section 19.5.80
-        //
-        // Memory32Fixed (ReadWrite, 0x1FFC0000, 0x10000, )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000000078000000,   // AddressMinimum - MIN
-          0x000000007FFFFFFF,   // AddressMinimum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x0000000008000000    // RangeLength - LEN
-        )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x00007C0000000000,   // AddressMinimum - MIN
-          0x00007FFFDFFFFFFF,   // AddressMaximum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x000003FFE0000000    // RangeLength - LEN
-        )
-      })
-
       Return (RBUF)
     }
-
 
     //
     // Declare an _OSC (OS Control Handoff) method which takes 4 arguments.
@@ -1001,72 +997,71 @@
       Return (0x63FFF0000000)
     }
 
+    //
+    // Declare a ResourceTemplate buffer to return the resource
+    // requirements from _CRS.
+    // Section 19.5.109
+    //
+
+    Name (RBUF, ResourceTemplate () {
+
+      //
+      // Declare the range of bus numbers assigned to this root
+      // complex. In this example, the minimum bus number will be
+      // 0, the maximum bus number will be 0xFF, supporting
+      // 256 busses total.
+      // Section 19.5.141
+      //
+
+      WordBusNumber (
+        ResourceProducer,
+        MinFixed,   // IsMinFixed
+        MaxFixed,   // IsMaxFixed
+        PosDecode,  // Decode
+        0,          // AddressGranularity
+        0,          // AddressMinimum - Minimum Bus Number
+        255,        // AddressMaximum - Maximum Bus Number
+        0,          // AddressTranslation - Set to 0
+        256)        // RangeLength - Number of Busses
+
+      //
+      // Declare the memory range to be used for BAR memory
+      // windows. This declares a 4GB region starting at
+      // 0x4000000000.
+      // Section 19.5.80
+      //
+      // Memory32Fixed (ReadWrite, 0x1FE40000, 0x10000, )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000000040000000,   // AddressMinimum - MIN
+        0x0000000047FFFFFF,   // AddressMinimum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x0000000008000000    // RangeLength - LEN
+      )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000600000000000,   // AddressMinimum - MIN
+        0x000063FFDFFFFFFF,   // AddressMaximum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x000003FFE0000000    // RangeLength - LEN
+      )
+    })
+
     Method (_CRS, 0, Serialized) {
-
-      //
-      // Declare a ResourceTemplate buffer to return the resource
-      // requirements from _CRS.
-      // Section 19.5.109
-      //
-
-      Name (RBUF, ResourceTemplate () {
-
-        //
-        // Declare the range of bus numbers assigned to this root
-        // complex. In this example, the minimum bus number will be
-        // 0, the maximum bus number will be 0xFF, supporting
-        // 256 busses total.
-        // Section 19.5.141
-        //
-
-        WordBusNumber (
-          ResourceProducer,
-          MinFixed,   // IsMinFixed
-          MaxFixed,   // IsMaxFixed
-          PosDecode,  // Decode
-          0,          // AddressGranularity
-          0,          // AddressMinimum - Minimum Bus Number
-          255,        // AddressMaximum - Maximum Bus Number
-          0,          // AddressTranslation - Set to 0
-          256)        // RangeLength - Number of Busses
-
-        //
-        // Declare the memory range to be used for BAR memory
-        // windows. This declares a 4GB region starting at
-        // 0x4000000000.
-        // Section 19.5.80
-        //
-        // Memory32Fixed (ReadWrite, 0x1FE40000, 0x10000, )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000000040000000,   // AddressMinimum - MIN
-          0x0000000047FFFFFF,   // AddressMinimum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x0000000008000000    // RangeLength - LEN
-        )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000600000000000,   // AddressMinimum - MIN
-          0x000063FFDFFFFFFF,   // AddressMaximum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x000003FFE0000000    // RangeLength - LEN
-        )
-      })
-
       Return (RBUF)
     }
 
@@ -1459,75 +1454,73 @@
       Return (0x67FFF0000000)
     }
 
+    //
+    // Declare a ResourceTemplate buffer to return the resource
+    // requirements from _CRS.
+    // Section 19.5.109
+    //
+
+    Name (RBUF, ResourceTemplate () {
+
+      //
+      // Declare the range of bus numbers assigned to this root
+      // complex. In this example, the minimum bus number will be
+      // 0, the maximum bus number will be 0xFF, supporting
+      // 256 busses total.
+      // Section 19.5.141
+      //
+
+      WordBusNumber (
+        ResourceProducer,
+        MinFixed,   // IsMinFixed
+        MaxFixed,   // IsMaxFixed
+        PosDecode,  // Decode
+        0,          // AddressGranularity
+        0,          // AddressMinimum - Minimum Bus Number
+        255,        // AddressMaximum - Maximum Bus Number
+        0,          // AddressTranslation - Set to 0
+        256)        // RangeLength - Number of Busses
+
+      //
+      // Declare the memory range to be used for BAR memory
+      // windows. This declares a 4GB region starting at
+      // 0x4000000000.
+      // Section 19.5.80
+      //
+      // Memory32Fixed (ReadWrite, 0x1FE40000, 0x10000, )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000000048000000,   // AddressMinimum - MIN
+        0x000000004FFFFFFF,   // AddressMinimum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x0000000008000000    // RangeLength - LEN
+      )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000640000000000,   // AddressMinimum - MIN
+        0x000067FFDFFFFFFF,   // AddressMaximum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x000003FFE0000000    // RangeLength - LEN
+      )
+    })
+
     Method (_CRS, 0, Serialized) {
-
-      //
-      // Declare a ResourceTemplate buffer to return the resource
-      // requirements from _CRS.
-      // Section 19.5.109
-      //
-
-      Name (RBUF, ResourceTemplate () {
-
-        //
-        // Declare the range of bus numbers assigned to this root
-        // complex. In this example, the minimum bus number will be
-        // 0, the maximum bus number will be 0xFF, supporting
-        // 256 busses total.
-        // Section 19.5.141
-        //
-
-        WordBusNumber (
-          ResourceProducer,
-          MinFixed,   // IsMinFixed
-          MaxFixed,   // IsMaxFixed
-          PosDecode,  // Decode
-          0,          // AddressGranularity
-          0,          // AddressMinimum - Minimum Bus Number
-          255,        // AddressMaximum - Maximum Bus Number
-          0,          // AddressTranslation - Set to 0
-          256)        // RangeLength - Number of Busses
-
-        //
-        // Declare the memory range to be used for BAR memory
-        // windows. This declares a 4GB region starting at
-        // 0x4000000000.
-        // Section 19.5.80
-        //
-        // Memory32Fixed (ReadWrite, 0x1FE40000, 0x10000, )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000000048000000,   // AddressMinimum - MIN
-          0x000000004FFFFFFF,   // AddressMinimum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x0000000008000000    // RangeLength - LEN
-        )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000640000000000,   // AddressMinimum - MIN
-          0x000067FFDFFFFFFF,   // AddressMaximum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x000003FFE0000000    // RangeLength - LEN
-        )
-      })
-
       Return (RBUF)
     }
-
 
     //
     // Declare an _OSC (OS Control Handoff) method which takes 4 arguments.
@@ -1918,72 +1911,71 @@
       Return (0x6BFFF0000000)
     }
 
+    //
+    // Declare a ResourceTemplate buffer to return the resource
+    // requirements from _CRS.
+    // Section 19.5.109
+    //
+
+    Name (RBUF, ResourceTemplate () {
+
+      //
+      // Declare the range of bus numbers assigned to this root
+      // complex. In this example, the minimum bus number will be
+      // 0, the maximum bus number will be 0xFF, supporting
+      // 256 busses total.
+      // Section 19.5.141
+      //
+
+      WordBusNumber (
+        ResourceProducer,
+        MinFixed,   // IsMinFixed
+        MaxFixed,   // IsMaxFixed
+        PosDecode,  // Decode
+        0,          // AddressGranularity
+        0,          // AddressMinimum - Minimum Bus Number
+        255,        // AddressMaximum - Maximum Bus Number
+        0,          // AddressTranslation - Set to 0
+        256)        // RangeLength - Number of Busses
+
+      //
+      // Declare the memory range to be used for BAR memory
+      // windows. This declares a 4GB region starting at
+      // 0x4000000000.
+      // Section 19.5.80
+      //
+      // Memory32Fixed (ReadWrite, 0x1FE40000, 0x10000, )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000000050000000,   // AddressMinimum - MIN
+        0x0000000057FFFFFF,   // AddressMaximum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x0000000008000000    // RangeLength - LEN
+      )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000680000000000,   // AddressMinimum - MIN
+        0x00006BFFDFFFFFFF,   // AddressMinimum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x000003FFE0000000    // RangeLength - LEN
+      )
+    })
+
     Method (_CRS, 0, Serialized) {
-
-      //
-      // Declare a ResourceTemplate buffer to return the resource
-      // requirements from _CRS.
-      // Section 19.5.109
-      //
-
-      Name (RBUF, ResourceTemplate () {
-
-        //
-        // Declare the range of bus numbers assigned to this root
-        // complex. In this example, the minimum bus number will be
-        // 0, the maximum bus number will be 0xFF, supporting
-        // 256 busses total.
-        // Section 19.5.141
-        //
-
-        WordBusNumber (
-          ResourceProducer,
-          MinFixed,   // IsMinFixed
-          MaxFixed,   // IsMaxFixed
-          PosDecode,  // Decode
-          0,          // AddressGranularity
-          0,          // AddressMinimum - Minimum Bus Number
-          255,        // AddressMaximum - Maximum Bus Number
-          0,          // AddressTranslation - Set to 0
-          256)        // RangeLength - Number of Busses
-
-        //
-        // Declare the memory range to be used for BAR memory
-        // windows. This declares a 4GB region starting at
-        // 0x4000000000.
-        // Section 19.5.80
-        //
-        // Memory32Fixed (ReadWrite, 0x1FE40000, 0x10000, )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000000050000000,   // AddressMinimum - MIN
-          0x0000000057FFFFFF,   // AddressMaximum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x0000000008000000    // RangeLength - LEN
-        )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000680000000000,   // AddressMinimum - MIN
-          0x00006BFFDFFFFFFF,   // AddressMinimum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x000003FFE0000000    // RangeLength - LEN
-        )
-      })
-
       Return (RBUF)
     }
 
@@ -2486,72 +2478,71 @@
       Return (0x6FFFF0000000)
     }
 
+    //
+    // Declare a ResourceTemplate buffer to return the resource
+    // requirements from _CRS.
+    // Section 19.5.109
+    //
+
+    Name (RBUF, ResourceTemplate () {
+
+      //
+      // Declare the range of bus numbers assigned to this root
+      // complex. In this example, the minimum bus number will be
+      // 0, the maximum bus number will be 0xFF, supporting
+      // 256 busses total.
+      // Section 19.5.141
+      //
+
+      WordBusNumber (
+        ResourceProducer,
+        MinFixed,   // IsMinFixed
+        MaxFixed,   // IsMaxFixed
+        PosDecode,  // Decode
+        0,          // AddressGranularity
+        0,          // AddressMinimum - Minimum Bus Number
+        255,        // AddressMaximum - Maximum Bus Number
+        0,          // AddressTranslation - Set to 0
+        256)        // RangeLength - Number of Busses
+
+      //
+      // Declare the memory range to be used for BAR memory
+      // windows. This declares a 4GB region starting at
+      // 0x4000000000.
+      // Section 19.5.80
+      //
+      // Memory32Fixed (ReadWrite, 0x1FE40000, 0x10000, )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x0000000058000000,   // AddressMinimum - MIN
+        0x000000005FFFFFFF,   // AddressMinimum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x0000000008000000    // RangeLength - LEN
+      )
+
+      QWordMemory (
+        ResourceProducer,     // ResourceUsage
+        PosDecode,            // Decode
+        MinFixed,             // IsMinFixed
+        MaxFixed,             // IsMaxFixed
+        NonCacheable,         // NonCacheable
+        ReadWrite,            // ReadAndWrite
+        0x0000000000000000,   // AddressGranularity - GRA
+        0x00006C0000000000,   // AddressMinimum - MIN
+        0x00006FFFDFFFFFFF,   // AddressMinimum - MAX
+        0x0000000000000000,   // AddressTranslation - TRA
+        0x000003FFE0000000    // RangeLength - LEN
+      )
+    })
+
     Method (_CRS, 0, Serialized) {
-
-      //
-      // Declare a ResourceTemplate buffer to return the resource
-      // requirements from _CRS.
-      // Section 19.5.109
-      //
-
-      Name (RBUF, ResourceTemplate () {
-
-        //
-        // Declare the range of bus numbers assigned to this root
-        // complex. In this example, the minimum bus number will be
-        // 0, the maximum bus number will be 0xFF, supporting
-        // 256 busses total.
-        // Section 19.5.141
-        //
-
-        WordBusNumber (
-          ResourceProducer,
-          MinFixed,   // IsMinFixed
-          MaxFixed,   // IsMaxFixed
-          PosDecode,  // Decode
-          0,          // AddressGranularity
-          0,          // AddressMinimum - Minimum Bus Number
-          255,        // AddressMaximum - Maximum Bus Number
-          0,          // AddressTranslation - Set to 0
-          256)        // RangeLength - Number of Busses
-
-        //
-        // Declare the memory range to be used for BAR memory
-        // windows. This declares a 4GB region starting at
-        // 0x4000000000.
-        // Section 19.5.80
-        //
-        // Memory32Fixed (ReadWrite, 0x1FE40000, 0x10000, )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x0000000058000000,   // AddressMinimum - MIN
-          0x000000005FFFFFFF,   // AddressMinimum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x0000000008000000    // RangeLength - LEN
-        )
-
-        QWordMemory (
-          ResourceProducer,     // ResourceUsage
-          PosDecode,            // Decode
-          MinFixed,             // IsMinFixed
-          MaxFixed,             // IsMaxFixed
-          NonCacheable,         // NonCacheable
-          ReadWrite,            // ReadAndWrite
-          0x0000000000000000,   // AddressGranularity - GRA
-          0x00006C0000000000,   // AddressMinimum - MIN
-          0x00006FFFDFFFFFFF,   // AddressMinimum - MAX
-          0x0000000000000000,   // AddressTranslation - TRA
-          0x000003FFE0000000    // RangeLength - LEN
-        )
-      })
-
       Return (RBUF)
     }
 
