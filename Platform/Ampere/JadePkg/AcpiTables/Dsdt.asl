@@ -267,7 +267,7 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
           STA4, 32, // interrupt status at offset 0x20
         }
 
-        Method(_EVT, 1) {
+        Method(_EVT, 1, Serialized) {
           Switch (ToInteger(Arg0)) {
             Case (84) { // GHES interrupt
               Notify (HED0, 0x80)
@@ -541,7 +541,7 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
           // Unmask the interrupt.
           Store (0x00, MASK)
         }
-        Method(_EVT, 1) {
+        Method(_EVT, 1, Serialized) {
           Switch (ToInteger(Arg0)) {
             Case (327) {
               if (And (STDS, 0x80)) {
