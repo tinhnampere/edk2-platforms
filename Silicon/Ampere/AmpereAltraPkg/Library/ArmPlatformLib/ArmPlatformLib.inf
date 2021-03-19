@@ -39,7 +39,6 @@
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [Pcd]
-  gArmTokenSpaceGuid.PcdSystemMemorySize
   gArmTokenSpaceGuid.PcdMmBufferBase
   gArmTokenSpaceGuid.PcdMmBufferSize
 
@@ -49,12 +48,10 @@
 [FixedPcd]
   gArmPlatformTokenSpaceGuid.PcdClusterCount
   gArmPlatformTokenSpaceGuid.PcdCoreCount
-  gArmPlatformTokenSpaceGuid.PcdClusterCount
-  gArmTokenSpaceGuid.PcdSystemMemoryBase
-
-  gArmTokenSpaceGuid.PcdArmPrimaryCore
-
   gArmPlatformTokenSpaceGuid.PL011UartClkInHz
+
+  gArmTokenSpaceGuid.PcdSystemMemoryBase
+  gArmTokenSpaceGuid.PcdArmPrimaryCore
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultBaudRate

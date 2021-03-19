@@ -20,6 +20,7 @@
 #include <Library/SMProLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Pi/PiStatusCode.h>
+#include <Platform/Ac01.h>
 #include <Protocol/ReportStatusCodeHandler.h>
 
 #define BIOS_BOOT_PROG_SET     1
@@ -31,9 +32,6 @@
 #define STATUS_SHIFT           16
 
 #define SOCKET_BASE_OFFSET     0x400000000000
-
-#define BASE_REG   (FixedPcdGet64 (PcdSmproDbBaseReg))
-#define MAILBOX    (FixedPcdGet32 (PcdSmproNsMailboxIndex))
 
 typedef struct {
   UINT8                 Byte;
@@ -141,7 +139,13 @@ BootProgressSendSMpro (
 
   NumSockets = GetNumberActiveSockets ();
   for (Index = 0; Index < NumSockets; Index++) {
-    Status = SMProDBWr (MAILBOX, Msg, Data1, Data2, BASE_REG + (SOCKET_BASE_OFFSET * Index));
+    Status = SMProDBWr (
+               SMPRO_NS_MAILBOX_INDEX,
+               Msg,
+               Data1,
+               Data2,
+               SMPRO_DB_BASE_REG + (SOCKET_BASE_OFFSET * Index)
+               );
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }

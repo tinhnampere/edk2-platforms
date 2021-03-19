@@ -88,7 +88,6 @@
 #define PMPRO_DB_BASE_REG              (FixedPcdGet64 (PcdPmproDbBaseReg))
 #define SMPRO_EFUSE_SHADOW0            (FixedPcdGet64 (PcdSmproEfuseShadow0))
 #define SMPRO_NS_MAILBOX_INDEX         (FixedPcdGet32 (PcdSmproNsMailboxIndex))
-#define SMPRO_I2C_BMC_BUS_ADDR         (FixedPcdGet32 (PcdSmproI2cBmcBusAddr))
 
 #define SOCKET_BASE_OFFSET             0x400000000000
 #define SMPRO_DBx_REG(socket, db, reg) \

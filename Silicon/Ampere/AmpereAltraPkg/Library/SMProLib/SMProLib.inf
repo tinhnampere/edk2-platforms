@@ -34,8 +34,4 @@
   TimerLib
 
 [FixedPcd]
-  gAmpereTokenSpaceGuid.PcdSmproDb
   gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
-  gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0
-  gAmpereTokenSpaceGuid.PcdSmproI2cBmcBusAddr
-  gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex

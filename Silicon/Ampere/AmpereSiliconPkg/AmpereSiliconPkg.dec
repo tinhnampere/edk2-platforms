@@ -59,41 +59,34 @@
   #
   # SMPro PMPro Pcds
   #
-  gAmpereTokenSpaceGuid.PcdSmproDb|0x0|UINT8|0x00000002
-  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg|0x100000540000|UINT64|0x00000003
-  gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0|0x10000054a000|UINT64|0x00000004
-  gAmpereTokenSpaceGuid.PcdSmproI2cBmcBusAddr|0x2f|UINT32|0x00000005
-  gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex|0x1|UINT32|0x00000006
-  gAmpereTokenSpaceGuid.PcdPmproDbBaseReg|0x100001540000|UINT64|0x00000007
-
-  #
-  # Default Turbo Frequency Pcd
-  #
-  gAmpereTokenSpaceGuid.PcdTurboDefaultFreq|3350000000|UINT64|0x00000008
+  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg|0x100000540000|UINT64|0x00000001
+  gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0|0x10000054a000|UINT64|0x00000002
+  gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex|0x1|UINT32|0x00000003
+  gAmpereTokenSpaceGuid.PcdPmproDbBaseReg|0x100001540000|UINT64|0x00000004
 
   #
   # SMBIOS Type 1 Pcd
   #
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|0|UINT8|0x00000009
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|0|UINT8|0x0000000A
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|0|UINT8|0x00000005
+  gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|0|UINT8|0x00000006
 
   #
   # SMBus
   #
-  gAmpereTokenSpaceGuid.PcdSmbusI2cBusNumber|0x00|UINT8|0x0000000B
-  gAmpereTokenSpaceGuid.PcdSmbusI2cBusSpeed|100000|UINT32|0x0000000C # Hz
+  gAmpereTokenSpaceGuid.PcdSmbusI2cBusNumber|0x00|UINT8|0x00000007
+  gAmpereTokenSpaceGuid.PcdSmbusI2cBusSpeed|100000|UINT32|0x00000008 # Hz
 
   #
   # BMC
   #
-  gAmpereTokenSpaceGuid.PcdBmcSlaveAddr|0x10|UINT8|0x0000000D
-  gAmpereTokenSpaceGuid.PcdBmcReadyGpio|18|UINT8|0x0000000E
+  gAmpereTokenSpaceGuid.PcdBmcSlaveAddr|0x10|UINT8|0x00000009
+  gAmpereTokenSpaceGuid.PcdBmcReadyGpio|18|UINT8|0x0000000A
 
   #
   # IPMI
   #
-  gAmpereTokenSpaceGuid.PcdIpmiLunNumber|0|UINT8|0x000000F
-  gAmpereTokenSpaceGuid.PcdIpmiSsifRetryDelay|60000|UINT32|0x00000010 # 60ms - 250ms
+  gAmpereTokenSpaceGuid.PcdIpmiLunNumber|0|UINT8|0x000000B
+  gAmpereTokenSpaceGuid.PcdIpmiSsifRetryDelay|60000|UINT32|0x0000000C # 60ms - 250ms
 
 [PcdsFixedAtBuild, PcdsDynamic]
   #
