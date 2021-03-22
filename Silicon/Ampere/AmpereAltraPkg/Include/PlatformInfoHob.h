@@ -35,14 +35,6 @@ typedef struct {
   UINT64 TotalSize;
   UINT64 Base[PLATFORM_DRAM_INFO_MAX_REGION];
   UINT64 Size[PLATFORM_DRAM_INFO_MAX_REGION];
-  UINT32 CurrentSpeed;
-} PlatformDramInfo;
-
-typedef struct {
-  UINT32 NumRegion;
-  UINT64 TotalSize;
-  UINT64 Base[PLATFORM_DRAM_INFO_MAX_REGION];
-  UINT64 Size[PLATFORM_DRAM_INFO_MAX_REGION];
   UINT64 Node[PLATFORM_DRAM_INFO_MAX_REGION];
   UINT64 Socket[PLATFORM_DRAM_INFO_MAX_REGION];
   UINT32 MaxSpeed;
@@ -50,16 +42,6 @@ typedef struct {
   UINT32 NvdRegion[PLATFORM_DRAM_INFO_MAX_REGION];
   UINT32 NvdimmMode[PLATFORM_CPU_MAX_SOCKET];
 } PlatformDramInfoV2;
-
-typedef struct {
-  CHAR8  PartNumber[32];
-  UINT64 DimmSize;
-  UINT8  DimmNrRank;
-  UINT8  DimmType;
-  UINT8  DimmStatus;
-  UINT16 DimmMfcId;
-  UINT8  DimmDevType;
-} PlatformDimmInfo;
 
 typedef struct {
   CHAR8  PartNumber[32];
@@ -72,53 +54,15 @@ typedef struct {
   UINT8  DimmDevType;
 } PlatformDimmInfoV2;
 
-/* Raw memory SPD Data structure */
-typedef struct {
-  /* Memory Type */
-  UINT8 Byte2;
-  /* Attribute, Total Width, Data Width (DDR2&3) */
-  UINT8 Byte5To8[9 - 5];
-  /* ECC Data Width, Data Width (DDR4) */
-  UINT8 Byte11To14[15 - 11];
-  /* Manufacturer (DDR2) */
-  UINT8 Byte64To71[72 - 64];
-  /* Part Number (DDR2) */
-  UINT8 Byte73To90[91 - 73];
-  /* Serial Number (DDR2) */
-  UINT8 Byte95To98[99 - 95];
-  /* Manufacturer (DDR3) */
-  UINT8 Byte117To118[119 - 117];
-  /* Serial Number (DDR3) */
-  UINT8 Byte122To125[126 - 122];
-  /* Part Number (DDR3) */
-  UINT8 Byte128To145[146 - 128];
-  /* Manufacturer (DDR4) */
-  UINT8 Byte320To321[322 - 320];
-  /* Serial Number (DDR4) */
-  UINT8 Byte325To328[329 - 325];
-  /* Part Number (DDR4) */
-  UINT8 Byte329To348[349 - 329];
-} PlatformDimmSpdData;
-
 typedef struct {
   UINT8 Data[512];
 } PlatformDimmSpdDataV2;
-
-typedef struct {
-  PlatformDimmInfo    Info;
-  PlatformDimmSpdData SpdData;
-} PlatformDimm;
 
 typedef struct {
   PlatformDimmInfoV2    Info;
   PlatformDimmSpdDataV2 SpdData;
   UINT32                NodeId;
 } PlatformDimmV2;
-
-typedef struct {
-  UINT32       NumSlot;
-  PlatformDimm Dimm[PLATFORM_DIMM_INFO_MAX_SLOT];
-} PlatformDimmList;
 
 typedef struct {
   UINT32         BoardDimmSlots;
@@ -180,22 +124,6 @@ typedef struct {
   PLATFORM_VPCR_HASH_INFO                Tpm2VPcrHashInfo;
 } PLATFORM_TPM2_INFO;
 #pragma pack()
-
-typedef struct {
-  UINT64           PcpClk;
-  UINT64           PmdClk;
-  UINT64           SocClk;
-  UINT64           AhbClk;
-  UINT64           AxiClk;
-  UINT64           ApbClk;
-  UINT64           IobaxiClk;
-  UINT8            CpuInfo[128];
-  UINT8            CpuVer[32];
-  UINT8            SmPmProVer[32];
-  UINT8            SmPmProBuild[32];
-  PlatformDramInfo DramInfo;
-  PlatformDimmList DimmList;
-} PlatformInfoHob;
 
 typedef struct {
   UINT8              MajorNumber;

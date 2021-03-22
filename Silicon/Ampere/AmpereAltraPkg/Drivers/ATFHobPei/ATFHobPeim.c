@@ -27,19 +27,6 @@ BuildPlatformInformationHob (
 
   /* The ATF HOB handoff base is at PcdSystemMemoryBase */
   Hob = GetNextGuidHob (
-          &gPlatformHobGuid,
-          (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
-          );
-  /* Build a GUID to pass them Platform HOB data to DXE phase */
-  if (Hob) {
-    BuildGuidDataHob (
-      &gPlatformHobGuid,
-      GET_GUID_HOB_DATA (Hob),
-      GET_GUID_HOB_DATA_SIZE (Hob)
-      );
-  }
-
-  Hob = GetNextGuidHob (
           &gPlatformHobV2Guid,
           (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
           );
