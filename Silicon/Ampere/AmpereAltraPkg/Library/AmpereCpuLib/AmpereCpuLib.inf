@@ -12,7 +12,7 @@
   FILE_GUID                      = 4ACE898C-4DDC-4EF7-BB6C-91549BDF5B9C
   MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = AmpereCpuLib
+  LIBRARY_CLASS                  = CpuLib
 
 [Sources]
   AmpereCpuLib.c

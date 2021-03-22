@@ -12,7 +12,7 @@
   FILE_GUID                     = 501DF419-0DC0-43E5-841A-98F645F15ECA
   MODULE_TYPE                   = DXE_DRIVER
   VERSION_STRING                = 0.1
-  LIBRARY_CLASS                 = NVParamDxeLib
+  LIBRARY_CLASS                 = NVParamLib
   CONSTRUCTOR                   = NVParamLibConstructor
 
 [Sources.common]

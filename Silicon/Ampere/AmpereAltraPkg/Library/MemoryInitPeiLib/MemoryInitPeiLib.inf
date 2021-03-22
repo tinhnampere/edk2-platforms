@@ -12,7 +12,7 @@
   FILE_GUID                      = 55DDB6E0-70B5-11E0-B33E-0002A5D5C51B
   MODULE_TYPE                    = SEC
   VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = PlatformPeiLib
+  LIBRARY_CLASS                  = MemoryInitPeiLib
 
 [Sources]
   MemoryInitPeiLib.c

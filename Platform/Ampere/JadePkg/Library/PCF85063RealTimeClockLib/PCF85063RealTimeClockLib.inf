@@ -9,7 +9,7 @@
 [Defines]
   INF_VERSION                      = 0x0001001B
   MODULE_TYPE                      = BASE
-  BASE_NAME                        = RealTimeClockLib
+  BASE_NAME                        = PCF85063RealTimeClockLib
   FILE_GUID                        = 271569F6-5522-4006-9FF5-F07A59473AAC
   LIBRARY_CLASS                    = RealTimeClockLib
   VERSION_STRING                   = 1.0
