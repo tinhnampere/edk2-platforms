@@ -57,29 +57,8 @@
 /* The base address of UART1 Register */
 #define UART1_REGISTER_BASE            0x12610000
 
-/* PCC Configuration */
-#define SMPRO_MAX_DB                   8
-#define SMPRO_DB0_IRQ_NUM              40
-
-#define PMPRO_MAX_DB                   8
-#define PMPRO_DB0_IRQ_NUM              56
-
-/* Non-secure Doorbell Mailbox to use between ARMv8 and SMpro */
-// #define SMPRO_NS_MAILBOX_INDEX  1
-
 /* Non-secure Doorbell Mailbox to use between ARMv8 and SMpro */
 #define SMPRO_NS_RNG_MAILBOX_INDEX     6
-
-#define PCC_MAX_SUBSPACES_PER_SOCKET   (SMPRO_MAX_DB + PMPRO_MAX_DB)
-#define PCC_SUBSPACE_MASK              0xEFFFEFFF
-
-#define DB_OUT                         0x00000010
-#define DB_OUT0                        0x00000014
-#define DB_OUT1                        0x00000018
-#define DB_STATUS                      0x00000020
-#define DB_STATUSMASK                  0x00000024
-#define DB_AVAIL_MASK                  0x00010000
-#define DBx_BASE_OFFSET                0x00001000
 
 /* Doorbell to use between ARMv8 and SMpro */
 #define SMPRO_DB                       0
@@ -90,31 +69,6 @@
 #define SMPRO_NS_MAILBOX_INDEX         (FixedPcdGet32 (PcdSmproNsMailboxIndex))
 
 #define SOCKET_BASE_OFFSET             0x400000000000
-#define SMPRO_DBx_REG(socket, db, reg) \
-        ((socket) * SOCKET_BASE_OFFSET + SMPRO_DB_BASE_REG + DBx_BASE_OFFSET * (db) + reg)
-
-#define PMPRO_DBx_REG(socket, db, reg) \
-        ((socket) * SOCKET_BASE_OFFSET + PMPRO_DB_BASE_REG + DBx_BASE_OFFSET * (db) + reg)
-
-#define PCC_MAX_SUBSPACES              ((SMPRO_MAX_DB + PMPRO_MAX_DB) * PLATFORM_CPU_MAX_SOCKET)
-#define PCC_SUBSPACE_SHARED_MEM_SIZE   0x4000
-
-#define PCC_NOMINAL_LATENCY                  10000 /* 10 ms */
-#define PCC_CPPC_NOMINAL_LATENCY             1000  /* 1 ms */
-#define PCC_MAX_PERIOD_ACCESS                0     /* unlimited */
-#define PCC_MIN_REQ_TURNAROUND_TIME          0     /* unlimited */
-#define PCC_CMD_POLL_UDELAY                  10    /* us */
-#define PCC_CPPC_MIN_REQ_TURNAROUND_TIME     110   /* 110 us */
-
-#define PCC_SIGNATURE_MASK                   0x50424300
-#define PCC_CPPC_SUBSPACE                    2 /* Doorbell 2 of PMPro */
-#define PCC_MSG                              0x53000040
-#define PCC_CPPC_MSG                         0x00000100
-#define PCC_CPPC_URG_MSG                     0x00800000
-#define PCC_256_ALIGN_ADDR                   0x00000040
-#define PCC_MSG_SIZE                         12 /* Num of Bytes */
-#define PCP_MSG_UPPER_ADDR_MASK              0xF
-
 
 /* The Array of Soc Gpio Base Address */
 #define GPIO_DWAPB_BASE_ADDR      0x1000026f0000,0x1000026e0000,0x1000027b0000,0x1000026d0000,0x5000026f0000,0x5000026e0000,0x5000027b0000,0x5000026d0000

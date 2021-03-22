@@ -8,6 +8,7 @@
 
 #include <Uefi.h>
 
+#include <IndustryStandard/Acpi.h>
 #include <Library/AcpiPccLib.h>
 #include <Library/ArmLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -18,312 +19,223 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Platform/Ac01.h>
 
-#define PCC_NULL_MSG             0x0F000000
+STATIC EFI_PHYSICAL_ADDRESS mPccSharedMemoryAddress;
+STATIC UINTN                mPccSharedMemorySize;
 
-STATIC UINT64 PccSharedMemAddr = 0;
-
-STATIC EFI_STATUS
-AcpiPccGetSharedMemAddr (
-  IN  UINT32 Socket,
-  IN  UINT32 Subspace,
-  OUT VOID   **AcpiPcct
+EFI_STATUS
+AcpiPccGetSharedMemoryAddress (
+  IN  UINT8  Socket,
+  IN  UINT16 Subspace,
+  OUT VOID   **SharedMemoryAddress
   )
 {
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
-      || (Socket >= PLATFORM_CPU_MAX_SOCKET))
+  if (Socket >= PLATFORM_CPU_MAX_SOCKET
+      || Subspace >= ACPI_PCC_MAX_SUBPACE)
   {
     return EFI_INVALID_PARAMETER;
   }
 
-  if (PccSharedMemAddr == 0) {
+  if (mPccSharedMemoryAddress == 0) {
     return EFI_NOT_READY;
   }
 
-  *AcpiPcct = (VOID *)(PccSharedMemAddr + PCC_SUBSPACE_SHARED_MEM_SIZE *
-                       (Subspace + PCC_MAX_SUBSPACES_PER_SOCKET * Socket));
+  *SharedMemoryAddress = (VOID *)(mPccSharedMemoryAddress + ACPI_PCC_SUBSPACE_SHARED_MEM_SIZE * Subspace);
 
   return EFI_SUCCESS;
 }
 
+/**
+  Allocate memory pages for the PCC shared memory region.
+
+  @param  PccSharedMemoryPtr     Pointer to the shared memory address.
+  @param  NumberOfSubspaces      Number of subspaces slot in the shared memory region.
+
+  @retval EFI_SUCCESS            Send the message successfully.
+  @retval EFI_INVALID_PARAMETER  TheNumberOfSubspaces is out of the valid range.
+  @retval Otherwise              Return errors from call to gBS->AllocatePages().
+
+**/
 EFI_STATUS
 EFIAPI
-AcpiPccSendMsg (
-  IN UINT32 Socket,
-  IN UINT32 Subspace,
-  IN VOID   *MsgBuf,
-  IN UINT32 Length
-  )
-{
-  INTN                           TimeoutCnt = PCC_NOMINAL_LATENCY / PCC_CMD_POLL_UDELAY;
-  VOID                           *CommunicationSpacePtr;
-  struct ACPI_PCCT_SHARED_MEMORY *AcpiPcct;
-  EFI_STATUS                     Status;
-  UINT32                         PccMsg;
-
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
-      || (Socket >= PLATFORM_CPU_MAX_SOCKET))
-  {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  Status = AcpiPccGetSharedMemAddr (Socket, Subspace, (VOID **)&AcpiPcct);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  CommunicationSpacePtr = AcpiPcct + 1;
-
-  /* Write Data into Communication Space Region */
-  CopyMem (CommunicationSpacePtr, MsgBuf, Length);
-  /* Flip CMD_COMPLETE bit */
-  AcpiPcct->StatusData.StatusT.CommandComplete = 0;
-  /* PCC signature */
-  AcpiPcct->Signature = PCC_SIGNATURE_MASK | Subspace;
-  /* Ring the Doorbell */
-  PccMsg = PCC_MSG;
-  /* Store the upper address (Bit 40-43) of PCC shared memory */
-  PccMsg |= ((UINT64)AcpiPcct >> 40) & PCP_MSG_UPPER_ADDR_MASK;
-  if (Subspace < PMPRO_MAX_DB) {
-    MmioWrite32 (PMPRO_DBx_REG (Socket, Subspace, DB_OUT), PccMsg);
-  } else {
-    MmioWrite32 (
-      SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_OUT),
-      PccMsg
-      );
-  }
-
-  /* Polling CMD_COMPLETE bit */
-  while (AcpiPcct->StatusData.StatusT.CommandComplete != 1) {
-    if (--TimeoutCnt <= 0) {
-      return EFI_TIMEOUT;
-    }
-    MicroSecondDelay (PCC_CMD_POLL_UDELAY);
-  }
-
-  return EFI_SUCCESS;
-}
-
-EFI_STATUS
-EFIAPI
-AcpiPccUnmaskInt (
-  IN UINT32 Socket,
-  IN UINT32 Subspace
-  )
-{
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
-      || (Socket >= PLATFORM_CPU_MAX_SOCKET))
-  {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  /* Unmask Interrupt */
-  if (Subspace < PMPRO_MAX_DB) {
-    MmioWrite32 (
-      PMPRO_DBx_REG (Socket, Subspace, DB_STATUSMASK),
-      ~DB_AVAIL_MASK
-      );
-  } else {
-    MmioWrite32 (
-      SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_STATUSMASK),
-      ~DB_AVAIL_MASK
-      );
-  }
-
-  return EFI_SUCCESS;
-}
-
-EFI_STATUS
-EFIAPI
-AcpiPccSyncSharedMemAddr (
-  IN UINT32 Socket,
-  IN UINT32 Subspace
-  )
-{
-  UINT32 PccData;
-
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
-      || (Socket >= PLATFORM_CPU_MAX_SOCKET))
-  {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  /*
-   * Advertise shared memory address to Platform (SMPro/PMPro)
-   * by ring the doorbell with dummy PCC message
-   */
-  PccData = PCC_NULL_MSG;
-
-  return AcpiPccSendMsg (Socket, Subspace, &PccData, 4);
-}
-
-EFI_STATUS
-EFIAPI
-AcpiPccSharedMemInit (
-  IN UINT32 Socket,
-  IN UINT32 Subspace
-  )
-{
-  struct ACPI_PCCT_SHARED_MEMORY *AcpiPcct;
-  EFI_STATUS                     Status;
-
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
-      || (Socket >= PLATFORM_CPU_MAX_SOCKET))
-  {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  Status = AcpiPccGetSharedMemAddr (Socket, Subspace, (VOID **)&AcpiPcct);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  /* Set Shared Memory address into DB OUT register */
-  if (Subspace < PMPRO_MAX_DB) {
-    MmioWrite32 (
-      PMPRO_DBx_REG (Socket, Subspace, DB_OUT0),
-      (UINT32)((UINT64)AcpiPcct >> 8)
-      );
-  } else {
-    MmioWrite32 (
-      SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_OUT0),
-      (UINT32)((UINT64)AcpiPcct >> 8)
-      );
-  }
-
-  /* Init shared memory for each PCC subspaces */
-  SetMem (
-    (VOID *)AcpiPcct,
-    sizeof (struct ACPI_PCCT_SHARED_MEMORY) + PCC_MSG_SIZE,
-    0x0
-    );
-  AcpiPcct->StatusData.StatusT.CommandComplete = 1;
-
-  return EFI_SUCCESS;
-}
-
-EFI_STATUS
-EFIAPI
-AcpiPccSharedMemInitV2 (
-  IN UINT32 Socket,
-  IN UINT32 Subspace
-  )
-{
-  struct ACPI_PCCT_SHARED_MEMORY *AcpiPcct;
-  EFI_STATUS                     Status;
-  UINT32                         AlignBit;
-
-  if ((Subspace >= PCC_MAX_SUBSPACES_PER_SOCKET)
-      || (Socket >= PLATFORM_CPU_MAX_SOCKET))
-  {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  Status = AcpiPccGetSharedMemAddr (Socket, Subspace, (VOID **)&AcpiPcct);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  if ((PCC_MSG & PCC_256_ALIGN_ADDR) != 0) {
-    AlignBit = 8;
-  }
-
-  /* Set Shared Memory address into DB OUT register */
-  if (Subspace < PMPRO_MAX_DB) {
-    MmioWrite32 (
-      PMPRO_DBx_REG (Socket, Subspace, DB_OUT0),
-      (UINT32)((UINT64)AcpiPcct >> AlignBit)
-      );
-
-    MmioWrite32 (
-      (PMPRO_DBx_REG (Socket, Subspace, DB_OUT1)),
-      (UINT32)((UINT64)AcpiPcct >> (32 + AlignBit))
-      );
-  } else {
-    MmioWrite32 (
-      SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_OUT0),
-      (UINT32)((UINT64)AcpiPcct >> AlignBit)
-      );
-
-    MmioWrite32 (
-      SMPRO_DBx_REG (Socket, Subspace - PMPRO_MAX_DB, DB_OUT1),
-      (UINT32)((UINT64)AcpiPcct >> (32 + AlignBit))
-      );
-  }
-
-  /* Init shared memory for each PCC subspaces */
-  SetMem (
-    (VOID *)AcpiPcct,
-    sizeof (struct ACPI_PCCT_SHARED_MEMORY) + PCC_MSG_SIZE,
-    0x0
-    );
-  AcpiPcct->StatusData.StatusT.CommandComplete = 1;
-
-  return EFI_SUCCESS;
-}
-
-EFI_STATUS
-EFIAPI
-AcpiIppPccIsSupported (
-  VOID
+AcpiPccAllocateSharedMemory (
+  OUT EFI_PHYSICAL_ADDRESS *PccSharedMemoryPtr,
+  IN  UINT16               NumberOfSubspaces
   )
 {
   EFI_STATUS Status;
 
-  /* Send a PCC NULL command to check if IPP supports PCC request */
-  AcpiPccSharedMemInit (0, 0);
-
-  Status = AcpiPccSyncSharedMemAddr (0, 0);
-  if (EFI_ERROR (Status)) {
-    return EFI_UNSUPPORTED;
-  }
-
-  return EFI_SUCCESS;
-}
-
-EFI_STATUS
-EFIAPI
-AcpiPccAllocSharedMemory (
-  OUT UINT64 *PccSharedMemPointer,
-  IN  UINT32 SubspaceNum
-  )
-{
-  EFI_STATUS Status;
-
-  if (SubspaceNum > PCC_MAX_SUBSPACES) {
+  if (NumberOfSubspaces > ACPI_PCC_MAX_SUBPACE) {
     return EFI_INVALID_PARAMETER;
   }
+
+  mPccSharedMemorySize = ACPI_PCC_SUBSPACE_SHARED_MEM_SIZE * NumberOfSubspaces;
 
   Status = gBS->AllocatePages (
                   AllocateAnyPages,
                   EfiRuntimeServicesData,
-                  EFI_SIZE_TO_PAGES (PCC_SUBSPACE_SHARED_MEM_SIZE * SubspaceNum),
-                  &PccSharedMemAddr
+                  EFI_SIZE_TO_PAGES (mPccSharedMemorySize),
+                  &mPccSharedMemoryAddress
                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to allocate PCC shared memory\n"));
+    mPccSharedMemorySize = 0;
     return Status;
   }
 
-  *PccSharedMemPointer = PccSharedMemAddr;
+  *PccSharedMemoryPtr = mPccSharedMemoryAddress;
 
   return EFI_SUCCESS;
 }
 
+/**
+  Free the whole shared memory region that is allocated by
+  the AcpiPccAllocateSharedMemory() function.
+
+**/
 VOID
 EFIAPI
 AcpiPccFreeSharedMemory (
-  OUT UINT64 *PccSharedMemPointer,
-  IN  UINT32 SubspaceNum
+  VOID
   )
 {
-  if (SubspaceNum > PCC_MAX_SUBSPACES) {
-    return;
+  if (mPccSharedMemoryAddress != 0 && mPccSharedMemorySize != 0)
+  {
+    gBS->FreePages (
+           mPccSharedMemoryAddress,
+           EFI_SIZE_TO_PAGES (mPccSharedMemorySize)
+           );
+
+    mPccSharedMemoryAddress = 0;
+  }
+}
+
+/**
+  Initialize the shared memory in the SMpro/PMpro Doorbell handler.
+  This function is to advertise the shared memory region address to the platform (SMpro/PMpro).
+
+  @param  Socket    The Socket ID.
+  @param  Doorbell  The Doorbell index from supported Doorbells per socket.
+  @param  Subspace  The Subspace index in the shared memory region.
+
+  @retval EFI_SUCCESS            Initialize successfully.
+  @retval EFI_INVALID_PARAMETER  The Socket, Doorbell or Subspace is out of the valid range.
+
+**/
+EFI_STATUS
+EFIAPI
+AcpiPccInitSharedMemory (
+  IN UINT8  Socket,
+  IN UINT16 Doorbell,
+  IN UINT16 Subspace
+  )
+{
+  EFI_STATUS                                            Status;
+  EFI_ACPI_6_3_PCCT_GENERIC_SHARED_MEMORY_REGION_HEADER *PcctSharedMemoryRegion;
+  UINT32                                                CommunicationData;
+  UINTN                                                 Timeout;
+
+  if (Socket >= PLATFORM_CPU_MAX_SOCKET
+      || Doorbell >= NUMBER_OF_DOORBELLS_PER_SOCKET
+      || Subspace >= ACPI_PCC_MAX_SUBPACE)
+  {
+    return EFI_INVALID_PARAMETER;
   }
 
-  gBS->FreePages (
-         *PccSharedMemPointer,
-         EFI_SIZE_TO_PAGES (PCC_SUBSPACE_SHARED_MEM_SIZE * SubspaceNum)
-         );
+  Status = AcpiPccGetSharedMemoryAddress (Socket, Subspace, (VOID **)&PcctSharedMemoryRegion);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
-  PccSharedMemAddr = 0;
+  //
+  // Zero shared memory region for each PCC subspaces
+  //
+  SetMem (
+    (VOID *)PcctSharedMemoryRegion,
+    sizeof (EFI_ACPI_6_3_PCCT_GENERIC_SHARED_MEMORY_REGION_HEADER) + DB_PCC_MSG_PAYLOAD_SIZE,
+    0
+    );
+
+  // Advertise shared memory address to Platform (SMpro/PMpro)
+  // by ringing the doorbell with dummy PCC message
+  //
+  CommunicationData = DB_PCC_PAYLOAD_DUMMY;
+
+  //
+  // Write Data into Communication Space Region
+  //
+  CopyMem ((VOID *)(PcctSharedMemoryRegion + 1), &CommunicationData, sizeof (CommunicationData));
+
+  PcctSharedMemoryRegion->Status.CommandComplete = 0;
+  PcctSharedMemoryRegion->Signature = ACPI_PCC_SUBSPACE_SHARED_MEM_SIGNATURE | Subspace;
+
+  Status = MailboxMsgSetPccSharedMem (Socket, Doorbell, TRUE, (UINT64)PcctSharedMemoryRegion);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Failed to send mailbox message!\n", __FUNCTION__));
+    ASSERT_EFI_ERROR (Status);
+    return Status;
+  }
+
+  //
+  // Polling CMD_COMPLETE bit
+  //
+  Timeout = ACPI_PCC_COMMAND_POLL_COUNT;
+  while (PcctSharedMemoryRegion->Status.CommandComplete != 1) {
+    if (--Timeout <= 0) {
+      DEBUG ((DEBUG_ERROR, "%a - Timeout occurred when polling the PCC Status Complete\n", __FUNCTION__));
+      return EFI_TIMEOUT;
+    }
+    MicroSecondDelay (ACPI_PCC_COMMAND_POLL_INTERVAL_US);
+  }
+
+  return EFI_SUCCESS;
+}
+
+/**
+  Unmask the Doorbell interrupt.
+
+  @param  Socket    The Socket ID.
+  @param  Doorbell  The Doorbell index from supported Doorbells per socket.
+
+  @retval EFI_SUCCESS            Unmask the Doorbell interrupt successfully.
+  @retval EFI_INVALID_PARAMETER  The Socket or Doorbell is out of the valid range.
+
+**/
+EFI_STATUS
+EFIAPI
+AcpiPccUnmaskDoorbellInterrupt (
+  IN UINT8  Socket,
+  IN UINT16 Doorbell
+  )
+{
+  return MailboxUnmaskInterrupt (Socket, Doorbell);
+}
+
+/**
+  Check whether the Doorbell is reserved or not.
+
+  @param  Doorbell   The Doorbell index from supported Doorbells.
+
+  @retval TRUE         The Doorbell is reserved for private use or invalid.
+  @retval FALSE        The Doorbell is available.
+
+**/
+BOOLEAN
+EFIAPI
+AcpiPccIsDoorbellReserved (
+  IN UINT16 Doorbell
+  )
+{
+  if (Doorbell >= ACPI_PCC_MAX_DOORBELL) {
+    ASSERT (FALSE);
+    return TRUE;
+  }
+
+  if (((1 << Doorbell) & ACPI_PCC_AVAILABLE_DOORBELL_MASK) == 0) {
+    //
+    // The doorbell is reserved for private use.
+    //
+    return TRUE;
+  }
+
+  return FALSE;
 }

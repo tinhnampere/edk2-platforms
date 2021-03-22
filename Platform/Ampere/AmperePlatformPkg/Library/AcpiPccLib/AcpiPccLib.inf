@@ -30,7 +30,9 @@
   BaseMemoryLib
   DebugLib
   IoLib
+  MailboxInterfaceLib
   PrintLib
+  SystemFirmwareInterfaceLib
   TimerLib
   UefiBootServicesTableLib
 

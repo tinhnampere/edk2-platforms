@@ -20,7 +20,7 @@
   AcpiDsdt.c
   AcpiMADT.c
   AcpiNfit.c
-  AcpiPCCT.c
+  AcpiPcct.c
   AcpiPPTT.c
   AcpiPlatform.h
   AcpiPlatformDxe.c
