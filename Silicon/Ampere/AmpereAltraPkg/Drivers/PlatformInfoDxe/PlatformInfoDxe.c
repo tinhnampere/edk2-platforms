@@ -23,7 +23,6 @@
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
-#include <Pcie.h>
 #include <PlatformInfoHob.h>
 
 #include "PlatformInfoHii.h"
