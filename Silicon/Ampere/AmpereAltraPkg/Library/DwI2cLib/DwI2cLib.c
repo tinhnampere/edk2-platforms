@@ -937,15 +937,15 @@ I2cLibConstructor (
   )
 {
   VOID               *Hob;
-  PlatformInfoHob_V2 *PlatformHob_V2;
+  PlatformInfoHob    *PlatformHob;
 
   /* Get I2C Clock from the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return EFI_NOT_FOUND;
   }
-  PlatformHob_V2 = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
-  I2cClock = PlatformHob_V2->AhbClk;
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  I2cClock = PlatformHob->AhbClk;
   ASSERT (I2cClock != 0);
 
   return EFI_SUCCESS;

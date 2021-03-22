@@ -41,7 +41,7 @@ typedef struct {
   UINT32 McuMask[PLATFORM_CPU_MAX_SOCKET];
   UINT32 NvdRegion[PLATFORM_DRAM_INFO_MAX_REGION];
   UINT32 NvdimmMode[PLATFORM_CPU_MAX_SOCKET];
-} PlatformDramInfoV2;
+} PlatformDramInfo;
 
 typedef struct {
   CHAR8  PartNumber[32];
@@ -52,22 +52,22 @@ typedef struct {
   UINT8  DimmType;
   UINT8  DimmStatus;
   UINT8  DimmDevType;
-} PlatformDimmInfoV2;
+} PlatformDimmInfo;
 
 typedef struct {
   UINT8 Data[512];
-} PlatformDimmSpdDataV2;
+} PlatformDimmSpdData;
 
 typedef struct {
-  PlatformDimmInfoV2    Info;
-  PlatformDimmSpdDataV2 SpdData;
+  PlatformDimmInfo      Info;
+  PlatformDimmSpdData   SpdData;
   UINT32                NodeId;
-} PlatformDimmV2;
+} PlatformDimm;
 
 typedef struct {
   UINT32         BoardDimmSlots;
-  PlatformDimmV2 Dimm[PLATFORM_DIMM_INFO_MAX_SLOT];
-} PlatformDimmListV2;
+  PlatformDimm   Dimm[PLATFORM_DIMM_INFO_MAX_SLOT];
+} PlatformDimmList;
 
 typedef struct {
   UINT32 EnableMask[4];
@@ -137,8 +137,8 @@ typedef struct {
   UINT8              CpuVer[32];
   UINT8              SmPmProVer[32];
   UINT8              SmPmProBuild[32];
-  PlatformDramInfoV2 DramInfo;
-  PlatformDimmListV2 DimmList;
+  PlatformDramInfo   DramInfo;
+  PlatformDimmList   DimmList;
   PlatformClusterEn  ClusterEn[2];
   UINT32             FailSafeStatus;
   UINT32             RcDisableMask[2];
@@ -169,6 +169,6 @@ typedef struct {
   UINT8 Link2PSpeed[2];
   UINT8 Link2PWidth[2];
 
-} PlatformInfoHob_V2;
+} PlatformInfoHob;
 
 #endif /* PLATFORM_INFO_HOB_H_ */

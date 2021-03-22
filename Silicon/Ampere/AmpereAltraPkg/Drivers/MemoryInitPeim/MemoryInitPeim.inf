@@ -35,7 +35,7 @@
 
 [Guids]
   gEfiMemoryTypeInformationGuid
-  gPlatformHobV2Guid
+  gPlatformHobGuid
 
 [FeaturePcd]
   gEmbeddedTokenSpaceGuid.PcdPrePiProduceMemoryTypeInformationHob

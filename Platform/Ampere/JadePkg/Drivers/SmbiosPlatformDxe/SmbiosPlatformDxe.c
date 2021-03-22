@@ -819,7 +819,7 @@ GetBiosVerMinor (
 STATIC
 EFI_STATUS
 UpdateSmbiosType0 (
-  PlatformInfoHob_V2 *PlatformHob
+  PlatformInfoHob    *PlatformHob
   )
 {
   EFI_STATUS                          Status        = EFI_SUCCESS;
@@ -1039,16 +1039,16 @@ UpdateSmbiosInfo (
   )
 {
   VOID               *Hob;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   ASSERT (Hob != NULL);
   if (Hob == NULL) {
     return;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   //
   //  Update Type0 information

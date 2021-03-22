@@ -29,7 +29,7 @@ ARM_CORE_INFO mArmPlatformMpCoreInfoTable[PLATFORM_CPU_MAX_NUM_CORES];
 
 BOOLEAN
 ArmPlatformCpuIsEnabled (
-  PlatformInfoHob_V2 *Hob,
+  PlatformInfoHob    *Hob,
   UINT32             CpuId
   )
 {
@@ -113,7 +113,7 @@ PrePeiCoreGetMpCoreInfo (
   )
 {
   UINTN              mArmPlatformCoreCount;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
   UINTN              ClusterId;
   UINTN              SocketId;
   UINTN              Index;
@@ -124,14 +124,14 @@ PrePeiCoreGetMpCoreInfo (
   ASSERT (*ArmCoreTable != NULL);
 
   Hob = GetNextGuidHob (
-          &gPlatformHobV2Guid,
+          &gPlatformHobGuid,
           (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
           );
   if (Hob == NULL) {
     return EFI_UNSUPPORTED;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   mArmPlatformCoreCount = 0;
   for  (Index = 0; Index < PLATFORM_CPU_MAX_NUM_CORES; Index++) {

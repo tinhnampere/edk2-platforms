@@ -512,7 +512,7 @@ PcieRCActiveDefaultSetting (
   IN PCIE_SCREEN_PRIVATE_DATA *PrivateData
   )
 {
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
   VOID               *Hob;
   UINT32             Efuse;
 
@@ -521,9 +521,9 @@ PcieRCActiveDefaultSetting (
     return FALSE;
   }
 
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob != NULL) {
-    PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+    PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
     Efuse = PlatformHob->RcDisableMask[0] | (PlatformHob->RcDisableMask[1] << RCS_PER_SOCKET);
     return (!(Efuse & BIT (RCIndex))) ? TRUE : FALSE;
   }

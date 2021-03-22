@@ -19,19 +19,19 @@
 #include <Platform/Ac01.h>
 #include <PlatformInfoHob.h>
 
-STATIC PlatformInfoHob_V2 *
+STATIC PlatformInfoHob *
 GetPlatformHob (
   VOID
   )
 {
   VOID *Hob;
 
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return NULL;
   }
 
-  return (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  return (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 }
 
 /**
@@ -46,7 +46,7 @@ CpuGetSubNumaMode (
   VOID
   )
 {
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -336,7 +336,7 @@ GetNumberSupportedSockets (
   VOID
   )
 {
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -360,7 +360,7 @@ GetNumberActiveSockets (
 {
   UINTN              NumberActiveSockets, Count, Index, Index1;
   PlatformClusterEn  *Socket;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -399,7 +399,7 @@ GetNumberActiveCPMsPerSocket (
   UINTN              NumberCPMs, Count, Index;
   UINT32             Val32;
   PlatformClusterEn  *Socket;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -537,7 +537,7 @@ GetMaximumNumberOfCores (
   )
 {
 
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -618,7 +618,7 @@ IsCpuEnabled (
   )
 {
   PlatformClusterEn  *Socket;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
   UINT32             SocketId;
   UINT32             ClusterId;
 

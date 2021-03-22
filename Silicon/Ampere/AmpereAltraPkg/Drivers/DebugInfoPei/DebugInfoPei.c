@@ -152,14 +152,14 @@ PrintSystemInfo (
 {
   UINTN              Idx;
   VOID               *Hob;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   SerialPrint ("SCP FW version    : %a\n", (const CHAR8 *)PlatformHob->SmPmProVer);
   SerialPrint ("SCP FW build date : %a\n", (const CHAR8 *)PlatformHob->SmPmProBuild);

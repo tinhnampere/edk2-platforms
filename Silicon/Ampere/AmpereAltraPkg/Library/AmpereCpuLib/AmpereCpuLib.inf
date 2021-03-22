@@ -40,4 +40,4 @@
   gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex
 
 [Guids]
-  gPlatformHobV2Guid
+  gPlatformHobGuid

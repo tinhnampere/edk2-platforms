@@ -77,16 +77,16 @@ InitializeMemory (
   UINTN              UefiMemoryBase;
   UINTN              Index;
   VOID               *Hob;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
   DEBUG ((DEBUG_INFO, "Memory Init PEIM Loaded\n"));
 
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return EFI_DEVICE_ERROR;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   /* Find system memory top of the first node */
   SystemMemoryTop = 0;

@@ -54,7 +54,7 @@ AcpiPcctIsV2 (
   VOID *Hob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return FALSE;
   }
@@ -68,16 +68,16 @@ AcpiPcctGetNumOfSocket (
   )
 {
   UINTN              NumberSockets, NumberActiveSockets, Count, Index, Index1;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
   PlatformClusterEn  *Socket;
   VOID               *Hob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return 1;
   }
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   NumberSockets = sizeof (PlatformHob->ClusterEn) / sizeof (PlatformClusterEn);
   NumberActiveSockets = 0;

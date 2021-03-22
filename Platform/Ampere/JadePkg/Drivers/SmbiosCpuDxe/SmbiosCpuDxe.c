@@ -402,7 +402,7 @@ UpdateStringPack (
 STATIC
 VOID
 UpdateSmbiosType4 (
-  PlatformInfoHob_V2 *PlatformHob
+  PlatformInfoHob    *PlatformHob
   )
 {
   UINTN              Index;
@@ -474,7 +474,7 @@ UpdateSmbiosType4 (
 STATIC
 VOID
 UpdateSmbiosType7 (
-  PlatformInfoHob_V2 *PlatformHob
+  PlatformInfoHob    *PlatformHob
   )
 {
   UINTN              Index;
@@ -540,16 +540,16 @@ UpdateSmbiosInfo (
   )
 {
   VOID               *Hob;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   ASSERT (Hob != NULL);
   if (Hob == NULL) {
     return;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   UpdateSmbiosType4 (PlatformHob);
   UpdateSmbiosType7 (PlatformHob);

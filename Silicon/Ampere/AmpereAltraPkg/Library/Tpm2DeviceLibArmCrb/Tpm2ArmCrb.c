@@ -283,14 +283,14 @@ Tpm2ArmCrbInitialize (
   )
 {
   VOID               *GuidHob;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
 
-  GuidHob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  GuidHob = GetFirstGuidHob (&gPlatformHobGuid);
   if (GuidHob == NULL) {
     return EFI_DEVICE_ERROR;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (GuidHob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (GuidHob);
   PlatformTpm2Config = PlatformHob->Tpm2Info.Tpm2ConfigData;
   PlatformTpm2InterfaceParams = PlatformHob->Tpm2Info.Tpm2CrbInterfaceParams;
 

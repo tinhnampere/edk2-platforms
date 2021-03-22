@@ -27,12 +27,12 @@ BuildPlatformInformationHob (
 
   /* The ATF HOB handoff base is at PcdSystemMemoryBase */
   Hob = GetNextGuidHob (
-          &gPlatformHobV2Guid,
+          &gPlatformHobGuid,
           (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
           );
-  if (Hob) {
+  if (Hob != NULL) {
     BuildGuidDataHob (
-      &gPlatformHobV2Guid,
+      &gPlatformHobGuid,
       GET_GUID_HOB_DATA (Hob),
       GET_GUID_HOB_DATA_SIZE (Hob)
       );

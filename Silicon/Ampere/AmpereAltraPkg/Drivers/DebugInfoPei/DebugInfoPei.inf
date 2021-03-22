@@ -35,7 +35,7 @@
   SerialPortLib
 
 [Guids]
-  gPlatformHobV2Guid
+  gPlatformHobGuid
 
 [Depex]
   TRUE

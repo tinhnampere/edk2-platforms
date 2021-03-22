@@ -57,7 +57,7 @@
   gTcgEvent2EntryHobGuid                                               ## PRODUCES               ## HOB
   gEfiTpmDeviceInstanceTpm20DtpmGuid                                   ## SOMETIMES_PRODUCES     ## GUID       # TPM device identifier
   gEdkiiMigratedFvInfoGuid                                             ## SOMETIMES_CONSUMES     ## HOB
-  gPlatformHobV2Guid                                                   ## CONSUMES               ## GUID
+  gPlatformHobGuid                                                     ## CONSUMES               ## GUID
 
 [Ppis]
   gEfiPeiFirmwareVolumeInfoPpiGuid                                     ## SOMETIMES_CONSUMES     ## NOTIFY

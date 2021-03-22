@@ -34,16 +34,16 @@ AcpiPatchDmc620 (
 {
   CHAR8              NodePath[MAX_ACPI_NODE_PATH];
   UINTN              Index, Index1;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
   UINT32             McuMask;
   VOID               *Hob;
 
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
     McuMask = PlatformHob->DramInfo.McuMask[Index];
@@ -65,14 +65,14 @@ AcpiPatchNvdimm (
 {
   CHAR8              NodePath[MAX_ACPI_NODE_PATH];
   UINTN              NvdRegionNumSK0, NvdRegionNumSK1, NvdRegionNum, Count;
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
   VOID               *Hob;
 
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return;
   }
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   NvdRegionNumSK0 = 0;
   NvdRegionNumSK1 = 0;
@@ -206,15 +206,15 @@ PcieGetSubNumaMode (
   VOID
   )
 {
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
   VOID               *Hob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return SUBNUMA_MODE_MONOLITHIC;
   }
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   return PlatformHob->SubNumaMode[0];
 }

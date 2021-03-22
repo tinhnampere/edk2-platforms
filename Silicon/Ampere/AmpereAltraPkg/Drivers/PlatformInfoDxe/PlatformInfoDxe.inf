@@ -44,7 +44,7 @@
 [Guids]
   gPlatformManagerFormsetGuid
   gEfiIfrTianoGuid
-  gPlatformHobV2Guid
+  gPlatformHobGuid
 
 [Protocols]
 

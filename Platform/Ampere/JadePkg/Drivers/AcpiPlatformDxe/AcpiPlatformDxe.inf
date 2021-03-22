@@ -65,7 +65,7 @@
   gEfiAcpiTableGuid
   gEfiEventReadyToBootGuid
   gAcpiConfigFormSetGuid
-  gPlatformHobV2Guid
+  gPlatformHobGuid
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## ALWAYS_CONSUMED

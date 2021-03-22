@@ -53,7 +53,7 @@
 [Guids]
   gEfiIfrTianoGuid                              ## CONSUMES
   gPlatformManagerFormsetGuid                   ## CONSUMES
-  gPlatformHobV2Guid                            ## CONSUMES
+  gPlatformHobGuid                              ## CONSUMES
 
 [Depex]
   TRUE

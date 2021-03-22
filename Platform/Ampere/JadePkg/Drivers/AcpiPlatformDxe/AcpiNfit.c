@@ -83,16 +83,16 @@ AcpiNvdInfoInit (
   IN     UINTN       NvdId
   )
 {
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
   VOID               *Hob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL || NvdInfoPtr == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   NvdInfoPtr->Enabled = TRUE;
   NvdInfoPtr->PhysId = NvdId;
@@ -120,18 +120,18 @@ AcpiNvdDataInit (
   IN UINTN Socket
   )
 {
-  PlatformInfoHob_V2 *PlatformHob;
+  PlatformInfoHob    *PlatformHob;
   NVDIMM_INFO        *NvdInfo;
   UINTN              Count;
   VOID               *Hob;
   UINTN              NvdRegionNum, RegionId;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-  PlatformHob = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
   NvdRegionNum = 0;
   for (Count = 0; Count < PlatformHob->DramInfo.NumRegion; Count++) {
@@ -321,7 +321,7 @@ AcpiNfitFillTableBySK (
   EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *NfitSpaPointer;
   EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE         *NfitControlRegionPointer;
   EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE         *NfitRegionMappingPointer;
-  PlatformInfoHob_V2                                        *PlatformHob;
+  PlatformInfoHob                                           *PlatformHob;
   VOID                                                      *Hob;
   UINT64                                                    NvdRegionBase,
                                                             NvdRegionSize;
@@ -329,7 +329,7 @@ AcpiNfitFillTableBySK (
   UINTN RegionId, NvdRegionIndex, NvdIndex;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobV2Guid);
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL
       || NfitSpaPointerStart == NULL
       || NfitSpaPointerNext == NULL)
@@ -337,7 +337,7 @@ AcpiNfitFillTableBySK (
     return EFI_INVALID_PARAMETER;
   }
 
-  PlatformHob    = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob    = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
   NvdRegionIndex = (Socket == 0) ? 0 : NvdData[NVDIMM_SK0].NvdRegionNum;
   NvdIndex       = (Socket == 0) ? 0 : NvdData[NVDIMM_SK0].NvdNum;
   if (NvdData[Socket].NvdMode == NVDIMM_HASHED) {
