@@ -32,7 +32,7 @@
 #define TYPE4_ADDITIONAL_STRINGS                                  \
   "SOCKET 0\0"                       /* socket type */            \
   "Ampere(R)\0"                      /* manufacturer */           \
-  "Ampere(TM) Altra(TM) Processor\0" /* processor description */  \
+  "Ampere(R) Altra(R) Processor\0"   /* processor description */  \
   "NotSet\0"                         /* part number */
 
 #define TYPE7_ADDITIONAL_STRINGS                                  \
