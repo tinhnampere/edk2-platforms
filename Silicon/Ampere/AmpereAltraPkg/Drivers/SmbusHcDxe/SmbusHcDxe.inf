@@ -26,8 +26,8 @@
 [LibraryClasses]
   BaseMemoryLib
   DebugLib
-  DwapbGpioLib
-  I2CLib
+  GpioLib
+  I2cLib
   PcdLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint

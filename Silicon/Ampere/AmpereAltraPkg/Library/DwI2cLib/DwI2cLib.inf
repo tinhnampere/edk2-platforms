@@ -8,15 +8,15 @@
 
 [Defines]
   INF_VERSION                    = 0x0001001B
-  BASE_NAME                      = I2CLib
+  BASE_NAME                      = DwI2cLib
   FILE_GUID                      = 222609E2-C181-11E6-A4A6-CEC0C932CE01
   MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = I2CLib
-  CONSTRUCTOR                    = I2CLibConstructor
+  LIBRARY_CLASS                  = I2cLib
+  CONSTRUCTOR                    = I2cLibConstructor
 
 [Sources]
-  I2CLib.c
+  DwI2cLib.c
 
 [Packages]
   ArmPkg/ArmPkg.dec

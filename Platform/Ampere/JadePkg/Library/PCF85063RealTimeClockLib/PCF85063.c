@@ -11,8 +11,8 @@
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/DwapbGpioLib.h>
-#include <Library/I2CLib.h>
+#include <Library/GpioLib.h>
+#include <Library/I2cLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 #include <Library/TimerLib.h>
@@ -69,14 +69,14 @@ STATIC volatile UINT64 RtcBufPhy;
 
 STATIC
 EFI_STATUS
-RtcI2CWaitAccess (
+RtcI2cWaitAccess (
   VOID
   )
 {
   INTN Timeout;
 
   Timeout = RTC_TIMEOUT_WAIT_ACCESS;
-  while ((DwapbGpioReadBit (I2C_RTC_ACCESS_GPIO_PIN) != 0) && (Timeout > 0)) {
+  while ((GpioReadBit (I2C_RTC_ACCESS_GPIO_PIN) != 0) && (Timeout > 0)) {
     MicroSecondDelay (100);
     Timeout -= 100;
   }
@@ -91,7 +91,7 @@ RtcI2CWaitAccess (
 
 STATIC
 EFI_STATUS
-RtcI2CRead (
+RtcI2cRead (
   IN     UINT8  Addr,
   IN OUT UINT64 Data,
   IN     UINT32 DataLen
@@ -100,11 +100,11 @@ RtcI2CRead (
   EFI_STATUS Status;
   UINT32     TmpLen;
 
-  if (EFI_ERROR (RtcI2CWaitAccess ())) {
+  if (EFI_ERROR (RtcI2cWaitAccess ())) {
     return EFI_DEVICE_ERROR;
   }
 
-  Status = I2CProbe (I2C_RTC_BUS_ADDRESS, I2C_RTC_BUS_SPEED);
+  Status = I2cProbe (I2C_RTC_BUS_ADDRESS, I2C_RTC_BUS_SPEED);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -113,7 +113,7 @@ RtcI2CRead (
   // Send the slave address for read
   //
   TmpLen = 1;
-  Status = I2CWrite (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, (UINT8 *)&Addr, &TmpLen);
+  Status = I2cWrite (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, (UINT8 *)&Addr, &TmpLen);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -121,7 +121,7 @@ RtcI2CRead (
   //
   // Read back the time
   //
-  Status = I2CRead (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, NULL, 0, (UINT8 *)Data, &DataLen);
+  Status = I2cRead (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, NULL, 0, (UINT8 *)Data, &DataLen);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -130,7 +130,7 @@ RtcI2CRead (
 }
 
 EFI_STATUS
-RtcI2CWrite (
+RtcI2cWrite (
   IN UINT8  Addr,
   IN UINT64 Data,
   IN UINT32 DataLen
@@ -140,7 +140,7 @@ RtcI2CWrite (
   UINT8      TmpBuf[RTC_DATA_BUF_LEN + 1];
   UINT32     TmpLen;
 
-  if (EFI_ERROR (RtcI2CWaitAccess ())) {
+  if (EFI_ERROR (RtcI2cWaitAccess ())) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -148,7 +148,7 @@ RtcI2CWrite (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = I2CProbe (I2C_RTC_BUS_ADDRESS, I2C_RTC_BUS_SPEED);
+  Status = I2cProbe (I2C_RTC_BUS_ADDRESS, I2C_RTC_BUS_SPEED);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -160,7 +160,7 @@ RtcI2CWrite (
   TmpLen = DataLen + 1;
   CopyMem ((VOID *)(TmpBuf + 1), (VOID *)Data, DataLen);
 
-  Status = I2CWrite (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, TmpBuf, &TmpLen);
+  Status = I2cWrite (I2C_RTC_BUS_ADDRESS, I2C_RTC_CHIP_ADDRESS, TmpBuf, &TmpLen);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -191,7 +191,7 @@ PlatformGetTime (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = RtcI2CRead (RTC_ADDR, RtcBufVir, RTC_DATA_BUF_LEN);
+  Status = RtcI2cRead (RTC_ADDR, RtcBufVir, RTC_DATA_BUF_LEN);
 
   Data = (UINT8 *)RtcBufVir;
   if (Status == EFI_SUCCESS) {
@@ -249,7 +249,7 @@ PlatformSetTime (
   Data[PCF85063_OFFSET_MON] = PCF85063_MON_ENC (Time->Month);
   Data[PCF85063_OFFSET_YEA] = PCF85063_YEA_ENC (Time->Year - RTC_DEFAULT_MIN_YEAR);
 
-  return RtcI2CWrite (RTC_ADDR, RtcBufVir, RTC_DATA_BUF_LEN);
+  return RtcI2cWrite (RTC_ADDR, RtcBufVir, RTC_DATA_BUF_LEN);
 }
 
 /**
@@ -287,12 +287,12 @@ PlatformInitialize (
   ASSERT_EFI_ERROR (RtcBufVir);
   RtcBufPhy = (UINT64)RtcBufVir;
 
-  Status = I2CSetupRuntime (I2C_RTC_BUS_ADDRESS);
+  Status = I2cSetupRuntime (I2C_RTC_BUS_ADDRESS);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     DEBUG ((
       DEBUG_ERROR,
-      "%a:%d I2CSetupRuntime() failed - %r \n",
+      "%a:%d I2cSetupRuntime() failed - %r \n",
       __FUNCTION__,
       __LINE__,
       Status
@@ -300,12 +300,12 @@ PlatformInitialize (
     return Status;
   }
 
-  Status = DwapbGPIOSetupRuntime (I2C_RTC_ACCESS_GPIO_PIN);
+  Status = GpioSetupRuntime (I2C_RTC_ACCESS_GPIO_PIN);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     DEBUG ((
       DEBUG_ERROR,
-      "%a:%d DwapbGPIOSetupRuntime() failed - %r \n",
+      "%a:%d GpioSetupRuntime() failed - %r \n",
       __FUNCTION__,
       __LINE__,
       Status

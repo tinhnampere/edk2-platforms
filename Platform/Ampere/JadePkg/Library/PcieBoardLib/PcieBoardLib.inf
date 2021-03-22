@@ -15,11 +15,11 @@
   LIBRARY_CLASS                  = PcieBoardLib
 
 [Sources]
-  BoardPcie.c
-  BoardPcieCommon.c
-  BoardPcieScreen.c
-  BoardPcieScreen.h
-  BoardPcieScreen.uni
+  PcieBoard.c
+  PcieBoardCommon.c
+  PcieBoardScreen.c
+  PcieBoardScreen.h
+  PcieBoardScreen.uni
   NVDataStruc.h
   Vfr.vfr
 
@@ -34,7 +34,7 @@
   AmpereCpuLib
   BaseLib
   DevicePathLib
-  DwapbGpioLib
+  GpioLib
   HiiLib
   HobLib
   MemoryAllocationLib

@@ -10,7 +10,7 @@
 #include <Uefi.h>
 
 #include <Library/DebugLib.h>
-#include <Library/DwapbGpioLib.h>
+#include <Library/GpioLib.h>
 #include <Library/DxeServicesTableLib.h>
 #include <Library/IoLib.h>
 #include <Library/TimerLib.h>
@@ -52,7 +52,7 @@ GetBaseAddr (
 }
 
 VOID
-DwapbGpioWrite (
+GpioWrite (
   IN UINT64 Base,
   IN UINT32 Val
   )
@@ -61,7 +61,7 @@ DwapbGpioWrite (
 }
 
 VOID
-DwapbGpioRead (
+GpioRead (
   IN  UINT64 Base,
   OUT UINT32 *Val
   )
@@ -72,7 +72,7 @@ DwapbGpioRead (
 
 VOID
 EFIAPI
-DwapbGpioWriteBit (
+GpioWriteBit (
   IN UINT32 Pin,
   IN UINT32 Val
   )
@@ -89,18 +89,18 @@ DwapbGpioWriteBit (
   GpioPin = Pin % GPIO_DWAPB_PINS_PER_CONTROLLER;
 
   Reg += GPIO_SWPORTA_DR_ADDR;
-  DwapbGpioRead (Reg, &ReadVal);
+  GpioRead (Reg, &ReadVal);
 
   if (Val != 0) {
-    DwapbGpioWrite (Reg, ReadVal | GPIO_MUX_VAL (GpioPin));
+    GpioWrite (Reg, ReadVal | GPIO_MUX_VAL (GpioPin));
   } else {
-    DwapbGpioWrite (Reg, ReadVal & ~GPIO_MUX_VAL (GpioPin));
+    GpioWrite (Reg, ReadVal & ~GPIO_MUX_VAL (GpioPin));
   }
 }
 
 UINTN
 EFIAPI
-DwapbGpioReadBit (
+GpioReadBit (
   IN UINT32 Pin
   )
 {
@@ -129,13 +129,13 @@ DwapbGpioReadBit (
     Reg +=  GPIO_EXT_PORTA_ADDR;
   }
 
-  DwapbGpioRead (Reg, &Val);
+  GpioRead (Reg, &Val);
 
   return Val & GPIO_MUX_VAL (GpioPin) ? 1 : 0;
 }
 
 EFI_STATUS
-DwapbGpioConfig (
+GpioConfig (
   IN UINT32 Pin,
   IN UINT32 InOut
   )
@@ -157,21 +157,21 @@ DwapbGpioConfig (
 
   Reg += GPIO_SWPORTA_DDR_ADDR;
   GpioPin = Pin % GPIO_DWAPB_PINS_PER_CONTROLLER;
-  DwapbGpioRead (Reg, &Val);
+  GpioRead (Reg, &Val);
 
   if (InOut == GPIO_OUT) {
     Val |= GPIO_MUX_VAL (GpioPin);
   } else {
     Val &= ~GPIO_MUX_VAL (GpioPin);
   }
-  DwapbGpioWrite (Reg, Val);
+  GpioWrite (Reg, Val);
 
   return EFI_SUCCESS;
 }
 
 EFI_STATUS
 EFIAPI
-DwapbGPIOModeConfig (
+GpioModeConfig (
   UINT8 Pin,
   UINTN Mode
   )
@@ -190,35 +190,35 @@ DwapbGPIOModeConfig (
 
   switch (Mode) {
   case GPIO_CONFIG_OUT_LOW:
-    DwapbGpioConfig (Pin, GPIO_OUT);
-    DwapbGpioWriteBit (Pin, 0);
+    GpioConfig (Pin, GPIO_OUT);
+    GpioWriteBit (Pin, 0);
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as output low\n", Pin));
     break;
 
   case GPIO_CONFIG_OUT_HI:
-    DwapbGpioConfig (Pin, GPIO_OUT);
-    DwapbGpioWriteBit (Pin, 1);
+    GpioConfig (Pin, GPIO_OUT);
+    GpioWriteBit (Pin, 1);
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as output high\n", Pin));
     break;
 
   case GPIO_CONFIG_OUT_LOW_TO_HIGH:
-    DwapbGpioConfig (Pin, GPIO_OUT);
-    DwapbGpioWriteBit (Pin, 0);
+    GpioConfig (Pin, GPIO_OUT);
+    GpioWriteBit (Pin, 0);
     MicroSecondDelay (1000 * Delay);
-    DwapbGpioWriteBit (Pin, 1);
+    GpioWriteBit (Pin, 1);
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as output low->high\n", Pin));
     break;
 
   case GPIO_CONFIG_OUT_HIGH_TO_LOW:
-    DwapbGpioConfig (Pin, GPIO_OUT);
-    DwapbGpioWriteBit (Pin, 1);
+    GpioConfig (Pin, GPIO_OUT);
+    GpioWriteBit (Pin, 1);
     MicroSecondDelay (1000 * Delay);
-    DwapbGpioWriteBit (Pin, 0);
+    GpioWriteBit (Pin, 0);
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as output high->low\n", Pin));
     break;
 
   case GPIO_CONFIG_IN:
-    DwapbGpioConfig (Pin, GPIO_IN);
+    GpioConfig (Pin, GPIO_IN);
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as input\n", Pin));
     break;
 
@@ -265,7 +265,7 @@ GpioVirtualAddressChangeEvent (
  **/
 EFI_STATUS
 EFIAPI
-DwapbGPIOSetupRuntime (
+GpioSetupRuntime (
   IN UINT32 Pin
   )
 {

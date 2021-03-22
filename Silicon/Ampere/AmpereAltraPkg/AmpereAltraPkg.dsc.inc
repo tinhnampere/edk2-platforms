@@ -93,8 +93,8 @@
   PcieCoreLib|Silicon/Ampere/AmpereAltraPkg/Library/PcieCore/PcieCoreLib.inf
   AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/AmpereCpuLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
-  I2CLib|Silicon/Ampere/AmpereAltraPkg/Library/DWI2CLib/I2CLib.inf
-  DwapbGpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwapbGpioLib/DwapbGpioLib.inf
+  I2cLib|Silicon/Ampere/AmpereAltraPkg/Library/DwI2cLib/DwI2cLib.inf
+  GpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwGpioLib/DwGpioLib.inf
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Library/MmCommunicationLib/MmCommunicationLib.inf
 
   # ARM PL011 UART Driver

@@ -41,7 +41,7 @@
   BaseLib
   BaseMemoryLib
   DebugLib
-  DwapbGpioLib
+  GpioLib
   IoLib
   MemoryAllocationLib
   PcdLib

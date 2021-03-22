@@ -51,7 +51,7 @@
 #include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
-#include <Library/DwapbGpioLib.h>
+#include <Library/GpioLib.h>
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
 #include <Library/NVParamLib.h>
@@ -266,7 +266,7 @@ PcieBoardReleaseAllPerst (
   // Write 1 to all GPIO[16..21] to release all PERST
   GpioPin = GPIO_DWAPB_PINS_PER_SOCKET * SocketId + 16;
   for (GpioIndex = 0; GpioIndex < 6; GpioIndex++) {
-    DwapbGPIOModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_HI);
+    GpioModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_HI);
   }
 }
 
@@ -352,9 +352,9 @@ PcieBoardAssertPerst (
       // 6: Number of GPIO pins to control via CPLD
       Val = (GpioGroupVal & 0x3F) & (1 << GpioIndex);
       if (Val == 0) {
-        DwapbGPIOModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_LOW);
+        GpioModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_LOW);
       } else {
-        DwapbGPIOModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_HI);
+        GpioModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_HI);
       }
     }
 

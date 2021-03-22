@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef I2CLIB_H_
-#define I2CLIB_H_
+#ifndef I2C_LIB_H_
+#define I2C_LIB_H_
 
 #include <Uefi/UefiBaseType.h>
 
@@ -26,7 +26,7 @@
  **/
 EFI_STATUS
 EFIAPI
-I2CWrite (
+I2cWrite (
   IN     UINT32 Bus,
   IN     UINT32 SlaveAddr,
   IN OUT UINT8  *Buf,
@@ -51,7 +51,7 @@ I2CWrite (
  **/
 EFI_STATUS
 EFIAPI
-I2CRead (
+I2cRead (
   IN     UINT32 Bus,
   IN     UINT32 SlaveAddr,
   IN     UINT8  *BufCmd,
@@ -70,7 +70,7 @@ I2CRead (
  **/
 EFI_STATUS
 EFIAPI
-I2CProbe (
+I2cProbe (
   IN UINT32 Bus,
   IN UINTN  BusSpeed
   );
@@ -84,8 +84,8 @@ I2CProbe (
  **/
 EFI_STATUS
 EFIAPI
-I2CSetupRuntime (
+I2cSetupRuntime (
   IN UINT32 Bus
   );
 
-#endif /* I2CLIB_H_ */
+#endif /* I2C_LIB_H_ */

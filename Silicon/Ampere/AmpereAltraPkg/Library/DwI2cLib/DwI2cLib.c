@@ -13,7 +13,7 @@
 #include <Library/DebugLib.h>
 #include <Library/DxeServicesTableLib.h>
 #include <Library/HobLib.h>
-#include <Library/I2CLib.h>
+#include <Library/I2cLib.h>
 #include <Library/IoLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
@@ -79,9 +79,9 @@ enum {
 #define FS_SCL_HCNT  62
 #define FS_SCL_LCNT  63
 
-#define I2CSync() { asm volatile ("dmb ish" : : : "memory"); }
+#define I2cSync() { asm volatile ("dmb ish" : : : "memory"); }
 
-STATIC UINT32 I2CSclMin[][3] = {  /* in nano seconds */
+STATIC UINT32 I2cSclMin[][3] = {  /* in nano seconds */
   /* High, Low, tf */
   [I2C_SS] =   {4000, 4700, 300},     /* SS (Standard Speed) */
   [I2C_FS] =   { 600, 1300, 300},     /* FS (Fast Speed) */
@@ -90,7 +90,7 @@ STATIC UINT32 I2CSclMin[][3] = {  /* in nano seconds */
   [I2C_HS_100PF] = {  60,  120, 300}, /* HS (High Speed) 100pf */
 };
 
-STATIC UINT32 I2CSclParam[][2] = {
+STATIC UINT32 I2cSclParam[][2] = {
   /* Spklen, offset */
   [I2C_SS] =   {10, 300},  /* SS (Standard Speed) */
   [I2C_FS] =   {10, 0},    /* FS (Fast Speed) */
@@ -99,10 +99,10 @@ STATIC UINT32 I2CSclParam[][2] = {
   [I2C_HS_100PF] = {0, 0}, /* HS (High Speed) 100pf */
 };
 
-STATIC BOOLEAN          I2CRuntimeEnableArray[MAX_PLATFORM_I2C_BUS_NUM] = {FALSE};
-STATIC UINTN            I2CBaseArray[MAX_PLATFORM_I2C_BUS_NUM] = {PLATFORM_I2C_REGISTER_BASE};
-STATIC DW_I2C_CONTEXT_T I2CBusList[MAX_PLATFORM_I2C_BUS_NUM];
-STATIC UINTN            I2CClock = 0;
+STATIC BOOLEAN          I2cRuntimeEnableArray[MAX_PLATFORM_I2C_BUS_NUM] = {FALSE};
+STATIC UINTN            I2cBaseArray[MAX_PLATFORM_I2C_BUS_NUM] = {PLATFORM_I2C_REGISTER_BASE};
+STATIC DW_I2C_CONTEXT_T I2cBusList[MAX_PLATFORM_I2C_BUS_NUM];
+STATIC UINTN            I2cClock = 0;
 STATIC EFI_EVENT        mVirtualAddressChangeEvent = NULL;
 
 #ifndef BIT
@@ -207,23 +207,23 @@ Write32 (
  Initialize I2C Bus
  **/
 VOID
-I2CHWInit (
+I2cHWInit (
   UINT32 Bus
   )
 {
   UINT32 Param;
 
-  I2CBusList[Bus].Base = I2CBaseArray[Bus];
-  Param = Read32 (I2CBusList[Bus].Base + DW_IC_COMP_PARAM_1);
-  I2CBusList[Bus].PollingTime = (10 * 1000000) / I2CBusList[Bus].BusSpeed;
-  I2CBusList[Bus].RxFifo = ((Param >> 8) & 0xff) + 1;
-  I2CBusList[Bus].TxFifo = ((Param >> 16) & 0xff) + 1;
-  I2CBusList[Bus].Enabled = 0;
+  I2cBusList[Bus].Base = I2cBaseArray[Bus];
+  Param = Read32 (I2cBusList[Bus].Base + DW_IC_COMP_PARAM_1);
+  I2cBusList[Bus].PollingTime = (10 * 1000000) / I2cBusList[Bus].BusSpeed;
+  I2cBusList[Bus].RxFifo = ((Param >> 8) & 0xff) + 1;
+  I2cBusList[Bus].TxFifo = ((Param >> 16) & 0xff) + 1;
+  I2cBusList[Bus].Enabled = 0;
   DBG (
     "Bus %d Rx_Buffer %d Tx_Buffer %d\n",
     Bus,
-    I2CBusList[Bus].RxFifo,
-    I2CBusList[Bus].TxFifo
+    I2cBusList[Bus].RxFifo,
+    I2cBusList[Bus].TxFifo
     );
 }
 
@@ -231,32 +231,32 @@ I2CHWInit (
  Enable or disable I2C Bus
  */
 VOID
-I2CEnable (
+I2cEnable (
   UINT32 Bus,
   UINT32 Enable
   )
 {
-  UINT32 I2CStatusCnt = DW_STATUS_WAIT_RETRY;
-  UINTN  Base         = I2CBusList[Bus].Base;
+  UINT32 I2cStatusCnt = DW_STATUS_WAIT_RETRY;
+  UINTN  Base         = I2cBusList[Bus].Base;
 
-  I2CBusList[Bus].Enabled = Enable;
+  I2cBusList[Bus].Enabled = Enable;
 
   Write32 (Base + DW_IC_ENABLE, Enable);
   do {
     if ((Read32 (Base + DW_IC_ENABLE_STATUS) & 0x01) == Enable) {
       break;
     }
-    MicroSecondDelay (I2CBusList[Bus].PollingTime);
-  } while (I2CStatusCnt-- != 0);
+    MicroSecondDelay (I2cBusList[Bus].PollingTime);
+  } while (I2cStatusCnt-- != 0);
 
-  if (I2CStatusCnt == 0) {
+  if (I2cStatusCnt == 0) {
     ERROR ("Enable/disable timeout\n");
   }
 
-  if ((Enable == 0) || (I2CStatusCnt == 0)) {
+  if ((Enable == 0) || (I2cStatusCnt == 0)) {
     /* Unset the target adddress */
     Write32 (Base + DW_IC_TAR, 0);
-    I2CBusList[Bus].Enabled = 0;
+    I2cBusList[Bus].Enabled = 0;
   }
 }
 
@@ -264,18 +264,18 @@ I2CEnable (
  Setup Slave address
  **/
 VOID
-I2CSetSlaveAddr (
+I2cSetSlaveAddr (
   UINT32 Bus,
   UINT32 SlaveAddr
   )
 {
-  UINTN  Base = I2CBusList[Bus].Base;
-  UINT32 OldEnableStatus = I2CBusList[Bus].Enabled;
+  UINTN  Base = I2cBusList[Bus].Base;
+  UINT32 OldEnableStatus = I2cBusList[Bus].Enabled;
 
-  I2CEnable (Bus, 0);
+  I2cEnable (Bus, 0);
   Write32 (Base + DW_IC_TAR, SlaveAddr);
   if (OldEnableStatus != 0) {
-    I2CEnable (Bus, 1);
+    I2cEnable (Bus, 1);
   }
 }
 
@@ -283,11 +283,11 @@ I2CSetSlaveAddr (
  Check for errors on I2C Bus
  **/
 UINT32
-I2CCheckErrors (
+I2cCheckErrors (
   UINT32 Bus
   )
 {
-  UINTN  Base = I2CBusList[Bus].Base;
+  UINTN  Base = I2cBusList[Bus].Base;
   UINT32 ErrorStatus;
 
   ErrorStatus = Read32 (Base + DW_IC_RAW_INTR_STAT) & DW_IC_ERR_CONDITION;
@@ -315,11 +315,11 @@ I2CCheckErrors (
  Waiting for bus to not be busy
  **/
 BOOLEAN
-I2CWaitBusNotBusy (
+I2cWaitBusNotBusy (
   UINT32 Bus
   )
 {
-  UINTN Base    = I2CBusList[Bus].Base;
+  UINTN Base    = I2cBusList[Bus].Base;
   UINTN Timeout = DW_BUS_WAIT_TIMEOUT_RETRY;
 
   while ((Read32 (Base + DW_IC_STATUS) & DW_IC_STATUS_MST_ACTIVITY) != 0) {
@@ -343,20 +343,20 @@ I2CWaitBusNotBusy (
  Waiting for TX FIFO buffer available
  **/
 EFI_STATUS
-I2CWaitTxData (
+I2cWaitTxData (
   UINT32 Bus
   )
 {
-  UINTN Base    = I2CBusList[Bus].Base;
+  UINTN Base    = I2cBusList[Bus].Base;
   UINTN Timeout = DW_TRANSFER_DATA_TIMEOUT;
 
-  while (Read32 (Base + DW_IC_TXFLR) == I2CBusList[Bus].TxFifo) {
+  while (Read32 (Base + DW_IC_TXFLR) == I2cBusList[Bus].TxFifo) {
     if (Timeout <= 0) {
       ERROR ("Timeout waiting for TX buffer available\n");
       return EFI_TIMEOUT;
     }
-    MicroSecondDelay (I2CBusList[Bus].PollingTime);
-    Timeout -= MicroSecondDelay (I2CBusList[Bus].PollingTime);
+    MicroSecondDelay (I2cBusList[Bus].PollingTime);
+    Timeout -= MicroSecondDelay (I2cBusList[Bus].PollingTime);
   }
 
   return EFI_SUCCESS;
@@ -366,11 +366,11 @@ I2CWaitTxData (
  Waiting for RX FIFO buffer available
  **/
 EFI_STATUS
-I2CWaitRxData (
+I2cWaitRxData (
   UINT32 Bus
   )
 {
-  UINTN Base    = I2CBusList[Bus].Base;
+  UINTN Base    = I2cBusList[Bus].Base;
   UINTN Timeout = DW_TRANSFER_DATA_TIMEOUT;
 
   while ((Read32 (Base + DW_IC_STATUS) & DW_IC_STATUS_RFNE) == 0) {
@@ -379,19 +379,19 @@ I2CWaitRxData (
       return EFI_TIMEOUT;
     }
 
-    if ((I2CCheckErrors (Bus) & DW_IC_INTR_TX_ABRT) != 0) {
+    if ((I2cCheckErrors (Bus) & DW_IC_INTR_TX_ABRT) != 0) {
       return EFI_ABORTED;
     }
 
-    MicroSecondDelay (I2CBusList[Bus].PollingTime);
-    Timeout -= MicroSecondDelay (I2CBusList[Bus].PollingTime);
+    MicroSecondDelay (I2cBusList[Bus].PollingTime);
+    Timeout -= MicroSecondDelay (I2cBusList[Bus].PollingTime);
   }
 
   return EFI_SUCCESS;
 }
 
 UINT32
-I2CSclHcnt (
+I2cSclHcnt (
   UINT32 IcClk,
   UINT32 tSYMBOL,
   UINT32 Tf,
@@ -441,7 +441,7 @@ I2CSclHcnt (
 }
 
 UINT32
-I2CSclLcnt (
+I2cSclLcnt (
   UINT32 IcClk,
   UINT32 tLOW,
   UINT32 Tf,
@@ -468,104 +468,104 @@ I2CSclLcnt (
  This functions configures scl clock Count for SS, FS, and HS.
  **/
 VOID
-I2CSclInit (
+I2cSclInit (
   UINT32 Bus,
-  UINT32 I2CClkFreq,
-  UINT32 I2CSpeed
+  UINT32 I2cClkFreq,
+  UINT32 I2cSpeed
   )
 {
   UINT32 Hcnt, Lcnt;
   UINT16 IcCon;
-  UINTN  Base            = I2CBusList[Bus].Base;
-  UINT32 InputClockKhz   = I2CClkFreq / 1000;
+  UINTN  Base            = I2cBusList[Bus].Base;
+  UINT32 InputClockKhz   = I2cClkFreq / 1000;
   UINT32 SsClockKhz      = InputClockKhz;
   UINT32 FsClockKhz      = InputClockKhz;
   UINT32 HsClockKhz      = InputClockKhz;
   UINT32 PsClockKhz      = InputClockKhz;
-  UINT32 I2CSpeedKhz     = I2CSpeed / 1000;
+  UINT32 I2cSpeedKhz     = I2cSpeed / 1000;
 
-  DBG ("Bus %d I2CClkFreq %d I2CSpeed %d\n", Bus, I2CClkFreq, I2CSpeed);
+  DBG ("Bus %d I2cClkFreq %d I2cSpeed %d\n", Bus, I2cClkFreq, I2cSpeed);
   IcCon = DW_IC_CON_MASTER | DW_IC_CON_SLAVE_DISABLE | DW_IC_CON_RESTART_EN;
 
-  if (I2CSpeedKhz <= 100) {
+  if (I2cSpeedKhz <= 100) {
     IcCon |= DW_IC_CON_SPEED_STD;
-    SsClockKhz = (SsClockKhz * 100) / I2CSpeedKhz;
+    SsClockKhz = (SsClockKhz * 100) / I2cSpeedKhz;
     /* Standard speed mode */
-    Hcnt = I2CSclHcnt (
+    Hcnt = I2cSclHcnt (
              SsClockKhz,
-             I2CSclMin[I2C_SS][I2C_SCL_HIGH],  /* tHD;STA = tHIGH = 4.0 us */
-             I2CSclMin[I2C_SS][I2C_SCL_TF],    /* tf = 0.3 us */
-             I2CSclParam[I2C_SS][I2C_SPKLEN],  /* spklen = 10 */
+             I2cSclMin[I2C_SS][I2C_SCL_HIGH],  /* tHD;STA = tHIGH = 4.0 us */
+             I2cSclMin[I2C_SS][I2C_SCL_TF],    /* tf = 0.3 us */
+             I2cSclParam[I2C_SS][I2C_SPKLEN],  /* spklen = 10 */
              0,                                /* 0: DW default, 1: Ideal */
-             I2CSclParam[I2C_SS][I2C_OFFSET]   /* offset = 300 */
+             I2cSclParam[I2C_SS][I2C_OFFSET]   /* offset = 300 */
              );
-    Write32 (Base + DW_IC_FS_SPKLEN, I2CSclParam[I2C_SS][I2C_SPKLEN]);
-    Lcnt = I2CSclLcnt (
+    Write32 (Base + DW_IC_FS_SPKLEN, I2cSclParam[I2C_SS][I2C_SPKLEN]);
+    Lcnt = I2cSclLcnt (
              SsClockKhz,
-             I2CSclMin[I2C_SS][I2C_SCL_LOW],   /* tLOW = 4.7 us */
-             I2CSclMin[I2C_SS][I2C_SCL_TF],    /* tf = 0.3 us */
+             I2cSclMin[I2C_SS][I2C_SCL_LOW],   /* tLOW = 4.7 us */
+             I2cSclMin[I2C_SS][I2C_SCL_TF],    /* tf = 0.3 us */
              0                                 /* No Offset */
              );
     Write32 (Base + DW_IC_SS_SCL_HCNT, Hcnt);
     Write32 (Base + DW_IC_SS_SCL_LCNT, Lcnt);
-  } else if (I2CSpeedKhz > 100 && I2CSpeedKhz <= 400) {
+  } else if (I2cSpeedKhz > 100 && I2cSpeedKhz <= 400) {
     IcCon |= DW_IC_CON_SPEED_FAST;
-    FsClockKhz = (FsClockKhz * 400) / I2CSpeedKhz;
+    FsClockKhz = (FsClockKhz * 400) / I2cSpeedKhz;
     /* Fast speed mode */
-    Hcnt = I2CSclHcnt (
+    Hcnt = I2cSclHcnt (
              FsClockKhz,
-             I2CSclMin[I2C_FS][I2C_SCL_HIGH],  /* tHD;STA = tHIGH = 0.6 us */
-             I2CSclMin[I2C_FS][I2C_SCL_TF],    /* tf = 0.3 us */
-             I2CSclParam[I2C_FS][I2C_SPKLEN],  /* spklen = 0xA */
+             I2cSclMin[I2C_FS][I2C_SCL_HIGH],  /* tHD;STA = tHIGH = 0.6 us */
+             I2cSclMin[I2C_FS][I2C_SCL_TF],    /* tf = 0.3 us */
+             I2cSclParam[I2C_FS][I2C_SPKLEN],  /* spklen = 0xA */
              0,                                /* 0: DW default, 1: Ideal */
-             I2CSclParam[I2C_FS][I2C_OFFSET]
+             I2cSclParam[I2C_FS][I2C_OFFSET]
              );
-    Write32 (Base + DW_IC_FS_SPKLEN, I2CSclParam[I2C_FS][I2C_SPKLEN]);
-    Lcnt = I2CSclLcnt (
+    Write32 (Base + DW_IC_FS_SPKLEN, I2cSclParam[I2C_FS][I2C_SPKLEN]);
+    Lcnt = I2cSclLcnt (
              FsClockKhz,
-             I2CSclMin[I2C_FS][I2C_SCL_LOW],   /* tLOW = 1.3 us */
-             I2CSclMin[I2C_FS][I2C_SCL_TF],    /* tf = 0.3 us */
+             I2cSclMin[I2C_FS][I2C_SCL_LOW],   /* tLOW = 1.3 us */
+             I2cSclMin[I2C_FS][I2C_SCL_TF],    /* tf = 0.3 us */
              0                                 /* No Offset */
              );
     Write32 (Base + DW_IC_FS_SCL_HCNT, Hcnt);
     Write32 (Base + DW_IC_FS_SCL_LCNT, Lcnt);
-  } else if (I2CSpeedKhz > 400 && I2CSpeedKhz <= 1000) {
+  } else if (I2cSpeedKhz > 400 && I2cSpeedKhz <= 1000) {
     IcCon |= DW_IC_CON_SPEED_FAST;
-    PsClockKhz = (PsClockKhz * 1000) / I2CSpeedKhz;
+    PsClockKhz = (PsClockKhz * 1000) / I2cSpeedKhz;
     /* Fast speed plus mode */
-    Hcnt = I2CSclHcnt (
+    Hcnt = I2cSclHcnt (
              PsClockKhz,
-             I2CSclMin[I2C_PS][I2C_SCL_HIGH],  /* tHD;STA = tHIGH = 0.26 us */
-             I2CSclMin[I2C_PS][I2C_SCL_TF],    /* tf = 0.12 us */
-             I2CSclParam[I2C_PS][I2C_SPKLEN],  /* spklen = 0xA */
+             I2cSclMin[I2C_PS][I2C_SCL_HIGH],  /* tHD;STA = tHIGH = 0.26 us */
+             I2cSclMin[I2C_PS][I2C_SCL_TF],    /* tf = 0.12 us */
+             I2cSclParam[I2C_PS][I2C_SPKLEN],  /* spklen = 0xA */
              0,                                /* 0: DW default, 1: Ideal */
-             I2CSclParam[I2C_PS][I2C_OFFSET]
+             I2cSclParam[I2C_PS][I2C_OFFSET]
              );
-    Lcnt = I2CSclLcnt (
+    Lcnt = I2cSclLcnt (
              PsClockKhz,
-             I2CSclMin[I2C_PS][I2C_SCL_LOW],   /* tLOW = 0.5 us */
-             I2CSclMin[I2C_PS][I2C_SCL_TF],    /* tf = 0.12 us */
+             I2cSclMin[I2C_PS][I2C_SCL_LOW],   /* tLOW = 0.5 us */
+             I2cSclMin[I2C_PS][I2C_SCL_TF],    /* tf = 0.12 us */
              0                                 /* No Offset */
              );
     Write32 (Base + DW_IC_FS_SCL_HCNT, Hcnt);
     Write32 (Base + DW_IC_FS_SCL_LCNT, Lcnt);
-    Write32 (Base + DW_IC_FS_SPKLEN, I2CSclParam[I2C_PS][I2C_SPKLEN]);
-  } else if (I2CSpeedKhz > 1000 && I2CSpeedKhz <= 3400) {
+    Write32 (Base + DW_IC_FS_SPKLEN, I2cSclParam[I2C_PS][I2C_SPKLEN]);
+  } else if (I2cSpeedKhz > 1000 && I2cSpeedKhz <= 3400) {
     IcCon |= (DW_IC_CON_SPEED_STD | DW_IC_CON_SPEED_FAST);
-    HsClockKhz = (HsClockKhz * 3400) / I2CSpeedKhz;
+    HsClockKhz = (HsClockKhz * 3400) / I2cSpeedKhz;
     /* High speed mode */
-    Hcnt = I2CSclHcnt (
+    Hcnt = I2cSclHcnt (
              HsClockKhz,
-             I2CSclMin[I2C_HS][I2C_SCL_HIGH],  /* tHD;STA = tHIGH = 0.06 us for 100pf 0.16 for 400pf */
-             I2CSclMin[I2C_HS][I2C_SCL_TF],    /* tf = 0.3 us */
-             I2CSclParam[I2C_HS][I2C_SPKLEN],  /* No spklen */
+             I2cSclMin[I2C_HS][I2C_SCL_HIGH],  /* tHD;STA = tHIGH = 0.06 us for 100pf 0.16 for 400pf */
+             I2cSclMin[I2C_HS][I2C_SCL_TF],    /* tf = 0.3 us */
+             I2cSclParam[I2C_HS][I2C_SPKLEN],  /* No spklen */
              0,                                /* 0: DW default, 1: Ideal */
-             I2CSclParam[I2C_HS][I2C_OFFSET]
+             I2cSclParam[I2C_HS][I2C_OFFSET]
              );
-    Lcnt = I2CSclLcnt (
+    Lcnt = I2cSclLcnt (
              HsClockKhz,
-             I2CSclMin[I2C_HS][I2C_SCL_LOW],   /* tLOW = 0.12 us for 100pf 0.32 us for 400pf */
-             I2CSclMin[I2C_HS][I2C_SCL_TF],    /* tf = 0.3 us */
+             I2cSclMin[I2C_HS][I2C_SCL_LOW],   /* tLOW = 0.12 us for 100pf 0.32 us for 400pf */
+             I2cSclMin[I2C_HS][I2C_SCL_TF],    /* tf = 0.3 us */
              0                                 /* No Offset */
              );
     Write32 (Base + DW_IC_HS_SCL_HCNT, Hcnt);
@@ -578,26 +578,26 @@ I2CSclInit (
  Initialize the designware i2c master hardware
  **/
 EFI_STATUS
-I2CInit (
+I2cInit (
   UINT32 Bus,
   UINTN  BusSpeed
   )
 {
   UINTN Base;
 
-  ASSERT (I2CClock != 0);
+  ASSERT (I2cClock != 0);
 
-  I2CBusList[Bus].BusSpeed = BusSpeed;
-  I2CHWInit (Bus);
+  I2cBusList[Bus].BusSpeed = BusSpeed;
+  I2cHWInit (Bus);
 
-  Base = I2CBusList[Bus].Base;
+  Base = I2cBusList[Bus].Base;
 
   /* Disable the adapter and interrupt */
-  I2CEnable (Bus, 0);
+  I2cEnable (Bus, 0);
   Write32 (Base + DW_IC_INTR_MASK, 0);
 
   /* Set standard and fast speed divider for high/low periods */
-  I2CSclInit (Bus, I2CClock, BusSpeed);
+  I2cSclInit (Bus, I2cClock, BusSpeed);
   Write32 (Base + DW_IC_SDA_HOLD, 0x4b);
 
   return EFI_SUCCESS;
@@ -607,11 +607,11 @@ I2CInit (
  Wait the transaction finished
  **/
 EFI_STATUS
-I2CFinish (
+I2cFinish (
   UINT32 Bus
   )
 {
-  UINTN Base    = I2CBusList[Bus].Base;
+  UINTN Base    = I2cBusList[Bus].Base;
   UINTN Timeout = DW_TRANSFER_DATA_TIMEOUT;
 
   /* Wait for TX FIFO empty */
@@ -619,8 +619,8 @@ I2CFinish (
     if ((Read32 (Base + DW_IC_STATUS) & DW_IC_STATUS_TFE) != 0) {
       break;
     }
-    MicroSecondDelay (I2CBusList[Bus].PollingTime);
-    Timeout -= MicroSecondDelay (I2CBusList[Bus].PollingTime);
+    MicroSecondDelay (I2cBusList[Bus].PollingTime);
+    Timeout -= MicroSecondDelay (I2cBusList[Bus].PollingTime);
   } while (Timeout > 0);
 
   if (Timeout == 0) {
@@ -635,8 +635,8 @@ I2CFinish (
       Read32 (Base + DW_IC_CLR_STOP_DET);
       return EFI_SUCCESS;
     }
-    MicroSecondDelay (I2CBusList[Bus].PollingTime);
-    Timeout -= MicroSecondDelay (I2CBusList[Bus].PollingTime);
+    MicroSecondDelay (I2cBusList[Bus].PollingTime);
+    Timeout -= MicroSecondDelay (I2cBusList[Bus].PollingTime);
   } while (Timeout > 0);
 
   ERROR ("Timeout waiting for transaction finished\n");
@@ -644,7 +644,7 @@ I2CFinish (
 }
 
 EFI_STATUS
-InternalI2CWrite (
+InternalI2cWrite (
   UINT32 Bus,
   UINT8  *Buf,
   UINT32 *Length
@@ -652,17 +652,17 @@ InternalI2CWrite (
 {
   EFI_STATUS Status = EFI_SUCCESS;
   UINTN      WriteCount;
-  UINTN      Base = I2CBusList[Bus].Base;
+  UINTN      Base = I2cBusList[Bus].Base;
 
   DBG ("Write Bus %d Buf %p Length %d\n", Bus, Buf, *Length);
-  I2CEnable (Bus, 1);
+  I2cEnable (Bus, 1);
 
   WriteCount = 0;
   while ((*Length - WriteCount) != 0) {
-    Status = I2CWaitTxData (Bus);
+    Status = I2cWaitTxData (Bus);
     if (EFI_ERROR (Status)) {
       Write32 (Base + DW_IC_DATA_CMD, DW_IC_DATA_CMD_STOP);
-      I2CSync ();
+      I2cSync ();
       goto Exit;
     }
 
@@ -677,21 +677,21 @@ InternalI2CWrite (
         Buf[WriteCount] & DW_IC_DATA_CMD_DAT_MASK
         );
     }
-    I2CSync ();
+    I2cSync ();
     WriteCount++;
   }
 
 Exit:
   *Length = WriteCount;
-  I2CFinish (Bus);
-  I2CWaitBusNotBusy (Bus);
-  I2CEnable (Bus, 0);
+  I2cFinish (Bus);
+  I2cWaitBusNotBusy (Bus);
+  I2cEnable (Bus, 0);
 
   return Status;
 }
 
 EFI_STATUS
-InternalI2CRead (
+InternalI2cRead (
   UINT32  Bus,
   UINT8  *BufCmd,
   UINT32 CmdLength,
@@ -699,7 +699,7 @@ InternalI2CRead (
   UINT32 *Length
   )
 {
-  UINTN      Base    = I2CBusList[Bus].Base;
+  UINTN      Base    = I2cBusList[Bus].Base;
   UINT32     CmdSend;
   UINT32     TxLimit, RxLimit;
   UINTN      Idx = 0;
@@ -709,30 +709,30 @@ InternalI2CRead (
   EFI_STATUS Status = EFI_SUCCESS;
 
   DBG ("Read Bus %d Buf %p Length:%d\n", Bus, Buf, *Length);
-  I2CEnable (Bus, 1);
+  I2cEnable (Bus, 1);
 
   /* Write command data */
   WriteCount = 0;
   while (CmdLength != 0) {
-    TxLimit = I2CBusList[Bus].TxFifo - Read32 (Base + DW_IC_TXFLR);
+    TxLimit = I2cBusList[Bus].TxFifo - Read32 (Base + DW_IC_TXFLR);
     Count = CmdLength > TxLimit ? TxLimit : CmdLength;
 
     for (Idx = 0; Idx < Count; Idx++ ) {
       CmdSend = BufCmd[WriteCount++] & DW_IC_DATA_CMD_DAT_MASK;
       Write32 (Base + DW_IC_DATA_CMD, CmdSend);
-      I2CSync ();
+      I2cSync ();
 
-      if (I2CCheckErrors (Bus) != 0) {
+      if (I2cCheckErrors (Bus) != 0) {
         Status = EFI_CRC_ERROR;
         goto Exit;
       }
       CmdLength--;
     }
 
-    Status = I2CWaitTxData (Bus);
+    Status = I2cWaitTxData (Bus);
     if (EFI_ERROR (Status)) {
       Write32 (Base + DW_IC_DATA_CMD, DW_IC_DATA_CMD_STOP);
-      I2CSync ();
+      I2cSync ();
       goto Exit;
     }
   }
@@ -740,8 +740,8 @@ InternalI2CRead (
   ReadCount = 0;
   WriteCount = 0;
   while ((*Length - ReadCount) != 0) {
-    TxLimit = I2CBusList[Bus].TxFifo - Read32 (Base + DW_IC_TXFLR);
-    RxLimit = I2CBusList[Bus].RxFifo - Read32 (Base + DW_IC_RXFLR);
+    TxLimit = I2cBusList[Bus].TxFifo - Read32 (Base + DW_IC_TXFLR);
+    RxLimit = I2cBusList[Bus].RxFifo - Read32 (Base + DW_IC_RXFLR);
     Count = *Length - ReadCount;
     Count = Count > RxLimit ? RxLimit : Count;
     Count = Count > TxLimit ? TxLimit : Count;
@@ -752,10 +752,10 @@ InternalI2CRead (
         CmdSend |= DW_IC_DATA_CMD_STOP;
       }
       Write32 (Base + DW_IC_DATA_CMD, CmdSend);
-      I2CSync ();
+      I2cSync ();
       WriteCount++;
 
-      if (I2CCheckErrors (Bus) != 0) {
+      if (I2cCheckErrors (Bus) != 0) {
         DBG ("Sending reading command remaining length %d CRC error\n", *Length);
         Status = EFI_CRC_ERROR;
         goto Exit;
@@ -763,22 +763,22 @@ InternalI2CRead (
     }
 
     for (Idx = 0; Idx < Count; Idx++ ) {
-      Status = I2CWaitRxData (Bus);
+      Status = I2cWaitRxData (Bus);
       if (EFI_ERROR (Status)) {
         DBG ("Reading remaining length %d failed to wait data\n", *Length);
 
         if (Status != EFI_ABORTED) {
           Write32 (Base + DW_IC_DATA_CMD, DW_IC_DATA_CMD_STOP);
-          I2CSync ();
+          I2cSync ();
         }
 
         goto Exit;
       }
 
       Buf[ReadCount++] = Read32 (Base + DW_IC_DATA_CMD) & DW_IC_DATA_CMD_DAT_MASK;
-      I2CSync ();
+      I2cSync ();
 
-      if (I2CCheckErrors (Bus) != 0) {
+      if (I2cCheckErrors (Bus) != 0) {
         DBG ("Reading remaining length %d CRC error\n", *Length);
         Status = EFI_CRC_ERROR;
         goto Exit;
@@ -788,16 +788,16 @@ InternalI2CRead (
 
 Exit:
   *Length = ReadCount;
-  I2CFinish (Bus);
-  I2CWaitBusNotBusy (Bus);
-  I2CEnable (Bus, 0);
+  I2cFinish (Bus);
+  I2cWaitBusNotBusy (Bus);
+  I2cEnable (Bus, 0);
 
   return Status;
 }
 
 EFI_STATUS
 EFIAPI
-I2CWrite (
+I2cWrite (
   IN     UINT32 Bus,
   IN     UINT32 SlaveAddr,
   IN OUT UINT8  *Buf,
@@ -808,14 +808,14 @@ I2CWrite (
     return EFI_INVALID_PARAMETER;
   }
 
-  I2CSetSlaveAddr (Bus, SlaveAddr);
+  I2cSetSlaveAddr (Bus, SlaveAddr);
 
-  return InternalI2CWrite (Bus, Buf, WriteLength);
+  return InternalI2cWrite (Bus, Buf, WriteLength);
 }
 
 EFI_STATUS
 EFIAPI
-I2CRead (
+I2cRead (
   IN     UINT32 Bus,
   IN     UINT32 SlaveAddr,
   IN     UINT8  *BufCmd,
@@ -828,14 +828,14 @@ I2CRead (
     return EFI_INVALID_PARAMETER;
   }
 
-  I2CSetSlaveAddr (Bus, SlaveAddr);
+  I2cSetSlaveAddr (Bus, SlaveAddr);
 
-  return InternalI2CRead (Bus, BufCmd, CmdLength, Buf, ReadLength);
+  return InternalI2cRead (Bus, BufCmd, CmdLength, Buf, ReadLength);
 }
 
 EFI_STATUS
 EFIAPI
-I2CProbe (
+I2cProbe (
   IN UINT32 Bus,
   IN UINTN  BusSpeed
   )
@@ -844,7 +844,7 @@ I2CProbe (
     return EFI_INVALID_PARAMETER;
   }
 
-  return I2CInit (Bus, BusSpeed);
+  return I2cInit (Bus, BusSpeed);
 }
 
 /**
@@ -865,15 +865,15 @@ I2cVirtualAddressChangeEvent (
 {
   UINTN Count;
 
-  EfiConvertPointer (0x0, (VOID **)&I2CBusList);
-  EfiConvertPointer (0x0, (VOID **)&I2CBaseArray);
-  EfiConvertPointer (0x0, (VOID **)&I2CClock);
+  EfiConvertPointer (0x0, (VOID **)&I2cBusList);
+  EfiConvertPointer (0x0, (VOID **)&I2cBaseArray);
+  EfiConvertPointer (0x0, (VOID **)&I2cClock);
   for (Count = 0; Count < MAX_PLATFORM_I2C_BUS_NUM; Count++) {
-    if (!I2CRuntimeEnableArray[Count]) {
+    if (!I2cRuntimeEnableArray[Count]) {
       continue;
     }
-    EfiConvertPointer (0x0, (VOID **)&I2CBaseArray[Count]);
-    EfiConvertPointer (0x0, (VOID **)&I2CBusList[Count].Base);
+    EfiConvertPointer (0x0, (VOID **)&I2cBaseArray[Count]);
+    EfiConvertPointer (0x0, (VOID **)&I2cBusList[Count].Base);
   }
 }
 
@@ -886,7 +886,7 @@ I2cVirtualAddressChangeEvent (
  **/
 EFI_STATUS
 EFIAPI
-I2CSetupRuntime (
+I2cSetupRuntime (
   IN UINT32 Bus
   )
 {
@@ -909,7 +909,7 @@ I2CSetupRuntime (
   }
 
   Status = gDS->GetMemorySpaceDescriptor (
-                  I2CBaseArray[Bus] & RUNTIME_ADDRESS_MASK,
+                  I2cBaseArray[Bus] & RUNTIME_ADDRESS_MASK,
                   &Descriptor
                   );
   if (EFI_ERROR (Status)) {
@@ -917,7 +917,7 @@ I2CSetupRuntime (
   }
 
   Status = gDS->SetMemorySpaceAttributes (
-                  I2CBaseArray[Bus] & RUNTIME_ADDRESS_MASK,
+                  I2cBaseArray[Bus] & RUNTIME_ADDRESS_MASK,
                   RUNTIME_ADDRESS_LENGTH,
                   Descriptor.Attributes | EFI_MEMORY_RUNTIME
                   );
@@ -925,14 +925,14 @@ I2CSetupRuntime (
     return Status;
   }
 
-  I2CRuntimeEnableArray[Bus] = TRUE;
+  I2cRuntimeEnableArray[Bus] = TRUE;
 
   return Status;
 }
 
 EFI_STATUS
 EFIAPI
-I2CLibConstructor (
+I2cLibConstructor (
   VOID
   )
 {
@@ -948,12 +948,12 @@ I2CLibConstructor (
       return EFI_NOT_FOUND;
     }
     PlatformHob_V2 = (PlatformInfoHob_V2 *)GET_GUID_HOB_DATA (Hob);
-    I2CClock = PlatformHob_V2->AhbClk;
+    I2cClock = PlatformHob_V2->AhbClk;
   } else {
     PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
-    I2CClock = PlatformHob->ApbClk;
+    I2cClock = PlatformHob->ApbClk;
   }
-  ASSERT (I2CClock != 0);
+  ASSERT (I2cClock != 0);
 
   return EFI_SUCCESS;
 }

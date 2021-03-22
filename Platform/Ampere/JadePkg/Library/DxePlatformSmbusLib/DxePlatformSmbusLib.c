@@ -8,7 +8,7 @@
 
 **/
 
-#include <Library/DwapbGpioLib.h>
+#include <Library/GpioLib.h>
 #include <Library/PcdLib.h>
 
 #include "InternalSmbusLib.h"
@@ -93,7 +93,7 @@ InternalSmBusExec (
   // Platform specific
   //
   if (SmbusDeviceAddress.SmbusDeviceAddress == BMC_SLAVE_ADDRESS
-      && DwapbGpioReadBit (BMC_READY_GPIO) == 0x0)
+      && GpioReadBit (BMC_READY_GPIO) == 0x0)
   {
     *Status = EFI_NOT_READY;
     return 0;

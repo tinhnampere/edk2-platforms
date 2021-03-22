@@ -32,9 +32,9 @@
   ArmLib
   BaseLib
   DebugLib
-  DwapbGpioLib
+  GpioLib
   DxeServicesTableLib
-  I2CLib
+  I2cLib
   TimeBaseLib
   TimerLib
   UefiLib

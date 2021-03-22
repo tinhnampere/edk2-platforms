@@ -8,8 +8,8 @@
 
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/DwapbGpioLib.h>
-#include <Library/I2CLib.h>
+#include <Library/GpioLib.h>
+#include <Library/I2cLib.h>
 #include <Library/PcdLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Protocol/SmbusHc.h>
@@ -152,7 +152,7 @@ SmbusHcExcute (
   //
   // Switch to correct I2C bus and speed
   //
-  Status = I2CProbe (I2C_BUS_NUMBER, I2C_BUS_SPEED);
+  Status = I2cProbe (I2C_BUS_NUMBER, I2C_BUS_SPEED);
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -187,7 +187,7 @@ SmbusHcExcute (
     }
     DEBUG ((DEBUG_VERBOSE, "\n"));
 
-    Status = I2CWrite (
+    Status = I2cWrite (
                I2C_BUS_NUMBER,
                SlaveAddress.SmbusDeviceAddress,
                WriteTemp,
@@ -204,7 +204,7 @@ SmbusHcExcute (
   case EfiSmbusReadBlock:
     WriteTemp[0] = Command;
     DataLen = *Length + 2; // +1 byte for Data Length +1 byte for PEC
-    Status = I2CRead (
+    Status = I2cRead (
                I2C_BUS_NUMBER,
                SlaveAddress.SmbusDeviceAddress,
                WriteTemp,

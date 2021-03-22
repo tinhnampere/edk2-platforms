@@ -16,7 +16,7 @@
 #include <Pcie.h>
 #include <PlatformInfoHob.h>
 
-#include "BoardPcieScreen.h"
+#include "PcieBoardScreen.h"
 
 #ifndef BIT
 #define BIT(nr) (1 << (nr))

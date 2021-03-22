@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef DWAPB_GPIO_LIB_H_
-#define DWAPB_GPIO_LIB_H_
+#ifndef GPIO_LIB_H_
+#define GPIO_LIB_H_
 
 enum SocGpioConfigMode {
   GPIO_CONFIG_OUT_LOW = 0,
@@ -19,20 +19,20 @@ enum SocGpioConfigMode {
 };
 
 /*
- *  DwapbGpioWriteBit: Use to Set/Clear GPIOs
+ *  GpioWriteBit: Use to Set/Clear GPIOs
  *  Input:
  *              Pin : Pin Identification
  *              Val : 1 to Set, 0 to Clear
  */
 VOID
 EFIAPI
-DwapbGpioWriteBit (
+GpioWriteBit (
   IN UINT32 Pin,
   IN UINT32 Val
   );
 
 /*
- *   DwapbGpioReadBit:
+ *   GpioReadBit:
  *   Input:
  *              Pin : Pin Identification
  *   Return:
@@ -41,12 +41,12 @@ DwapbGpioWriteBit (
  */
 UINTN
 EFIAPI
-DwapbGpioReadBit (
+GpioReadBit (
   IN UINT32 Pin
   );
 
 /*
- *  DwapbGPIOModeConfig: Use to configure GPIOs as Input/Output
+ *  GpioModeConfig: Use to configure GPIOs as Input/Output
  *  Input:
  *              Pin : Pin Identification
  *              InOut : GPIO_OUT/1 as Output
@@ -54,7 +54,7 @@ DwapbGpioReadBit (
  */
 EFI_STATUS
 EFIAPI
-DwapbGPIOModeConfig (
+GpioModeConfig (
   UINT8 Pin,
   UINTN Mode
   );
@@ -68,8 +68,8 @@ DwapbGPIOModeConfig (
  */
 EFI_STATUS
 EFIAPI
-DwapbGPIOSetupRuntime (
+GpioSetupRuntime (
   IN UINT32 Pin
   );
 
-#endif /* DWAPB_GPIO_LIB_H_ */
+#endif /* GPIO_LIB_H_ */

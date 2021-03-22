@@ -12,10 +12,10 @@
   FILE_GUID                      = E7D9CAE1-6930-46E3-BDF9-0027446E7DF2
   MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = DwGpioSocLib
+  LIBRARY_CLASS                  = GpioLib
 
 [Sources.common]
-  DwapbGpioLib.c
+  DwGpioLib.c
 
 [Packages]
   ArmPkg/ArmPkg.dec
