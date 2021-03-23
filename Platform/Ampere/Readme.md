@@ -30,12 +30,13 @@ $ git clone https://github.com/AmpereComputing/edk2-ampere-tools.git
 
 ## Notes
 
-If you run into any build issue with the Intel ASL+ Optimizing Compiler/Disassembler (IASL) that comes with your Linux distro,
-download and install the IASL compiler from https://acpica.org/. At the time of this write-up, we have tested with version 20200110.
+ASL code in the Ampere platforms are compatible with IASL compiler version 20201217. If you run into any build issue
+with the Intel ASL+ Optimizing Compiler/Disassembler (IASL) that comes with your Linux distro, download and install
+the IASL compiler from https://acpica.org/ with the following commands:
 
 ```bash
-$ wget https://acpica.org/sites/acpica/files/acpica-unix2-20200110.tar.gz
-$ tar xzf acpica-unix2-20200110.tar.gz
-$ cd acpica-unix2-20200110
+$ wget https://acpica.org/sites/acpica/files/acpica-unix2-20201217.tar.gz
+$ tar xzf acpica-unix2-20201217.tar.gz
+$ cd acpica-unix2-20201217
 $ make HOST=_CYGWIN && sudo make install
 ```
