@@ -10,10 +10,71 @@
 
 #include <Library/DebugLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
+#include <IndustryStandard/Pci.h>
 #include <Protocol/PciIo.h>
 
 #include "PcieDeviceConfigDxe.h"
 #include "PcieHelper.h"
+
+EFI_STATUS
+FindCapabilityPtr (
+  IN  EFI_PCI_IO_PROTOCOL *PciIo,
+  IN  UINT8               CapabilityId,
+  OUT UINT8               *CapabilityPtr
+  )
+{
+  EFI_STATUS Status;
+  UINT8      NextPtr;
+  UINT16     TmpValue;
+
+  ASSERT (PciIo != NULL);
+
+  //
+  // Get pointer to first PCI Capability header
+  //
+  Status = PciIo->Pci.Read (
+                        PciIo,
+                        EfiPciIoWidthUint8,
+                        PCI_CAPBILITY_POINTER_OFFSET,
+                        1,
+                        &NextPtr
+                        );
+  if (EFI_ERROR (Status)) {
+    goto Exit;
+  }
+
+  while (TRUE) {
+    if (NextPtr == 0x00) {
+      Status = EFI_NOT_FOUND;
+      goto Exit;
+    }
+
+    //
+    // Retrieve PCI Capability header
+    //
+    Status = PciIo->Pci.Read (
+                          PciIo,
+                          EfiPciIoWidthUint16,
+                          NextPtr,
+                          1,
+                          &TmpValue
+                          );
+    if (EFI_ERROR (Status)) {
+      goto Exit;
+    }
+
+    if ((TmpValue & 0xFF) == CapabilityId) {
+      *CapabilityPtr = NextPtr;
+      Status = EFI_SUCCESS;
+      goto Exit;
+    }
+
+    NextPtr = (TmpValue >> 8) & 0xFF;
+  }
+
+Exit:
+  return Status;
+}
 
 EFI_STATUS
 WriteMps (
@@ -37,12 +98,11 @@ WriteMps (
   Status = PciIo->Pci.Read (
                         PciIo,
                         EfiPciIoWidthUint16,
-                        PcieCapOffset + PCIE_CONTROL_REG,
+                        PcieCapOffset + PCI_EXPRESS_CAPABILITY_DEVICE_CONTROL_REG,
                         1,
                         &TmpValue
                         );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Pci.Read error line 0x%d\n", __LINE__));
     return Status;
   }
 
@@ -52,12 +112,11 @@ WriteMps (
   Status = PciIo->Pci.Write (
                         PciIo,
                         EfiPciIoWidthUint16,
-                        PcieCapOffset + PCIE_CONTROL_REG,
+                        PcieCapOffset + PCI_EXPRESS_CAPABILITY_DEVICE_CONTROL_REG,
                         1,
                         &TmpValue
                         );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Pci.Write error line 0x%d\n", __LINE__));
     return Status;
   }
   DEBUG ((
@@ -96,12 +155,11 @@ WriteMrr (
   Status = PciIo->Pci.Read (
                         PciIo,
                         EfiPciIoWidthUint16,
-                        PcieCapOffset + PCIE_CONTROL_REG,
+                        PcieCapOffset + PCI_EXPRESS_CAPABILITY_DEVICE_CONTROL_REG,
                         1,
                         &TmpValue
                         );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Pci.Read error line 0x%d\n", __LINE__));
     return Status;
   }
 
@@ -111,12 +169,11 @@ WriteMrr (
   Status = PciIo->Pci.Write (
                         PciIo,
                         EfiPciIoWidthUint16,
-                        PcieCapOffset + PCIE_CONTROL_REG,
+                        PcieCapOffset + PCI_EXPRESS_CAPABILITY_DEVICE_CONTROL_REG,
                         1,
                         &TmpValue
                         );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Pci.Write error line 0x%d\n", __LINE__));
     return Status;
   }
   DEBUG ((

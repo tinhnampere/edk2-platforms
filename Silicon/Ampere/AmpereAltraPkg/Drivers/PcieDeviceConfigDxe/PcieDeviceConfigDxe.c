@@ -10,7 +10,7 @@
 
 #include <Guid/MdeModuleHii.h>
 #include <Guid/PcieDeviceConfigHii.h>
-#include <IndustryStandard/Pci22.h>
+#include <IndustryStandard/Pci.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -408,7 +408,7 @@ OnPciIoProtocolNotify (
   UINTN PciFunctionNumber;
   UINTN PciSegment;
 
-  UINT8  NextCapPtr;
+  UINT8  CapabilityPtr;
   UINT16 TmpValue;
 
   PCIE_NODE        *Node;
@@ -434,6 +434,9 @@ OnPciIoProtocolNotify (
                     &gEfiPciIoProtocolGuid,
                     (VOID **)&PciIo
                     );
+    if (EFI_ERROR (Status)) {
+      break;
+    }
 
     // Get device bus location
     Status = PciIo->GetLocation (
@@ -459,48 +462,25 @@ OnPciIoProtocolNotify (
       PciFunctionNumber
       ));
 
-    // find PCIe Capabilities offset
-    Status = PciIo->Pci.Read (
-                          PciIo,
-                          EfiPciIoWidthUint8,
-                          0x34,
-                          1,
-                          &NextCapPtr
-                          );
+    Status = FindCapabilityPtr (PciIo, EFI_PCI_CAPABILITY_ID_PCIEXP, &CapabilityPtr);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Pci.Read error line 0x%d\n", __LINE__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: PCI Express Capability not found\n",
+        __FUNCTION__
+        ));
       continue;
-    }
-
-    while (TRUE) {
-      Status = PciIo->Pci.Read (
-                            PciIo,
-                            EfiPciIoWidthUint16,
-                            NextCapPtr,
-                            1,
-                            &TmpValue
-                            );
-      if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Pci.Read error line 0x%d\n", __LINE__));
-        break;
-      }
-      if ((TmpValue & 0xFF) == PCIE_CAPABILITIES_ID) {
-        break;
-      }
-      NextCapPtr = (TmpValue >> 8) & 0xFF;
-      ASSERT (NextCapPtr < 512);
     }
 
     // Get Device's max MPS support
     Status = PciIo->Pci.Read (
                           PciIo,
                           EfiPciIoWidthUint16,
-                          NextCapPtr + PCIE_CAPABILITIES_REG,
+                          CapabilityPtr + PCI_EXPRESS_CAPABILITY_DEVICE_CAPABILITIES_REG,
                           1,
                           &TmpValue
                           );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Pci.Read error line 0x%d\n", __LINE__));
       continue;
     }
 
@@ -513,7 +493,6 @@ OnPciIoProtocolNotify (
                           &Pci
                           );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Pci.Read error line 0x%d\n", __LINE__));
       continue;
     }
     DEBUG ((
@@ -525,7 +504,7 @@ OnPciIoProtocolNotify (
 
     Node = AllocateZeroPool (sizeof (*Node));
     Node->MaxMps = TmpValue & PCIE_MAX_PAYLOAD_MASK;
-    Node->PcieCapOffset = NextCapPtr;
+    Node->PcieCapOffset = CapabilityPtr;
     Node->PciIo = PciIo;
     Node->Seg = PciSegment;
     Node->Bus = PciBusNumber;
