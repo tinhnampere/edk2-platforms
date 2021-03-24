@@ -17,9 +17,9 @@ AcpiPatchCmn600 (
   CHAR8 NodePath[MAX_ACPI_NODE_PATH];
   UINTN Index;
 
-  for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
+  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
     AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.CMN%1X._STA", Index);
-    if (GetNumberActiveCPMsPerSocket (Index)) {
+    if (GetNumberOfActiveCPMsPerSocket (Index) > 0) {
       AcpiDSDTSetNodeStatusValue (NodePath, 0xf);
     } else {
       AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
@@ -45,7 +45,7 @@ AcpiPatchDmc620 (
 
   PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
 
-  for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
+  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
     McuMask = PlatformHob->DramInfo.McuMask[Index];
     for (Index1 = 0; Index1 < sizeof (McuMask) * 8; Index1++) {
       AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.MC%1X%1X._STA", Index, Index1);
@@ -160,12 +160,12 @@ AcpiPatchHwmon (
   )
 {
   CHAR8 NodePath[MAX_ACPI_NODE_PATH];
-  UINTN Index;
+  UINT8 Index;
 
   // PCC Hardware Monitor Devices
-  for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
+  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
     AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.HM0%1X._STA", Index);
-    if (GetNumberActiveCPMsPerSocket (Index)) {
+    if (GetNumberOfActiveCPMsPerSocket (Index) > 0) {
       AcpiDSDTSetNodeStatusValue (NodePath, 0xf);
     } else {
       AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
@@ -173,9 +173,9 @@ AcpiPatchHwmon (
   }
 
   // Ampere Altra SoC Hardware Monitor Devices
-  for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
+  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
     AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.HM0%1X._STA", Index + 2);
-    if (GetNumberActiveCPMsPerSocket (Index)) {
+    if (GetNumberOfActiveCPMsPerSocket (Index) > 0) {
       AcpiDSDTSetNodeStatusValue (NodePath, 0xf);
     } else {
       AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
@@ -255,7 +255,7 @@ AcpiPatchPcieNuma (
     break;
   }
 
-  if (GetNumberActiveSockets () > 1) {
+  if (GetNumberOfActiveSockets () > 1) {
     NumPciePort = 16; // 16 ports total (8 per socket)
   } else {
     NumPciePort = 8;  // 8 ports total

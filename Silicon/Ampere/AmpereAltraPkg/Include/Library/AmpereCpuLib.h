@@ -28,8 +28,6 @@
 #define CCSIDR_LINE_SIZE(Ccsidr) \
   (((Ccsidr) & CCSIDR_LINE_SIZE_MASK) >> CCSIDR_LINE_SIZE_SHIFT)
 
-#define SOC_EFUSE_SHADOWn(s,x)        (SMPRO_EFUSE_SHADOW0 + (s) * SOCKET_BASE_OFFSET + (x) * 4)
-
 #define SUBNUMA_MODE_MONOLITHIC        0
 #define SUBNUMA_MODE_HEMISPHERE        1
 #define SUBNUMA_MODE_QUADRANT          2
@@ -67,7 +65,7 @@ CpuGetSubNumaMode (
 **/
 UINT8
 EFIAPI
-CpuGetNumOfSubNuma (
+CpuGetNumberOfSubNumaRegion (
   VOID
   );
 
@@ -83,7 +81,7 @@ UINT8
 EFIAPI
 CpuGetSubNumNode (
   UINT8  Socket,
-  UINT32 Cpm
+  UINT16 Cpm
   );
 
 /**
@@ -138,24 +136,24 @@ CpuGetCacheSize (
 /**
   Get the number of supported socket.
 
-  @return   UINT32      Number of supported socket.
+  @return   UINT8      Number of supported socket.
 
 **/
-UINT32
+UINT8
 EFIAPI
-GetNumberSupportedSockets (
+GetNumberOfSupportedSockets (
   VOID
   );
 
 /**
   Get the number of active socket.
 
-  @return   UINT32      Number of active socket.
+  @return   UINT8      Number of active socket.
 
 **/
-UINT32
+UINT8
 EFIAPI
-GetNumberActiveSockets (
+GetNumberOfActiveSockets (
   VOID
   );
 
@@ -163,52 +161,52 @@ GetNumberActiveSockets (
   Get the number of active CPM per socket.
 
   @param    SocketId    Socket index.
-  @return   UINT32      Number of CPM.
+  @return   UINT16      Number of CPM.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetNumberActiveCPMsPerSocket (
-  UINT32 SocketId
+GetNumberOfActiveCPMsPerSocket (
+  UINT8 SocketId
   );
 
 /**
-  Get the configured number of CPM per socket.
+  Get the number of configured CPM per socket.
 
   @param    SocketId    Socket index.
-  @return   UINT32      Configured number of CPM.
+  @return   UINT16      Number of configured CPM.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetConfiguredNumberCPMs (
-  IN UINTN Socket
+GetNumberOfConfiguredCPMs (
+  UINT8 SocketId
   );
 
 /**
-  Set the configured number of CPM per socket.
+  Set the number of configured CPM per socket.
 
   @param    SocketId        Socket index.
-  @param    Number          Number of CPM to be configured.
+  @param    NumberOfCPMs    Number of CPM to be configured.
   @return   EFI_SUCCESS     Operation succeeded.
   @return   Others          An error has occurred.
 
 **/
 EFI_STATUS
 EFIAPI
-SetConfiguredNumberCPMs (
-  UINTN Socket,
-  UINTN Number
+SetNumberOfConfiguredCPMs (
+  UINT8  SocketId,
+  UINT16 NumberOfCPMs
   );
 
 /**
   Get the maximum number of core per socket. This number
   should be the same for all sockets.
 
-  @return   UINT32      Maximum number of core.
+  @return   UINT16      Maximum number of core.
 
 **/
-UINT32
+UINT16
 EFIAPI
 GetMaximumNumberOfCores (
   VOID
@@ -221,33 +219,33 @@ GetMaximumNumberOfCores (
   @return   UINT32      Maximum number of CPM.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetMaximumNumberCPMs (
+GetMaximumNumberOfCPMs (
   VOID
   );
 
 /**
   Get the number of active cores of a sockets.
 
-  @return   UINT32      Number of active core.
+  @return   UINT16      Number of active core.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetNumberActiveCoresPerSocket (
-  UINT32 SocketId
+GetNumberOfActiveCoresPerSocket (
+  UINT8 SocketId
   );
 
 /**
   Get the number of active cores of all socket.
 
-  @return   UINT32      Number of active core.
+  @return   UINT16      Number of active core.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetNumberActiveCores (
+GetNumberOfActiveCores (
   VOID
   );
 
@@ -256,26 +254,26 @@ GetNumberActiveCores (
 
   @param    CpuId       The logical Cpu ID. Started from 0.
   @return   BOOLEAN     TRUE if the Cpu enabled
-                        FALSE if the Cpu disabled/
+                        FALSE if the Cpu disabled.
 
 **/
 BOOLEAN
 EFIAPI
 IsCpuEnabled (
-  UINTN CpuId
+  UINT16 CpuId
   );
 
 
 /**
   Check if the slave socket is present
 
-  @return   BOOLEAN     TRUE if the Slave Cpu present
-                        FALSE if the Slave Cpu present
+  @return   BOOLEAN     TRUE if the Slave Cpu is present
+                        FALSE if the Slave Cpu is not present
 
 **/
 BOOLEAN
 EFIAPI
-PlatSlaveSocketPresent (
+IsSlaveSocketPresent (
   VOID
   );
 

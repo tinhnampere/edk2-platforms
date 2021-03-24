@@ -254,7 +254,7 @@ UpdatePlatformInfoScreen (
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
-  if (GetNumberActiveSockets () > 1) {
+  if (GetNumberOfActiveSockets () > 1) {
     /* Create the inter socket link text string */
     UnicodeSPrint (
       Str,

@@ -134,14 +134,14 @@ BootProgressSendSMpro (
   IN UINT32 Data2
   )
 {
-  UINT32     NumSockets;
+  UINT8      NumSockets;
   UINT32     Msg;
   EFI_STATUS Status;
-  UINT32     Index;
+  UINT8      Index;
 
   Msg = SMPRO_BOOT_PROCESS_ENCODE_MSG (BIOS_BOOT_PROG_SET, BIOS_BOOT_STAGE);
 
-  NumSockets = GetNumberActiveSockets ();
+  NumSockets = GetNumberOfActiveSockets ();
   for (Index = 0; Index < NumSockets; Index++) {
     Status = SMProDBWr (
                SMPRO_NS_MAILBOX_INDEX,

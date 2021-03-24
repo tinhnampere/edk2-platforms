@@ -522,7 +522,7 @@ InstallMemStructures (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  for ( Index = 0; Index < GetNumberSupportedSockets (); Index++ ) {
+  for ( Index = 0; Index < GetNumberOfSupportedSockets (); Index++ ) {
     // Copy template to Type 16
     CopyMem (Table, (VOID *)&mArmDefaultType16, sizeof (ARM_TYPE16));
 

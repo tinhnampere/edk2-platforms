@@ -544,7 +544,7 @@ UpdateRasConfigScreen (
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
-  if (GetNumberActiveSockets () > 1) {
+  if (GetNumberOfActiveSockets () > 1) {
     if (PrivateData->Configuration.EnableApeiSupport == 0) {
       HiiCreateGrayoutIf (StartOpCodeHandle, 0x8005);
     }

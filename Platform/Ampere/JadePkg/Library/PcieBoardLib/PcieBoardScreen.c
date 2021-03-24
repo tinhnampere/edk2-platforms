@@ -621,7 +621,7 @@ PcieRCScreenSetup (
 
   QuestionFlags = EFI_IFR_FLAG_RESET_REQUIRED | EFI_IFR_FLAG_CALLBACK;
   if (IsEmptyRC (RC)
-      || (GetNumberActiveSockets () == 1 && RC->Socket == 1))
+      || (GetNumberOfActiveSockets () == 1 && RC->Socket == 1))
   {
     //
     // Do not allow changing if none of Root Port underneath enabled

@@ -596,7 +596,7 @@ MemInfoMainScreen (
     NULL                                                 // Default Opcode is NULl
     );
 
-  if (GetNumberActiveSockets () > 1) {
+  if (GetNumberOfActiveSockets () > 1) {
     /* Display enable slave's 32bit region */
     HiiCreateCheckBoxOpCode (
       StartOpCodeHandle,                                    // Container for dynamic created opcodes
@@ -1065,7 +1065,7 @@ MemInfoMainNvdimmScreen (
   //
   // Update Current NVDIMM-N Mode title Socket1
   //
-  if (GetNumberActiveSockets () > 1) {
+  if (GetNumberOfActiveSockets () > 1) {
     switch (PlatformHob->DramInfo.NvdimmMode[1]) {
     case 0:
       UnicodeSPrint (Str, sizeof (Str), L"%s", L"Non-NVDIMM");

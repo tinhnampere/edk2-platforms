@@ -148,7 +148,7 @@ WrapBertErrorData (
   UINT32 CrashSize;
 
   CrashSize = PLAT_CRASH_ITERATOR_SIZE *
-              GetNumberSupportedSockets () *
+              GetNumberOfSupportedSockets () *
               GetMaximumNumberOfCores ();
   CrashSize += 2 * (SMPRO_CRASH_SIZE + PMPRO_CRASH_SIZE);
   CrashSize += sizeof (WrappedError->Bed.vendor);
@@ -455,7 +455,7 @@ AcpiApeiUpdate (
     AcpiApeiUninstallTable (EFI_ACPI_6_3_SOFTWARE_DELEGATED_EXCEPTIONS_INTERFACE_TABLE_SIGNATURE);
     AcpiApeiUninstallTable (EFI_ACPI_6_3_ERROR_INJECTION_TABLE_SIGNATURE);
   } else {
-    if (GetNumberActiveSockets () == 1) {
+    if (GetNumberOfActiveSockets () == 1) {
       AcpiApeiHestUpdateTable1P ();
     }
   }

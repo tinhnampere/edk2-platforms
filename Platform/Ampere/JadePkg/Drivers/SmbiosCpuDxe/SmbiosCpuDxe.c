@@ -412,7 +412,7 @@ UpdateSmbiosType4 (
 
   ASSERT (PlatformHob != NULL);
 
-  for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
+  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
     if (Index == 0) {
       Table = &mArmDefaultType4Sk0.Base;
       StringPack = mArmDefaultType4Sk0.Strings;
@@ -424,9 +424,9 @@ UpdateSmbiosType4 (
     AsciiSPrint (Str, sizeof (Str), "CPU %d", Index);
     UpdateStringPack (StringPack, Str, ADDITIONAL_STR_INDEX_1);
 
-    Table->CoreCount = (UINT16)GetMaximumNumberOfCores ();
-    Table->ThreadCount = (UINT16)GetMaximumNumberOfCores ();
-    Table->EnabledCoreCount = (UINT16)(GetNumberActiveCoresPerSocket (Index));
+    Table->CoreCount = (UINT8)GetMaximumNumberOfCores ();
+    Table->ThreadCount = (UINT8)GetMaximumNumberOfCores ();
+    Table->EnabledCoreCount = (UINT8)GetNumberOfActiveCoresPerSocket (Index);
 
     if (Table->EnabledCoreCount) {
       Table->CurrentSpeed = (UINT16)(PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
@@ -482,7 +482,7 @@ UpdateSmbiosType7 (
 
   ASSERT (PlatformHob != NULL);
 
-  for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
+  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
     if (Index == 0) {
       Table = &mArmDefaultType7Sk0L1.Base;
     } else {
@@ -522,7 +522,7 @@ UpdateSmbiosType7 (
     Table->InstalledSize2    = CACHE_SIZE_2 (32 << 20);
   }
 
-  if (GetNumberSupportedSockets () == 2 && GetNumberActiveCoresPerSocket (1) == 0) {
+  if (GetNumberOfSupportedSockets () == 2 && GetNumberOfActiveCoresPerSocket (1) == 0) {
     mArmDefaultType7Sk1L1.Base.InstalledSize = 0;
     mArmDefaultType7Sk1L1.Base.InstalledSize2 = 0;
     mArmDefaultType7Sk1L2.Base.InstalledSize = 0;
@@ -572,7 +572,7 @@ InstallType7Structures (
   UINTN              Index;
   UINTN              Level;
 
-  for ( Index = 0; Index < GetNumberSupportedSockets (); Index++ ) {
+  for ( Index = 0; Index < GetNumberOfSupportedSockets (); Index++ ) {
     if ( Index == 0) {
       Tables = DefaultType7Sk0Tables;
       Type4Table = &mArmDefaultType4Sk0.Base;
@@ -631,7 +631,7 @@ InstallStructures (
   EFI_SMBIOS_HANDLE SmbiosHandle;
   UINTN             Index;
 
-  for (Index = 0; Index < GetNumberSupportedSockets () && DefaultTables[Index] != NULL; Index++) {
+  for (Index = 0; Index < GetNumberOfSupportedSockets () && DefaultTables[Index] != NULL; Index++) {
     SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER *)DefaultTables[Index])->Handle;
     Status = Smbios->Add (
                        Smbios,

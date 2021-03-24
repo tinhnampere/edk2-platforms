@@ -42,8 +42,8 @@ AcpiInstallSlitTable (
     return Status;
   }
 
-  NumDomainPerSocket = CpuGetNumOfSubNuma ();
-  NumDomain = NumDomainPerSocket * GetNumberActiveSockets ();
+  NumDomainPerSocket = CpuGetNumberOfSubNumaRegion ();
+  NumDomain = NumDomainPerSocket * GetNumberOfActiveSockets ();
 
   SlitTablePointer = (EFI_ACPI_6_3_SYSTEM_LOCALITY_DISTANCE_INFORMATION_TABLE_HEADER *)
                      AllocateZeroPool (sizeof (SLITTableHeaderTemplate) + NumDomain * NumDomain);

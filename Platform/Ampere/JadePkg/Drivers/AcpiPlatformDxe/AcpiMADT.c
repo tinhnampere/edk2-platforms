@@ -113,7 +113,7 @@ CpuGetCoreOrder (
 {
   PlatformInfoHob    *PlatformHob;
   VOID               *Hob;
-  UINT32             SubNumaMode;
+  UINT8              SubNumaMode;
   UINT8              Ac01Chip = 1;
 
   /* Get the Platform HOB */
@@ -210,7 +210,7 @@ AcpiInstallMadtGicR (
    * If the Slave socket is not present, discard the Slave socket
    * GIC redistributor region
    */
-  if ((SocketId == 1) && (GetNumberActiveCPMsPerSocket (SocketId) == 0)) {
+  if ((SocketId == 1) && (GetNumberOfActiveCPMsPerSocket (SocketId) == 0)) {
     return 0;
   }
 
@@ -281,9 +281,9 @@ AcpiInstallMadtTable (
              sizeof (GicDTemplate) +
              (PLATFORM_CPU_MAX_SOCKET * sizeof (GicRTemplate)) +
              ((SOCKET0_LAST_RC - SOCKET0_FIRST_RC +  1) * sizeof (GicItsTemplate));
-      if (GetNumberActiveSockets () > 1) {
+      if (GetNumberOfActiveSockets () > 1) {
         Size += ((SOCKET1_LAST_RC - SOCKET1_FIRST_RC +  1) * sizeof (GicItsTemplate));
-      } else if (!PlatSlaveSocketPresent ()) {
+      } else if (!IsSlaveSocketPresent ()) {
         Size += 2 * sizeof (GicItsTemplate); /* RCA0/1 */
       }
 
@@ -323,7 +323,7 @@ AcpiInstallMadtTable (
       }
 
       /* Install Gic ITS */
-      if (!PlatSlaveSocketPresent ()) {
+      if (!IsSlaveSocketPresent ()) {
         for (Index = 0; Index <= 1; Index++) { /* RCA0/1 */
           Size += AcpiInstallMadtGicIts ((VOID *)((UINT64)GiccEntryPointer + Size), Index);
         }
@@ -331,7 +331,7 @@ AcpiInstallMadtTable (
       for (Index = SOCKET0_FIRST_RC; Index <= SOCKET0_LAST_RC; Index++) {
         Size += AcpiInstallMadtGicIts ((VOID *)((UINT64)GiccEntryPointer + Size), Index);
       }
-      if (GetNumberActiveSockets () > 1) {
+      if (GetNumberOfActiveSockets () > 1) {
         for (Index = SOCKET1_FIRST_RC; Index <= SOCKET1_LAST_RC; Index++) {
           Size += AcpiInstallMadtGicIts ((VOID *)((UINT64)GiccEntryPointer + Size), Index);
         }

@@ -94,7 +94,7 @@ Ac01PcieSetup (
   ZeroMem (&RCList, sizeof (AC01_RC) * MAX_AC01_PCIE_ROOT_COMPLEX);
 
   // Adjust MMIO32 base address 1P vs 2P
-  if (!PlatSlaveSocketPresent ()) {
+  if (!IsSlaveSocketPresent ()) {
     CopyMem ((VOID *)&RCMmio32Base, (VOID *)&RCMmio32Base1P, sizeof (UINT64) * MAX_AC01_PCIE_ROOT_COMPLEX);
   }
 
@@ -206,7 +206,7 @@ Ac01PcieCheckRootBridgeDisabled (
   }
   if (HBIndex == (MAX_AC01_PCIE_ROOT_COMPLEX -1)) {
     SortPciList (PciList);
-    if (!PlatSlaveSocketPresent ()) {
+    if (!IsSlaveSocketPresent ()) {
       AcpiPatchPciMem32 (PciList);
     }
     AcpiInstallMcfg (PciList);

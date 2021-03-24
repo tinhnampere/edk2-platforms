@@ -12,6 +12,7 @@
 #include <Guid/PlatformInfoHobGuid.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
 #include <Library/NVParamLib.h>
@@ -19,19 +20,26 @@
 #include <Platform/Ac01.h>
 #include <PlatformInfoHob.h>
 
-STATIC PlatformInfoHob *
+STATIC PlatformInfoHob *mPlatformInfoHob = NULL;
+
+PlatformInfoHob *
 GetPlatformHob (
   VOID
   )
 {
   VOID *Hob;
 
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
-  if (Hob == NULL) {
-    return NULL;
+  if (mPlatformInfoHob == NULL) {
+    Hob = GetFirstGuidHob (&gPlatformHobGuid);
+    if (Hob == NULL) {
+      DEBUG ((DEBUG_ERROR, "%a: Failed to get gPlatformHobGuid!\n", __FUNCTION__));
+      return NULL;
+    }
+
+    mPlatformInfoHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
   }
 
-  return (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  return mPlatformInfoHob;
 }
 
 /**
@@ -64,24 +72,36 @@ CpuGetSubNumaMode (
 **/
 UINT8
 EFIAPI
-CpuGetNumOfSubNuma (
+CpuGetNumberOfSubNumaRegion (
   VOID
   )
 {
-  UINT8 SubNumaMode = CpuGetSubNumaMode ();
+  UINT8 SubNumaMode;
+  UINT8 NumberOfSubNumaRegion;
+
+  SubNumaMode = CpuGetSubNumaMode ();
+  ASSERT (SubNumaMode <= SUBNUMA_MODE_QUADRANT);
 
   switch (SubNumaMode) {
   case SUBNUMA_MODE_MONOLITHIC:
-    return MONOLITIC_NUM_OF_REGION;
+    NumberOfSubNumaRegion = MONOLITIC_NUM_OF_REGION;
+    break;
 
   case SUBNUMA_MODE_HEMISPHERE:
-    return HEMISPHERE_NUM_OF_REGION;
+    NumberOfSubNumaRegion = HEMISPHERE_NUM_OF_REGION;
+    break;
 
   case SUBNUMA_MODE_QUADRANT:
-    return QUADRANT_NUM_OF_REGION;
+    NumberOfSubNumaRegion = QUADRANT_NUM_OF_REGION;
+    break;
+
+  default:
+    // Should never reach there.
+    ASSERT (FALSE);
+    break;
   }
 
-  return QUADRANT_NUM_OF_REGION;
+  return NumberOfSubNumaRegion;
 }
 
 /**
@@ -96,35 +116,36 @@ UINT8
 EFIAPI
 CpuGetSubNumNode (
   UINT8  SocketId,
-  UINT32 Cpm
+  UINT16 Cpm
   )
 {
   BOOLEAN IsAsymMesh;
-  INTN    Ret;
-  UINT8   MaxNumOfCPM;
+  UINT8   SubNumaNode;
+  UINT16  MaxNumberOfCPM;
   UINT8   MiddleRow;
   UINT8   QuadrantHigherRowNodeNumber[NUM_OF_CPM_PER_MESH_ROW] = {1, 1, 1, 1, 3, 3, 3, 3};
   UINT8   QuadrantLowerRowNodeNumber[NUM_OF_CPM_PER_MESH_ROW]  = {0, 0, 0, 0, 2, 2, 2, 2};
   UINT8   QuadrantMiddleRowNodeNumber[NUM_OF_CPM_PER_MESH_ROW] = {0, 0, 1, 1, 3, 3, 2, 2};
   UINT8   SubNumaMode;
 
-  MaxNumOfCPM = GetMaximumNumberCPMs ();
+  MaxNumberOfCPM = GetMaximumNumberOfCPMs ();
   SubNumaMode = CpuGetSubNumaMode ();
+  ASSERT (SubNumaMode <= SUBNUMA_MODE_QUADRANT);
 
   switch (SubNumaMode) {
   case SUBNUMA_MODE_MONOLITHIC:
-    Ret = (SocketId == 0) ? 0 : 1;
+    SubNumaNode = (SocketId == 0) ? 0 : 1;
     break;
 
   case SUBNUMA_MODE_HEMISPHERE:
     if (CPM_PER_ROW_OFFSET (Cpm) >= SUBNUMA_CPM_REGION_SIZE) {
-      Ret = 1;
+      SubNumaNode = 1;
     } else {
-      Ret = 0;
+      SubNumaNode = 0;
     }
 
     if (SocketId == 1) {
-      Ret += HEMISPHERE_NUM_OF_REGION;
+      SubNumaNode += HEMISPHERE_NUM_OF_REGION;
     }
     break;
 
@@ -145,27 +166,32 @@ CpuGetSubNumNode (
     // |---------------------------------------|
     //
 
-    IsAsymMesh = (BOOLEAN)(CPM_ROW_NUMBER (MaxNumOfCPM) % 2 != 0);
-    MiddleRow = CPM_ROW_NUMBER (MaxNumOfCPM) / 2;
+    IsAsymMesh = (BOOLEAN)(CPM_ROW_NUMBER (MaxNumberOfCPM) % 2 != 0);
+    MiddleRow = CPM_ROW_NUMBER (MaxNumberOfCPM) / 2;
     if (IsAsymMesh
         && CPM_ROW_NUMBER (Cpm) == MiddleRow)
     {
-      Ret = QuadrantMiddleRowNodeNumber[CPM_PER_ROW_OFFSET (Cpm)];
+      SubNumaNode = QuadrantMiddleRowNodeNumber[CPM_PER_ROW_OFFSET (Cpm)];
 
     } else if (CPM_ROW_NUMBER (Cpm) >= MiddleRow) {
-      Ret = QuadrantHigherRowNodeNumber[CPM_PER_ROW_OFFSET (Cpm)];
+      SubNumaNode = QuadrantHigherRowNodeNumber[CPM_PER_ROW_OFFSET (Cpm)];
 
     } else {
-      Ret = QuadrantLowerRowNodeNumber[CPM_PER_ROW_OFFSET (Cpm)];
+      SubNumaNode = QuadrantLowerRowNodeNumber[CPM_PER_ROW_OFFSET (Cpm)];
     }
 
     if (SocketId == 1) {
-      Ret += QUADRANT_NUM_OF_REGION;
+      SubNumaNode += QUADRANT_NUM_OF_REGION;
     }
+    break;
+
+  default:
+    // Should never reach there.
+    ASSERT (FALSE);
     break;
   }
 
-  return Ret;
+  return SubNumaNode;
 }
 
 /**
@@ -327,12 +353,12 @@ CpuGetCacheSize (
 /**
   Get the number of supported socket.
 
-  @return   UINT32      Number of supported socket.
+  @return   UINT8      Number of supported socket.
 
 **/
-UINT32
+UINT8
 EFIAPI
-GetNumberSupportedSockets (
+GetNumberOfSupportedSockets (
   VOID
   )
 {
@@ -340,7 +366,10 @@ GetNumberSupportedSockets (
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
-    return 0;
+    //
+    // By default, the number of supported sockets is 1.
+    //
+    return 1;
   }
 
   return (sizeof (PlatformHob->ClusterEn) / sizeof (PlatformClusterEn));
@@ -349,54 +378,57 @@ GetNumberSupportedSockets (
 /**
   Get the number of active socket.
 
-  @return   UINT32      Number of active socket.
+  @return   UINT8      Number of active socket.
 
 **/
-UINT32
+UINT8
 EFIAPI
-GetNumberActiveSockets (
+GetNumberOfActiveSockets (
   VOID
   )
 {
-  UINTN              NumberActiveSockets, Count, Index, Index1;
+  UINT8              NumberOfActiveSockets, Count, Index, Index1;
   PlatformClusterEn  *Socket;
   PlatformInfoHob    *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
-    return 0;
+    //
+    // By default, the number of active sockets is 1.
+    //
+    return 1;
   }
 
-  NumberActiveSockets = 0;
+  NumberOfActiveSockets = 0;
 
-  for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
+  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
     Socket = &PlatformHob->ClusterEn[Index];
     Count = ARRAY_SIZE (Socket->EnableMask);
     for (Index1 = 0; Index1 < Count; Index1++) {
-      if (Socket->EnableMask[Index1]) {
-        NumberActiveSockets++;
+      if (Socket->EnableMask[Index1] != 0) {
+        NumberOfActiveSockets++;
         break;
       }
     }
   }
 
-  return NumberActiveSockets;
+  return NumberOfActiveSockets;
 }
 
 /**
   Get the number of active CPM per socket.
 
   @param    SocketId    Socket index.
-  @return   UINT32      Number of CPM.
+  @return   UINT16      Number of CPM.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetNumberActiveCPMsPerSocket (
-  UINT32 SocketId
+GetNumberOfActiveCPMsPerSocket (
+  UINT8 SocketId
   )
 {
-  UINTN              NumberCPMs, Count, Index;
+  UINT16             NumberOfCPMs, Count, Index;
   UINT32             Val32;
   PlatformClusterEn  *Socket;
   PlatformInfoHob    *PlatformHob;
@@ -406,44 +438,44 @@ GetNumberActiveCPMsPerSocket (
     return 0;
   }
 
-  if (SocketId >= GetNumberSupportedSockets ()) {
+  if (SocketId >= GetNumberOfSupportedSockets ()) {
     return 0;
   }
 
-  NumberCPMs = 0;
+  NumberOfCPMs = 0;
   Socket = &PlatformHob->ClusterEn[SocketId];
   Count = ARRAY_SIZE (Socket->EnableMask);
   for (Index = 0; Index < Count; Index++) {
     Val32 = Socket->EnableMask[Index];
-    while (Val32) {
-      if (Val32 & 0x1) {
-        NumberCPMs++;
+    while (Val32 > 0) {
+      if ((Val32 & 0x1) != 0) {
+        NumberOfCPMs++;
       }
       Val32 >>= 1;
     }
   }
 
-  return NumberCPMs;
+  return NumberOfCPMs;
 }
 
 /**
-  Get the configured number of CPM per socket. This number
+  Get the number of configured CPM per socket. This number
   should be the same for all sockets.
 
   @param    SocketId    Socket index.
-  @return   UINT32      Configured number of CPM.
+  @return   UINT8       Number of configured CPM.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetConfiguredNumberCPMs (
-  UINTN SocketId
+GetNumberOfConfiguredCPMs (
+  UINT8 SocketId
   )
 {
   EFI_STATUS Status;
   UINT32     Value;
   UINT32     Param, ParamStart, ParamEnd;
-  INTN       Count;
+  UINT16     Count;
 
   Count = 0;
   ParamStart = NV_SI_S0_PCP_ACTIVECPM_0_31 + SocketId * NV_PARAM_ENTRYSIZE * (PLATFORM_CPU_MAX_CPM / 32);
@@ -457,8 +489,8 @@ GetConfiguredNumberCPMs (
     if (EFI_ERROR (Status)) {
       break;
     }
-    while (Value) {
-      if (Value & 1) {
+    while (Value != 0) {
+      if ((Value & 0x01) != 0) {
         Count++;
       }
       Value >>= 1;
@@ -469,40 +501,43 @@ GetConfiguredNumberCPMs (
 }
 
 /**
-  Set the configured number of CPM per socket.
+  Set the number of configured CPM per socket.
 
   @param    SocketId        Socket index.
-  @param    Number          Number of CPM to be configured.
+  @param    NumberOfCPMs    Number of CPM to be configured.
   @return   EFI_SUCCESS     Operation succeeded.
   @return   Others          An error has occurred.
 
 **/
 EFI_STATUS
 EFIAPI
-SetConfiguredNumberCPMs (
-  UINTN Socket,
-  UINTN Number
+SetNumberOfConfiguredCPMs (
+  UINT8  SocketId,
+  UINT16 NumberOfCPMs
   )
 {
-  EFI_STATUS Status = EFI_SUCCESS;
+  EFI_STATUS Status;
   UINT32     Value;
   UINT32     Param, ParamStart, ParamEnd;
-  BOOLEAN    IsClear = FALSE;
+  BOOLEAN    IsClear;
 
-  if (Number == 0) {
+  IsClear = FALSE;
+  if (NumberOfCPMs == 0) {
     IsClear = TRUE;
   }
 
-  ParamStart = NV_SI_S0_PCP_ACTIVECPM_0_31 + Socket * NV_PARAM_ENTRYSIZE * (PLATFORM_CPU_MAX_CPM / 32);
+  Status = EFI_SUCCESS;
+
+  ParamStart = NV_SI_S0_PCP_ACTIVECPM_0_31 + SocketId * NV_PARAM_ENTRYSIZE * (PLATFORM_CPU_MAX_CPM / 32);
   ParamEnd = ParamStart + NV_PARAM_ENTRYSIZE * (PLATFORM_CPU_MAX_CPM / 32);
   for (Param = ParamStart; Param < ParamEnd; Param += NV_PARAM_ENTRYSIZE) {
-    if (Number >= 32) {
+    if (NumberOfCPMs >= 32) {
       Value = 0xffffffff;
-      Number -= 32;
+      NumberOfCPMs -= 32;
     } else {
       Value = 0;
-      while (Number > 0) {
-        Value |= (1 << (--Number));
+      while (NumberOfCPMs > 0) {
+        Value |= (1 << (--NumberOfCPMs));
       }
     }
     if (IsClear) {
@@ -527,16 +562,15 @@ SetConfiguredNumberCPMs (
 /**
   Get the maximum number of core per socket.
 
-  @return   UINT32      Maximum number of core.
+  @return   UINT16      Maximum number of core.
 
 **/
-UINT32
+UINT16
 EFIAPI
 GetMaximumNumberOfCores (
   VOID
   )
 {
-
   PlatformInfoHob    *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
@@ -551,12 +585,12 @@ GetMaximumNumberOfCores (
   Get the maximum number of CPM per socket. This number
   should be the same for all sockets.
 
-  @return   UINT32      Maximum number of CPM.
+  @return   UINT16      Maximum number of CPM.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetMaximumNumberCPMs (
+GetMaximumNumberOfCPMs (
   VOID
   )
 {
@@ -567,40 +601,40 @@ GetMaximumNumberCPMs (
   Get the number of active cores of a sockets.
 
   @param    SocketId    Socket Index.
-  @return   UINT32      Number of active core.
+  @return   UINT16      Number of active core.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetNumberActiveCoresPerSocket (
-  UINT32 SocketId
+GetNumberOfActiveCoresPerSocket (
+  UINT8 SocketId
   )
 {
-  return GetNumberActiveCPMsPerSocket (SocketId) * PLATFORM_CPU_NUM_CORES_PER_CPM;
+  return GetNumberOfActiveCPMsPerSocket (SocketId) * PLATFORM_CPU_NUM_CORES_PER_CPM;
 }
 
 /**
   Get the number of active cores of all sockets.
 
-  @return   UINT32      Number of active core.
+  @return   UINT16      Number of active core.
 
 **/
-UINT32
+UINT16
 EFIAPI
-GetNumberActiveCores (
+GetNumberOfActiveCores (
   VOID
   )
 {
-  UINTN NumberActiveCores;
-  UINTN Index;
+  UINT16 NumberOfActiveCores;
+  UINT8  Index;
 
-  NumberActiveCores = 0;
+  NumberOfActiveCores = 0;
 
-  for (Index = 0; Index < GetNumberSupportedSockets (); Index++) {
-    NumberActiveCores += GetNumberActiveCoresPerSocket (Index);
+  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
+    NumberOfActiveCores += GetNumberOfActiveCoresPerSocket (Index);
   }
 
-  return NumberActiveCores;
+  return NumberOfActiveCores;
 }
 
 /**
@@ -608,19 +642,19 @@ GetNumberActiveCores (
 
   @param    CpuId       The logical Cpu ID. Started from 0.
   @return   BOOLEAN     TRUE if the Cpu enabled
-                        FALSE if the Cpu disabled/
+                        FALSE if the Cpu disabled.
 
 **/
 BOOLEAN
 EFIAPI
 IsCpuEnabled (
-  UINTN CpuId
+  UINT16 CpuId
   )
 {
   PlatformClusterEn  *Socket;
   PlatformInfoHob    *PlatformHob;
-  UINT32             SocketId;
-  UINT32             ClusterId;
+  UINT8              SocketId;
+  UINT16             ClusterId;
 
   SocketId = SOCKET_ID (CpuId);
   ClusterId = CLUSTER_ID (CpuId);
@@ -630,12 +664,12 @@ IsCpuEnabled (
     return FALSE;
   }
 
-  if (SocketId >= GetNumberSupportedSockets ()) {
+  if (SocketId >= GetNumberOfSupportedSockets ()) {
     return FALSE;
   }
 
   Socket = &PlatformHob->ClusterEn[SocketId];
-  if (Socket->EnableMask[ClusterId / 32] & (1 << (ClusterId % 32))) {
+  if ((Socket->EnableMask[ClusterId / 32] & (1 << (ClusterId % 32))) != 0) {
     return TRUE;
   }
 
@@ -645,18 +679,19 @@ IsCpuEnabled (
 /**
   Check if the slave socket is present
 
-  @return   BOOLEAN     TRUE if the Slave Cpu present
-                        FALSE if the Slave Cpu present
+  @return   BOOLEAN     TRUE if the Slave Cpu is present
+                        FALSE if the Slave Cpu is not present
 
 **/
 BOOLEAN
 EFIAPI
-PlatSlaveSocketPresent (
+IsSlaveSocketPresent (
   VOID
   )
 {
   UINT32 Value;
 
   Value = MmioRead32 (SMPRO_EFUSE_SHADOW0 + CFG2P_OFFSET);
-  return (Value & SLAVE_PRESENT_N)? FALSE : TRUE;
+
+  return ((Value & SLAVE_PRESENT_N) != 0) ? FALSE : TRUE;
 }

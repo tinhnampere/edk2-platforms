@@ -169,9 +169,9 @@ PrintSystemInfo (
   SerialPrint ("CPU info\n");
   SerialPrint ("    CPU ID                      : %X\n", ArmReadMidr ());
   SerialPrint ("    CPU Clock                   : %d MHz\n", PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
-  SerialPrint ("    Number of active sockets    : %d\n", GetNumberActiveSockets ());
-  SerialPrint ("    Number of active cores      : %d\n", GetNumberActiveCores ());
-  if (GetNumberActiveSockets () > 1) {
+  SerialPrint ("    Number of active sockets    : %d\n", GetNumberOfActiveSockets ());
+  SerialPrint ("    Number of active cores      : %d\n", GetNumberOfActiveCores ());
+  if (GetNumberOfActiveSockets () > 1) {
     SerialPrint (
       "    Inter Socket Connection 0   : Width: x%d / Speed %a\n",
       PlatformHob->Link2PWidth[0],
@@ -183,7 +183,7 @@ PrintSystemInfo (
       GetCCIXLinkSpeed (PlatformHob->Link2PSpeed[1])
       );
   }
-  for (Idx = 0; Idx < GetNumberActiveSockets (); Idx++) {
+  for (Idx = 0; Idx < GetNumberOfActiveSockets (); Idx++) {
     SerialPrint ("    Socket[%d]: Core voltage     : %d\n", Idx, PlatformHob->CoreVoltage[Idx]);
     SerialPrint ("    Socket[%d]: SCU ProductID    : %X\n", Idx, PlatformHob->ScuProductId[Idx]);
     SerialPrint ("    Socket[%d]: Max cores        : %d\n", Idx, PlatformHob->MaxNumOfCore[Idx]);
@@ -196,7 +196,7 @@ PrintSystemInfo (
 
   SerialPrint ("SOC info\n");
   SerialPrint ("    DDR Frequency               : %d MHz\n", PlatformHob->DramInfo.MaxSpeed);
-  for (Idx = 0; Idx < GetNumberActiveSockets (); Idx++) {
+  for (Idx = 0; Idx < GetNumberOfActiveSockets (); Idx++) {
     SerialPrint ("    Socket[%d]: Soc voltage      : %d\n", Idx, PlatformHob->SocVoltage[Idx]);
     SerialPrint ("    Socket[%d]: DIMM1 voltage    : %d\n", Idx, PlatformHob->Dimm1Voltage[Idx]);
     SerialPrint ("    Socket[%d]: DIMM2 voltage    : %d\n", Idx, PlatformHob->Dimm2Voltage[Idx]);
