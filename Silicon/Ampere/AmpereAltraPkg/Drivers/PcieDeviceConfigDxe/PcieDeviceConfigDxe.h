@@ -57,6 +57,7 @@ typedef struct {
 
   EFI_HANDLE     DriverHandle;
   EFI_HII_HANDLE HiiHandle;
+  VARSTORE_DATA  LastVarStoreConfig;
   VARSTORE_DATA  VarStoreConfig;
 
   //

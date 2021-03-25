@@ -26,12 +26,8 @@
 #include "PcieDeviceConfigDxe.h"
 #include "PcieHelper.h"
 
-STATIC VOID      *mPciProtocolNotifyRegistration;
-STATIC EFI_EVENT mPciProtocolNotifyEvent;
-
+VOID          *mPciProtocolNotifyRegistration;
 CHAR16        *mVariableName = VARSTORE_NAME;
-VARSTORE_DATA *mVarStoreConfig;
-PRIVATE_DATA  *mPrivateData;
 PCIE_NODE     *mDeviceBuf[MAX_DEVICE] = {NULL};
 
 HII_VENDOR_DEVICE_PATH mHiiVendorDevicePath = {
@@ -64,27 +60,36 @@ FlushDeviceData (
 {
   EFI_STATUS    Status;
   PCIE_NODE     *Node;
-  UINT64        BufferSize;
+  PRIVATE_DATA  *PrivateData;
   UINT8         Index;
-  VARSTORE_DATA VarStoreConfig;
+  VARSTORE_DATA *LastVarStoreConfig;
+  VARSTORE_DATA *VarStoreConfig;
 
-  // Get Variables
-  BufferSize = sizeof (VARSTORE_DATA);
-  Status = gRT->GetVariable (
-                  mVariableName,
-                  &gPcieDeviceConfigFormSetGuid,
-                  NULL,
-                  &BufferSize,
-                  &VarStoreConfig
-                  );
-  if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "%a: Failed to get variable status %r",
-      __FUNCTION__,
-      Status
-      ));
-    return;
+  PrivateData = (PRIVATE_DATA *)Context;
+  LastVarStoreConfig = &PrivateData->LastVarStoreConfig;
+  VarStoreConfig = &PrivateData->VarStoreConfig;
+
+  //
+  // If config has changed, update NVRAM
+  //
+  if (CompareMem (VarStoreConfig, LastVarStoreConfig, sizeof (VARSTORE_DATA)) != 0) {
+    DEBUG ((DEBUG_INFO, "%a Update Device Config Variable\n", __FUNCTION__));
+    Status = gRT->SetVariable (
+                    mVariableName,
+                    &gPcieDeviceConfigFormSetGuid,
+                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                    sizeof (VARSTORE_DATA),
+                    VarStoreConfig
+                    );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: Failed to set variable status %r",
+        __FUNCTION__,
+        Status
+        ));
+      return;
+    }
   }
 
   // Iterate through the list, then write corresponding MPS MRR
@@ -94,22 +99,22 @@ FlushDeviceData (
     }
 
     // Write MPS value
-    WriteMps (mDeviceBuf[Index], VarStoreConfig.MPS[Index]);
+    WriteMps (mDeviceBuf[Index], VarStoreConfig->MPS[Index]);
 
     FOR_EACH (Node, mDeviceBuf[Index], Parent) {
-      WriteMps (Node, VarStoreConfig.MPS[Index]);
+      WriteMps (Node, VarStoreConfig->MPS[Index]);
     }
 
     FOR_EACH (Node, mDeviceBuf[Index], Brother) {
-      WriteMps (Node, VarStoreConfig.MPS[Index]);
+      WriteMps (Node, VarStoreConfig->MPS[Index]);
     }
 
     // Write MRR value
     // FIXME: No need to update MRR of parent node
-    WriteMrr (mDeviceBuf[Index], VarStoreConfig.MRR[Index]);
+    WriteMrr (mDeviceBuf[Index], VarStoreConfig->MRR[Index]);
 
     FOR_EACH (Node, mDeviceBuf[Index], Brother) {
-      WriteMrr (Node, VarStoreConfig.MRR[Index]);
+      WriteMrr (Node, VarStoreConfig->MRR[Index]);
     }
   }
 
@@ -118,7 +123,8 @@ FlushDeviceData (
 
 EFI_STATUS
 UpdateDeviceForm (
-  UINT8 Index
+  UINT8        Index,
+  PRIVATE_DATA *PrivateData
   )
 {
   CHAR16 Str[MAX_STRING_SIZE];
@@ -152,7 +158,7 @@ UpdateDeviceForm (
     );
 
   HiiSetString (
-    mPrivateData->HiiHandle,
+    PrivateData->HiiHandle,
     STRING_TOKEN (STR_DEVICE_FORM),
     Str,
     NULL
@@ -332,7 +338,7 @@ UpdateDeviceForm (
     );
 
   HiiUpdateForm (
-    mPrivateData->HiiHandle,       // HII handle
+    PrivateData->HiiHandle,        // HII handle
     &gPcieDeviceConfigFormSetGuid, // Formset GUID
     DEVICE_FORM_ID,                // Form ID
     StartOpCodeHandle,             // Label for where to insert opcodes
@@ -341,53 +347,8 @@ UpdateDeviceForm (
 
   HiiFreeOpCodeHandle (StartOpCodeHandle);
   HiiFreeOpCodeHandle (EndOpCodeHandle);
-
-  return EFI_SUCCESS;
-}
-
-EFI_STATUS
-StoreNodeInfo (
-  PCIE_NODE *Node,
-  UINT8     Index
-  )
-{
-  EFI_STATUS           Status;
-  STATIC VARSTORE_DATA NewVarStoreConfig;
-  UINT8                Idx;
-  UINT64               SlotInfo;
-  UINTN                BufferSize;
-
-  if (Node == NULL) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  SlotInfo = PCIE_ADD (Node->Vid, Node->Did, Node->Seg, Node->Bus, Node->Dev);
-
-  NewVarStoreConfig.MPS[Index] = DEFAULT_MPS;
-  NewVarStoreConfig.MRR[Index] = DEFAULT_MRR;
-  NewVarStoreConfig.SlotInfo[Index] = SlotInfo;
-
-  // Retrieve setting from previous variable
-  for (Idx = 0; Idx < MAX_DEVICE; Idx++) {
-    if (mVarStoreConfig->SlotInfo[Idx] == SlotInfo) {
-      NewVarStoreConfig.MPS[Index] = mVarStoreConfig->MPS[Idx];
-      NewVarStoreConfig.MRR[Index] = mVarStoreConfig->MRR[Idx];
-      break;
-    }
-  }
-
-  BufferSize = sizeof (NewVarStoreConfig);
-  Status = gRT->SetVariable (
-                  mVariableName,
-                  &gPcieDeviceConfigFormSetGuid,
-                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                  BufferSize,
-                  &NewVarStoreConfig
-                  );
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
+  HiiFreeOpCodeHandle (MpsOpCodeHandle);
+  HiiFreeOpCodeHandle (MrrOpCodeHandle);
   return EFI_SUCCESS;
 }
 
@@ -408,13 +369,23 @@ OnPciIoProtocolNotify (
   UINTN PciFunctionNumber;
   UINTN PciSegment;
 
+  UINT8  Idx;
   UINT8  CapabilityPtr;
   UINT16 TmpValue;
+  UINT64 SlotInfo;
 
   PCIE_NODE        *Node;
+  PRIVATE_DATA     *PrivateData;
   STATIC PCIE_NODE *LastNode;
   STATIC UINT8     Index;
   STATIC UINT8     LastBus;
+
+  VARSTORE_DATA    *LastVarStoreConfig;
+  VARSTORE_DATA    *VarStoreConfig;
+
+  PrivateData = (PRIVATE_DATA *)Context;
+  LastVarStoreConfig = &PrivateData->LastVarStoreConfig;
+  VarStoreConfig = &PrivateData->VarStoreConfig;
 
   while (TRUE) {
     BufferSize = sizeof (EFI_HANDLE);
@@ -450,6 +421,7 @@ OnPciIoProtocolNotify (
         ((PciBusNumber == 0) && (PciDeviceNumber == 0)))
     {
       // Filter out Host Bridge
+      DEBUG ((DEBUG_INFO, "Filter out Host Bridge %x\n", PciSegment));
       continue;
     }
 
@@ -512,13 +484,26 @@ OnPciIoProtocolNotify (
     Node->Fun = PciFunctionNumber;
     Node->Vid = Pci.Hdr.VendorId;
     Node->Did = Pci.Hdr.DeviceId;
+    SlotInfo = PCIE_ADD (Node->Vid, Node->Did, Node->Seg, Node->Bus, Node->Dev);
 
     // Presume child devices were registered follow root port
     if (PciBusNumber != 0) {
       if (LastBus == 0) {
         Node->Parent = LastNode;
         mDeviceBuf[Index] = Node;
-        StoreNodeInfo (Node, Index);
+
+        VarStoreConfig->MPS[Index] = DEFAULT_MPS;
+        VarStoreConfig->MRR[Index] = DEFAULT_MRR;
+        VarStoreConfig->SlotInfo[Index] = SlotInfo;
+
+        // Retrieve setting from previous variable
+        for (Idx = 0; Idx < MAX_DEVICE; Idx++) {
+          if (SlotInfo == LastVarStoreConfig->SlotInfo[Idx]) {
+            VarStoreConfig->MPS[Index] = LastVarStoreConfig->MPS[Idx];
+            VarStoreConfig->MRR[Index] = LastVarStoreConfig->MRR[Idx];
+            break;
+          }
+        }
 
         Index++;
       } else if (PciBusNumber == LastBus) {
@@ -547,8 +532,11 @@ UpdateMainForm (
   EFI_IFR_GUID_LABEL *StartLabel;
   VOID               *EndOpCodeHandle;
   EFI_IFR_GUID_LABEL *EndLabel;
+  PRIVATE_DATA       *PrivateData;
 
   DEBUG ((DEBUG_INFO, "%a Entry ...\n", __FUNCTION__));
+
+  PrivateData = (PRIVATE_DATA *)Context;
 
   //
   // Initialize the container for dynamic opcodes
@@ -593,7 +581,7 @@ UpdateMainForm (
     UnicodeSPrint (
       Str,
       sizeof (Str),
-      L"PCIe Device 0x%04x:0x%04x - 0x%04x:0x%02x:0x%02x",
+      L"PCIe Device 0x%04x:0x%04x - %04x:%02x:%02x",
       mDeviceBuf[Index]->Vid,
       mDeviceBuf[Index]->Did,
       mDeviceBuf[Index]->Seg,
@@ -601,7 +589,7 @@ UpdateMainForm (
       mDeviceBuf[Index]->Dev
       );
 
-    StrId = HiiSetString (mPrivateData->HiiHandle, 0, Str, NULL);
+    StrId = HiiSetString (PrivateData->HiiHandle, 0, Str, NULL);
 
     //
     // Create a Goto OpCode to device configuration
@@ -617,7 +605,7 @@ UpdateMainForm (
   }
 
   HiiUpdateForm (
-    mPrivateData->HiiHandle,        // HII handle
+    PrivateData->HiiHandle,         // HII handle
     &gPcieDeviceConfigFormSetGuid,  // Formset GUID
     MAIN_FORM_ID,                   // Form ID
     StartOpCodeHandle,              // Label for where to insert opcodes
@@ -667,21 +655,8 @@ ExtractConfig (
   VarStoreConfig = &PrivateData->VarStoreConfig;
   ASSERT (VarStoreConfig != NULL);
 
-  //
-  // Get Buffer Storage data from EFI variable.
-  // Try to get the current setting from variable.
-  //
   BufferSize = sizeof (VARSTORE_DATA);
-  Status = gRT->GetVariable (
-                  mVariableName,
-                  &gPcieDeviceConfigFormSetGuid,
-                  NULL,
-                  &BufferSize,
-                  VarStoreConfig
-                  );
-  if (EFI_ERROR (Status)) {
-    return EFI_NOT_FOUND;
-  }
+
   if (Request == NULL) {
     //
     // Request is set to NULL, construct full request string.
@@ -843,20 +818,7 @@ RouteConfig (
   {
     return EFI_NOT_FOUND;
   }
-  //
-  // Get Buffer Storage data from EFI variable
-  //
-  BufferSize = sizeof (VARSTORE_DATA);
-  Status = gRT->GetVariable (
-                  mVariableName,
-                  &gPcieDeviceConfigFormSetGuid,
-                  NULL,
-                  &BufferSize,
-                  VarStoreConfig
-                  );
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
+
   //
   // Check if configuring Name/Value storage
   //
@@ -877,19 +839,6 @@ RouteConfig (
                                &BufferSize,
                                Progress
                                );
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-  //
-  // Store Buffer Storage back to variable
-  //
-  Status = gRT->SetVariable (
-                  mVariableName,
-                  &gPcieDeviceConfigFormSetGuid,
-                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                  sizeof (VARSTORE_DATA),
-                  VarStoreConfig
-                  );
 
   return Status;
 }
@@ -922,7 +871,8 @@ DriverCallback (
   OUT      EFI_BROWSER_ACTION_REQUEST     *ActionRequest
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS   Status;
+  PRIVATE_DATA *PrivateData;
 
   if (((Value == NULL) &&
        (Action != EFI_BROWSER_ACTION_FORM_OPEN) &&
@@ -932,12 +882,14 @@ DriverCallback (
     return EFI_INVALID_PARAMETER;
   }
 
+  PrivateData = PRIVATE_DATA_FROM_THIS (This);
+
   switch (Action) {
   case EFI_BROWSER_ACTION_CHANGING:
     if ((QuestionId >= DEVICE_KEY)
         & (QuestionId <= (DEVICE_KEY + MAX_DEVICE)))
     {
-      Status = UpdateDeviceForm (QuestionId - DEVICE_KEY);
+      Status = UpdateDeviceForm (QuestionId - DEVICE_KEY, PrivateData);
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -979,18 +931,20 @@ PcieDeviceConfigEntryPoint (
   EFI_STATUS                      Status;
   EFI_EVENT                       PlatformUiEntryEvent;
   EFI_EVENT                       FlushDeviceEvent;
+  EFI_EVENT                       PciProtocolNotifyEvent;
+  PRIVATE_DATA                    *PrivateData;
   UINTN                           BufferSize;
 
   DriverHandle = NULL;
-  mPrivateData = AllocateZeroPool (sizeof (*mPrivateData));
-  if (mPrivateData == NULL) {
+  PrivateData = AllocateZeroPool (sizeof (*PrivateData));
+  if (PrivateData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  mPrivateData->Signature = PRIVATE_DATA_SIGNATURE;
+  PrivateData->Signature = PRIVATE_DATA_SIGNATURE;
 
-  mPrivateData->ConfigAccess.ExtractConfig = ExtractConfig;
-  mPrivateData->ConfigAccess.RouteConfig = RouteConfig;
-  mPrivateData->ConfigAccess.Callback = DriverCallback;
+  PrivateData->ConfigAccess.ExtractConfig = ExtractConfig;
+  PrivateData->ConfigAccess.RouteConfig = RouteConfig;
+  PrivateData->ConfigAccess.Callback = DriverCallback;
 
   //
   // Locate ConfigRouting protocol
@@ -1001,23 +955,23 @@ PcieDeviceConfigEntryPoint (
                   (VOID **)&HiiConfigRouting
                   );
   if (EFI_ERROR (Status)) {
-    return Status;
+    goto Exit;
   }
-  mPrivateData->HiiConfigRouting = HiiConfigRouting;
+  PrivateData->HiiConfigRouting = HiiConfigRouting;
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &DriverHandle,
                   &gEfiDevicePathProtocolGuid,
                   &mHiiVendorDevicePath,
                   &gEfiHiiConfigAccessProtocolGuid,
-                  &mPrivateData->ConfigAccess,
+                  &PrivateData->ConfigAccess,
                   NULL
                   );
   if (EFI_ERROR (Status)) {
-    return Status;
+    goto Exit;
   }
 
-  mPrivateData->DriverHandle = DriverHandle;
+  PrivateData->DriverHandle = DriverHandle;
 
   //
   // Publish our HII data
@@ -1030,59 +984,63 @@ PcieDeviceConfigEntryPoint (
                 NULL
                 );
   if (HiiHandle == NULL) {
-    return EFI_OUT_OF_RESOURCES;
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Exit;
   }
-  mPrivateData->HiiHandle = HiiHandle;
+  PrivateData->HiiHandle = HiiHandle;
 
   // Event to fixup screen
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
                   TPL_CALLBACK,
                   UpdateMainForm,
-                  NULL,
+                  (VOID *)PrivateData,
                   &gPlatformManagerEntryEventGuid,
                   &PlatformUiEntryEvent
                   );
   if (EFI_ERROR (Status)) {
-    return Status;
+    goto Exit;
   }
 
   // Event to collect PciIo
-  mPciProtocolNotifyEvent = EfiCreateProtocolNotifyEvent (
-                              &gEfiPciIoProtocolGuid,
-                              TPL_CALLBACK,
-                              OnPciIoProtocolNotify,
-                              NULL,
-                              &mPciProtocolNotifyRegistration
-                              );
-  ASSERT (mPciProtocolNotifyEvent != NULL);
+  PciProtocolNotifyEvent = EfiCreateProtocolNotifyEvent (
+                             &gEfiPciIoProtocolGuid,
+                             TPL_CALLBACK,
+                             OnPciIoProtocolNotify,
+                             (VOID *)PrivateData,
+                             &mPciProtocolNotifyRegistration
+                             );
+  ASSERT (PciProtocolNotifyEvent != NULL);
 
   // Event to flush device data
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
                   TPL_CALLBACK,
                   FlushDeviceData,
-                  NULL,
+                  (VOID *)PrivateData,
                   &gEfiEventReadyToBootGuid,
                   &FlushDeviceEvent
                   );
   if (EFI_ERROR (Status)) {
-    return Status;
+    goto Exit;
   }
 
   // Verify varstore
-  mVarStoreConfig = &mPrivateData->VarStoreConfig;
   BufferSize = sizeof (VARSTORE_DATA);
   Status = gRT->GetVariable (
                   mVariableName,
                   &gPcieDeviceConfigFormSetGuid,
                   NULL,
                   &BufferSize,
-                  mVarStoreConfig
+                  &PrivateData->LastVarStoreConfig
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to get varstore config status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "%a: Last config is not found\n", __FUNCTION__));
   }
 
   return EFI_SUCCESS;
+
+Exit:
+  FreePool (PrivateData);
+  return Status;
 }
