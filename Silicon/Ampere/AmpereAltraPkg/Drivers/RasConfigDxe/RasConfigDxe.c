@@ -80,6 +80,30 @@ RasConfigNvParamGet (
   Configuration->RasHardwareEinj = (EFI_ERROR (Status)) ? 0 : Value;
 
   Status = NVParamGet (
+             NV_SI_RAS_PCIE_AER_FW_FIRST,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &Value
+             );
+  if (EFI_ERROR (Status)) {
+    //
+    // The PCIe AER FW-First is disabled by default
+    // if any error happens when reading the parameter.
+    //
+    Value = 0;
+    Status = NVParamSet (
+               NV_SI_RAS_PCIE_AER_FW_FIRST,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               Value
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a:%d NVParamSet() failed!\n", __FUNCTION__, __LINE__));
+      ASSERT_EFI_ERROR (Status);
+    }
+  }
+  Configuration->RasPcieAerFwFirstEnabled = Value;
+
+  Status = NVParamGet (
              NV_SI_RAS_BERT_ENABLED,
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
@@ -137,6 +161,13 @@ RasConfigNvParamSet (
     NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
     NV_PERM_BIOS | NV_PERM_MANU,
     Configuration->RasHardwareEinj
+    );
+
+  NVParamSet (
+    NV_SI_RAS_PCIE_AER_FW_FIRST,
+    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+    NV_PERM_BIOS | NV_PERM_MANU,
+    Configuration->RasPcieAerFwFirstEnabled
     );
 
   NVParamSet (

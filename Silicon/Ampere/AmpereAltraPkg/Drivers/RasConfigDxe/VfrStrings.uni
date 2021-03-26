@@ -16,6 +16,9 @@
 #string STR_RAS_HARDWARE_EINJ_PROMPT                #language en-US "Hardware EINJ"
 #string STR_RAS_HARDWARE_EINJ_HELP                  #language en-US "Enable hardware EINJ support, if disabled EINJ is software simulated"
 
+#string STR_RAS_PCIE_AER_FW_FIRST_PROMPT            #language en-US "PCIe AER Firmware First"
+#string STR_RAS_PCIE_AER_FW_FIRST_HELP              #language en-US "Enable firmware to detect PCIe AER, if disabled OS detects AER"
+
 #string STR_RAS_BERT_ENABLED_PROMPT                 #language en-US "Enable BERT"
 #string STR_RAS_BERT_ENABLED_HELP                   #language en-US "Enable Boot Error Record Table, if disabled BERT will not be populated"
 

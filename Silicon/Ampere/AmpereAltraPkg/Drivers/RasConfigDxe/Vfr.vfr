@@ -36,6 +36,15 @@ formset
       option text = STRING_TOKEN(STR_RAS_COMMON_DISABLE), value = 0, flags = 0;
 
     endoneof;
+
+    oneof varid  = RasConfigNVData.RasPcieAerFwFirstEnabled,
+      prompt      = STRING_TOKEN(STR_RAS_PCIE_AER_FW_FIRST_PROMPT),
+      help        = STRING_TOKEN(STR_RAS_PCIE_AER_FW_FIRST_HELP),
+      flags       = NUMERIC_SIZE_4 | RESET_REQUIRED,
+      option text = STRING_TOKEN(STR_RAS_COMMON_ENABLE), value = 1, flags = 0;
+      option text = STRING_TOKEN(STR_RAS_COMMON_DISABLE), value = 0, flags = DEFAULT;
+
+    endoneof;
   endif;
 
   grayoutif ideqval RasConfigNVData.EnableApeiSupport == 0;
