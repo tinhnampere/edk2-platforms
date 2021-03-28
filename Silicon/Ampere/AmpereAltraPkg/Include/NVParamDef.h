@@ -489,9 +489,11 @@ typedef enum {
   NV_SI_RO_BOARD_PCIE_AER_FW_FIRST                  = (194 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_RTC_GPI_LOCK_BYPASS                = (195 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_TPM_DISABLE                        = (196 * 8) + NV_BOARD_PARAM_START,
-  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_TPM_DISABLE,
+  NV_SI_RO_BOARD_MESH_S0_CXG_RC_STRONG_ORDERING_EN  = (197 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
+  NV_SI_RO_BOARD_MESH_S1_CXG_RC_STRONG_ORDERING_EN  = (198 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
+  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_MESH_S1_CXG_RC_STRONG_ORDERING_EN,
   /* NOTE: Add before NV_BOARD_PARAM_MAX and increase its value */
-  NV_BOARD_PARAM_MAX                                = (196 * 8) + NV_BOARD_PARAM_START,
+  NV_BOARD_PARAM_MAX                                = (198 * 8) + NV_BOARD_PARAM_START,
 } NVPARAM;
 
 #endif /* NVPARAMDEF_H_ */
