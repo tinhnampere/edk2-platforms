@@ -129,7 +129,7 @@
 [0001]               Encoded Access Width : 04 [QWord Access:64]
 [0008]                            Address : 0000000088220140
 
-[0008]                              Value : 0000000000000000
+[0008]                              Value : 0000000000000001
 [0008]                               Mask : FFFFFFFFFFFFFFFF
 
 [0001]                             Action : 07 [Get Command Status]
