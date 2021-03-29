@@ -342,12 +342,12 @@ IpmiSsifCmd (
       break;
     }
 
-    if (++RetryCount > IPMI_SSIF_MAX_REQUEST_RETRY) {
+    if (++RetryCount > IPMI_SSIF_REQUEST_RETRY_COUNT) {
       DEBUG ((DEBUG_ERROR, "%a: Write Request error %r\n", __FUNCTION__, Status));
       goto Exit;
     }
 
-    MicroSecondDelay (IPMI_SSIF_RETRY_DELAY);
+    MicroSecondDelay (IPMI_SSIF_REQUEST_RETRY_INTERVAL);
   }
 
   //
@@ -367,14 +367,14 @@ IpmiSsifCmd (
       break;
     }
 
-    if (++RetryCount > IPMI_SSIF_MAX_REQUEST_RETRY) {
+    if (++RetryCount > IPMI_SSIF_RESPONSE_RETRY_COUNT) {
       DEBUG ((DEBUG_ERROR, "%a: Read Response error %r\n", __FUNCTION__, Status));
       *ResponseDataSize = 0;
       goto Exit;
     }
 
     *ResponseDataSize = TempLength;
-    MicroSecondDelay (IPMI_SSIF_RETRY_DELAY);
+    MicroSecondDelay (IPMI_SSIF_RESPONSE_RETRY_INTERVAL);
   }
 
 Exit:

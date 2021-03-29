@@ -39,7 +39,10 @@
 [Pcd]
   gAmpereTokenSpaceGuid.PcdBmcSlaveAddr
   gAmpereTokenSpaceGuid.PcdIpmiLunNumber
-  gAmpereTokenSpaceGuid.PcdIpmiSsifRetryDelay
+  gAmpereTokenSpaceGuid.PcdIpmiSsifRequestRetryCount
+  gAmpereTokenSpaceGuid.PcdIpmiSsifRequestRetryInterval
+  gAmpereTokenSpaceGuid.PcdIpmiSsifResponseRetryCount
+  gAmpereTokenSpaceGuid.PcdIpmiSsifResponseRetryInterval
 
 [Depex]
   TRUE

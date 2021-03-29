@@ -86,7 +86,10 @@
   # IPMI
   #
   gAmpereTokenSpaceGuid.PcdIpmiLunNumber|0|UINT8|0x000000B
-  gAmpereTokenSpaceGuid.PcdIpmiSsifRetryDelay|60000|UINT32|0x0000000C # 60ms - 250ms
+  gAmpereTokenSpaceGuid.PcdIpmiSsifRequestRetryCount|5|UINT8|0x00000C
+  gAmpereTokenSpaceGuid.PcdIpmiSsifRequestRetryInterval|60000|UINT32|0x0000000D # 60ms - 250ms
+  gAmpereTokenSpaceGuid.PcdIpmiSsifResponseRetryCount|250|UINT8|0x00000E
+  gAmpereTokenSpaceGuid.PcdIpmiSsifResponseRetryInterval|20000|UINT32|0x0000000F # 20ms
 
 [PcdsFixedAtBuild, PcdsDynamic]
   #

@@ -15,6 +15,8 @@
 #define IPMI_MAX_LUN             0x3
 #define IPMI_MAX_NETFUNCTION     0x3F
 
+#define IPMI_SSIF_BLOCK_LEN                         0x20
+
 #define IPMI_SSIF_SINGLE_PART_WRITE_SMBUS_CMD       0x02
 #define IPMI_SSIF_MULTI_PART_WRITE_START_SMBUS_CMD  0x06
 #define IPMI_SSIF_MULTI_PART_WRITE_MIDDLE_SMBUS_CMD 0x07
@@ -31,10 +33,13 @@
 #define IPMI_SSIF_MULTI_PART_READ_START_PATTERN2    0x1
 #define IPMI_SSIF_MULTI_PART_READ_END_PATTERN       0xFF
 
-#define IPMI_SSIF_SLAVE_ADDRESS       (FixedPcdGet8 (PcdBmcSlaveAddr))
-#define IPMI_SSIF_RETRY_DELAY         (FixedPcdGet32 (PcdIpmiSsifRetryDelay))
-#define IPMI_SSIF_BLOCK_LEN           0x20
-#define IPMI_SSIF_MAX_REQUEST_RETRY   5 // 12.17 SSIF Timing
+#define IPMI_SSIF_SLAVE_ADDRESS                     (FixedPcdGet8 (PcdBmcSlaveAddr))
+
+#define IPMI_SSIF_REQUEST_RETRY_COUNT               (FixedPcdGet32 (PcdIpmiSsifRequestRetryCount))
+#define IPMI_SSIF_REQUEST_RETRY_INTERVAL            (FixedPcdGet32 (PcdIpmiSsifRequestRetryInterval))
+
+#define IPMI_SSIF_RESPONSE_RETRY_COUNT              (FixedPcdGet32 (PcdIpmiSsifResponseRetryCount))
+#define IPMI_SSIF_RESPONSE_RETRY_INTERVAL           (FixedPcdGet32 (PcdIpmiSsifResponseRetryInterval))
 
 #define SSIF_SINGLE_PART_RW           0x0
 #define SSIF_START_END_RW             0x1
