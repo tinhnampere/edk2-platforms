@@ -493,11 +493,6 @@ PcieRCActiveDefaultSetting (
   VOID               *Hob;
   UINT32             Efuse;
 
-  // FIXME: Disable Root Complex 6 (USB and VGA) as default
-  if (RCIndex == 6) {
-    return FALSE;
-  }
-
   Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob != NULL) {
     PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
@@ -1194,10 +1189,6 @@ PcieBoardScreenInitialize (
       VarStoreConfig->RCBifurHi[RCIndex] = RC->DevMapHi;
       VarStoreConfig->RCStatus[RCIndex] = RC->Active;
       IsUpdated = TRUE;
-    }
-    // FIXME: Disable Root Complex 6 (USB and VGA) as default
-    if (EFI_ERROR (Status) && RCIndex == 6) {
-      VarStoreConfig->RCStatus[RCIndex] = 0;
     }
   }
 

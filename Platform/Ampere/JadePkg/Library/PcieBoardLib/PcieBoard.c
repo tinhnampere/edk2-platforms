@@ -177,7 +177,7 @@ PcieBoardParseRCParams (
   VOID               *Hob;
   UINTN              BufferSize;
   PCIE_VARSTORE_DATA VarStoreConfig = {
-    .RCStatus = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE,
+    .RCStatus = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
                  TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE},
     .RCBifurLo = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     .RCBifurHi = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
