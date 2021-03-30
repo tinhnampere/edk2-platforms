@@ -40,5 +40,7 @@
   gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0
   gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex
 
+  gArmTokenSpaceGuid.PcdSystemMemoryBase
+
 [Guids]
   gPlatformHobGuid

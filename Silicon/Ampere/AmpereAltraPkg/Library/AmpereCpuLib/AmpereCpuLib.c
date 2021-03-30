@@ -31,7 +31,10 @@ GetPlatformHob (
   VOID *Hob;
 
   if (mPlatformInfoHob == NULL) {
-    Hob = GetFirstGuidHob (&gPlatformHobGuid);
+    Hob = GetNextGuidHob (
+            &gPlatformHobGuid,
+            (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
+            );
     if (Hob == NULL) {
       DEBUG ((DEBUG_ERROR, "%a: Failed to get gPlatformHobGuid!\n", __FUNCTION__));
       return NULL;

@@ -62,46 +62,12 @@ AcpiPcctIsV2 (
   return TRUE;
 }
 
-STATIC UINT32
-AcpiPcctGetNumOfSocket (
-  VOID
-  )
-{
-  UINTN              NumberSockets, NumberActiveSockets, Count, Index, Index1;
-  PlatformInfoHob    *PlatformHob;
-  PlatformClusterEn  *Socket;
-  VOID               *Hob;
-
-  /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
-  if (Hob == NULL) {
-    return 1;
-  }
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
-
-  NumberSockets = sizeof (PlatformHob->ClusterEn) / sizeof (PlatformClusterEn);
-  NumberActiveSockets = 0;
-
-  for (Index = 0; Index < NumberSockets; Index++) {
-    Socket = &PlatformHob->ClusterEn[Index];
-    Count = ARRAY_SIZE (Socket->EnableMask);
-    for (Index1 = 0; Index1 < Count; Index1++) {
-      if (Socket->EnableMask[Index1] != 0) {
-        NumberActiveSockets++;
-        break;
-      }
-    }
-  }
-
-  return NumberActiveSockets;
-}
-
 EFI_STATUS
 AcpiPcctInit (
   VOID
   )
 {
-  INTN NumOfSocket = AcpiPcctGetNumOfSocket ();
+  INTN NumOfSocket = GetNumberOfActiveSockets ();
   INTN Subspace;
   INTN Socket;
   INTN Idx;
@@ -139,7 +105,7 @@ AcpiInstallPcctTable (
 {
   EFI_ACPI_6_3_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER *PcctTablePointer = NULL;
   EFI_ACPI_6_3_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS   *PcctEntryPointer = NULL;
-  INTN                                                     NumOfSocket = AcpiPcctGetNumOfSocket ();
+  INTN                                                     NumOfSocket = GetNumberOfActiveSockets ();
   UINT64                                                   PccSharedMemPointer = 0;
   EFI_ACPI_TABLE_PROTOCOL                                  *AcpiTableProtocol;
   UINTN                                                    PcctTableKey  = 0;

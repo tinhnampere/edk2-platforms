@@ -27,25 +27,6 @@
 
 ARM_CORE_INFO mArmPlatformMpCoreInfoTable[PLATFORM_CPU_MAX_NUM_CORES];
 
-BOOLEAN
-ArmPlatformCpuIsEnabled (
-  PlatformInfoHob    *Hob,
-  UINT32             CpuId
-  )
-{
-  UINT32 ClusterId;
-  UINT32 SocketId;
-
-  SocketId = SOCKET_ID (CpuId);
-  ClusterId = CLUSTER_ID (CpuId);
-
-  if (Hob->ClusterEn[SocketId].EnableMask[ClusterId / 32] & (1 << (ClusterId % 32))) {
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
 /**
   Return the current Boot Mode
 
@@ -113,29 +94,17 @@ PrePeiCoreGetMpCoreInfo (
   )
 {
   UINTN              mArmPlatformCoreCount;
-  PlatformInfoHob    *PlatformHob;
   UINTN              ClusterId;
   UINTN              SocketId;
   UINTN              Index;
-  VOID               *Hob;
 
   ASSERT (CoreCount != NULL);
   ASSERT (ArmCoreTable != NULL);
   ASSERT (*ArmCoreTable != NULL);
 
-  Hob = GetNextGuidHob (
-          &gPlatformHobGuid,
-          (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
-          );
-  if (Hob == NULL) {
-    return EFI_UNSUPPORTED;
-  }
-
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
-
   mArmPlatformCoreCount = 0;
   for  (Index = 0; Index < PLATFORM_CPU_MAX_NUM_CORES; Index++) {
-    if (!ArmPlatformCpuIsEnabled (PlatformHob, Index)) {
+    if (!IsCpuEnabled (Index)) {
       continue;
     }
     SocketId = SOCKET_ID (Index);

@@ -71,8 +71,7 @@ ArmPlatformGetVirtualMemoryMap (
   /* For Address space 0x5000_0000_0000 to 0x5001_00FF_FFFF
    *  - Device memory
    */
-  if (PlatformHob->ClusterEn[1].EnableMask[0] ||
-      PlatformHob->ClusterEn[1].EnableMask[1])
+  if (IsSlaveSocketActive ())
   {
     VirtualMemoryTable[++Index].PhysicalBase = 0x500000000000ULL;
     VirtualMemoryTable[Index].VirtualBase  = 0x500000000000ULL;
