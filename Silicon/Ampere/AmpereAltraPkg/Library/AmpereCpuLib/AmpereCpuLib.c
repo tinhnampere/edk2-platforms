@@ -658,3 +658,19 @@ IsSlaveSocketPresent (
 
   return ((Value & SLAVE_PRESENT_N) != 0) ? FALSE : TRUE;
 }
+
+/**
+  Check if the slave socket is active
+
+  @return   BOOLEAN     TRUE if the Slave CPU Socket is active.
+                        FALSE if the Slave CPU Socket is not active.
+
+**/
+BOOLEAN
+EFIAPI
+IsSlaveSocketActive (
+  VOID
+  )
+{
+  return (GetNumberOfActiveSockets () > 1) ? TRUE : FALSE;
+}

@@ -254,4 +254,17 @@ IsSlaveSocketPresent (
   VOID
   );
 
+/**
+  Check if the slave socket is active
+
+  @return   BOOLEAN     TRUE if the Slave CPU Socket is active.
+                        FALSE if the Slave CPU Socket is not active.
+
+**/
+BOOLEAN
+EFIAPI
+IsSlaveSocketActive (
+  VOID
+  );
+
 #endif /* AMPERE_CPU_LIB_H_ */
