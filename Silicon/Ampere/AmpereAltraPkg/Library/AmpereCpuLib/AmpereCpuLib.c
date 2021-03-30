@@ -401,7 +401,7 @@ GetNumberOfActiveCPMsPerSocket (
     return 0;
   }
 
-  if (SocketId >= GetNumberOfSupportedSockets ()) {
+  if (SocketId >= GetNumberOfActiveSockets ()) {
     return 0;
   }
 
@@ -593,7 +593,7 @@ GetNumberOfActiveCores (
 
   NumberOfActiveCores = 0;
 
-  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
+  for (Index = 0; Index < GetNumberOfActiveSockets (); Index++) {
     NumberOfActiveCores += GetNumberOfActiveCoresPerSocket (Index);
   }
 
@@ -627,7 +627,7 @@ IsCpuEnabled (
     return FALSE;
   }
 
-  if (SocketId >= GetNumberOfSupportedSockets ()) {
+  if (SocketId >= GetNumberOfActiveSockets ()) {
     return FALSE;
   }
 
