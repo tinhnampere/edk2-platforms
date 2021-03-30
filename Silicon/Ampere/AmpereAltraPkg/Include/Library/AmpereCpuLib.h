@@ -85,29 +85,6 @@ CpuGetSubNumNode (
   );
 
 /**
-  Get the value of CLIDR register.
-
-  @return   UINT64      The value of CLIDR register.
-
-**/
-UINT64
-EFIAPI
-AArch64ReadCLIDRReg ();
-
-/**
-  Get the value of CCSID register.
-
-  @param    Level       Cache level.
-  @return   UINT64      The value of CCSID register.
-
-**/
-UINT64
-EFIAPI
-AArch64ReadCCSIDRReg (
-  UINT64 Level
-  );
-
-/**
   Get the associativity of cache.
 
   @param    Level       Cache level.
@@ -117,7 +94,7 @@ AArch64ReadCCSIDRReg (
 UINT32
 EFIAPI
 CpuGetAssociativity (
-  UINTN Level
+  UINT32 Level
   );
 
 /**
@@ -130,7 +107,7 @@ CpuGetAssociativity (
 UINT32
 EFIAPI
 CpuGetCacheSize (
-  UINTN Level
+  UINT32 Level
   );
 
 /**

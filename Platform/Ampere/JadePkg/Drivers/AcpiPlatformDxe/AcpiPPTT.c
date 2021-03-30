@@ -177,9 +177,11 @@ AcpiPpttFillCacheSizeInfo (
   UINT32                            Level
   )
 {
-  UINT64 CacheCCSIDR = AArch64ReadCCSIDRReg (Level);
+  UINT64 CacheCCSIDR;
   UINT32 CacheLineSize;
   UINT32 Count;
+
+  CacheCCSIDR = ReadCCSIDR (Level);
 
   CacheLineSize = 1;
   Count = CCSIDR_LINE_SIZE (CacheCCSIDR) + 4;

@@ -12,6 +12,7 @@
 #include <Guid/SmBios.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/ArmLib.h>
+#include <Library/ArmLib/ArmLibPrivate.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -299,14 +300,14 @@ STATIC CONST VOID *DefaultType7Sk1Tables[] =
 STATIC
 UINT32
 GetCacheConfig (
-  UINTN Level
+  UINT32 Level
   )
 {
   UINT64  Val;
   BOOLEAN SupportWB;
   BOOLEAN SupportWT;
 
-  Val = AArch64ReadCCSIDRReg (Level);
+  Val = ReadCCSIDR (Level);
   SupportWT = (Val & (1 << 31)) ? TRUE : FALSE;
   SupportWB = (Val & (1 << 30)) ? TRUE : FALSE;
   if (SupportWT && SupportWB) {

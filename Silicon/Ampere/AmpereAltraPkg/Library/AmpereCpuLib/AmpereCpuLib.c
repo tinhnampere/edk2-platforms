@@ -11,6 +11,7 @@
 
 #include <Guid/PlatformInfoHobGuid.h>
 #include <Library/AmpereCpuLib.h>
+#include <Library/ArmLib/ArmLibPrivate.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
@@ -195,46 +196,6 @@ CpuGetSubNumNode (
 }
 
 /**
-  Get the value of CLIDR register.
-
-  @return   UINT64      The value of CLIDR register.
-
-**/
-UINT64
-EFIAPI
-AArch64ReadCLIDRReg (
-  VOID
-  )
-{
-  UINT64 Value;
-
-  asm volatile ("mrs %x0, clidr_el1 " : "=r" (Value));
-
-  return Value;
-}
-
-/**
-  Get the value of CCSID register.
-
-  @param    Level       Cache level.
-  @return   UINT64      The value of CCSID register.
-
-**/
-UINT64
-EFIAPI
-AArch64ReadCCSIDRReg (
-  UINT64 Level
-  )
-{
-  UINT64 Value;
-
-  asm volatile ("msr csselr_el1, %x0 " : : "rZ" (Level));
-  asm volatile ("mrs %x0, ccsidr_el1 " : "=r" (Value));
-
-  return Value;
-}
-
-/**
   Get the associativity of cache.
 
   @param    Level       Cache level.
@@ -244,18 +205,19 @@ AArch64ReadCCSIDRReg (
 UINT32
 EFIAPI
 CpuGetAssociativity (
-  UINTN Level
+  UINT32 Level
   )
 {
   UINT64 CacheCCSIDR;
-  UINT64 CacheCLIDR = AArch64ReadCLIDRReg ();
+  UINT64 CacheCLIDR;
   UINT32 Value = 0x2; /* Unknown Set-Associativity */
 
+  CacheCLIDR = ReadCLIDR ();
   if (!CLIDR_CTYPE (CacheCLIDR, Level)) {
     return Value;
   }
 
-  CacheCCSIDR = AArch64ReadCCSIDRReg (Level);
+  CacheCCSIDR = ReadCCSIDR (Level);
   switch (CCSIDR_ASSOCIATIVITY (CacheCCSIDR)) {
   case 0:
     /* Direct mapped */
@@ -326,19 +288,20 @@ CpuGetAssociativity (
 UINT32
 EFIAPI
 CpuGetCacheSize (
-  UINTN Level
+  UINT32 Level
   )
 {
   UINT32 CacheLineSize;
   UINT32 Count;
   UINT64 CacheCCSIDR;
-  UINT64 CacheCLIDR = AArch64ReadCLIDRReg ();
+  UINT64 CacheCLIDR;
 
+  CacheCLIDR = ReadCLIDR ();
   if (!CLIDR_CTYPE (CacheCLIDR, Level)) {
     return 0;
   }
 
-  CacheCCSIDR = AArch64ReadCCSIDRReg (Level);
+  CacheCCSIDR = ReadCCSIDR (Level);
   CacheLineSize = 1;
   Count = CCSIDR_LINE_SIZE (CacheCCSIDR) + 4;
   while (Count-- > 0) {
