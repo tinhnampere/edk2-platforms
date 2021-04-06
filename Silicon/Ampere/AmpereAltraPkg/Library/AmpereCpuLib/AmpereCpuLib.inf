@@ -36,9 +36,7 @@
   gArmPlatformTokenSpaceGuid.PcdCoreCount
   gArmPlatformTokenSpaceGuid.PcdClusterCount
 
-  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
   gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0
-  gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex
 
   gArmTokenSpaceGuid.PcdSystemMemoryBase
 
