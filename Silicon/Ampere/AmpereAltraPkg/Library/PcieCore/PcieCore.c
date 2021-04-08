@@ -11,7 +11,7 @@
 #include <Library/HobLib.h>
 #include <Library/PcieBoardLib.h>
 #include <Library/PciePhyLib.h>
-#include <Library/SMProLib.h>
+#include <Library/SystemFirmwareInterfaceLib.h>
 #include <PlatformInfoHob.h>
 
 #include "Pcie.h"
@@ -1147,14 +1147,14 @@ Ac01PcieCoreSetupRC (
   }
 
   // Program VendorID and DeviceId
-  if (!EFI_ERROR (SMProRegRd (RC->Socket, RC->HBAddr  + HBPDVIDR, &Val))) {
+  if (!EFI_ERROR (MailboxMsgRegisterRead (RC->Socket, RC->HBAddr  + HBPDVIDR, &Val))) {
     Val = PCIVENDID_SET (Val, AMPERE_PCIE_VENDORID);
     if (RCA == RC->Type) {
       Val = PCIDEVID_SET (Val, AC01_HOST_BRIDGE_DEVICEID_RCA);
     } else {
       Val = PCIDEVID_SET (Val, AC01_HOST_BRIDGE_DEVICEID_RCB);
     }
-    SMProRegWr (RC->Socket, RC->HBAddr  + HBPDVIDR, Val);
+    MailboxMsgRegisterWrite (RC->Socket, RC->HBAddr  + HBPDVIDR, Val);
   }
 
   return 0;

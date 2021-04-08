@@ -38,6 +38,7 @@
   HiiLib
   HobLib
   MemoryAllocationLib
+  SystemFirmwareInterfaceLib
   UefiBootServicesTableLib
   UefiLib
   UefiRuntimeServicesTableLib

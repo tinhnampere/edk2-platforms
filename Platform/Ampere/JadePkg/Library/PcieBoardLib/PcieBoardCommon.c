@@ -8,7 +8,7 @@
 
 #include <Library/DebugLib.h>
 #include <Library/NVParamLib.h>
-#include <Library/SMProLib.h>
+#include <Library/SystemFirmwareInterfaceLib.h>
 #include <NVParamDef.h>
 
 #include "Pcie.h"
@@ -254,15 +254,15 @@ PcieBoardSetupDevmap (
 
   if (RC->Active) {
     if (RC->Type == RCA) {
-      if (!EFI_ERROR (SMProRegRd (RC->Socket, RC->HBAddr + HBRCAPDMR, &Val))) {
+      if (!EFI_ERROR (MailboxMsgRegisterRead (RC->Socket, RC->HBAddr + HBRCAPDMR, &Val))) {
         Val = RCAPCIDEVMAP_SET (Val, RC->DevMapLo & 0x7);
-        SMProRegWr (RC->Socket, RC->HBAddr + HBRCAPDMR, Val);
+        MailboxMsgRegisterWrite (RC->Socket, RC->HBAddr + HBRCAPDMR, Val);
       }
     } else {
-      if (!EFI_ERROR (SMProRegRd (RC->Socket, RC->HBAddr + HBRCBPDMR, &Val))) {
+      if (!EFI_ERROR (MailboxMsgRegisterRead (RC->Socket, RC->HBAddr + HBRCBPDMR, &Val))) {
         Val = RCBPCIDEVMAPLO_SET (Val, RC->DevMapLo & 0x7);
         Val = RCBPCIDEVMAPHI_SET (Val, RC->DevMapHi & 0x7);
-        SMProRegWr (RC->Socket, RC->HBAddr + HBRCBPDMR, Val);
+        MailboxMsgRegisterWrite (RC->Socket, RC->HBAddr + HBRCBPDMR, Val);
       }
     }
   }

@@ -47,7 +47,8 @@
   PcdLib
   PcieBoardLib
   PciePhyLib
-  SMProLib
+  SerialPortLib
+  SystemFirmwareInterfaceLib
   TimerLib
   UefiBootServicesTableLib
   UefiLib
