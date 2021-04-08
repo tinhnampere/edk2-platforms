@@ -16,22 +16,10 @@
 #include <Library/AmpereCpuLib.h>
 #include <Library/DebugLib.h>
 #include <Library/DxeServicesLib.h>
-#include <Library/SMProInterface.h>
-#include <Library/SMProLib.h>
+#include <Library/SystemFirmwareInterfaceLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Pi/PiStatusCode.h>
-#include <Platform/Ac01.h>
 #include <Protocol/ReportStatusCodeHandler.h>
-
-#define BIOS_BOOT_PROG_SET     1
-#define BIOS_BOOT_STAGE        8
-
-#define BOOT_STATE_MASK        0x0000FFFF
-#define BOOT_STATE_SHIFT       0
-#define STATUS_MASK            0xFFFF0000
-#define STATUS_SHIFT           16
-
-#define SOCKET_BASE_OFFSET     0x400000000000
 
 typedef struct {
   UINT8                 Byte;
@@ -115,41 +103,6 @@ StatusCodeFilter (
 }
 
 /**
- *   Send boot progress data to SMPro.
- *
- *   @param Data to send to SMPro.
- *   @return
- *      EFI_DEVICE_ERROR: Error while sending to SMPro.
- *      EFI_SUCCESS
- *
- **/
-STATIC
-EFI_STATUS
-BootProgressSendSMpro (
-  IN UINT32 Data1,
-  IN UINT32 Data2
-  )
-{
-  UINT32     Msg;
-  EFI_STATUS Status;
-
-  Msg = SMPRO_BOOT_PROCESS_ENCODE_MSG (BIOS_BOOT_PROG_SET, BIOS_BOOT_STAGE);
-
-  Status = SMProDBWr (
-             SMPRO_NS_MAILBOX_INDEX,
-             Msg,
-             Data1,
-             Data2,
-             SMPRO_DB_BASE_REG
-             );
-  if (EFI_ERROR (Status)) {
-    return EFI_DEVICE_ERROR;
-  }
-
-  return EFI_SUCCESS;
-}
-
-/**
   Report status code listener of Boot Progress Dxe.
 
   @param[in]  CodeType            Indicates the type of status code being reported.
@@ -209,10 +162,7 @@ BootProgressListenerDxe (
     mBootstate = BOOT_COMPLETE;
   }
 
-  BootProgressSendSMpro (
-    (((UINT32)mBootstate << BOOT_STATE_SHIFT) & BOOT_STATE_MASK) | (((UINT32)Value << STATUS_SHIFT) & STATUS_MASK),
-    Value >> STATUS_SHIFT
-    );
+  MailboxMsgSetBootProgress (0, mBootstate, Value);
 
   if (Value == (EFI_SOFTWARE_EFI_BOOT_SERVICE | EFI_SW_BS_PC_EXIT_BOOT_SERVICES) &&
       mRscHandlerProtocol != NULL)

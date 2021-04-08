@@ -32,14 +32,13 @@
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   AmpereCpuLib
   BaseLib
   DebugLib
   DxeServicesLib
-  SMProLib
+  SystemFirmwareInterfaceLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
   UefiLib
@@ -47,10 +46,6 @@
 
 [Protocols]
   gEfiRscHandlerProtocolGuid                    ## CONSUMES
-
-[FixedPcd]
-   gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
-   gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex
 
 [Depex]
   gEfiRscHandlerProtocolGuid

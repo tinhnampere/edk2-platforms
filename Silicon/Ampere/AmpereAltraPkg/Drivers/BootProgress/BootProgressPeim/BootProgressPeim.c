@@ -16,21 +16,9 @@
 #include <Library/AmpereCpuLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PeiServicesLib.h>
-#include <Library/SMProInterface.h>
-#include <Library/SMProLib.h>
+#include <Library/SystemFirmwareInterfaceLib.h>
 #include <Pi/PiStatusCode.h>
-#include <Platform/Ac01.h>
 #include <Ppi/ReportStatusCodeHandler.h>
-
-#define BIOS_BOOT_PROG_SET     1
-#define BIOS_BOOT_STAGE        8
-
-#define BOOT_STATE_MASK        0x0000FFFF
-#define BOOT_STATE_SHIFT       0
-#define STATUS_MASK            0xFFFF0000
-#define STATUS_SHIFT           16
-
-#define SOCKET_BASE_OFFSET     0x400000000000
 
 enum BOOT_PROGRESS_STATE {
   BOOT_NOTSTART = 0,
@@ -119,41 +107,6 @@ StatusCodeFilter (
 }
 
 /**
- *   Send boot progress data to SMPro.
- *
- *   @param Data to send to SMPro.
- *   @return
- *      EFI_DEVICE_ERROR: Error while sending to SMPro.
- *      EFI_SUCCESS
- *
- **/
-STATIC
-EFI_STATUS
-BootProgressSendSMpro (
-  IN UINT32 Data1,
-  IN UINT32 Data2
-  )
-{
-  UINT32     Msg;
-  EFI_STATUS Status;
-
-  Msg = SMPRO_BOOT_PROCESS_ENCODE_MSG (BIOS_BOOT_PROG_SET, BIOS_BOOT_STAGE);
-
-  Status = SMProDBWr (
-             SMPRO_NS_MAILBOX_INDEX,
-             Msg,
-             Data1,
-             Data2,
-             SMPRO_DB_BASE_REG
-             );
-  if (EFI_ERROR (Status)) {
-    return EFI_DEVICE_ERROR;
-  }
-
-  return EFI_SUCCESS;
-}
-
-/**
   Report status code listener for PEI. This is used to record the boot progress info
   and report it to SMPro.
 
@@ -214,10 +167,7 @@ BootProgressListenerPei (
     mBootstate = BOOT_FAILED;
   }
 
-  BootProgressSendSMpro (
-    (((UINT32)mBootstate << BOOT_STATE_SHIFT) & BOOT_STATE_MASK) | (((UINT32)Value << STATUS_SHIFT) & STATUS_MASK),
-    Value >> STATUS_SHIFT
-    );
+  MailboxMsgSetBootProgress (0, mBootstate, Value);
 
   return EFI_SUCCESS;
 }

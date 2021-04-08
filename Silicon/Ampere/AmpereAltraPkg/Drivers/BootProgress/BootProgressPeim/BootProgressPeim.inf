@@ -34,21 +34,16 @@
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   BaseLib
   DebugLib
   PeiServicesLib
   PeimEntryPoint
-  SMProLib
+  SystemFirmwareInterfaceLib
 
 [Ppis]
   gEfiPeiRscHandlerPpiGuid                      ## CONSUMES
-
-[FixedPcd]
-   gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
-   gAmpereTokenSpaceGuid.PcdSmproNsMailboxIndex
 
 [Depex]
   gEfiPeiRscHandlerPpiGuid
