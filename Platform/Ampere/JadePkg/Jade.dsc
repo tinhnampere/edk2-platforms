@@ -235,3 +235,4 @@
   # Misc
   #
   Platform/Ampere/JadePkg/Drivers/BootOptionsRecoveryDxe/BootOptionsRecoveryDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/IpmiBootDxe/IpmiBootDxe.inf

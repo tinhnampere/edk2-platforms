@@ -425,6 +425,7 @@ APRIORI DXE {
   # Misc
   #
   INF Platform/Ampere/JadePkg/Drivers/BootOptionsRecoveryDxe/BootOptionsRecoveryDxe.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/IpmiBootDxe/IpmiBootDxe.inf
 
 [FV.SystemFirmwareDescriptor]
 FvAlignment        = 8
