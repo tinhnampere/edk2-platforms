@@ -359,21 +359,23 @@ UpdateTurboModeConfig (
 {
   EFI_STATUS         Status;
   PlatformInfoHob    *PlatformHob;
+  BOOLEAN            EnableTurbo;
 
   ASSERT (PrivateData != NULL);
 
   if (PrivateData->Configuration.AcpiTurboSupport != 0) {
     PlatformHob = PrivateData->PlatformHob;
+    EnableTurbo = (PrivateData->Configuration.AcpiTurboMode != 0) ? TRUE : FALSE;
 
     if (PlatformHob->TurboCapability[0] != 0) {
-      Status = PMProTurboEnable (0, PrivateData->Configuration.AcpiTurboMode);
+      Status = MailboxMsgTurboConfig (0, EnableTurbo);
       if (EFI_ERROR (Status)) {
         return Status;
       }
     }
 
     if (PlatformHob->TurboCapability[1] != 0) {
-      Status = PMProTurboEnable (1, PrivateData->Configuration.AcpiTurboMode);
+      Status = MailboxMsgTurboConfig (1, EnableTurbo);
       if (EFI_ERROR (Status)) {
         return Status;
       }

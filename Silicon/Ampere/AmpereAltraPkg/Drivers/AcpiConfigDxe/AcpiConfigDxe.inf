@@ -35,7 +35,7 @@
   HiiLib
   HobLib
   MemoryAllocationLib
-  PMProLib
+  SystemFirmwareInterfaceLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
   UefiLib

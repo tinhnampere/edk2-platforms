@@ -24,7 +24,7 @@
 #include <Library/HiiLib.h>
 #include <Library/HobLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/PMProLib.h>
+#include <Library/SystemFirmwareInterfaceLib.h>
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiDriverEntryPoint.h>
