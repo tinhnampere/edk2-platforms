@@ -21,13 +21,9 @@
 [Packages]
   MdePkg/MdePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
-  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
   BaseLib
   BaseMemoryLib
   DebugLib
-  SMProLib
-
-[FixedPcd]
-  gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
+  SystemFirmwareInterfaceLib

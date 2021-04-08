@@ -1,5 +1,5 @@
 /** @file
-  RNG (Random Number Generator) Library that uses Hardware RNG in SMPro.
+  RNG (Random Number Generator) Library that uses Hardware RNG in SMpro.
 
   Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
 
@@ -11,7 +11,7 @@
 #define TRNG_LIB_H_
 
 /**
-  Generates a random number by using Hardware RNG in SMPro.
+  Generates a random number by using Hardware RNG in SMpro.
 
   @param[out] Buffer      Buffer to receive the random number.
   @param[in]  BufferSize  Number of bytes in Buffer.

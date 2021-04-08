@@ -88,6 +88,8 @@
   PlatformPeiLib|Silicon/Ampere/AmpereAltraPkg/Library/PlatformPeiLib/PlatformPeiLib.inf
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Library/NVParamLib/NVParamLib.inf
   SMProLib|Silicon/Ampere/AmpereAltraPkg/Library/SMProLib/SMProLib.inf
+  MailboxInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Library/MailboxInterfaceLib/MailboxInterfaceLib.inf
+  SystemFirmwareInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Library/SystemFirmwareInterfaceLib/SystemFirmwareInterfaceLib.inf
   PMProLib|Silicon/Ampere/AmpereAltraPkg/Library/PMProLib/PMProLib.inf
   PciePhyLib|Silicon/Ampere/AmpereAltraPkg/Library/PciePhyLib/PciePhyLib.inf
   PcieCoreLib|Silicon/Ampere/AmpereAltraPkg/Library/PcieCore/PcieCoreLib.inf
