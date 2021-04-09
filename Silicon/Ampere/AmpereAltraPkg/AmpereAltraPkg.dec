@@ -22,9 +22,6 @@
   ##  @libraryclass  Defines a set of methods to get/set NVParam.
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/NVParamLib.h
 
-  ##  @libraryclass  Defines a set of methods to communicate with SMPro.
-  SMProLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/SMProLib.h
-
   ##  @libraryclass  Defines a set of methods to read/write to I2C devices.
   I2cLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/I2cLib.h
 
@@ -39,9 +36,6 @@
 
   ##  @libraryclass  Defines a set of miscellaneous PCIe functions
   PcieBoardLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PcieBoardLib.h
-
-  ##  @libraryclass  Defines a set of methods to communicate with PMPro.
-  PMProLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PMProLib.h
 
   ##  @libraryclass  Defines a set of methods to access flash memory.
   FlashLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/FlashLib.h

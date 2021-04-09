@@ -21,7 +21,6 @@
 #include <Library/PeiServicesTablePointerLib.h>
 #include <Library/PrintLib.h>
 #include <Library/SerialPortLib.h>
-#include <Library/SMProLib.h>
 #include <NVParamDef.h>
 #include <Pcie.h>
 #include <PlatformInfoHob.h>
