@@ -83,7 +83,7 @@ AcpiNvdInfoInit (
   IN     UINTN       NvdId
   )
 {
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   VOID               *Hob;
 
   /* Get the Platform HOB */
@@ -92,7 +92,7 @@ AcpiNvdInfoInit (
     return EFI_INVALID_PARAMETER;
   }
 
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   NvdInfoPtr->Enabled = TRUE;
   NvdInfoPtr->PhysId = NvdId;
@@ -120,7 +120,7 @@ AcpiNvdDataInit (
   IN UINTN Socket
   )
 {
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   NVDIMM_INFO        *NvdInfo;
   UINTN              Count;
   VOID               *Hob;
@@ -131,7 +131,7 @@ AcpiNvdDataInit (
   if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   NvdRegionNum = 0;
   for (Count = 0; Count < PlatformHob->DramInfo.NumRegion; Count++) {
@@ -321,7 +321,7 @@ AcpiNfitFillTableBySK (
   EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *NfitSpaPointer;
   EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE         *NfitControlRegionPointer;
   EFI_ACPI_6_3_NFIT_NVDIMM_REGION_MAPPING_STRUCTURE         *NfitRegionMappingPointer;
-  PlatformInfoHob                                           *PlatformHob;
+  PLATFORM_INFO_HOB                                         *PlatformHob;
   VOID                                                      *Hob;
   UINT64                                                    NvdRegionBase,
                                                             NvdRegionSize;
@@ -337,7 +337,7 @@ AcpiNfitFillTableBySK (
     return EFI_INVALID_PARAMETER;
   }
 
-  PlatformHob    = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob    = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
   NvdRegionIndex = (Socket == 0) ? 0 : NvdData[NVDIMM_SK0].NvdRegionNum;
   NvdIndex       = (Socket == 0) ? 0 : NvdData[NVDIMM_SK0].NvdNum;
   if (NvdData[Socket].NvdMode == NVDIMM_HASHED) {

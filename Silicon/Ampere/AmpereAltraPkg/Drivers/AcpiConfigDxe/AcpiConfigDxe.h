@@ -53,7 +53,7 @@ typedef struct {
   EFI_HANDLE                DriverHandle;
   EFI_HII_HANDLE            HiiHandle;
   ACPI_CONFIG_VARSTORE_DATA Configuration;
-  PlatformInfoHob           *PlatformHob;
+  PLATFORM_INFO_HOB         *PlatformHob;
   EFI_ACPI_SDT_PROTOCOL     *AcpiTableProtocol;
   EFI_ACPI_HANDLE           AcpiTableHandle;
 

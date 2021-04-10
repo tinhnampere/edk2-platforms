@@ -44,14 +44,14 @@ ArmPlatformGetVirtualMemoryMap (
   UINT32                       NumRegion;
   UINTN                        Count;
   VOID                         *Hob;
-  PlatformInfoHob              *PlatformHob;
+  PLATFORM_INFO_HOB            *PlatformHob;
 
   Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return;
   }
 
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   ASSERT (VirtualMemoryMap != NULL);
 

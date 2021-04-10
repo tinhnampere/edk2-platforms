@@ -44,7 +44,7 @@
 #define RUNTIME_ADDRESS_LENGTH         SIZE_64KB
 
 /* Bus specific values */
-typedef struct DW_I2C_CONTEXT {
+typedef struct {
   UINTN  Base;
   UINT32 BusSpeed;
   UINT32 RxFifo;
@@ -937,14 +937,14 @@ I2cLibConstructor (
   )
 {
   VOID               *Hob;
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
 
   /* Get I2C Clock from the Platform HOB */
   Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return EFI_NOT_FOUND;
   }
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
   I2cClock = PlatformHob->AhbClk;
   ASSERT (I2cClock != 0);
 

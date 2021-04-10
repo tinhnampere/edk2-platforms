@@ -725,11 +725,11 @@ RasdpMitigationCheck (
   INTN    PcieIndex
   )
 {
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   VOID               *Hob;
 
   Hob = GetFirstGuidHob (&gPlatformHobGuid);
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
   if ((PlatformHob->ScuProductId[0] & 0xff) == 0x01) {
     if (AsciiStrCmp ((CONST CHAR8 *)PlatformHob->CpuVer, "A0") == 0) {
       return ((RC->Type == RCB)||(PcieIndex > 0)) ? TRUE : FALSE;

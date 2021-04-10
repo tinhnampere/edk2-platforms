@@ -41,7 +41,7 @@ typedef struct {
   UINT32 McuMask[PLATFORM_CPU_MAX_SOCKET];
   UINT32 NvdRegion[PLATFORM_DRAM_INFO_MAX_REGION];
   UINT32 NvdimmMode[PLATFORM_CPU_MAX_SOCKET];
-} PlatformDramInfo;
+} PLATFORM_DRAM_INFO;
 
 typedef struct {
   CHAR8  PartNumber[32];
@@ -52,26 +52,26 @@ typedef struct {
   UINT8  DimmType;
   UINT8  DimmStatus;
   UINT8  DimmDevType;
-} PlatformDimmInfo;
+} PLATFORM_DIMM_INFO;
 
 typedef struct {
   UINT8 Data[512];
-} PlatformDimmSpdData;
+} PLATFORM_DIMM_SPD_DATA;
 
 typedef struct {
-  PlatformDimmInfo      Info;
-  PlatformDimmSpdData   SpdData;
-  UINT32                NodeId;
-} PlatformDimm;
+  PLATFORM_DIMM_INFO     Info;
+  PLATFORM_DIMM_SPD_DATA SpdData;
+  UINT32                 NodeId;
+} PLATFORM_DIMM;
 
 typedef struct {
   UINT32         BoardDimmSlots;
-  PlatformDimm   Dimm[PLATFORM_DIMM_INFO_MAX_SLOT];
-} PlatformDimmList;
+  PLATFORM_DIMM  Dimm[PLATFORM_DIMM_INFO_MAX_SLOT];
+} PLATFORM_DIMM_LIST;
 
 typedef struct {
   UINT32 EnableMask[4];
-} PlatformClusterEn;
+} PLATFORM_CLUSTER_EN;
 
 //
 // Algorithm ID defined in pre-UEFI firmware
@@ -126,27 +126,27 @@ typedef struct {
 #pragma pack()
 
 typedef struct {
-  UINT8              MajorNumber;
-  UINT8              MinorNumber;
-  UINT64             PcpClk;
-  UINT64             CpuClk;
-  UINT64             SocClk;
-  UINT64             AhbClk;
-  UINT64             SysClk;
-  UINT8              CpuInfo[128];
-  UINT8              CpuVer[32];
-  UINT8              SmPmProVer[32];
-  UINT8              SmPmProBuild[32];
-  PlatformDramInfo   DramInfo;
-  PlatformDimmList   DimmList;
-  PlatformClusterEn  ClusterEn[2];
-  UINT32             FailSafeStatus;
-  UINT32             RcDisableMask[2];
-  UINT8              ResetStatus;
-  UINT16             CoreVoltage[2];
-  UINT16             SocVoltage[2];
-  UINT16             Dimm1Voltage[2];
-  UINT16             Dimm2Voltage[2];
+  UINT8               MajorNumber;
+  UINT8               MinorNumber;
+  UINT64              PcpClk;
+  UINT64              CpuClk;
+  UINT64              SocClk;
+  UINT64              AhbClk;
+  UINT64              SysClk;
+  UINT8               CpuInfo[128];
+  UINT8               CpuVer[32];
+  UINT8               SmPmProVer[32];
+  UINT8               SmPmProBuild[32];
+  PLATFORM_DRAM_INFO  DramInfo;
+  PLATFORM_DIMM_LIST  DimmList;
+  PLATFORM_CLUSTER_EN ClusterEn[2];
+  UINT32              FailSafeStatus;
+  UINT32              RcDisableMask[2];
+  UINT8               ResetStatus;
+  UINT16              CoreVoltage[2];
+  UINT16              SocVoltage[2];
+  UINT16              Dimm1Voltage[2];
+  UINT16              Dimm2Voltage[2];
 
   /* Chip information */
   UINT32 ScuProductId[2];
@@ -169,6 +169,6 @@ typedef struct {
   UINT8 Link2PSpeed[2];
   UINT8 Link2PWidth[2];
 
-} PlatformInfoHob;
+} PLATFORM_INFO_HOB;
 
 #endif /* PLATFORM_INFO_HOB_H_ */

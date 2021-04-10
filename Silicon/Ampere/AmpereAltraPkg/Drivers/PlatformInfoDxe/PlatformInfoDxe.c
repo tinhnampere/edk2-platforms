@@ -113,7 +113,7 @@ UpdatePlatformInfoScreen (
   )
 {
   VOID               *Hob;
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   CHAR16             Str[MAX_STRING_SIZE];
 
   VOID               *StartOpCodeHandle;
@@ -126,7 +126,7 @@ UpdatePlatformInfoScreen (
   if (Hob == NULL) {
     return EFI_DEVICE_ERROR;
   }
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   /* SCP Version */
   AsciiStrToUnicodeStrS ((const CHAR8 *)PlatformHob->SmPmProVer, Str, MAX_STRING_SIZE);

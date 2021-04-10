@@ -21,9 +21,9 @@
 #include <Platform/Ac01.h>
 #include <PlatformInfoHob.h>
 
-STATIC PlatformInfoHob *mPlatformInfoHob = NULL;
+STATIC PLATFORM_INFO_HOB *mPlatformInfoHob = NULL;
 
-PlatformInfoHob *
+PLATFORM_INFO_HOB *
 GetPlatformHob (
   VOID
   )
@@ -40,7 +40,7 @@ GetPlatformHob (
       return NULL;
     }
 
-    mPlatformInfoHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+    mPlatformInfoHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
   }
 
   return mPlatformInfoHob;
@@ -58,7 +58,7 @@ CpuGetSubNumaMode (
   VOID
   )
 {
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -328,7 +328,7 @@ GetNumberOfSupportedSockets (
   VOID
   )
 {
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -338,7 +338,7 @@ GetNumberOfSupportedSockets (
     return 1;
   }
 
-  return (sizeof (PlatformHob->ClusterEn) / sizeof (PlatformClusterEn));
+  return (sizeof (PlatformHob->ClusterEn) / sizeof (PLATFORM_CLUSTER_EN));
 }
 
 /**
@@ -353,9 +353,9 @@ GetNumberOfActiveSockets (
   VOID
   )
 {
-  UINT8              NumberOfActiveSockets, Count, Index, Index1;
-  PlatformClusterEn  *Socket;
-  PlatformInfoHob    *PlatformHob;
+  UINT8               NumberOfActiveSockets, Count, Index, Index1;
+  PLATFORM_CLUSTER_EN *Socket;
+  PLATFORM_INFO_HOB   *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -394,10 +394,10 @@ GetNumberOfActiveCPMsPerSocket (
   UINT8 SocketId
   )
 {
-  UINT16             NumberOfCPMs, Count, Index;
-  UINT32             Val32;
-  PlatformClusterEn  *Socket;
-  PlatformInfoHob    *PlatformHob;
+  UINT16              NumberOfCPMs, Count, Index;
+  UINT32              Val32;
+  PLATFORM_CLUSTER_EN *Socket;
+  PLATFORM_INFO_HOB   *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -537,7 +537,7 @@ GetMaximumNumberOfCores (
   VOID
   )
 {
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
 
   PlatformHob = GetPlatformHob ();
   if (PlatformHob == NULL) {
@@ -617,10 +617,10 @@ IsCpuEnabled (
   UINT16 CpuId
   )
 {
-  PlatformClusterEn  *Socket;
-  PlatformInfoHob    *PlatformHob;
-  UINT8              SocketId;
-  UINT16             ClusterId;
+  PLATFORM_CLUSTER_EN *Socket;
+  PLATFORM_INFO_HOB   *PlatformHob;
+  UINT8               SocketId;
+  UINT16              ClusterId;
 
   SocketId = SOCKET_ID (CpuId);
   ClusterId = CLUSTER_ID (CpuId);

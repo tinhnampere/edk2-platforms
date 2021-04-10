@@ -321,7 +321,7 @@ AcpiNVDataUpdate (
   )
 {
   EFI_STATUS         Status;
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   UINT32             TurboSupport;
 
   ASSERT (PrivateData != NULL);
@@ -358,7 +358,7 @@ UpdateTurboModeConfig (
   )
 {
   EFI_STATUS         Status;
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   BOOLEAN            EnableTurbo;
 
   ASSERT (PrivateData != NULL);
@@ -581,7 +581,7 @@ AcpiConfigEntryPoint (
   BOOLEAN                         ActionFlag;
   EFI_STRING                      ConfigRequestHdr;
   EFI_EVENT                       ReadyToBootEvent;
-  PlatformInfoHob                 *PlatformHob;
+  PLATFORM_INFO_HOB               *PlatformHob;
   VOID                            *Hob;
 
   //
@@ -612,7 +612,7 @@ AcpiConfigEntryPoint (
     AcpiConfigUnload ();
     return EFI_DEVICE_ERROR;
   }
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   mPrivateData->PlatformHob = PlatformHob;
 

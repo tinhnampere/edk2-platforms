@@ -496,8 +496,8 @@ InstallMemStructures (
   EFI_STATUS         Status = EFI_SUCCESS;
   EFI_SMBIOS_HANDLE  SmbiosHandle;
   EFI_SMBIOS_HANDLE  Type16Handle;
-  PlatformInfoHob    *PlatformHob;
-  PlatformDimm       *Dimm;
+  PLATFORM_INFO_HOB  *PlatformHob;
+  PLATFORM_DIMM      *Dimm;
   CHAR8              *Table;
   VOID               *Hob;
   UINTN              Index;
@@ -515,7 +515,7 @@ InstallMemStructures (
     return EFI_INVALID_PARAMETER;
   }
 
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   Table = AllocateZeroPool (sizeof (ARM_TYPE17));
   if (Table == NULL) {

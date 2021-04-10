@@ -171,7 +171,7 @@ PcieBoardParseRCParams (
   )
 {
   UINT32             Efuse;
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   UINT8              PlatRCId;
   EFI_STATUS         Status;
   VOID               *Hob;
@@ -223,7 +223,7 @@ PcieBoardParseRCParams (
     Efuse = 0;
     Hob = GetFirstGuidHob (&gPlatformHobGuid);
     if (Hob != NULL) {
-      PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+      PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
       Efuse = PlatformHob->RcDisableMask[0] | (PlatformHob->RcDisableMask[1] << RCS_PER_SOCKET);
       PCIE_DEBUG (
         "RcDisableMask[0]: 0x%x [1]: 0x%x\n",

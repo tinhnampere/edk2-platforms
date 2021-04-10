@@ -188,7 +188,7 @@ enum RC_BLOCK {
   MAX_RC = MAX_RCB
 };
 
-typedef struct _AC01_PCIE {
+typedef struct {
   UINT64  CsrAddr;               // Pointer to CSR Address
   UINT64  SnpsRamAddr;           // Pointer to Synopsys SRAM address
   UINT8   MaxGen;                // Max speed Gen-1/-2/-3/-4
@@ -202,7 +202,7 @@ typedef struct _AC01_PCIE {
   BOOLEAN HotPlug;               // Hotplug support
 } AC01_PCIE;
 
-typedef struct _AC01_RC {
+typedef struct {
   UINT64    BaseAddr;
   UINT64    TcuAddr;
   UINT64    HBAddr;

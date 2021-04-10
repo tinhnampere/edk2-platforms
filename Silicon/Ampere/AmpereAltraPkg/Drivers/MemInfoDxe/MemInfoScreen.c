@@ -407,7 +407,7 @@ DriverCallback (
 
 EFI_STATUS
 MemInfoMainScreen (
-  PlatformInfoHob    *PlatformHob
+  PLATFORM_INFO_HOB  *PlatformHob
   )
 {
   MEM_INFO_SCREEN_PRIVATE_DATA *PrivateData = mPrivateData;
@@ -421,7 +421,7 @@ MemInfoMainScreen (
   EFI_IFR_GUID_LABEL           *EndLabel;
   CHAR16                       Str[MAX_STRING_SIZE], Str1[MAX_STRING_SIZE];
   EFI_HOB_RESOURCE_DESCRIPTOR  *ResHob;
-  PlatformDimmInfo             *DimmInfo;
+  PLATFORM_DIMM_INFO           *DimmInfo;
   UINT64                       Size;
   UINTN                        Count;
 
@@ -751,7 +751,7 @@ MemInfoMainScreen (
 
 EFI_STATUS
 MemInfoMainPerformanceScreen (
-  PlatformInfoHob    *PlatformHob
+  PLATFORM_INFO_HOB  *PlatformHob
   )
 {
   EFI_STATUS                   Status;
@@ -975,7 +975,7 @@ MemInfoMainPerformanceScreen (
 
 EFI_STATUS
 MemInfoMainNvdimmScreen (
-  PlatformInfoHob    *PlatformHob
+  PLATFORM_INFO_HOB  *PlatformHob
   )
 {
   EFI_STATUS                   Status;
@@ -1179,14 +1179,14 @@ MemInfoScreenSetup (
 {
   EFI_STATUS         Status;
   VOID               *Hob;
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
 
   /* Get the Platform HOB */
   Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
     return EFI_DEVICE_ERROR;
   }
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   Status = MemInfoMainScreen (PlatformHob);
   if (EFI_ERROR (Status)) {

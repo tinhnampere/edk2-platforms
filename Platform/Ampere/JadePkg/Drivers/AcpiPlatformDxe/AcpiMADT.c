@@ -111,7 +111,7 @@ CpuGetCoreOrder (
   VOID
   )
 {
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   VOID               *Hob;
   UINT8              SubNumaMode;
   UINT8              Ac01Chip = 1;
@@ -121,7 +121,7 @@ CpuGetCoreOrder (
   if (Hob == NULL) {
     return SUBNUMA_MODE_MONOLITHIC;
   }
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
   Ac01Chip = ((PlatformHob->ScuProductId[0] & 0xFF) == 0x1) ? 1 : 0;
 
   SubNumaMode = CpuGetSubNumaMode ();

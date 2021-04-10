@@ -465,7 +465,7 @@ Tcg2AcpiEntryPoint (
 {
   EFI_STATUS         Status;
   VOID               *GuidHob;
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
 
   if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm20DtpmGuid)) {
     DEBUG ((DEBUG_ERROR, "No TPM2 DTPM instance required!\n"));
@@ -477,7 +477,7 @@ Tcg2AcpiEntryPoint (
     return EFI_DEVICE_ERROR;
   }
 
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (GuidHob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (GuidHob);
   mPlatformTpm2InterfaceParams = PlatformHob->Tpm2Info.Tpm2CrbInterfaceParams;
   mPlatformTpm2ConfigData = PlatformHob->Tpm2Info.Tpm2ConfigData;
 

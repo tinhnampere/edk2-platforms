@@ -33,7 +33,7 @@ SratCalculateNumMemoryRegion (
   VOID
   )
 {
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   UINTN              Count;
   UINT64             TmpVal;
   VOID               *Hob;
@@ -44,7 +44,7 @@ SratCalculateNumMemoryRegion (
   if (Hob == NULL) {
     return 0;
   }
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   Result = 0;
   for (Count = 0; Count < PlatformHob->DramInfo.NumRegion; Count++) {
@@ -63,7 +63,7 @@ SratAddMemAffinity (
   EFI_ACPI_6_3_MEMORY_AFFINITY_STRUCTURE *SratMemAffinity
   )
 {
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
   UINTN              Count, NumRegion;
   UINT64             RegionSize, RegionBase;
   VOID               *Hob;
@@ -74,7 +74,7 @@ SratAddMemAffinity (
   if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;
   }
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (Hob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   NumRegion = 0;
 

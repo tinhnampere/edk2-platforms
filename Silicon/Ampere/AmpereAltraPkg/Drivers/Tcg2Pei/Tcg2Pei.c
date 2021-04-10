@@ -1075,7 +1075,7 @@ PeimEntryMA (
   EFI_STATUS         Status2;
   UINTN              Size;
   VOID               *GuidHob;
-  PlatformInfoHob    *PlatformHob;
+  PLATFORM_INFO_HOB  *PlatformHob;
 
   //
   // Initialize TPM device
@@ -1092,7 +1092,7 @@ PeimEntryMA (
     goto Done;
   }
 
-  PlatformHob = (PlatformInfoHob *)GET_GUID_HOB_DATA (GuidHob);
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (GuidHob);
   mPlatformTpm2Config = PlatformHob->Tpm2Info.Tpm2ConfigData;
 
   //

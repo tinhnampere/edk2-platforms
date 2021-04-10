@@ -57,6 +57,7 @@ typedef struct {
 
 EFI_MM_COMM_REQUEST mEfiMmSpiNorReq;
 
+#pragma pack(1)
 typedef struct {
   UINT8  ImgMajorVer;
   UINT8  ImgMinorVer;
@@ -72,7 +73,10 @@ typedef struct {
    */
   UINT32 MCUFailsMask;
   UINT16 CRC16;
-} __attribute__((packed, aligned (4))) FailSafeCtx_t;
+  UINT8  Reserved[3];
+} FAIL_SAFE_CONTEXT;
+
+#pragma pack()
 
 STATIC
 EFI_STATUS
@@ -120,14 +124,14 @@ CheckCrc16 (
 
 BOOLEAN
 FailSafeValidCRC (
-  FailSafeCtx_t *FailSafeBuf
+  FAIL_SAFE_CONTEXT *FailSafeBuf
   )
 {
   UINT8  Valid;
   UINT16 Crc;
   UINT32 Len;
 
-  Len = sizeof (FailSafeCtx_t);
+  Len = sizeof (FAIL_SAFE_CONTEXT);
   Crc = FailSafeBuf->CRC16;
   FailSafeBuf->CRC16 = 0;
 
@@ -216,7 +220,7 @@ FailSafeBootSuccessfully (
   EFI_STATUS                    Status;
   UINT64                        FailSafeStartOffset;
   UINT64                        FailSafeSize;
-  FailSafeCtx_t                 FailSafeBuf;
+  FAIL_SAFE_CONTEXT             FailSafeBuf;
 
   Status = FailSafeGetRegionInfo (&FailSafeStartOffset, &FailSafeSize);
   if (EFI_ERROR (Status)) {
@@ -226,7 +230,7 @@ FailSafeBootSuccessfully (
 
   MmData[0] = MM_SPINOR_FUNC_READ;
   MmData[1] = FailSafeStartOffset;
-  MmData[2] = (UINT64)sizeof (FailSafeCtx_t);
+  MmData[2] = (UINT64)sizeof (FAIL_SAFE_CONTEXT);
   MmData[3] = (UINT64)&FailSafeBuf;
   UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
