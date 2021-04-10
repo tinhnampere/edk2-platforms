@@ -16,19 +16,13 @@
 #define PLATFORM_CPU_MAX_CPM                (FixedPcdGet32 (PcdClusterCount))
 
 /* Number of cores per CPM. */
-#define PLATFORM_CPU_NUM_CORES_PER_CPM      (FixedPcdGet32(PcdCoreCount) / PLATFORM_CPU_MAX_CPM)
+#define PLATFORM_CPU_NUM_CORES_PER_CPM      (FixedPcdGet32 (PcdCoreCount) / PLATFORM_CPU_MAX_CPM)
 
 /* Socket bit offset of core UID. */
 #define PLATFORM_SOCKET_UID_BIT_OFFSET      16
 
 /* CPM bit offset of core UID. */
 #define PLATFORM_CPM_UID_BIT_OFFSET         8
-
-/* Maximum number of system locality supported. */
-#define PLATFORM_MAX_NUM_ACPI_SYSTEM_LOCALITIES    2
-
-/* Default turbo frequency. */
-#define TURBO_DEFAULT_FREQ             3350000000
 
 /* Maximum number of cores supported. */
 #define PLATFORM_CPU_MAX_NUM_CORES  (PLATFORM_CPU_MAX_SOCKET * PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM)
@@ -41,34 +35,6 @@
 
 /* Maximum number of memory supported. */
 #define PLATFORM_MAX_MEMORY_REGION     4
-
-/* Maximum number of GIC ITS supported. */
-#define PLATFORM_MAX_NUM_GIC_ITS       1
-
-/* The first SPI interrupt number of the Slave socket */
-#define PLATFORM_SLAVE_SOCKET_SPI_INTERRUPT_START  352
-
-/* The base register of AHBC */
-#define AHBC_REGISTER_BASE             0x1f10c000
-
-/* The base address of UART0 Register */
-#define UART0_REGISTER_BASE            0x12600000
-
-/* The base address of UART1 Register */
-#define UART1_REGISTER_BASE            0x12610000
-
-/* Non-secure Doorbell Mailbox to use between ARMv8 and SMpro */
-#define SMPRO_NS_RNG_MAILBOX_INDEX     6
-
-/* Doorbell to use between ARMv8 and SMpro */
-#define SMPRO_DB                       0
-#define PMPRO_DB                       1
-#define SMPRO_DB_BASE_REG              (FixedPcdGet64 (PcdSmproDbBaseReg))
-#define PMPRO_DB_BASE_REG              (FixedPcdGet64 (PcdPmproDbBaseReg))
-#define SMPRO_EFUSE_SHADOW0            (FixedPcdGet64 (PcdSmproEfuseShadow0))
-#define SMPRO_NS_MAILBOX_INDEX         (FixedPcdGet32 (PcdSmproNsMailboxIndex))
-
-#define SOCKET_BASE_OFFSET             0x400000000000
 
 /* The Array of Soc Gpio Base Address */
 #define GPIO_DWAPB_BASE_ADDR      0x1000026f0000,0x1000026e0000,0x1000027b0000,0x1000026d0000,0x5000026f0000,0x5000026e0000,0x5000027b0000,0x5000026d0000
@@ -170,13 +136,11 @@
 #define SOCKET1_LAST_RC         15
 
 //
-// Offset from SMPRO_EFUSE_SHADOW0
+// SMpro EFUSE Shadow register
 //
-#define CFG2P_OFFSET                0x200
+#define SMPRO_EFUSE_SHADOW0         (FixedPcdGet64 (PcdSmproEfuseShadow0))
 
-//
-// Slave Socket Present_N in CFG2P_OFFSET
-//
-#define SLAVE_PRESENT_N             0x2
+#define CFG2P_OFFSET                0x200
+#define SLAVE_PRESENT_N             BIT1 // Slave socket present
 
 #endif /* PLATFORM_AC01_H_ */
