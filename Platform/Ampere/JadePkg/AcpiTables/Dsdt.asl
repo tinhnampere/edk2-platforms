@@ -115,7 +115,7 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
     Device(I2C4) {
       Name(_HID, "APMC0D0F")
       Name(_UID, 4)
-      Name(_STR, Unicode("eMAG2 I2C Device"))
+      Name(_STR, Unicode("Altra I2C Device"))
       Method(_STA, 0, NotSerialized) {
         return (0x0f)
       }
