@@ -44,21 +44,11 @@
 
 [Pcd]
   # Type 0
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVendor
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVersion
   gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString
-  gArmTokenSpaceGuid.PcdFdSize
-
-  # Type 1
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemManufacturer
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemProductName
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemVersion
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSerialNumber
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1Uuid
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSkuNumber
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion
+
+  gArmTokenSpaceGuid.PcdFdSize
 
   # FRU Chassis Information
   gAmpereTokenSpaceGuid.PcdFruChassisPartNumber

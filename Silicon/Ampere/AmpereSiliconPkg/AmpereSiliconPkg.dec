@@ -106,18 +106,15 @@
   # SMBIOS, default or template values
   #
   # SMBIOS Type 0 - BIOS Information
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVendor|"Ampere(R)"|VOID*|0xB0000000
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosVersion|"TianoCore EDKII"|VOID*|0xB0000001
   gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate|"MM/DD/YYYY"|VOID*|0xB0000002 # Must follow this MM/DD/YYYY SMBIOS date format
 
-  # SMBIOS Type 1 - System Information
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemManufacturer|"Ampere(R)"|VOID*|0xB0000003
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemProductName|"Mt Jade"|VOID*|0xB0000004
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemVersion|"0.0"|VOID*|0xB0000005
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSerialNumber|"1234-5678-9ABC-DEFF"|VOID*|0xB0000006
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1Uuid|"FEDCBA9876543210"|VOID*|0xB0000007
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1SystemSkuNumber|"12345678"|VOID*|0xB0000008
+  # NVRam Pcds
+  gAmpereTokenSpaceGuid.PcdNvramErased|FALSE|BOOLEAN|0xB0000009
 
+  # Pcie HotPlug reset map
+  gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap|0x0|UINT8|0xB000000A
+
+[PcdsDynamic, PcdsDynamicEx]
   # FRU Chassis Information
   gAmpereTokenSpaceGuid.PcdFruChassisPartNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000021
   gAmpereTokenSpaceGuid.PcdFruChassisSerialNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000022
@@ -138,9 +135,3 @@
   gAmpereTokenSpaceGuid.PcdFruProductAssetTag|"To be filled by O.E.M.                             "|VOID*|0xB0000046
   gAmpereTokenSpaceGuid.PcdFruProductFruFileId|"To be filled by O.E.M.                             "|VOID*|0xB0000047
   gAmpereTokenSpaceGuid.PcdFruProductExtra|"To be filled by O.E.M.                             "|VOID*|0xB0000048
-
-  # NVRam Pcds
-  gAmpereTokenSpaceGuid.PcdNvramErased|FALSE|BOOLEAN|0xB0000009
-
-  # Pcie HotPlug reset map
-  gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap|0x0|UINT8|0xB000000A
