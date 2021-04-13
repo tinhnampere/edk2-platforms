@@ -12,18 +12,20 @@
 #include <Uefi/UefiBaseType.h>
 
 /**
- Write to I2C bus.
+  Write to I2C bus.
 
- @Bus:          Bus ID.
- @SlaveAddr:    The address of slave device in the bus.
- @Buf:          Buffer that holds data to write.
- @WriteLength:  Pointer to length of buffer.
- @return:       EFI_INVALID_PARAMETER if parameter is invalid.
-                EFI_UNSUPPORTED if the bus is not supported.
-                EFI_NOT_READY if the device/bus is not ready.
-                EFI_TIMEOUT if timeout why transferring data.
-                Otherwise, 0 for success.
- **/
+  @param[in]     Bus          I2C bus Id.
+  @param[in]     SlaveAddr    The address of slave device on the bus.
+  @param[in,out] Buf          Buffer that holds data to write.
+  @param[in,out] WriteLength  Pointer to length of buffer.
+
+  @return EFI_SUCCESS            Write successfully.
+  @return EFI_INVALID_PARAMETER  A parameter is invalid.
+  @return EFI_UNSUPPORTED        The bus is not supported.
+  @return EFI_NOT_READY          The device/bus is not ready.
+  @return EFI_TIMEOUT            Timeout why transferring data.
+
+**/
 EFI_STATUS
 EFIAPI
 I2cWrite (
@@ -34,21 +36,23 @@ I2cWrite (
   );
 
 /**
- Read data from I2C bus.
+  Read data from I2C bus.
 
- @Bus:          Bus ID.
- @SlaveAddr:    The address of slave device in the bus.
- @BufCmd:       Buffer where to send the command.
- @CmdLength:    Pointer to length of BufCmd.
- @Buf:          Buffer where to put the read data to.
- @ReadLength:   Pointer to length of buffer.
- @return:       EFI_INVALID_PARAMETER if parameter is invalid.
-                EFI_UNSUPPORTED if the bus is not supported.
-                EFI_NOT_READY if the device/bus is not ready.
-                EFI_TIMEOUT if timeout why transferring data.
-                EFI_CRC_ERROR if there are errors on receiving data.
-                Otherwise, 0 for success.
- **/
+  @param[in]     Bus          I2C bus Id.
+  @param[in]     SlaveAddr    The address of slave device on the bus.
+  @param[in]     BufCmd       Buffer where to send the command.
+  @param[in]     CmdLength    Pointer to length of BufCmd.
+  @param[in,out] Buf          Buffer where to put the read data to.
+  @param[in,out] ReadLength   Pointer to length of buffer.
+
+  @return EFI_SUCCESS            Read successfully.
+  @return EFI_INVALID_PARAMETER  A parameter is invalid.
+  @return EFI_UNSUPPORTED        The bus is not supported.
+  @return EFI_NOT_READY          The device/bus is not ready.
+  @return EFI_TIMEOUT            Timeout why transferring data.
+  @return EFI_CRC_ERROR          There are errors on receiving data.
+
+**/
 EFI_STATUS
 EFIAPI
 I2cRead (
@@ -63,11 +67,13 @@ I2cRead (
 /**
  Setup new transaction with I2C slave device.
 
- @Bus:      Bus ID.
- @BusSpeed: Bus speed in Hz.
- @return:   EFI_INVALID_PARAMETER if parameter is invalid.
-            Otherwise, 0 for success.
- **/
+  @param[in] Bus      I2C bus Id.
+  @param[in] BusSpeed I2C bus speed in Hz.
+
+  @retval EFI_SUCCESS           Success.
+  @retval EFI_INVALID_PARAMETER A parameter is invalid.
+
+**/
 EFI_STATUS
 EFIAPI
 I2cProbe (
@@ -78,10 +84,12 @@ I2cProbe (
 /**
  Setup a bus that to be used in runtime service.
 
- @Bus:      Bus ID.
- @return:   0 for success.
-            Otherwise, error code.
- **/
+  @param[in] Bus I2C bus Id.
+
+  @retval EFI_SUCCESS  Success.
+  @retval Otherwise    Error code.
+
+**/
 EFI_STATUS
 EFIAPI
 I2cSetupRuntime (
