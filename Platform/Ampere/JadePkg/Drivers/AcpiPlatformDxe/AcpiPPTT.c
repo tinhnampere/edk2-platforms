@@ -279,7 +279,7 @@ AcpiInstallPpttTable (
   EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = NULL;
   EFI_ACPI_TABLE_PROTOCOL               *AcpiTableProtocol;
   UINTN                                 PpttTableKey  = 0;
-  INTN                                  Count, Count1;
+  INTN                                  Count;
   EFI_STATUS                            Status;
   UINTN                                 Size;
 
@@ -292,77 +292,68 @@ AcpiInstallPpttTable (
     return Status;
   }
 
-  for (Count = 0; Count < gST->NumberOfTableEntries; Count++) {
-    if (CompareGuid (&gArmMpCoreInfoGuid, &(gST->ConfigurationTable[Count].VendorGuid))) {
-      Size = sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER) +
-             sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) +                                                        /* Root node */
-             (PLATFORM_CPU_MAX_SOCKET * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +                            /* Socket node */
-             (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_MAX_SOCKET * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +     /* Cluster node */
-             (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +                         /* Core node */
-             (PLATFORM_CPU_MAX_NUM_CORES * (sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + 2 * sizeof (UINT32))) + /* Thread node */
-             (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE)) +                             /* L1I node */
-             (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE)) +                             /* L1D node */
-             (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE));                              /* L2 node */
+  Size = sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER) +
+          sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) +                                                        /* Root node */
+          (PLATFORM_CPU_MAX_SOCKET * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +                            /* Socket node */
+          (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_MAX_SOCKET * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +     /* Cluster node */
+          (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +                         /* Core node */
+          (PLATFORM_CPU_MAX_NUM_CORES * (sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + 2 * sizeof (UINT32))) + /* Thread node */
+          (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE)) +                             /* L1I node */
+          (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE)) +                             /* L1D node */
+          (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE));                              /* L2 node */
 
-      PpttTablePointer =
-        (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER *)AllocateZeroPool (Size);
-      if (PpttTablePointer == NULL) {
-        return EFI_OUT_OF_RESOURCES;
-      }
-
-      PpttProcessorEntryPointer =
-        (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *)((UINT64)PpttTablePointer +
-                                                  sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER));
-
-      Size = 0;
-      Size += AcpiPpttRootNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size));
-
-      for (Count1 = 0; Count1 < PLATFORM_CPU_MAX_SOCKET; Count1++) {
-        Size += AcpiPpttSocketNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count1);
-      }
-
-      for (Count1 = 0; Count1 < PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_MAX_SOCKET; Count1++) {
-        Size += AcpiPpttClusterNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count1);
-      }
-
-      for (Count1 = 0; Count1 < PLATFORM_CPU_MAX_NUM_CORES; Count1++) {
-        Size += AcpiPpttL2CacheNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count1);
-        Size += AcpiPpttL1InstructionCacheNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count1);
-        Size += AcpiPpttL1DataCacheNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count1);
-        Size += AcpiPpttProcessorCoreNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count1);
-        Size += AcpiPpttProcessorThreadNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count1);
-      }
-
-      CopyMem (
-        PpttTablePointer,
-        &PPTTTableHeaderTemplate,
-        sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER)
-        );
-
-      Size += sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER);
-      PpttTablePointer->Header.Length = Size;
-
-      AcpiTableChecksum (
-        (UINT8 *)PpttTablePointer,
-        PpttTablePointer->Header.Length
-        );
-
-      Status = AcpiTableProtocol->InstallAcpiTable (
-                                    AcpiTableProtocol,
-                                    (VOID *)PpttTablePointer,
-                                    PpttTablePointer->Header.Length,
-                                    &PpttTableKey
-                                    );
-      FreePool ((VOID *)PpttTablePointer);
-      if (EFI_ERROR (Status)) {
-        return Status;
-      }
-      break;
-    }
+  PpttTablePointer =
+    (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER *)AllocateZeroPool (Size);
+  if (PpttTablePointer == NULL) {
+    return EFI_OUT_OF_RESOURCES;
   }
 
-  if (Count == gST->NumberOfTableEntries) {
-    return EFI_INVALID_PARAMETER;
+  PpttProcessorEntryPointer =
+    (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *)((UINT64)PpttTablePointer +
+                                              sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER));
+
+  Size = 0;
+  Size += AcpiPpttRootNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size));
+
+  for (Count = 0; Count < PLATFORM_CPU_MAX_SOCKET; Count++) {
+    Size += AcpiPpttSocketNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
+  }
+
+  for (Count = 0; Count < PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_MAX_SOCKET; Count++) {
+    Size += AcpiPpttClusterNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
+  }
+
+  for (Count = 0; Count < PLATFORM_CPU_MAX_NUM_CORES; Count++) {
+    Size += AcpiPpttL2CacheNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
+    Size += AcpiPpttL1InstructionCacheNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
+    Size += AcpiPpttL1DataCacheNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
+    Size += AcpiPpttProcessorCoreNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
+    Size += AcpiPpttProcessorThreadNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
+  }
+
+  CopyMem (
+    PpttTablePointer,
+    &PPTTTableHeaderTemplate,
+    sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER)
+    );
+
+  Size += sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER);
+  PpttTablePointer->Header.Length = Size;
+
+  AcpiTableChecksum (
+    (UINT8 *)PpttTablePointer,
+    PpttTablePointer->Header.Length
+    );
+
+  Status = AcpiTableProtocol->InstallAcpiTable (
+                                AcpiTableProtocol,
+                                (VOID *)PpttTablePointer,
+                                PpttTablePointer->Header.Length,
+                                &PpttTableKey
+                                );
+  FreePool ((VOID *)PpttTablePointer);
+  if (EFI_ERROR (Status)) {
+    return Status;
   }
 
   return EFI_SUCCESS;
