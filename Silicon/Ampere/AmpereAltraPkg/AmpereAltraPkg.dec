@@ -22,6 +22,12 @@
   ##  @libraryclass  Defines a set of methods to get/set NVParam.
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/NVParamLib.h
 
+  ##  @libraryclass  Defines a set of methods to access Mailbox interface.
+  MailboxInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/MailboxInterfaceLib.h
+
+  ##  @libraryclass  Defines a set of methods to communicate with SCP.
+  SystemFirmwareInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/SystemFirmwareInterfaceLib.h
+
   ##  @libraryclass  Defines a set of methods to read/write to I2C devices.
   I2cLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/I2cLib.h
 
@@ -32,7 +38,7 @@
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/MmCommunicationLib.h
 
   ##  @libraryclass  Defines a set of methods to initialize PHY
-  PHYLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PciePhyLib.h
+  PciePhyLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PciePhyLib.h
 
   ##  @libraryclass  Defines a set of miscellaneous PCIe functions
   PcieBoardLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PcieBoardLib.h
@@ -42,6 +48,9 @@
 
   ##  @libraryclass  Defines a set of methods to generate random numbers by using Hardware RNG.
   TrngLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/TrngLib.h
+
+  ## @libraryclass  Defines a set of methods to communicate with secure partitions
+  ArmSpciLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/ArmSpciLib.h
 
 [Guids]
   # GUID for the CPU HII configuration form
