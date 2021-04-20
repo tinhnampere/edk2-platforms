@@ -19,7 +19,6 @@
   PcieCore.h
   PcieCoreCapCfg.h
   PcieCoreLib.c
-  PcieHotPlug.c
   PciePatchAcpi.c
   PciePatchAcpi.h
 
@@ -46,6 +45,7 @@
   MemoryAllocationLib
   PcdLib
   PcieBoardLib
+  PcieHotPlugLib
   PciePhyLib
   SerialPortLib
   SystemFirmwareInterfaceLib
@@ -55,7 +55,6 @@
   UefiRuntimeServicesTableLib
 
 [Pcd]
-  gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
 

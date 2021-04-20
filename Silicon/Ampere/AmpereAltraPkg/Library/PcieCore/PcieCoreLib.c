@@ -13,16 +13,17 @@
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcieBoardLib.h>
-#include <Library/PcieHotPlug.h>
+#include <Library/PcieHotPlugLib.h>
 #include <Library/PciHostBridgeLib.h>
 #include <Library/PrintLib.h>
 #include <Library/SerialPortLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <PcieCore.h>
-#include <PciePatchAcpi.h>
 #include <Protocol/PciHostBridgeResourceAllocation.h>
+
+#include "PcieCore.h"
+#include "PciePatchAcpi.h"
 
 STATIC UINT64  RCRegBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_REGISTER_BASE };
 STATIC UINT64  RCMmioBase[MAX_AC01_PCIE_ROOT_COMPLEX] = { AC01_PCIE_MMIO_BASE };

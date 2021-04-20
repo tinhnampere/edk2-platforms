@@ -12,7 +12,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PcdLib.h>
-#include <Library/PcieHotPlug.h>
+#include <Library/PcieHotPlugLib.h>
 
 EFI_GUID PcieHotPlugGuid = HOTPLUG_GUID;
 UINT32   HandleId;
