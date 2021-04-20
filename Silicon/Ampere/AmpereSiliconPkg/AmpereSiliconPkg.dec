@@ -57,7 +57,7 @@
 
 [PcdsFixedAtBuild]
   #
-  # SMPro PMPro Pcds
+  # SMpro PMpro Pcds
   #
   gAmpereTokenSpaceGuid.PcdSmproDbBaseReg|0x100000540000|UINT64|0x00000001
   gAmpereTokenSpaceGuid.PcdSmproEfuseShadow0|0x10000054a000|UINT64|0x00000002

@@ -2,7 +2,7 @@
 #  This module installs Boot Progress Dxe.
 #
 #  This module registers report status code listener to report boot progress
-#  to SMPro.
+#  to SMpro.
 #
 #  Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
 #

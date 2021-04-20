@@ -1,9 +1,9 @@
 /** @file
 
-  This module installs Boot Progress Pei to report boot progress to SMPro.
+  This module installs Boot Progress Pei to report boot progress to SMpro.
 
   This module registers report status code listener to report boot progress
-  to SMPro.
+  to SMpro.
 
   Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
 
@@ -108,7 +108,7 @@ StatusCodeFilter (
 
 /**
   Report status code listener for PEI. This is used to record the boot progress info
-  and report it to SMPro.
+  and report it to SMpro.
 
   @param[in]  PeiServices         An indirect pointer to the EFI_PEI_SERVICES table published by the PEI Foundation.
   @param[in]  CodeType            Indicates the type of status code being reported.

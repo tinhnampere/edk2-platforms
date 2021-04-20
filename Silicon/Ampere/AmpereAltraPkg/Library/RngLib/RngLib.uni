@@ -10,4 +10,4 @@
 
 #string STR_MODULE_ABSTRACT             #language en-US "Instance of RNG Library"
 
-#string STR_MODULE_DESCRIPTION          #language en-US "RngLib that uses Hardware RNG module from SMPro to generate random numbers."
+#string STR_MODULE_DESCRIPTION          #language en-US "RngLib that uses Hardware RNG module from SMpro to generate random numbers."

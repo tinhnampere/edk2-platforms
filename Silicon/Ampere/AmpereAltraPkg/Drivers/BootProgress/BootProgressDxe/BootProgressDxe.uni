@@ -1,8 +1,8 @@
 //
-// This module installs Boot Progress Dxe that report boot progress to SMPro.
+// This module installs Boot Progress Dxe that report boot progress to SMpro.
 //
 // This module registers report status code listener to report boot progress
-// for SMPro.
+// for SMpro.
 //
 // Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
 //
@@ -13,5 +13,5 @@
 
 #string STR_MODULE_ABSTRACT             #language en-US "Installs Boot Progress Driver"
 
-#string STR_MODULE_DESCRIPTION          #language en-US "This module registers report status code listener to collect and report boot progress to SMPro."
+#string STR_MODULE_DESCRIPTION          #language en-US "This module registers report status code listener to collect and report boot progress to SMpro."
 
