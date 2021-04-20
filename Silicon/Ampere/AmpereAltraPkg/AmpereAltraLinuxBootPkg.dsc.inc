@@ -414,7 +414,8 @@
   #
   # ARM Architectural Timer Frequency
   #
-  gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|50000000
+  # Set it to 0 so that the code will read frequence from register
+  gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|0
   gEmbeddedTokenSpaceGuid.PcdMetronomeTickPeriod|1000
 
   # use the TTY terminal type
@@ -459,7 +460,7 @@
 
 [PcdsDynamicDefault.common]
   # Fist DRAM Memory region under 4GB address range
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0x90000000
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0x70000000
 
 ################################################################################
 #
