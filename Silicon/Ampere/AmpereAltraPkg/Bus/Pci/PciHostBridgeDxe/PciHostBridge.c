@@ -154,14 +154,14 @@ RootBridgeConstructor (
   IN UINT32                   Seg
   )
 {
-  MRES_TYPE Index;
+  PCI_RESOURCE_TYPE Index;
 
   //
   // The host to pci bridge, the host memory and io addresses are
   // integrated as PCIe controller subsystem resource. We move forward to mark
   // resource as ResAllocated.
   //
-  for (Index = rtBus; Index < rtMaxRes; Index++) {
+  for (Index = TypeIo; Index < TypeMax; Index++) {
     RootBridgeInstance->ResAllocNode[Index].Type      = Index;
     RootBridgeInstance->ResAllocNode[Index].Base      = 0;
     RootBridgeInstance->ResAllocNode[Index].Length    = 0;
@@ -327,7 +327,7 @@ InitializePciHostBridge (
       NumberRootPortInstalled++;
 
       RootBridgeInstance->ConfigBuffer = AllocateZeroPool (
-                                           rtMaxRes * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
+                                           TypeMax * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
                                            + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
                                            );
       if (RootBridgeInstance->ConfigBuffer == NULL) {
@@ -501,7 +501,7 @@ NotifyPhase (
 {
   PCI_HOST_BRIDGE_INSTANCE        *HostBridgeInstance;
   PCI_ROOT_BRIDGE_INSTANCE        *RootBridgeInstance;
-  MRES_TYPE                       Index;
+  PCI_RESOURCE_TYPE               Index;
   PCI_RES_NODE                    *ResNode;
   LIST_ENTRY                      *List;
   EFI_PHYSICAL_ADDRESS            AddrBase;
@@ -532,7 +532,7 @@ NotifyPhase (
     while (List != &HostBridgeInstance->Head) {
       RootBridgeInstance = ROOT_BRIDGE_FROM_LINK (List);
 
-      for (Index = rtBus; Index < rtMaxRes; Index++) {
+      for (Index = TypeIo; Index < TypeMax; Index++) {
         ResNode = &(RootBridgeInstance->ResAllocNode[Index]);
 
         ResNode->Type      = Index;
@@ -589,7 +589,7 @@ NotifyPhase (
 
       RootBridgeInstance = ROOT_BRIDGE_FROM_LINK (List);
 
-      for (Index = rtIo16; Index < rtMaxRes; Index++) {
+      for (Index = TypeIo; Index < TypeMax; Index++) {
         ResNode = &(RootBridgeInstance->ResAllocNode[Index]);
 
         if (ResNode->Status == ResNone) {
@@ -597,35 +597,33 @@ NotifyPhase (
         }
 
         switch (Index) {
-        case rtIo16:
-        case rtIo32:
+        case TypeIo:
           AddrBase = RootBridgeInstance->RootBridge.Io.Base;
           AddrLimit = RootBridgeInstance->RootBridge.Io.Limit;
           break;
 
-        case rtMmio32:
+        case TypeMem32:
           AddrBase = RootBridgeInstance->RootBridge.Mem.Base;
           AddrLimit = RootBridgeInstance->RootBridge.Mem.Limit;
           break;
 
-        case rtMmio32p:
+        case TypePMem32:
           AddrBase = RootBridgeInstance->RootBridge.PMem.Base;
           AddrLimit = RootBridgeInstance->RootBridge.PMem.Limit;
           break;
 
-        case rtMmio64:
+        case TypeMem64:
           AddrBase = RootBridgeInstance->RootBridge.MemAbove4G.Base;
           AddrLimit = RootBridgeInstance->RootBridge.MemAbove4G.Limit;
           break;
 
-        case rtMmio64p:
+        case TypePMem64:
           AddrBase = RootBridgeInstance->RootBridge.PMemAbove4G.Base;
           AddrLimit = RootBridgeInstance->RootBridge.PMemAbove4G.Limit;
           break;
 
         default:
-          ASSERT (FALSE);
-          break;
+          continue;
         } // end switch (Index)
 
         AddrLen = ResNode->Length;
@@ -673,7 +671,7 @@ NotifyPhase (
     while (List != &HostBridgeInstance->Head) {
       RootBridgeInstance = ROOT_BRIDGE_FROM_LINK (List);
 
-      for (Index = rtIo16; Index < rtMaxRes; Index++) {
+      for (Index = TypeIo; Index < TypeMax; Index++) {
         ResNode = &(RootBridgeInstance->ResAllocNode[Index]);
 
         if (ResNode->Status == ResAllocated) {
@@ -681,12 +679,11 @@ NotifyPhase (
           AddrBase = ResNode->Base;
 
           switch (Index) {
-          case rtIo16:
-          case rtIo32:
-          case rtMmio32:
-          case rtMmio32p:
-          case rtMmio64:
-          case rtMmio64p:
+          case TypeIo:
+          case TypeMem32:
+          case TypePMem32:
+          case TypeMem64:
+          case TypePMem64:
             Status = gDS->FreeMemorySpace (AddrBase, AddrLen);
             if (EFI_ERROR (Status)) {
               ReturnStatus = Status;
@@ -694,8 +691,7 @@ NotifyPhase (
             break;
 
           default:
-            ASSERT (FALSE);
-            break;
+            continue;
           } // end switch (Index)
 
           ResNode->Type      = Index;
@@ -1059,7 +1055,7 @@ SetBusNumbers (
       //
       // Update the Bus Range
       //
-      ResNode = &(RootBridgeInstance->ResAllocNode[rtBus]);
+      ResNode = &(RootBridgeInstance->ResAllocNode[TypeBus]);
       ResNode->Base   = BusStart;
       ResNode->Length = BusLen;
       ResNode->Status = ResAllocated;
@@ -1183,12 +1179,12 @@ SubmitResources (
         }
 
         Index = (Ptr->SpecificFlag & EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE) ?
-                rtMmio32p : rtMmio32;
+                TypePMem32 : TypeMem32;
       }
 
       if (Ptr->AddrSpaceGranularity == 64) {
         Index = (Ptr->SpecificFlag & EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE) ?
-                rtMmio64p : rtMmio64;
+                TypePMem64 : TypeMem64;
       }
 
       break;
@@ -1201,7 +1197,7 @@ SubmitResources (
         return EFI_INVALID_PARAMETER;
       }
 
-      Index = rtIo32;
+      Index = TypeIo;
       break;
 
     case ACPI_ADDRESS_SPACE_TYPE_BUS:
@@ -1287,7 +1283,7 @@ GetProposedResources (
   }
 
   Buffer = AllocateZeroPool (
-             (rtMaxRes - 1) * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) +
+             (TypeMax - 1) * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) +
              sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
              );
   if (Buffer == NULL) {
@@ -1295,8 +1291,35 @@ GetProposedResources (
   }
 
   Descriptor = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Buffer;
-  for (Index = rtIo16; Index < rtMaxRes; Index++) {
+  for (Index = TypeIo; Index < TypeMax; Index++) {
     ResStatus = RootBridgeInstance->ResAllocNode[Index].Status;
+
+    switch (Index) {
+    case TypeIo:
+      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_IO;
+      Descriptor->SpecificFlag         = 0;
+      Descriptor->AddrSpaceGranularity = 32;
+      break;
+
+    case TypeMem32:
+    case TypePMem32:
+      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
+      Descriptor->SpecificFlag         = (Index == TypeMem32) ? 0 :
+                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+      Descriptor->AddrSpaceGranularity = 32;
+      break;
+
+    case TypeMem64:
+    case TypePMem64:
+      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
+      Descriptor->SpecificFlag         = (Index == TypeMem64) ? 0 :
+                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+      Descriptor->AddrSpaceGranularity = 64;
+      break;
+
+    default:
+      continue;
+    }
 
     Descriptor->Desc                  = ACPI_ADDRESS_SPACE_DESCRIPTOR;
     Descriptor->Len                   = sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3;
@@ -1305,31 +1328,6 @@ GetProposedResources (
     Descriptor->AddrLen               = RootBridgeInstance->ResAllocNode[Index].Length;
     Descriptor->AddrRangeMax          = Descriptor->AddrRangeMin + Descriptor->AddrLen - 1;
     Descriptor->AddrTranslationOffset = (ResStatus == ResAllocated) ? EFI_RESOURCE_SATISFIED : PCI_RESOURCE_LESS;
-
-    switch (Index) {
-    case rtIo16:
-    case rtIo32:
-      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_IO;
-      Descriptor->SpecificFlag         = 0;
-      Descriptor->AddrSpaceGranularity = 32;
-      break;
-
-    case rtMmio32:
-    case rtMmio32p:
-      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
-      Descriptor->SpecificFlag         = (Index == rtMmio32) ? 0 :
-                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
-      Descriptor->AddrSpaceGranularity = 32;
-      break;
-
-    case rtMmio64:
-    case rtMmio64p:
-      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
-      Descriptor->SpecificFlag         = (Index == rtMmio64) ? 0 :
-                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
-      Descriptor->AddrSpaceGranularity = 64;
-      break;
-    }
 
     PCIE_DEBUG ("Descriptor->ResType:%d\n", Descriptor->ResType);
     PCIE_DEBUG ("Descriptor->Addrlen:%llx\n", Descriptor->AddrLen);

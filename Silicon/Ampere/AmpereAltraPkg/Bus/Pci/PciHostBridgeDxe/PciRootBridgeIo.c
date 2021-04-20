@@ -1517,15 +1517,46 @@ RootBridgeIoConfiguration (
   RootBridgeInstance = ROOT_BRIDGE_FROM_THIS (This);
   ZeroMem (
     RootBridgeInstance->ConfigBuffer,
-    rtMaxRes * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
+    TypeMax * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
     );
 
   Descriptor = RootBridgeInstance->ConfigBuffer;
-  for (Index = rtBus; Index < rtMaxRes; Index++) {
+  for (Index = TypeIo; Index < TypeMax; Index++) {
 
     ResAllocNode = &RootBridgeInstance->ResAllocNode[Index];
 
     if (ResAllocNode->Status != ResAllocated) {
+      continue;
+    }
+
+    switch (ResAllocNode->Type) {
+
+    case TypeBus:
+      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_BUS;
+      break;
+
+    case TypeIo:
+      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_IO;
+      Descriptor->AddrSpaceGranularity = 32;
+      break;
+
+    case TypeMem32:
+    case TypePMem32:
+      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
+      Descriptor->SpecificFlag         = (Index == TypeMem32) ? 0 :
+                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+      Descriptor->AddrSpaceGranularity = 32;
+      break;
+
+    case TypeMem64:
+    case TypePMem64:
+      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
+      Descriptor->SpecificFlag         = (Index == TypeMem64) ? 0 :
+                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+      Descriptor->AddrSpaceGranularity = 64;
+      break;
+
+    default:
       continue;
     }
 
@@ -1534,38 +1565,6 @@ RootBridgeIoConfiguration (
     Descriptor->AddrRangeMin  = ResAllocNode->Base;
     Descriptor->AddrRangeMax  = ResAllocNode->Base + ResAllocNode->Length - 1;
     Descriptor->AddrLen       = ResAllocNode->Length;
-
-    switch (ResAllocNode->Type) {
-
-    case rtBus:
-      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_BUS;
-      break;
-
-    case rtIo16:
-    case rtIo32:
-      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_IO;
-      Descriptor->AddrSpaceGranularity = 32;
-      break;
-
-    case rtMmio32:
-    case rtMmio32p:
-      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
-      Descriptor->SpecificFlag         = (Index == rtMmio32) ? 0 :
-                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
-      Descriptor->AddrSpaceGranularity = 32;
-      break;
-
-    case rtMmio64:
-    case rtMmio64p:
-      Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
-      Descriptor->SpecificFlag         = (Index == rtMmio64) ? 0 :
-                                         EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
-      Descriptor->AddrSpaceGranularity = 64;
-      break;
-
-    default:
-      break;
-    }
 
     Descriptor++;
   }

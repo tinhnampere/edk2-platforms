@@ -21,7 +21,6 @@
 #include <Library/PciHostBridgeLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
-#include <PciBus.h>
 #include <Protocol/DevicePath.h>
 #include <Protocol/Metronome.h>
 #include <Protocol/PciHostBridgeResourceAllocation.h>
@@ -63,6 +62,19 @@
   CR (a, PCI_ROOT_BRIDGE_INSTANCE, Link, PCI_ROOT_BRIDGE_SIGNATURE)
 
 //
+// PCI Resource Type
+//
+typedef enum {
+  TypeIo    = 0,
+  TypeMem32,
+  TypePMem32,
+  TypeMem64,
+  TypePMem64,
+  TypeBus,
+  TypeMax
+} PCI_RESOURCE_TYPE;
+
+//
 // Type of Resource status
 //
 typedef enum {
@@ -76,11 +88,11 @@ typedef enum {
 // Struct of Resource Node
 //
 typedef struct {
-  MRES_TYPE  Type;
-  UINT64     Base;
-  UINT64     Length;
-  UINT64     Alignment;
-  RES_STATUS Status;
+  PCI_RESOURCE_TYPE  Type;
+  UINT64             Base;
+  UINT64             Length;
+  UINT64             Alignment;
+  RES_STATUS         Status;
 } PCI_RES_NODE;
 
 //
@@ -109,7 +121,7 @@ typedef struct {
   EFI_HANDLE                      RootBridgeHandle;
   UINT64                          RootBridgeAttrib;
   VOID                            *ConfigBuffer;
-  PCI_RES_NODE                    ResAllocNode[rtMaxRes];
+  PCI_RES_NODE                    ResAllocNode[TypeMax];
   EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL RbIo;
   PCI_ROOT_BRIDGE                 RootBridge;
 } PCI_ROOT_BRIDGE_INSTANCE;
