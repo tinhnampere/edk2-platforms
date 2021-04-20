@@ -110,12 +110,20 @@ typedef struct {
 } PLATFORM_TPM2_CONFIG_DATA;
 
 typedef struct {
-  UINT64 AddressOfControlArea;
-  UINT64 ControlAreaLength;
-  UINT8  InterruptMode;
-  UINT8  Reserved[3];
-  UINT32 InterruptNumber;         // Should have a value of zero polling
-  UINT32 SmcFunctionId;           // SMC Function ID
+  UINT32 CurrentRequest;
+  UINT32 LastRequest;
+  UINT32 LastRequestStatus;
+} PLATFORM_TPM2_PPI_REQUEST;
+
+typedef struct {
+  UINT64                      AddressOfControlArea;
+  UINT64                      ControlAreaLength;
+  UINT8                       InterruptMode;
+  UINT8                       Reserved[3];
+  UINT32                      InterruptNumber;         // Should have a value of zero polling
+  UINT32                      SmcFunctionId;           // SMC Function ID
+  UINT64                      PpiRequestNotifyAddress; // Doorbell/Interrupt Address
+  PLATFORM_TPM2_PPI_REQUEST   *PpiRequest;             // PPI Request
 } PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS;
 
 typedef struct {
