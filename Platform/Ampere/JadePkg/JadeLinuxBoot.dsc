@@ -43,9 +43,21 @@
   RealTimeClockLib|Platform/Ampere/JadePkg/Library/PCF85063RealTimeClockLib/PCF85063RealTimeClockLib.inf
 
   #
-  # Libraries needed byFailSafeDxe
+  # Library for FailSafe support
   #
   FailSafeLib|Platform/Ampere/AmperePlatformPkg/Library/FailSafeLib/FailSafeLib.inf
+
+  #
+  # ACPI Libraries
+  #
+  AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf
+  AcpiHelperLib|Platform/Ampere/AmperePlatformPkg/Library/AcpiHelperLib/AcpiHelperLib.inf
+  AcpiPccLib|Platform/Ampere/AmperePlatformPkg/Library/AcpiPccLib/AcpiPccLib.inf
+
+  #
+  # Pcie Board
+  #
+  PcieBoardLib|Platform/Ampere/JadePkg/Library/PcieBoardLib/PcieBoardLib.inf
 
 [LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION, LibraryClasses.common.DXE_RUNTIME_DRIVER, LibraryClasses.common.DXE_DRIVER]
   SmbusLib|Platform/Ampere/JadePkg/Library/DxePlatformSmbusLib/DxePlatformSmbusLib.inf

@@ -25,6 +25,7 @@
   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
 
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
+  BaseMemoryLib|MdePkg/Library/BaseMemoryLibOptDxe/BaseMemoryLibOptDxe.inf
   SafeIntLib|MdePkg/Library/BaseSafeIntLib/BaseSafeIntLib.inf
   SynchronizationLib|MdePkg/Library/BaseSynchronizationLib/BaseSynchronizationLib.inf
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
@@ -45,7 +46,6 @@
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
   HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
   UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
-
   UefiRuntimeLib|MdePkg/Library/UefiRuntimeLib/UefiRuntimeLib.inf
 
   #
@@ -53,21 +53,17 @@
   #
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
 
-  PeiServicesLib|MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
-  BaseMemoryLib|MdePkg/Library/BaseMemoryLibOptDxe/BaseMemoryLibOptDxe.inf
-
-  # Consumed by IScsiDxe module
-  BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
-  IntrinsicLib|CryptoPkg/Library/IntrinsicLib/IntrinsicLib.inf
-  OpensslLib|CryptoPkg/Library/OpensslLib/OpensslLib.inf
+  #
+  # Random Generator Library
+  #
   TrngLib|Silicon/Ampere/AmpereAltraPkg/Library/TrngLib/TrngLib.inf
   RngLib|Silicon/Ampere/AmpereAltraPkg/Library/RngLib/RngLib.inf
 
-  # ARM Libraries
+  #
+  # ARM Architectural Libraries
+  #
   ArmLib|ArmPkg/Library/ArmLib/ArmBaseLib.inf
   ArmMmuLib|ArmPkg/Library/ArmMmuLib/ArmMmuBaseLib.inf
-
-  # ARM Architectural Libraries
   CacheMaintenanceLib|ArmPkg/Library/ArmCacheMaintenanceLib/ArmCacheMaintenanceLib.inf
   DefaultExceptionHandlerLib|ArmPkg/Library/DefaultExceptionHandlerLib/DefaultExceptionHandlerLib.inf
   CpuExceptionHandlerLib|ArmPkg/Library/ArmExceptionLib/ArmExceptionLib.inf
@@ -78,8 +74,8 @@
   ArmSmcLib|ArmPkg/Library/ArmSmcLib/ArmSmcLib.inf
   ArmSpciLib|Silicon/Ampere/AmpereAltraPkg/Library/ArmSpciLib/ArmSpciLib.inf
   ArmGenericTimerCounterLib|ArmPkg/Library/ArmGenericTimerPhyCounterLib/ArmGenericTimerPhyCounterLib.inf
-
   ResetSystemLib|ArmPkg/Library/ArmSmcPsciResetSystemLib/ArmSmcPsciResetSystemLib.inf
+  TimerLib|ArmPkg/Library/ArmArchTimerLib/ArmArchTimerLib.inf
 
   #
   # Ampere Altra specific Libraries
@@ -97,13 +93,12 @@
   GpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwGpioLib/DwGpioLib.inf
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Library/MmCommunicationLib/MmCommunicationLib.inf
 
+  #
   # ARM PL011 UART Driver
+  #
   PL011UartLib|ArmPlatformPkg/Library/PL011UartLib/PL011UartLib.inf
   SerialPortLib|ArmPlatformPkg/Library/PL011SerialPortLib/PL011SerialPortLib.inf
   PL011UartClockLib|ArmPlatformPkg/Library/PL011UartClockLib/PL011UartClockLib.inf
-
-  # Timer Library
-  TimerLib|ArmPkg/Library/ArmArchTimerLib/ArmArchTimerLib.inf
 
   #
   # Uncomment (and comment out the next line) For RealView Debugger. The Standard IO window
@@ -146,17 +141,20 @@
   AuthVariableLib|SecurityPkg/Library/AuthVariableLib/AuthVariableLib.inf
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
 
+  #
   # re-use the UserPhysicalPresent() dummy implementation from the ovmf tree
+  #
   PlatformSecureLib|OvmfPkg/Library/PlatformSecureLib/PlatformSecureLib.inf
 !else
   TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
   AuthVariableLib|MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
 !endif
-  VarCheckLib|MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
   VariablePolicyLib|MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLib.inf
   VariablePolicyHelperLib|MdeModulePkg/Library/VariablePolicyHelperLib/VariablePolicyHelperLib.inf
 
+  #
   # Networking Requirements
+  #
 !if $(NETWORK_TLS_ENABLE) == TRUE
   TlsLib|CryptoPkg/Library/TlsLib/TlsLib.inf
 !endif
@@ -179,7 +177,6 @@
 [LibraryClasses.common.SEC]
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   DebugAgentLib|ArmPkg/Library/DebugAgentSymbolsBaseLib/DebugAgentSymbolsBaseLib.inf
-  DefaultExceptionHandlerLib|ArmPkg/Library/DefaultExceptionHandlerLib/DefaultExceptionHandlerLib.inf
 
 !ifdef $(EDK2_SKIP_PEICORE)
   PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
@@ -192,7 +189,6 @@
 !endif
 
   ArmGicArchLib|ArmPkg/Library/ArmGicArchSecLib/ArmGicArchSecLib.inf
-  # Specific ArmPlatformLib
 
 [LibraryClasses.common.PEI_CORE]
   HobLib|MdePkg/Library/PeiHobLib/PeiHobLib.inf
@@ -202,7 +198,6 @@
   PerformanceLib|MdeModulePkg/Library/PeiPerformanceLib/PeiPerformanceLib.inf
   ReportStatusCodeLib|MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
-  PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   PcdLib|MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
 
@@ -218,7 +213,6 @@
   PerformanceLib|MdeModulePkg/Library/PeiPerformanceLib/PeiPerformanceLib.inf
   ReportStatusCodeLib|MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
-  PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   PeiResourcePublicationLib|MdePkg/Library/PeiResourcePublicationLib/PeiResourcePublicationLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   PeiServicesTablePointerLib|ArmPkg/Library/PeiServicesTablePointerLib/PeiServicesTablePointerLib.inf
@@ -259,14 +253,7 @@
   UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiTianoCustomDecompressLib.inf
   PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
-  HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
-
-  ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
-  SortLib|MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
   ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
-
-  # UiApp dependencies
-  FileExplorerLib|MdeModulePkg/Library/FileExplorerLib/FileExplorerLib.inf
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
 
 [LibraryClasses.common.UEFI_DRIVER]
@@ -307,7 +294,9 @@
   #
   NULL|ArmPkg/Library/CompilerIntrinsicsLib/CompilerIntrinsicsLib.inf
 
+  #
   # Add support for GCC stack protector
+  #
   NULL|MdePkg/Library/BaseStackCheckLib/BaseStackCheckLib.inf
 
 ################################################################################
@@ -322,15 +311,19 @@
   gEfiMdePkgTokenSpaceGuid.PcdComponentName2Disable|FALSE
   gEfiMdePkgTokenSpaceGuid.PcdDriverDiagnostics2Disable|TRUE
 
+  #
   # Use the Vector Table location in CpuDxe. We will not copy the Vector Table at PcdCpuVectorBaseAddress
+  #
   gArmTokenSpaceGuid.PcdRelocateVectorTable|FALSE
 
   gEmbeddedTokenSpaceGuid.PcdPrePiProduceMemoryTypeInformationHob|TRUE
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
 
-  ## If TRUE, Graphics Output Protocol will be installed on virtual handle
-  ## created by ConsplitterDxe. It could be set FALSE to save size.
+  #
+  # If TRUE, Graphics Output Protocol will be installed on virtual handle
+  # created by ConsplitterDxe. It could be set FALSE to save size.
+  #
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutGopSupport|TRUE
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|FALSE
 
@@ -360,7 +353,9 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2F
 !endif
 
-  ## SBSA Watchdog Count
+  #
+  # SBSA Watchdog Count
+  #
 !ifndef DISABLE_SBSA_WATCHDOG
   gArmPlatformTokenSpaceGuid.PcdWatchdogCount|1
 !endif
@@ -416,20 +411,27 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x2000
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxAuthVariableSize|0x2800
 
+  #
   # Stacks for MPCores in Normal World
-  # Non-Trusted SRAM
+  #
   gArmPlatformTokenSpaceGuid.PcdCPUCoresStackBase|0x91100000
   gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize|0x20000
   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize|0x1000
 
+  #
   # System Memory Base
+  #
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x90000000
 
+  #
   # Firmware Volume
+  #
   gArmTokenSpaceGuid.PcdFvBaseAddress|0x92000000
   gArmTokenSpaceGuid.PcdFvSize|0x007c0000
 
+  #
   # UEFI region size
+  #
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize|0x08000000
 
   #
@@ -459,9 +461,11 @@
   gArmPlatformTokenSpaceGuid.PcdSerialDbgRegisterBase|0x100002620000
   gArmPlatformTokenSpaceGuid.PcdSerialDbgUartBaudRate|115200
 
+  #
   # We want to use the Shell Libraries but don't want it to initialise
   # automatically. We initialise the libraries when the command is called by the
   # Shell.
+  #
   gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
@@ -486,10 +490,14 @@
   gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|0
   gEmbeddedTokenSpaceGuid.PcdMetronomeTickPeriod|1000
 
+  #
   # use the TTY terminal type
+  #
   gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType|4
 
+  #
   # GUID of the UI app
+  #
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile|{ 0x21, 0xaa, 0x2c, 0x46, 0x14, 0x76, 0x03, 0x45, 0x83, 0x6e, 0x8a, 0xb6, 0xf4, 0x66, 0x23, 0x31 }
 
   #
@@ -536,7 +544,9 @@
 !endif
 
 [PcdsDynamicDefault.common]
+  #
   # Fist DRAM Memory region under 4GB address range
+  #
   gArmTokenSpaceGuid.PcdSystemMemorySize|0x70000000
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0x0
@@ -694,7 +704,9 @@
   MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
 
+  #
   # Simple TextIn/TextOut for UEFI Terminal
+  #
   EmbeddedPkg/SimpleTextInOutSerial/SimpleTextInOutSerial.inf
 
   #
@@ -813,7 +825,6 @@
       NULL|ShellPkg/Library/UefiShellNetwork2CommandsLib/UefiShellNetwork2CommandsLib.inf
       NULL|ShellPkg/Library/UefiShellAcpiViewCommandLib/UefiShellAcpiViewCommandLib.inf
       HandleParsingLib|ShellPkg/Library/UefiHandleParsingLib/UefiHandleParsingLib.inf
-      PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
       BcfgCommandLib|ShellPkg/Library/UefiShellBcfgCommandLib/UefiShellBcfgCommandLib.inf
     <PcdsFixedAtBuild>
       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0xFF
