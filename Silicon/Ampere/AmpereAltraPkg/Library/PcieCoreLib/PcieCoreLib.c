@@ -79,9 +79,12 @@ GetRCIndex (
 }
 
 /**
-   Prepare to start PCIE core BSP driver
+  Prepare to start PCIE core BSP driver.
 
-   @retval EFI_SUCCESS           Success to initialize.
+  @param ImageHandle[in]        Handle for the image.
+  @param SystemTable[in]        Address of the system table.
+
+  @retval EFI_SUCCESS           Initialize successfully.
 **/
 EFI_STATUS
 Ac01PcieSetup (
@@ -113,31 +116,59 @@ Ac01PcieSetup (
   return EFI_SUCCESS;
 }
 
+/**
+  Get Total HostBridge
+
+  @retval UINTN                 Return Total HostBridge.
+**/
 UINT8
 Ac01PcieGetTotalHBs (
   VOID
   )
 {
-  return 16;
+  return MAX_AC01_PCIE_ROOT_COMPLEX;
 }
 
+/**
+  Get Total RootBridge per HostBridge.
+
+  @param  RCIndex[in]           Index to identify of Root Complex.
+
+  @retval UINTN                 Return Total RootBridge per HostBridge.
+**/
 UINT8
 Ac01PcieGetTotalRBsPerHB (
-  UINTN RCIndex
+  IN UINTN RCIndex
   )
 {
-  return 1;
+  return MAX_AC01_PCIE_ROOT_BRIDGE;
 }
 
+/**
+  Get RootBridge Attribute.
+
+  @param  HBIndex[in]           Index to identify of PCIE Host bridge.
+  @param  RBIndex[in]           Index to identify of underneath PCIE Root bridge.
+
+  @retval UINTN                 Return RootBridge Attribute.
+**/
 UINTN
 Ac01PcieGetRootBridgeAttribute (
   IN UINTN HBIndex,
   IN UINTN RBIndex
   )
 {
-  return 2;
+  return EFI_PCI_HOST_BRIDGE_MEM64_DECODE;
 }
 
+/**
+  Get RootBridge Segment number.
+
+  @param  HBIndex[in]           Index to identify of PCIE Host bridge.
+  @param  RBIndex[in]           Index to identify of underneath PCIE Root bridge.
+
+  @retval UINTN                 Return RootBridge Segment number.
+**/
 UINTN
 Ac01PcieGetRootBridgeSegmentNumber (
   IN UINTN HBIndex,
@@ -189,6 +220,14 @@ SortPciList (
   }
 }
 
+/**
+  Get RootBridge disable status
+
+  @param  HBIndex[In]           Index to identify of PCIE Host bridge.
+  @param  RBIndex[In]           Index to identify of underneath PCIE Root bridge.
+
+  @retval BOOLEAN               Return RootBridge disable status.
+**/
 BOOLEAN
 Ac01PcieCheckRootBridgeDisabled (
   IN UINTN HBIndex,
@@ -217,10 +256,11 @@ Ac01PcieCheckRootBridgeDisabled (
 }
 
 /**
-   Initialize Host bridge
+  Initialize Host bridge.
 
-   @param  HBIndex               Index to identify of PCIE Host bridge.
-   @retval EFI_SUCCESS           Success to initialize.
+  @param  HBIndex[in]           Index to identify of PCIE Host bridge.
+
+  @retval EFI_SUCCESS           Initialize successfully.
 **/
 EFI_STATUS
 Ac01PcieSetupHostBridge (
@@ -231,13 +271,14 @@ Ac01PcieSetupHostBridge (
 }
 
 /**
-   Initialize Root bridge
+  Initialize Root bridge.
 
-   @param  HBIndex               Index to identify of PCIE Host bridge.
-   @param  RBIndex               Index to identify of underneath PCIE Root bridge.
-   @param  RootBridgeInstance    The pointer of instance of the Root bridge IO.
-   @retval EFI_SUCCESS           Success to initialize.
-   @retval EFI_DEVICE_ERROR      Error when initializing.
+  @param  HBIndex[in]            Index to identify of PCIE Host bridge.
+  @param  RBIndex[in]            Index to identify of underneath PCIE Root bridge.
+  @param  RootBridgeInstance[in] The pointer of instance of the Root bridge IO.
+
+  @retval EFI_SUCCESS           Initialize successfully.
+  @retval EFI_DEVICE_ERROR      Error when initializing.
 **/
 EFI_STATUS
 Ac01PcieSetupRootBridge (
@@ -295,21 +336,16 @@ Error:
 }
 
 /**
-   Reads/Writes an PCI configuration register.
+  Reads/Writes an PCI configuration register.
 
-   Reads/Writes from/to register specified by Address.
-   This function must guarantee that all PCI read and write operations are
-   serialized.
+  @param  RootInstance[in]      Pointer to RootInstance structure.
+  @param  Address[in]           Address which want to read or write to.
+  @param  Write[in]             Indicate that this is a read or write command.
+  @param  Width[in]             Specify the width of the data.
+  @param  Data[in, out]         The buffer to hold the data.
 
-   If Address > 0x0FFFFFFF, then ASSERT().
-
-   Address de-couple to format of Bus:Dev:Fn
-   Bus = (Address >> 20) & 0xFF;
-   Dev = (Address >> 15) & 0x1F;
-   Func = (Address >> 12) & 0x07;
-   Reg = (Address) & 0xFFF;
+  @retval EFI_SUCCESS           Read/Write successfully.
 **/
-
 EFI_STATUS
 Ac01PcieConfigRW (
   IN     VOID    *RootInstance,
@@ -452,7 +488,7 @@ _link_polling:
 }
 
 /**
-   Prepare to end PCIE core BSP driver
+  Prepare to end PCIE core BSP driver
 **/
 VOID
 Ac01PcieEnd (
@@ -465,11 +501,11 @@ Ac01PcieEnd (
 }
 
 /**
-   Callback funciton for EndEnumeration notification from PCI stack
+  Callback funciton for EndEnumeration notification from PCI stack.
 
-   @param  RCIndex               Index to identify of PCIE root complex.
-   @param  PortIndex             Index to identify of PCIE root port.
-   @param  Phase                 The phase of enumeration as informed from PCI stack.
+  @param  HBIndex               Index to identify of PCIE Host bridge.
+  @param  RBIndex               Index to identify of underneath PCIE Root bridge.
+  @param  Phase                 The phase of enumeration as informed from PCI stack.
 **/
 VOID
 Ac01PcieHostBridgeNotifyPhase (

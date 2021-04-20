@@ -15,8 +15,8 @@
 #include <Library/DebugLib.h>
 #include <Library/IoLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/PcieCoreLib.h>
 #include <Library/PcdLib.h>
-#include <Library/PciHostBridgeElink.h>
 #include <Library/PciHostBridgeLib.h>
 #include <Library/PciLib.h>
 #include <Library/PrintLib.h>
@@ -115,10 +115,10 @@ PciHostBridgeReadyToBootEvent (
   UINTN Idx1, Idx2, Count = 0;
   CHAR8 NodePath[MAX_ACPI_NODE_PATH];
 
-  for (Idx1 = 0; Idx1 < PCI_GET_NUMBER_HOSTBRIDGE (); Idx1++) {
-    for (Idx2 = 0; Idx2 < PCI_GET_NUMBER_ROOTBRIDGE (Idx1); Idx2++) {
+  for (Idx1 = 0; Idx1 < Ac01PcieGetTotalHBs (); Idx1++) {
+    for (Idx2 = 0; Idx2 < Ac01PcieGetTotalRBsPerHB (Idx1); Idx2++) {
       AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.PCI%X._STA", Count);
-      if (PCI_CHECK_ROOT_BRIDGE_DISABLED (Idx1, Idx2)) {
+      if (Ac01PcieCheckRootBridgeDisabled (Idx1, Idx2)) {
         AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
       } else {
         AcpiDSDTSetNodeStatusValue (NodePath, 0xf);
@@ -237,15 +237,15 @@ InitializePciHostBridge (
   LIST_ENTRY               *List;
   UINTN                    SegmentNumber;
 
-  if (( PCI_CHECK_ROOT_BRIDGE_DISABLED == NULL)
-      || (PCI_CORE_SETUP == NULL)
-      || (PCI_CORE_END == NULL)
-      || (PCI_CORE_SETUP_HOST_BRIDGE == NULL)
-      || (PCI_CORE_SETUP_ROOT_BRIDGE == NULL)
-      || (PCI_CORE_IO_PCI_RW == NULL)
-      || (PCI_GET_NUMBER_HOSTBRIDGE == NULL)
-      || (PCI_GET_NUMBER_ROOTBRIDGE == NULL)
-      || (PCI_GET_ROOTBRIDGE_ATTR == NULL ))
+  if (( Ac01PcieCheckRootBridgeDisabled == NULL)
+      || (Ac01PcieSetup == NULL)
+      || (Ac01PcieEnd == NULL)
+      || (Ac01PcieSetupHostBridge == NULL)
+      || (Ac01PcieSetupRootBridge == NULL)
+      || (Ac01PcieConfigRW == NULL)
+      || (Ac01PcieGetTotalHBs == NULL)
+      || (Ac01PcieGetTotalRBsPerHB == NULL)
+      || (Ac01PcieGetRootBridgeAttribute == NULL ))
   {
     PCIE_ERR ("PciHostBridge: Invalid Parameters\n");
     return EFI_INVALID_PARAMETER;
@@ -256,7 +256,7 @@ InitializePciHostBridge (
   mDriverImageHandle = ImageHandle;
 
   // Inform Pcie Core BSP Driver to start setup phase
-  Status = PCI_CORE_SETUP (ImageHandle, SystemTable);
+  Status = Ac01PcieSetup (ImageHandle, SystemTable);
   if (EFI_ERROR (Status)) {
     PCIE_ERR ("  PCIe Core Setup failed!\n");
     return EFI_OUT_OF_RESOURCES;
@@ -265,7 +265,7 @@ InitializePciHostBridge (
   //
   // Create Host Bridge Device Handle
   //
-  for (Idx1 = 0; Idx1 < PCI_GET_NUMBER_HOSTBRIDGE (); Idx1++) {
+  for (Idx1 = 0; Idx1 < Ac01PcieGetTotalHBs (); Idx1++) {
     HostBridgeInstance = AllocateCopyPool (
                            sizeof (PCI_HOST_BRIDGE_INSTANCE),
                            (VOID *)&mPciHostBridgeInstanceTemplate
@@ -275,14 +275,14 @@ InitializePciHostBridge (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Status = PCI_CORE_SETUP_HOST_BRIDGE (Idx1);
+    Status = Ac01PcieSetupHostBridge (Idx1);
     if (EFI_ERROR (Status)) {
       FreePool (HostBridgeInstance);
       PCIE_ERR ("  HB%d setup failed!\n", Idx1);
       return EFI_OUT_OF_RESOURCES;
     }
 
-    HostBridgeInstance->RootBridgeNumber = PCI_GET_NUMBER_ROOTBRIDGE (Idx1);
+    HostBridgeInstance->RootBridgeNumber = Ac01PcieGetTotalRBsPerHB (Idx1);
 
     InitializeListHead (&HostBridgeInstance->Head);
 
@@ -317,7 +317,7 @@ InitializePciHostBridge (
       }
 
       // Initialize Hardware
-      Status = PCI_CORE_SETUP_ROOT_BRIDGE (Idx1, Idx2, (VOID *)&RootBridgeInstance->RootBridge);
+      Status = Ac01PcieSetupRootBridge (Idx1, Idx2, (VOID *)&RootBridgeInstance->RootBridge);
       if (EFI_ERROR (Status)) {
         FreePool (RootBridgeInstance);
         PCIE_ERR ("    HB%d-RB%d setup failed!\n", Idx1, Idx2);
@@ -347,14 +347,14 @@ InitializePciHostBridge (
         (EFI_DEVICE_PATH_PROTOCOL *)GenerateRootBridgeDevicePath (Idx1, Idx2);
 
       SegmentNumber = Count;
-      if (PCI_GET_ROOTBRIDGE_SEGMENTNUMBER) {
-        SegmentNumber = PCI_GET_ROOTBRIDGE_SEGMENTNUMBER (Idx1, Idx2);
+      if (Ac01PcieGetRootBridgeSegmentNumber) {
+        SegmentNumber = Ac01PcieGetRootBridgeSegmentNumber (Idx1, Idx2);
       }
 
       RootBridgeConstructor (
         RootBridgeInstance,
         HostBridgeInstance->HostBridgeHandle,
-        PCI_GET_ROOTBRIDGE_ATTR (Idx1),
+        Ac01PcieGetRootBridgeAttribute (Idx1, Idx2),
         SegmentNumber
         );
 
@@ -411,7 +411,7 @@ InitializePciHostBridge (
   }
 
   // Inform BSP Pcie Driver to end setup phase
-  PCI_CORE_END ();
+  Ac01PcieEnd ();
 
   /* Event for ACPI Menu configuration */
   Status = gBS->CreateEventEx (
@@ -737,8 +737,8 @@ NotifyPhase (
     RootBridgeIdx = DevPath->AcpiDevicePath.UID % (1<<16);
 
     // Notify BSP Driver
-    if (PCI_CORE_HOST_BRIDGE_NOTIFY_PHASE != NULL) {
-      PCI_CORE_HOST_BRIDGE_NOTIFY_PHASE (HostBridgeIdx, RootBridgeIdx, Phase);
+    if (Ac01PcieHostBridgeNotifyPhase != NULL) {
+      Ac01PcieHostBridgeNotifyPhase (HostBridgeIdx, RootBridgeIdx, Phase);
     }
 
     List = List->ForwardLink;

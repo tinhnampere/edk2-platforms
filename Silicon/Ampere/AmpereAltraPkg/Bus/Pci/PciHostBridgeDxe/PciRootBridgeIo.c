@@ -13,8 +13,8 @@
 #include <Library/DebugLib.h>
 #include <Library/IoLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/PcieCoreLib.h>
 #include <Library/PcdLib.h>
-#include <Library/PciHostBridgeElink.h>
 #include <Library/PciHostBridgeLib.h>
 #include <Library/PciLib.h>
 #include <Library/TimerLib.h>
@@ -528,15 +528,15 @@ RootBridgeIoPciRW (
     if (Write) {
       switch (OperationWidth) {
       case EfiPciWidthUint8:
-        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 1, Uint8Buffer);
+        Ac01PcieConfigRW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 1, Uint8Buffer);
         break;
 
       case EfiPciWidthUint16:
-        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 2, Uint8Buffer);
+        Ac01PcieConfigRW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 2, Uint8Buffer);
         break;
 
       case EfiPciWidthUint32:
-        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 4, Uint8Buffer);
+        Ac01PcieConfigRW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, TRUE, 4, Uint8Buffer);
         break;
 
       default:
@@ -550,15 +550,15 @@ RootBridgeIoPciRW (
     } else {
       switch (OperationWidth) {
       case EfiPciWidthUint8:
-        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 1, Uint8Buffer);
+        Ac01PcieConfigRW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 1, Uint8Buffer);
         break;
 
       case EfiPciWidthUint16:
-        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 2, Uint8Buffer);
+        Ac01PcieConfigRW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 2, Uint8Buffer);
         break;
 
       case EfiPciWidthUint32:
-        PCI_CORE_IO_PCI_RW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 4, Uint8Buffer);
+        Ac01PcieConfigRW ((VOID *)&RootBridgeInstance->RootBridge, PcieRegAddr, FALSE, 4, Uint8Buffer);
         break;
 
       default:
