@@ -8,7 +8,7 @@
 
 [Defines]
   INF_VERSION                    = 0x0001001B
-  BASE_NAME                      = PcieCore
+  BASE_NAME                      = PcieCoreLib
   FILE_GUID                      = 8ABFA0FC-313E-11E8-B467-0ED5F89F718B
   MODULE_TYPE                    = DXE_DRIVER
   VERSION_STRING                 = 1.0
