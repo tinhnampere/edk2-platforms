@@ -9,7 +9,7 @@
 #ifndef PCI_ROOT_BRIDGE_IO_H_
 #define PCI_ROOT_BRIDGE_IO_H_
 
-#include <IndustryStandard/Pci22.h>
+#include <IndustryStandard/Pci.h>
 #include <Library/PciLib.h>
 
 /**

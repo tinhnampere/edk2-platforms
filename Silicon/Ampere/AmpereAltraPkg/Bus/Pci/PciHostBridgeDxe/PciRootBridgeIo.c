@@ -6,7 +6,7 @@
 
 **/
 
-#include <IndustryStandard/Pci22.h>
+#include <IndustryStandard/Pci.h>
 #include <Library/ArmLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>

@@ -7,7 +7,7 @@
 **/
 
 #include <Guid/EventGroup.h>
-#include <IndustryStandard/Pci22.h>
+#include <IndustryStandard/Pci.h>
 #include <Library/AcpiHelperLib.h>
 #include <Library/ArmLib.h>
 #include <Library/BaseLib.h>

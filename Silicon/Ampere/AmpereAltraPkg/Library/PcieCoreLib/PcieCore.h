@@ -9,7 +9,7 @@
 #ifndef PCIECORE_H_
 #define PCIECORE_H_
 
-#include <IndustryStandard/Pci22.h>
+#include <IndustryStandard/Pci.h>
 #include <Library/ArmLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
