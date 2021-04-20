@@ -124,10 +124,16 @@ typedef enum {
   NV_SI_S0_RHS_RCA_EN                       = (76 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_S1_RHS_RCA_EN                       = (77 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_2P_DPLL                             = (78 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_2P_ALI_CFG                          = (79 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_2P_ALI_CFG_LINK_RETRAIN             = (80 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_2P_ALI_CFG_CRC                      = (81 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_DDR_RT_CONTROL_31_00                = (82 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_DDR_RT_CONTROL_63_32                = (83 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_DDR_TIMEOUT_CONTROL                 = (84 * 8) + NV_PREBOOT_PARAM_START,
   NV_PMPRO_REGION1_LOAD_START               = NV_SI_SLC_DISABLE,
-  NV_PMPRO_REGION1_LOAD_END                 = NV_SI_2P_DPLL,
+  NV_PMPRO_REGION1_LOAD_END                 = NV_SI_2P_ALI_CFG_CRC,
   /* NOTE: Add before NV_PREBOOT_PARAM_MAX and increase its value */
-  NV_PREBOOT_PARAM_MAX                      = (78 * 8) + NV_PREBOOT_PARAM_START,
+  NV_PREBOOT_PARAM_MAX                      = (84 * 8) + NV_PREBOOT_PARAM_START,
 
   /*
    * Manufactory non-volatile memory
@@ -201,9 +207,11 @@ typedef enum {
   NV_SI_DDR_TCAL_LOW_TEMP_VOLT_OFF_MV       = (62 * 8) + NV_MANU_PARAM_START,
   NV_SI_DDR_TCAL_PERIOD_SEC                 = (63 * 8) + NV_MANU_PARAM_START,
   NV_SI_DDR_TCAL_SOC_VOLT_CAP_MV            = (64 * 8) + NV_MANU_PARAM_START,
-  NV_PMPRO_REGION2_LOAD_END                 = NV_SI_DDR_TCAL_SOC_VOLT_CAP_MV,
+  NV_SI_ALTRAMAX_ICCMAX_EN                  = (65 * 8) + NV_MANU_PARAM_START,
+  NV_SI_MESH_TURBO_ACTIVITY_THRESHOLD       = (66 * 8) + NV_MANU_PARAM_START,
+  NV_PMPRO_REGION2_LOAD_END                 = NV_SI_MESH_TURBO_ACTIVITY_THRESHOLD,
   /* NOTE: Add before NV_MANU_PARAM_MAX and increase its value */
-  NV_MANU_PARAM_MAX                         = (64 * 8) + NV_MANU_PARAM_START,
+  NV_MANU_PARAM_MAX                         = (66 * 8) + NV_MANU_PARAM_START,
 
   /*
    * User non-volatile memory
@@ -268,8 +276,15 @@ typedef enum {
   NV_SI_RAS_PCIE_AER_FW_FIRST               = (54 * 8) + NV_USER_PARAM_START,
   NV_SI_RAS_DRAM_EINJ_NOTRIGGER             = (55 * 8) + NV_USER_PARAM_START,
   NV_SI_RAS_AEST_PROC_EN                    = (56 * 8) + NV_USER_PARAM_START,
+  NV_SI_MESH_S0_CXG_RC_STRONG_ORDERING_EN   = (57 * 8) + NV_USER_PARAM_START,
+  NV_SI_MESH_S1_CXG_RC_STRONG_ORDERING_EN   = (58 * 8) + NV_USER_PARAM_START,
+  NV_SI_2P_RESERVED0                        = (59 * 8) + NV_USER_PARAM_START,
+  NV_SI_2P_RESERVED1                        = (60 * 8) + NV_USER_PARAM_START,
+  NV_SI_2P_RESERVED2                        = (61 * 8) + NV_USER_PARAM_START,
+  NV_SI_HCR_EL2_CTL_LOW                     = (62 * 8) + NV_USER_PARAM_START,
+  NV_SI_HCR_EL2_CTL_HIGH                    = (63 * 8) + NV_USER_PARAM_START,
   /* NOTE: Add before NV_USER_PARAM_MAX and increase its value */
-  NV_USER_PARAM_MAX                         = (56 * 8) + NV_USER_PARAM_START,
+  NV_USER_PARAM_MAX                         = (63 * 8) + NV_USER_PARAM_START,
   NV_PMPRO_REGION3_LOAD_START               = NV_USER_PARAM_START,
   NV_PMPRO_REGION3_LOAD_END                 = NV_USER_PARAM_MAX,
 
@@ -491,9 +506,10 @@ typedef enum {
   NV_SI_RO_BOARD_TPM_DISABLE                        = (196 * 8) + NV_BOARD_PARAM_START,
   NV_SI_RO_BOARD_MESH_S0_CXG_RC_STRONG_ORDERING_EN  = (197 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_MESH_S1_CXG_RC_STRONG_ORDERING_EN  = (198 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
-  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_MESH_S1_CXG_RC_STRONG_ORDERING_EN,
+  NV_SI_RO_BOARD_GPIO_SW_WATCHDOG_EN                = (199 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
+  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_GPIO_SW_WATCHDOG_EN,
   /* NOTE: Add before NV_BOARD_PARAM_MAX and increase its value */
-  NV_BOARD_PARAM_MAX                                = (198 * 8) + NV_BOARD_PARAM_START,
+  NV_BOARD_PARAM_MAX                                = (199 * 8) + NV_BOARD_PARAM_START,
 } NVPARAM;
 
 #endif /* NVPARAMDEF_H_ */
