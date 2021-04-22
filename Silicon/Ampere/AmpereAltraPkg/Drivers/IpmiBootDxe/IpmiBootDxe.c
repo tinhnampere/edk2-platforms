@@ -490,10 +490,10 @@ Exit:
   // UiApp was registered with HIDDEN attribute and will be ignored by BDS.
   // Therefore, if first BootOption is UiApp, Manually set Boot OS Indication.
   //
-  DataSize = sizeof (UINT64);
   GetEfiGlobalVariable2 (L"BootOrder", (VOID **)&BootOrder, &mBootOrderSize);
   if (BootOrder != NULL) {
     if (CompareBBSType (BootOrder[0], BBS_TYPE_MENU)) {
+      DataSize = sizeof (UINT64);
       Status = gRT->GetVariable (
                       EFI_OS_INDICATIONS_VARIABLE_NAME,
                       &gEfiGlobalVariableGuid,
@@ -506,7 +506,7 @@ Exit:
                       EFI_OS_INDICATIONS_VARIABLE_NAME,
                       &gEfiGlobalVariableGuid,
                       EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-                      DataSize,
+                      sizeof (UINT64),
                       &OsIndication
                       );
       ASSERT_EFI_ERROR (Status);
