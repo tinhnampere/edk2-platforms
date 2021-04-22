@@ -46,7 +46,7 @@ NumBlocks     = 0xAC
 ################################################################################
 
 0x00000000|0x00AC0000
-gAmpereTokenSpaceGuid.PcdFvMainCoreBaseAddress|gAmpereTokenSpaceGuid.PcdFvMainCoreSize
+gArmTokenSpaceGuid.PcdFvBaseAddress|gArmTokenSpaceGuid.PcdFvSize
 FV = FVMAIN_COMPACT
 
 ################################################################################

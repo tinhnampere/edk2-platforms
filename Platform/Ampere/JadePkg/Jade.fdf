@@ -46,20 +46,20 @@ NumBlocks     = 0x1F
 ################################################################################
 
 #
-# FV_PEI
+# FV MAIN
 # Offset: 0x00000000
-# Size:   0x000C0000
+# Size:   0x00740000
 #
-0x00000000|0x000C0000
-gAmpereTokenSpaceGuid.PcdFvPeiBaseAddress|gAmpereTokenSpaceGuid.PcdFvPeiSize
-FV = FV_PEI
+0x00000000|0x00740000
+gArmTokenSpaceGuid.PcdFvBaseAddress|gArmTokenSpaceGuid.PcdFvSize
+FV = FVMAIN_COMPACT
 
 #
 # NV Variables
-# Offset: 0x000C0000
+# Offset: 0x00740000
 # Size:   0x00080000
 #
-0x000C0000|0x00030000
+0x00740000|0x00030000
 gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
 DATA = {
   ## This is the EFI_FIRMWARE_VOLUME_HEADER
@@ -96,7 +96,7 @@ DATA = {
   0x5A, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 }
 
-0x000F0000|0x00010000
+0x00770000|0x00010000
 gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize
 DATA = {
   # EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER->Signature = gEdkiiWorkingBlockSignatureGuid =
@@ -109,24 +109,8 @@ DATA = {
   0xE0, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 }
 
-0x00100000|0x00040000
+0x00780000|0x00040000
 gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize
-
-#
-# NVRAM Backup
-# Offset: 0x00140000
-# Size:   0x00080000
-# T.B.D
-#
-
-#
-# FV_MAIN
-# Offset: 0x001C0000
-# Size:   0x00600000
-#
-0x001C0000|0x00600000
-gAmpereTokenSpaceGuid.PcdFvMainCoreBaseAddress|gAmpereTokenSpaceGuid.PcdFvMainCoreSize
-FV = FvMain
 
 ################################################################################
 #
@@ -139,9 +123,7 @@ FV = FvMain
 #
 ################################################################################
 
-[FV.FV_PEI]
-BlockSize          = 0x40000
-NumBlocks          = 0x3
+[FV.FVMAIN_COMPACT]
 FvAlignment        = 16
 ERASE_POLARITY     = 1
 MEMORY_MAPPED      = TRUE
@@ -164,7 +146,6 @@ APRIORI PEI {
   INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
   INF MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
   INF MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
-
 }
 
   INF ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
@@ -197,9 +178,13 @@ APRIORI PEI {
 
   INF RuleOverride = FMP_IMAGE_DESC Platform/Ampere/JadePkg/Capsule/SystemFirmwareDescriptor/SystemFirmwareDescriptor.inf
 
+  FILE FV_IMAGE = 9E21FD93-9C72-4c15-8C4B-E77F1DB2D792 {
+    SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+      SECTION FV_IMAGE = FVMAIN
+    }
+  }
+
 [FV.FvMain]
-BlockSize          = 0x40000
-NumBlocks          = 0x18
 FvAlignment        = 16
 ERASE_POLARITY     = 1
 MEMORY_MAPPED      = TRUE

@@ -354,12 +354,6 @@
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x90000000
 
   #
-  # Firmware Volume
-  #
-  gArmTokenSpaceGuid.PcdFvBaseAddress|0x92000000
-  gArmTokenSpaceGuid.PcdFvSize|0x007c0000
-
-  #
   # UEFI region size
   #
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize|0x08000000

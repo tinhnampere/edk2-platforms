@@ -29,19 +29,12 @@ PlatformPeim (
   UINT64 FvMainBase;
   UINT32 FvMainSize;
 
-  ASSERT (FixedPcdGet32 (PcdFvMainCoreSize) != 0);
-
   // Build FV_MAIN Hand-off block (HOB) to let DXE IPL pick up correctly
-  FvMainBase = FixedPcdGet64 (PcdFvMainCoreBaseAddress);
-  FvMainSize = FixedPcdGet32 (PcdFvMainCoreSize);
+  FvMainBase = FixedPcdGet64 (PcdFvBaseAddress);
+  FvMainSize = FixedPcdGet32 (PcdFvSize);
+  ASSERT (FvMainSize != 0);
+
   BuildFvHob (FvMainBase, FvMainSize);
-  PeiServicesInstallFvInfoPpi (
-    &(((EFI_FIRMWARE_VOLUME_HEADER *)ReadUnaligned64 (&FvMainBase)))->FileSystemGuid,
-    (VOID *)(UINTN)ReadUnaligned64 (&FvMainBase),
-    FvMainSize,
-    NULL,
-    NULL
-    );
 
   return EFI_SUCCESS;
 }

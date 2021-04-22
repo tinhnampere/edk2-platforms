@@ -35,8 +35,8 @@
   PeiServicesLib
 
 [FixedPcd]
-  gAmpereTokenSpaceGuid.PcdFvMainCoreBaseAddress
-  gAmpereTokenSpaceGuid.PcdFvMainCoreSize
+  gArmTokenSpaceGuid.PcdFvBaseAddress
+  gArmTokenSpaceGuid.PcdFvSize
 
 [Depex]
   TRUE
