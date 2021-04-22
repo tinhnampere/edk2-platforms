@@ -43,14 +43,6 @@
 #define PCIE_PHY_DEBUG(arg...)
 #endif
 
-#ifdef PCIE_CORE_MMIO_DEBUG
-#define PCIE_DEBUG_MMIO(arg...)            \
-  DEBUG ((DEBUG_INFO,"PCICore (DBG): "));  \
-  DEBUG ((DEBUG_INFO,## arg))
-#else
-#define PCIE_DEBUG_MMIO(arg...)
-#endif
-
 #ifdef PCIE_CORE_DEBUG
 #define PCIE_DEBUG(arg...)                   \
   if (DebugCodeEnabled()) {                  \
@@ -93,9 +85,6 @@
 /* The base address of MMIO32 Registers */
 #define AC01_PCIE_MMIO32_BASE_1P   0x000040000000, 0x000050000000, 0x000060000000, 0x000070000000, 0x000001000000, 0x000010000000, 0x000020000000, 0x000030000000, 0, 0, 0, 0, 0, 0, 0, 0
 
-/* A switch to enable PciBus Driver Debug messages over Serial Port. */
-#define PCI_BUS_DEBUG_MESSAGES    1
-
 /* DSDT RCA2 PCIe Meme32 Attribute */
 #define AC01_PCIE_RCA2_QMEM    0x0000000000000000, 0x0000000060000000, 0x000000006FFFFFFF, 0x0000000000000000, 0x0000000010000000
 
@@ -114,29 +103,11 @@
 /* DSDT RCB3 PCIe Meme32 Attribute */
 #define AC01_PCIE_RCB3_QMEM    0x0000000000000000, 0x0000000030000000, 0x000000003FFFFFFF, 0x0000000000000000, 0x0000000010000000
 
-/* Ampere Pcie vendor ID */
-#define AMPERE_PCIE_VENDORID  0x1DEF
-
-/* Ampere Pcie device ID */
-#define AMPERE_PCIE_DEVICEID  0xE00D
-
 /* The start of TBU PMU IRQ array. */
 #define SMMU_TBU_PMU_IRQ_START_ARRAY  224, 230, 236, 242, 160, 170, 180, 190, 544, 550, 556, 562, 480, 490, 500, 510
 
 /* The start of TCU PMU IRQ array */
 #define SMMU_TCU_PMU_IRQ_START_ARRAY  256, 257, 258, 259, 260, 261, 262, 263, 576, 577, 578, 579, 580, 581, 582, 583
-
-/* Token Enabled to use PCIIO Mapped address for either DMA or PIO Data Transfer*/
-#define USE_PCIIO_MAP_ADDRESS_FOR_DATA_TRANSFER   1
-
-/* Pci Express Base Addrerss should come from CSP module */
-#define PCIEX_BASE_ADDRESS    0x00000000
-
-#define PCIEX_LENGTH          0x10000000
-/* Pci Express Extended Config Space length should come from CSP module */
-
-#define ISA_IRQ_MASK          0
-
 
 enum PCIE_LINK_WIDTH {
   LNKW_NONE = 0,
