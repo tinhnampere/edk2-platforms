@@ -91,13 +91,12 @@
   gAmpereTokenSpaceGuid.PcdIpmiSsifResponseRetryCount|250|UINT8|0x00000E
   gAmpereTokenSpaceGuid.PcdIpmiSsifResponseRetryInterval|20000|UINT32|0x0000000F # 20ms
 
-[PcdsFixedAtBuild, PcdsDynamic]
+[PcdsFixedAtBuild, PcdsDynamic, PcdsDynamicEx]
   #
   # Firmware Volume Pcds
   #
-  gAmpereTokenSpaceGuid.PcdFvBlockSize|0x00040000|UINT32|0xA0000004
+  gAmpereTokenSpaceGuid.PcdFvBlockSize|0|UINT32|0xB0000001
 
-[PcdsFixedAtBuild, PcdsDynamic, PcdsDynamicEx]
   #
   # SMBIOS, default or template values
   #

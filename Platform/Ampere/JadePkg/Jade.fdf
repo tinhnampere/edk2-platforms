@@ -26,8 +26,8 @@ Size          = 0x007C0000|gArmTokenSpaceGuid.PcdFdSize         # The size in by
 ErasePolarity = 1
 
 # This one is tricky, it must be: BlockSize * NumBlocks = Size
-BlockSize     = 0x40000
-NumBlocks     = 0x1F
+BlockSize     = 0x10000|gAmpereTokenSpaceGuid.PcdFvBlockSize
+NumBlocks     = 0x7C
 
 ################################################################################
 #
