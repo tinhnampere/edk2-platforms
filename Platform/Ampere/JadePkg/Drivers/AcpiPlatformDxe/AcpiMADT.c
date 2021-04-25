@@ -106,51 +106,34 @@ UINT32 Ac01CoreOrderQuadrant[PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_C
 
 EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER *MadtTablePointer;
 
-STATIC UINT32 *
+UINT32 *
 CpuGetCoreOrder (
   VOID
   )
 {
-  PLATFORM_INFO_HOB  *PlatformHob;
-  VOID               *Hob;
   UINT8              SubNumaMode;
-  UINT8              Ac01Chip = 1;
-
-  /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
-  if (Hob == NULL) {
-    return SUBNUMA_MODE_MONOLITHIC;
-  }
-  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
-  Ac01Chip = ((PlatformHob->ScuProductId[0] & 0xFF) == 0x1) ? 1 : 0;
 
   SubNumaMode = CpuGetSubNumaMode ();
   switch (SubNumaMode) {
   case SUBNUMA_MODE_MONOLITHIC:
-    if (Ac01Chip != 0) {
-      return (UINT32 *)&Ac01CoreOrderMonolithic;
-    }
+    return (UINT32 *)&Ac01CoreOrderMonolithic;
 
   case SUBNUMA_MODE_HEMISPHERE:
-    if (Ac01Chip != 0) {
-      return (UINT32 *)&Ac01CoreOrderHemisphere;
-    }
     return (UINT32 *)&Ac01CoreOrderHemisphere;
 
   case SUBNUMA_MODE_QUADRANT:
-    if (Ac01Chip != 0) {
-      return (UINT32 *)&Ac01CoreOrderQuadrant;
-    }
-  }
+    return (UINT32 *)&Ac01CoreOrderQuadrant;
 
-  if (Ac01Chip != 0) {
-    return (UINT32 *)&Ac01CoreOrderMonolithic;
+  default:
+    // Should never reach here
+    ASSERT (FALSE);
+    return NULL;
   }
 
   return NULL;
 }
 
-STATIC UINT32
+UINT32
 AcpiInstallMadtProcessorNode (
   VOID   *EntryPointer,
   UINT32 CpuId
@@ -183,7 +166,7 @@ AcpiInstallMadtProcessorNode (
   return Size;
 }
 
-STATIC UINT32
+UINT32
 AcpiInstallMadtGicD (
   VOID *EntryPointer
   )
@@ -197,7 +180,7 @@ AcpiInstallMadtGicD (
   return Size;
 }
 
-STATIC UINT32
+UINT32
 AcpiInstallMadtGicR (
   VOID   *EntryPointer,
   UINT32 SocketId
@@ -210,7 +193,7 @@ AcpiInstallMadtGicR (
    * If the Slave socket is not present, discard the Slave socket
    * GIC redistributor region
    */
-  if ((SocketId == 1) && (GetNumberOfActiveCPMsPerSocket (SocketId) == 0)) {
+  if (SocketId == 1 && !IsSlaveSocketActive ()) {
     return 0;
   }
 
@@ -224,7 +207,7 @@ AcpiInstallMadtGicR (
   return Size;
 }
 
-STATIC UINT32
+UINT32
 AcpiInstallMadtGicIts (
   VOID   *EntryPointer,
   UINT32 Index
@@ -347,10 +330,6 @@ AcpiInstallMadtTable (
     PcdGetPtr (PcdAcpiDefaultOemId),
     sizeof (MadtTablePointer->Header.OemId)
     );
-  MadtTablePointer->Header.OemTableId = EFI_ACPI_OEM_TABLE_ID;
-  MadtTablePointer->Header.OemRevision = 3;
-  MadtTablePointer->Header.CreatorId = EFI_ACPI_CREATOR_ID;
-  MadtTablePointer->Header.CreatorRevision = EFI_ACPI_CREATOR_REVISION;
 
   AcpiTableChecksum (
     (UINT8 *)MadtTablePointer,
