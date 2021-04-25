@@ -215,7 +215,7 @@ ArmPlatformGetVirtualMemoryMap (
   VirtualMemoryTable[Index].Length       = 0x8000000ULL;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
-  if (GetNumberOfActiveSockets () == 2) {
+  if (IsSlaveSocketActive ()) {
     // Slave socket exist
     /*
      *  - PCIe RCA0 Device memory

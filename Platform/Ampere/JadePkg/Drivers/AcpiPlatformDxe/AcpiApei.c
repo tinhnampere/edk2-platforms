@@ -455,7 +455,7 @@ AcpiApeiUpdate (
     AcpiApeiUninstallTable (EFI_ACPI_6_3_SOFTWARE_DELEGATED_EXCEPTIONS_INTERFACE_TABLE_SIGNATURE);
     AcpiApeiUninstallTable (EFI_ACPI_6_3_ERROR_INJECTION_TABLE_SIGNATURE);
   } else {
-    if (GetNumberOfActiveSockets () == 1) {
+    if (!IsSlaveSocketActive ()) {
       AcpiApeiHestUpdateTable1P ();
     }
   }

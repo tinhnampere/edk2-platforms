@@ -201,24 +201,6 @@ AcpiPatchDsu (
   }
 }
 
-STATIC UINT8
-PcieGetSubNumaMode (
-  VOID
-  )
-{
-  PLATFORM_INFO_HOB  *PlatformHob;
-  VOID               *Hob;
-
-  /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
-  if (Hob == NULL) {
-    return SUBNUMA_MODE_MONOLITHIC;
-  }
-  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
-
-  return PlatformHob->SubNumaMode[0];
-}
-
 VOID
 AcpiPatchPcieNuma (
   VOID
@@ -229,15 +211,15 @@ AcpiPatchPcieNuma (
   UINTN NumaIdx;
   UINTN NumPciePort;
   UINTN NumaAssignment[3][16] = {
-    { 0, 0, 0, 0, 0, 0, 0, 0,   // Monolitic Node 0 (S0)
-      1, 1, 1, 1, 1, 1, 1, 1 }, // Monolitic Node 1 (S1)
+    { 0, 0, 0, 0, 0, 0, 0, 0,   // Monolithic Node 0 (S0)
+      1, 1, 1, 1, 1, 1, 1, 1 }, // Monolithic Node 1 (S1)
     { 0, 1, 0, 1, 0, 0, 1, 1,   // Hemisphere Node 0, 1 (S0)
       2, 3, 2, 3, 2, 2, 3, 3 }, // Hemisphere Node 2, 3 (S1)
     { 0, 2, 1, 3, 1, 1, 3, 3,   // Quadrant Node 0, 1, 2, 3 (S0)
       4, 6, 5, 7, 5, 5, 7, 7 }, // Quadrant Node 4, 5, 6, 7 (S1)
   };
 
-  switch (PcieGetSubNumaMode ()) {
+  switch (CpuGetSubNumaMode ()) {
   case SUBNUMA_MODE_MONOLITHIC:
     NumaIdx = 0;
     break;
@@ -255,7 +237,7 @@ AcpiPatchPcieNuma (
     break;
   }
 
-  if (GetNumberOfActiveSockets () > 1) {
+  if (IsSlaveSocketActive ()) {
     NumPciePort = 16; // 16 ports total (8 per socket)
   } else {
     NumPciePort = 8;  // 8 ports total

@@ -279,7 +279,7 @@ AcpiInstallMadtTable (
           sizeof (GicDTemplate) +
           (PLATFORM_CPU_MAX_SOCKET * sizeof (GicRTemplate)) +
           ((SOCKET0_LAST_RC - SOCKET0_FIRST_RC +  1) * sizeof (GicItsTemplate));
-  if (GetNumberOfActiveSockets () > 1) {
+  if (IsSlaveSocketActive ()) {
     Size += ((SOCKET1_LAST_RC - SOCKET1_FIRST_RC +  1) * sizeof (GicItsTemplate));
   } else if (!IsSlaveSocketPresent ()) {
     Size += 2 * sizeof (GicItsTemplate); /* RCA0/1 */
@@ -329,7 +329,7 @@ AcpiInstallMadtTable (
   for (Index = SOCKET0_FIRST_RC; Index <= SOCKET0_LAST_RC; Index++) {
     Size += AcpiInstallMadtGicIts ((VOID *)((UINT64)GiccEntryPointer + Size), Index);
   }
-  if (GetNumberOfActiveSockets () > 1) {
+  if (IsSlaveSocketActive ()) {
     for (Index = SOCKET1_FIRST_RC; Index <= SOCKET1_LAST_RC; Index++) {
       Size += AcpiInstallMadtGicIts ((VOID *)((UINT64)GiccEntryPointer + Size), Index);
     }

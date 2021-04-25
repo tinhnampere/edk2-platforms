@@ -170,7 +170,7 @@ PrintSystemInfo (
   SerialPrint ("    CPU Clock                   : %d MHz\n", PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
   SerialPrint ("    Number of active sockets    : %d\n", GetNumberOfActiveSockets ());
   SerialPrint ("    Number of active cores      : %d\n", GetNumberOfActiveCores ());
-  if (GetNumberOfActiveSockets () > 1) {
+  if (IsSlaveSocketActive ()) {
     SerialPrint (
       "    Inter Socket Connection 0   : Width: x%d / Speed %a\n",
       PlatformHob->Link2PWidth[0],

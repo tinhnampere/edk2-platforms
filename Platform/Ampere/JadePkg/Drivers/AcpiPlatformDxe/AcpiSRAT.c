@@ -197,7 +197,7 @@ SratAddGicItsAffinity (
     Size += InstallGicItsAffinity ((VOID *)((UINT64)TmpPtr + Size), Index);
   }
 
-  if (GetNumberOfActiveSockets () > 1) {
+  if (IsSlaveSocketActive ()) {
     for (Index = SOCKET1_FIRST_RC; Index <= SOCKET1_LAST_RC; Index++) {
       GicItsAffinityTemplate.ItsId = Index;
       GicItsAffinityTemplate.ProximityDomain = 1;
@@ -233,7 +233,7 @@ AcpiInstallSratTable (
          SratCalculateNumMemoryRegion () * sizeof (EFI_ACPI_6_3_MEMORY_AFFINITY_STRUCTURE) +
          GetNumberOfActiveCores () * sizeof (EFI_ACPI_6_3_GICC_AFFINITY_STRUCTURE) +
          ((SOCKET0_LAST_RC - SOCKET0_FIRST_RC +  1) * sizeof (GicItsAffinityTemplate));
-  if (GetNumberOfActiveSockets () > 1) {
+  if (IsSlaveSocketActive ()) {
     Size += (SOCKET1_LAST_RC - SOCKET1_FIRST_RC +  1) * sizeof (GicItsAffinityTemplate);
   } else if (!IsSlaveSocketPresent ()) {
     Size += 2 * sizeof (GicItsAffinityTemplate); /* RCA0/1 */

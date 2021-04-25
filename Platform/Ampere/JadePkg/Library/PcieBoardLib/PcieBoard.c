@@ -212,7 +212,7 @@ PcieBoardParseRCParams (
     (RC->Active) ? "ACTIVE" : "INACTIVE"
     );
 
-  if (GetNumberOfActiveSockets () == 1 && RC->Socket == 1) {
+  if (!IsSlaveSocketActive () && RC->Socket == 1) {
     RC->Active = FALSE;
   }
 
@@ -235,7 +235,7 @@ PcieBoardParseRCParams (
       if ((PlatformHob->ScuProductId[0] & 0xff) == 0x01) {
         if (PlatformHob->AHBCId[0] == 0x20100
             || PlatformHob->AHBCId[0] == 0x21100
-            || (GetNumberOfActiveSockets () > 1
+            || (IsSlaveSocketActive ()
                 && (PlatformHob->AHBCId[1] == 0x20100
                     || PlatformHob->AHBCId[1] == 0x21100)))
         {
