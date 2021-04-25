@@ -40,7 +40,6 @@ EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER PPTTTableHeaderTemplate 
 };
 
 STATIC EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER *PpttTablePointer;
-STATIC UINT32                                                  PpttCoreOffset[PLATFORM_CPU_MAX_NUM_CORES];
 STATIC UINT32                                                  PpttClusterOffset[PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_MAX_SOCKET];
 STATIC UINT32                                                  PpttSocketOffset[PLATFORM_CPU_MAX_SOCKET];
 STATIC UINT32                                                  PpttRootOffset;
@@ -48,8 +47,8 @@ STATIC UINT32                                                  PpttL1DataCacheOf
 STATIC UINT32                                                  PpttL1InstructionCacheOffset[PLATFORM_CPU_MAX_NUM_CORES];
 STATIC UINT32                                                  PpttL2CacheOffset[PLATFORM_CPU_MAX_NUM_CORES];
 
-STATIC UINT32
-AcpiPpttProcessorThreadNode (
+UINT32
+AcpiPpttProcessorCoreNode (
   VOID   *EntryPointer,
   UINT32 CpuId
   )
@@ -71,7 +70,7 @@ AcpiPpttProcessorThreadNode (
   PpttProcessorEntryPointer->Flags.NodeIsALeaf = 1;
   PpttProcessorEntryPointer->Flags.IdenticalImplementation = 1;
   PpttProcessorEntryPointer->AcpiProcessorId = (SocketId << PLATFORM_SOCKET_UID_BIT_OFFSET) | (ClusterIdPerSocket << 8) | CoreIdPerCpm;
-  PpttProcessorEntryPointer->Parent = (UINT32)PpttCoreOffset[CpuId];
+  PpttProcessorEntryPointer->Parent = (UINT32)PpttClusterOffset[CpuId / PLATFORM_CPU_NUM_CORES_PER_CPM];
   PpttProcessorEntryPointer->NumberOfPrivateResources = 2; /* L1I + L1D */
 
   ResPointer = (UINT32 *)((UINT64)EntryPointer +
@@ -80,28 +79,6 @@ AcpiPpttProcessorThreadNode (
   ResPointer[1] = PpttL1DataCacheOffset[CpuId];
 
   PpttProcessorEntryPointer->Length = sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + 2 * sizeof (UINT32);
-
-  return PpttProcessorEntryPointer->Length;
-}
-
-STATIC UINT32
-AcpiPpttProcessorCoreNode (
-  VOID   *EntryPointer,
-  UINT32 CpuId
-  )
-{
-  EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
-
-  PpttCoreOffset[CpuId] = (UINT64)EntryPointer - (UINT64)PpttTablePointer;
-
-  CopyMem (
-    PpttProcessorEntryPointer,
-    &PPTTProcessorTemplate,
-    sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)
-    );
-
-  PpttProcessorEntryPointer->Parent = (UINT32)PpttClusterOffset[CpuId / PLATFORM_CPU_NUM_CORES_PER_CPM];
-  PpttProcessorEntryPointer->Flags.IdenticalImplementation = 1;
 
   return PpttProcessorEntryPointer->Length;
 }
@@ -296,8 +273,7 @@ AcpiInstallPpttTable (
           sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) +                                                        /* Root node */
           (PLATFORM_CPU_MAX_SOCKET * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +                            /* Socket node */
           (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_MAX_SOCKET * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +     /* Cluster node */
-          (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +                         /* Core node */
-          (PLATFORM_CPU_MAX_NUM_CORES * (sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + 2 * sizeof (UINT32))) + /* Thread node */
+          (PLATFORM_CPU_MAX_NUM_CORES * (sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + 2 * sizeof (UINT32))) + /* Core node */
           (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE)) +                             /* L1I node */
           (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE)) +                             /* L1D node */
           (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE));                              /* L2 node */
@@ -328,7 +304,6 @@ AcpiInstallPpttTable (
     Size += AcpiPpttL1InstructionCacheNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
     Size += AcpiPpttL1DataCacheNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
     Size += AcpiPpttProcessorCoreNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
-    Size += AcpiPpttProcessorThreadNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
   }
 
   CopyMem (
