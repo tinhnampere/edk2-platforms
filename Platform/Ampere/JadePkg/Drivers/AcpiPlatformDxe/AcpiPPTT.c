@@ -46,6 +46,7 @@ STATIC UINT32                                                  PpttRootOffset;
 STATIC UINT32                                                  PpttL1DataCacheOffset[PLATFORM_CPU_MAX_NUM_CORES];
 STATIC UINT32                                                  PpttL1InstructionCacheOffset[PLATFORM_CPU_MAX_NUM_CORES];
 STATIC UINT32                                                  PpttL2CacheOffset[PLATFORM_CPU_MAX_NUM_CORES];
+STATIC UINT32                                                  PpttSLCCacheOffset[PLATFORM_CPU_MAX_SOCKET];
 
 UINT32
 AcpiPpttProcessorCoreNode (
@@ -112,6 +113,7 @@ AcpiPpttSocketNode (
   )
 {
   EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
+  UINT32                                *ResPointer;
 
   PpttSocketOffset[SocketId] = (UINT64)EntryPointer - (UINT64)PpttTablePointer;
 
@@ -124,6 +126,12 @@ AcpiPpttSocketNode (
   PpttProcessorEntryPointer->Flags.PhysicalPackage = 1;
   PpttProcessorEntryPointer->Flags.IdenticalImplementation = 1;
   PpttProcessorEntryPointer->Parent = (UINT32)PpttRootOffset;
+
+  PpttProcessorEntryPointer->NumberOfPrivateResources = 1;
+  ResPointer = (UINT32 *)((UINT64)EntryPointer + sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
+  ResPointer[0] = PpttSLCCacheOffset[SocketId];
+
+  PpttProcessorEntryPointer->Length = sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + sizeof (UINT32);
 
   return PpttProcessorEntryPointer->Length;
 }
@@ -245,6 +253,39 @@ AcpiPpttL2CacheNode (
   return PpttCacheEntryPointer->Length;
 }
 
+STATIC UINT32
+AcpiPpttSLCCacheNode (
+  VOID   *EntryPointer,
+  UINT32 SocketId
+  )
+{
+  EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer = EntryPointer;
+
+  PpttSLCCacheOffset[SocketId] = (UINT64)EntryPointer - (UINT64)PpttTablePointer;
+  CopyMem (
+    PpttCacheEntryPointer,
+    &PPTTCacheTemplate,
+    sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE)
+    );
+
+  PpttCacheEntryPointer->Flags.LineSizeValid = 1;
+  PpttCacheEntryPointer->Flags.NumberOfSetsValid = 1;
+  PpttCacheEntryPointer->Flags.AssociativityValid = 1;
+  PpttCacheEntryPointer->Flags.SizePropertyValid = 1;
+  PpttCacheEntryPointer->Flags.CacheTypeValid = 1;
+
+  PpttCacheEntryPointer->Size = 0x2000000; /* 32 MB */
+  PpttCacheEntryPointer->NumberOfSets = 0x400; /* 1024 sets per 1MB HN-F */
+
+  PpttCacheEntryPointer->Associativity = 0x10; /* 16-way set-associative */
+  PpttCacheEntryPointer->LineSize = 0x40; /* 64 bytes */
+  PpttCacheEntryPointer->NextLevelOfCache = 0;
+
+  PpttCacheEntryPointer->Attributes.CacheType = 0x3; /* Unified Cache */
+
+  return PpttCacheEntryPointer->Length;
+}
+
 /*
  *  Install PPTT table.
  */
@@ -256,7 +297,7 @@ AcpiInstallPpttTable (
   EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = NULL;
   EFI_ACPI_TABLE_PROTOCOL               *AcpiTableProtocol;
   UINTN                                 PpttTableKey  = 0;
-  INTN                                  Count;
+  UINTN                                 Count;
   EFI_STATUS                            Status;
   UINTN                                 Size;
 
@@ -271,7 +312,8 @@ AcpiInstallPpttTable (
 
   Size = sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER) +
           sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) +                                                        /* Root node */
-          (PLATFORM_CPU_MAX_SOCKET * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +                            /* Socket node */
+          (PLATFORM_CPU_MAX_SOCKET * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE)) +                                /* SLC node */
+          (PLATFORM_CPU_MAX_SOCKET * (sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + sizeof (UINT32))) +        /* Socket node */
           (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_MAX_SOCKET * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)) +     /* Cluster node */
           (PLATFORM_CPU_MAX_NUM_CORES * (sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + 2 * sizeof (UINT32))) + /* Core node */
           (PLATFORM_CPU_MAX_NUM_CORES * sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE)) +                             /* L1I node */
@@ -292,6 +334,7 @@ AcpiInstallPpttTable (
   Size += AcpiPpttRootNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size));
 
   for (Count = 0; Count < PLATFORM_CPU_MAX_SOCKET; Count++) {
+    Size += AcpiPpttSLCCacheNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
     Size += AcpiPpttSocketNode ((VOID *)((UINT64)PpttProcessorEntryPointer + Size), Count);
   }
 
