@@ -6,6 +6,9 @@
 
 **/
 
+#include <Library/NVParamLib.h>
+#include <NVParamDef.h>
+
 #include "AcpiNfit.h"
 #include "AcpiPlatform.h"
 
@@ -250,6 +253,93 @@ AcpiPatchPcieNuma (
 }
 
 EFI_STATUS
+AcpiPatchPcieAerFwFirst (
+  VOID
+  )
+{
+  EFI_ACPI_SDT_PROTOCOL                       *AcpiTableProtocol;
+  EFI_ACPI_HANDLE                             TableHandle;
+  EFI_ACPI_HANDLE                             ChildHandle;
+  EFI_ACPI_DATA_TYPE                          DataType;
+  UINTN                                       DataSize;
+  CHAR8                                       ObjectPath[8];
+  EFI_STATUS                                  Status;
+  UINT32                                      AerFwFirstConfigValue;
+  UINT8                                       *Data;
+
+  //
+  // Check if PCIe AER Firmware First should be enabled
+  //
+  Status = NVParamGet (
+             NV_SI_RAS_PCIE_AER_FW_FIRST,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &AerFwFirstConfigValue
+             );
+  if (EFI_ERROR (Status)) {
+    Status = NVParamGet (
+               NV_SI_RO_BOARD_PCIE_AER_FW_FIRST,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               &AerFwFirstConfigValue
+               );
+    if (EFI_ERROR (Status)) {
+      AerFwFirstConfigValue = 0;
+    }
+  }
+
+  if (AerFwFirstConfigValue == 0) {
+    //
+    // By default, the PCIe AER FW-First (ACPI Object "AERF") is set to 0
+    // in the DSDT table.
+    //
+    return EFI_SUCCESS;
+  }
+
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiSdtProtocolGuid,
+                  NULL,
+                  (VOID **)&AcpiTableProtocol
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Unable to locate ACPI table protocol\n"));
+    return Status;
+  }
+
+  Status = AcpiOpenDSDT (AcpiTableProtocol, &TableHandle);
+  if (EFI_ERROR (Status)) {
+    AcpiTableProtocol->Close (TableHandle);
+    return Status;
+  }
+
+  //
+  // Update Name Object "AERF" (PCIe AER Firmware-First) if it is enabled.
+  //
+  AsciiSPrint (ObjectPath, sizeof (ObjectPath), "\\AERF");
+  Status = AcpiTableProtocol->FindPath (TableHandle, ObjectPath, &ChildHandle);
+  ASSERT_EFI_ERROR (Status);
+  if (!EFI_ERROR (Status)) {
+    Status = AcpiTableProtocol->GetOption (
+                                  ChildHandle,
+                                  0,
+                                  &DataType,
+                                  (VOID *)&Data,
+                                  &DataSize
+                                  );
+    ASSERT_EFI_ERROR (Status);
+    if (!EFI_ERROR (Status)
+        && Data[0] == AML_NAME_OP
+        && (Data[5] == AML_ZERO_OP || Data[5] == AML_ONE_OP))
+    {
+      Data[5] = 1; // Enable PCIe AER Firmware-First
+    }
+  }
+
+  AcpiTableProtocol->Close (TableHandle);
+  AcpiDSDTUpdateChecksum (AcpiTableProtocol);
+
+  return Status;
+}
+
+EFI_STATUS
 AcpiPatchDsdtTable (
   VOID
   )
@@ -260,6 +350,7 @@ AcpiPatchDsdtTable (
   AcpiPatchHwmon ();
   AcpiPatchNvdimm ();
   AcpiPatchPcieNuma ();
+  AcpiPatchPcieAerFwFirst ();
 
   return EFI_SUCCESS;
 }

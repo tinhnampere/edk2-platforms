@@ -69,6 +69,7 @@
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## ALWAYS_CONSUMED
+  gEfiAcpiSdtProtocolGuid
 
 [Depex]
   gEfiAcpiTableProtocolGuid

@@ -319,11 +319,15 @@
         //
         // Never allow native Hot plug, PME.
         // Never allow SHPC (no SHPC controller in this system).
-        // Allows PCI Express AER control
-        // Allows PCI Express Capabitlity Structure control
+        // Only allow PCIe AER control if PCIe AER Firmware-First is disabled
+        // Allows PCI Express Capability Structure control
         //
 
-        And (CTRL, 0x18, CTRL)
+        If (AERF) {
+          And (CTRL, 0x10, CTRL)
+        } Else {
+          And (CTRL, 0x18, CTRL)
+        }
 
         //
         // Check for unknown revision.
@@ -646,11 +650,15 @@
         //
         // Never allow native Hot plug, PME.
         // Never allow SHPC (no SHPC controller in this system).
-        // Allows PCI Express AER control
-        // Allows PCI Express Capabitlity Structure control
+        // Only allow PCIe AER control if PCIe AER Firmware-First is disabled
+        // Allows PCI Express Capability Structure control
         //
 
-        And (CTRL, 0x18, CTRL)
+        If (AERF) {
+          And (CTRL, 0x10, CTRL)
+        } Else {
+          And (CTRL, 0x18, CTRL)
+        }
 
         //
         // Check for unknown revision.
@@ -995,11 +1003,15 @@
         //
         // Never allow native Hot plug, PME.
         // Never allow SHPC (no SHPC controller in this system).
-        // Allows PCI Express AER control
-        // Allows PCI Express Capabitlity Structure control
+        // Only allow PCIe AER control if PCIe AER Firmware-First is disabled
+        // Allows PCI Express Capability Structure control
         //
 
-        And (CTRL, 0x18, CTRL)
+        If (AERF) {
+          And (CTRL, 0x10, CTRL)
+        } Else {
+          And (CTRL, 0x18, CTRL)
+        }
 
         //
         // Check for unknown revision.
@@ -1560,11 +1572,15 @@
         //
         // Never allow native Hot plug, PME.
         // Never allow SHPC (no SHPC controller in this system).
-        // Allows PCI Express AER control
-        // Allows PCI Express Capabitlity Structure control
+        // Only allow PCIe AER control if PCIe AER Firmware-First is disabled
+        // Allows PCI Express Capability Structure control
         //
 
-        And (CTRL, 0x18, CTRL)
+        If (AERF) {
+          And (CTRL, 0x10, CTRL)
+        } Else {
+          And (CTRL, 0x18, CTRL)
+        }
 
         //
         // Check for unknown revision.
@@ -2131,11 +2147,15 @@
         //
         // Never allow native Hot plug, PME.
         // Never allow SHPC (no SHPC controller in this system).
-        // Allows PCI Express AER control
-        // Allows PCI Express Capabitlity Structure control
+        // Only allow PCIe AER control if PCIe AER Firmware-First is disabled
+        // Allows PCI Express Capability Structure control
         //
 
-        And (CTRL, 0x18, CTRL)
+        If (AERF) {
+          And (CTRL, 0x10, CTRL)
+        } Else {
+          And (CTRL, 0x18, CTRL)
+        }
 
         //
         // Check for unknown revision.
@@ -2479,11 +2499,15 @@
         //
         // Never allow native Hot plug, PME.
         // Never allow SHPC (no SHPC controller in this system).
-        // Allows PCI Express AER control
-        // Allows PCI Express Capabitlity Structure control
+        // Only allow PCIe AER control if PCIe AER Firmware-First is disabled
+        // Allows PCI Express Capability Structure control
         //
 
-        And (CTRL, 0x18, CTRL)
+        If (AERF) {
+          And (CTRL, 0x10, CTRL)
+        } Else {
+          And (CTRL, 0x18, CTRL)
+        }
 
         //
         // Check for unknown revision.
