@@ -70,6 +70,7 @@
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## ALWAYS_CONSUMED
   gEfiAcpiSdtProtocolGuid
+  gEfiPciRootBridgeIoProtocolGuid
 
 [Depex]
   gEfiAcpiTableProtocolGuid

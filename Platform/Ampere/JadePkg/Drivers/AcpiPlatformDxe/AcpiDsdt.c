@@ -6,11 +6,25 @@
 
 **/
 
+#include <Protocol/PciRootBridgeIo.h>
 #include <Library/NVParamLib.h>
 #include <NVParamDef.h>
 
 #include "AcpiNfit.h"
 #include "AcpiPlatform.h"
+
+#define PCIE_DEVICE_CONTROL_OFFSET                      0x078
+#define PCIE_DEVICE_CONTROL_UNSUPPORT_REQ_REP_EN        0x08
+#define PCIE_DEVICE_CONTROL_FATAL_ERR_REPORT_EN         0x04
+#define PCIE_DEVICE_CONTROL_NON_FATAL_ERR_REPORT_EN     0x02
+#define PCIE_DEVICE_CONTROL_CORR_ERR_REPORT_EN          0x01
+
+#define PCIE_ROOT_ERR_CMD_OFFSET                        0x12C
+#define PCIE_ROOT_ERR_CMD_FATAL_ERR_REPORTING_EN        0x4
+#define PCIE_ROOT_ERR_CMD_NON_FATAL_ERR_REPORTING_EN    0x2
+#define PCIE_ROOT_ERR_CMD_CORR_ERR_REPORTING_EN         0x1
+
+#define PCIE_MAX_DEVICE_PER_ROOT_PORT 8
 
 STATIC VOID
 AcpiPatchCmn600 (
@@ -257,7 +271,11 @@ AcpiPatchPcieAerFwFirst (
   VOID
   )
 {
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_PCI_ADDRESS Address;
   EFI_ACPI_SDT_PROTOCOL                       *AcpiTableProtocol;
+  EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL             *PciRootBridgeIo;
+  EFI_HANDLE                                  *HandleBuffer;
+  UINTN                                       HandleCount;
   EFI_ACPI_HANDLE                             TableHandle;
   EFI_ACPI_HANDLE                             ChildHandle;
   EFI_ACPI_DATA_TYPE                          DataType;
@@ -265,6 +283,9 @@ AcpiPatchPcieAerFwFirst (
   CHAR8                                       ObjectPath[8];
   EFI_STATUS                                  Status;
   UINT32                                      AerFwFirstConfigValue;
+  UINT32                                      RegData;
+  UINT16                                      Device;
+  UINT32                                      Index;
   UINT8                                       *Data;
 
   //
@@ -335,6 +356,74 @@ AcpiPatchPcieAerFwFirst (
 
   AcpiTableProtocol->Close (TableHandle);
   AcpiDSDTUpdateChecksum (AcpiTableProtocol);
+
+  //
+  // For PCIe AER Firmware First, PCIe capability registers need
+  // to be updated to allow Firmware to detect AER errors.
+  //
+
+  HandleCount = 0;
+  HandleBuffer = NULL;
+  PciRootBridgeIo = NULL;
+
+  Status = gBS->LocateHandleBuffer (
+                  ByProtocol,
+                  &gEfiPciRootBridgeIoProtocolGuid,
+                  NULL,
+                  &HandleCount,
+                  &HandleBuffer
+                  );
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  //
+  // Loop through each root complex
+  //
+  for (Index = 0; Index < HandleCount; Index++) {
+    Status = gBS->HandleProtocol (
+                    HandleBuffer[Index],
+                    &gEfiPciRootBridgeIoProtocolGuid,
+                    (VOID **)&PciRootBridgeIo
+                    );
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+
+    //
+    // Loop through each root port
+    //
+    for (Device = 1; Device <= PCIE_MAX_DEVICE_PER_ROOT_PORT; Device++) {
+      Address.Bus = 0;
+      Address.Device = Device;
+      Address.Function = 0;
+      Address.Register = 0;
+
+      Address.ExtendedRegister = PCIE_DEVICE_CONTROL_OFFSET;
+      PciRootBridgeIo->Pci.Read (PciRootBridgeIo, EfiPciWidthUint32, *((UINT64 *)&Address), 1, &RegData);
+
+      if (RegData == 0xFFFFFFFF) {
+        continue;
+      }
+
+      RegData |= PCIE_DEVICE_CONTROL_UNSUPPORT_REQ_REP_EN
+                 | PCIE_DEVICE_CONTROL_FATAL_ERR_REPORT_EN
+                 | PCIE_DEVICE_CONTROL_NON_FATAL_ERR_REPORT_EN
+                 | PCIE_DEVICE_CONTROL_CORR_ERR_REPORT_EN;
+
+      PciRootBridgeIo->Pci.Write (PciRootBridgeIo, EfiPciWidthUint32, *((UINT64 *)&Address), 1, &RegData);
+
+      RegData = 0;
+      Address.ExtendedRegister = PCIE_ROOT_ERR_CMD_OFFSET;
+      PciRootBridgeIo->Pci.Read (PciRootBridgeIo, EfiPciWidthUint32, *((UINT64 *)&Address), 1, &RegData);
+
+      RegData |= PCIE_ROOT_ERR_CMD_FATAL_ERR_REPORTING_EN
+                 | PCIE_ROOT_ERR_CMD_NON_FATAL_ERR_REPORTING_EN
+                 | PCIE_ROOT_ERR_CMD_CORR_ERR_REPORTING_EN;
+
+      PciRootBridgeIo->Pci.Write (PciRootBridgeIo, EfiPciWidthUint32, *((UINT64 *)&Address), 1, &RegData);
+    }
+  }
 
   return Status;
 }
