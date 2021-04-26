@@ -18,14 +18,14 @@
   AcpiApei.c
   AcpiApei.h
   AcpiDsdt.c
-  AcpiMADT.c
+  AcpiMadt.c
   AcpiNfit.c
   AcpiPcct.c
-  AcpiPPTT.c
+  AcpiPptt.c
   AcpiPlatform.h
   AcpiPlatformDxe.c
-  AcpiSLIT.c
-  AcpiSRAT.c
+  AcpiSlit.c
+  AcpiSrat.c
 
 [Packages]
   ArmPkg/ArmPkg.dec
