@@ -359,7 +359,7 @@ ArmPlatformGetVirtualMemoryMap (
    */
   VirtualMemoryTable[++Index].PhysicalBase = 0x88230000ULL;
   VirtualMemoryTable[Index].VirtualBase  = 0x88230000ULL;
-  VirtualMemoryTable[Index].Length       = 0x30000ULL;
+  VirtualMemoryTable[Index].Length       = 0x50000ULL;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*

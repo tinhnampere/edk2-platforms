@@ -12,5 +12,5 @@
 [0004]                    Asl Compiler ID : "INTL"
 [0004]              Asl Compiler Revision : 20100528
 
-[0004]           Boot Error Region Length : 30000
+[0004]           Boot Error Region Length : 50000
 [0008]          Boot Error Region Address : 0000000088230000

@@ -33,7 +33,7 @@
 #define GENERIC_ERROR_DATA_REVISION  0x300
 
 
-#define PLAT_CRASH_ITERATOR_SIZE     0x238
+#define PLAT_CRASH_ITERATOR_SIZE     0x358
 #define SMPRO_CRASH_SIZE             0x800
 #define PMPRO_CRASH_SIZE             0x400
 #define HEST_NUM_ENTRIES_PER_SOC     3
@@ -41,7 +41,7 @@
 #define CURRENT_BERT_VERSION         0x10
 #define BERT_FLASH_OFFSET            0x91B30000ULL
 #define BERT_DDR_OFFSET              0x88230000ULL
-#define BERT_DDR_LENGTH              0x30000
+#define BERT_DDR_LENGTH              0x50000
 
 typedef struct {
   UINT8  Type;
