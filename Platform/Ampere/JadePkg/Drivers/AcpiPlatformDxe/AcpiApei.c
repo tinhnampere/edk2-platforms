@@ -156,6 +156,7 @@ WrapBertErrorData (
   CrashSize += sizeof (WrappedError->Bed.Vendor);
 
   WrappedError->Ges.BlockStatus.ErrorDataEntryCount = 1;
+  WrappedError->Ges.BlockStatus.UncorrectableErrorValid = 1;
   WrappedError->Ged.ErrorSeverity = BERT_DEFAULT_ERROR_SEVERITY;
   WrappedError->Ged.Revision = GENERIC_ERROR_DATA_REVISION;
 
