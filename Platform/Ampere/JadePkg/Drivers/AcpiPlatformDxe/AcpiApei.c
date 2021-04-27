@@ -153,7 +153,7 @@ WrapBertErrorData (
               GetNumberOfSupportedSockets () *
               GetMaximumNumberOfCores ();
   CrashSize += 2 * (SMPRO_CRASH_SIZE + PMPRO_CRASH_SIZE);
-  CrashSize += sizeof (WrappedError->Bed.Vendor);
+  CrashSize += sizeof (WrappedError->Bed.Vendor) + sizeof (WrappedError->Bed.BertRev);
 
   WrappedError->Ges.BlockStatus.ErrorDataEntryCount = 1;
   WrappedError->Ges.BlockStatus.UncorrectableErrorValid = 1;
