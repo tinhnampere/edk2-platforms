@@ -35,7 +35,7 @@
 
 #define PLAT_CRASH_ITERATOR_SIZE     0x398
 #define SMPRO_CRASH_SIZE             0x800
-#define PMPRO_CRASH_SIZE             0x400
+#define PMPRO_CRASH_SIZE             0x800
 #define HEST_NUM_ENTRIES_PER_SOC     3
 
 #define CURRENT_BERT_VERSION         0x10
