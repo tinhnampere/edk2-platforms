@@ -125,7 +125,9 @@ PullBertSpinorData (
   APEI_CRASH_DUMP_DATA *BertErrorData
   )
 {
-  UINTN Length = sizeof (*BertErrorData);
+  UINTN Length;
+
+  Length = sizeof (*BertErrorData);
 
   FlashReadCommand (
     (UINT8 *)BERT_FLASH_OFFSET,
@@ -151,24 +153,24 @@ WrapBertErrorData (
               GetNumberOfSupportedSockets () *
               GetMaximumNumberOfCores ();
   CrashSize += 2 * (SMPRO_CRASH_SIZE + PMPRO_CRASH_SIZE);
-  CrashSize += sizeof (WrappedError->Bed.vendor);
+  CrashSize += sizeof (WrappedError->Bed.Vendor);
 
-  WrappedError->Ges.BlockStatus = BERT_DEFAULT_BLOCK_TYPE;
+  WrappedError->Ges.BlockStatus.ErrorDataEntryCount = 1;
   WrappedError->Ged.ErrorSeverity = BERT_DEFAULT_ERROR_SEVERITY;
   WrappedError->Ged.Revision = GENERIC_ERROR_DATA_REVISION;
 
-  if (WrappedError->Bed.vendor.Type == RAS_2P_TYPE ||
-      (WrappedError->Bed.vendor.Type == BERT_ERROR_TYPE &&
-       (WrappedError->Bed.vendor.SubType == 0 ||
-        WrappedError->Bed.vendor.SubType == BERT_UEFI_FAILURE)))
+  if (WrappedError->Bed.Vendor.Type == RAS_2P_TYPE ||
+      (WrappedError->Bed.Vendor.Type == BERT_ERROR_TYPE &&
+       (WrappedError->Bed.Vendor.SubType == 0 ||
+        WrappedError->Bed.Vendor.SubType == BERT_UEFI_FAILURE)))
   {
-    WrappedError->Ged.ErrorDataLength = sizeof (WrappedError->Bed.vendor) +
+    WrappedError->Ged.ErrorDataLength = sizeof (WrappedError->Bed.Vendor) +
                                         sizeof (WrappedError->Bed.BertRev);
-    WrappedError->Ges.DataLength = sizeof (WrappedError->Bed.vendor) +
+    WrappedError->Ges.DataLength = sizeof (WrappedError->Bed.Vendor) +
                                    sizeof (WrappedError->Bed.BertRev) +
                                    sizeof (WrappedError->Ged);
     AdjustBERTRegionLen (
-      sizeof (WrappedError->Bed.vendor) +
+      sizeof (WrappedError->Bed.Vendor) +
       sizeof (WrappedError->Bed.BertRev) +
       sizeof (WrappedError->Ged) +
       sizeof (WrappedError->Ges)
@@ -224,9 +226,9 @@ WriteSpinorDefaultBertTable (
   APEI_BERT_ERROR_DATA DefaultData = {0};
 
   CreateDefaultBertData (&DefaultData);
-  if ((Bed->vendor.Type != DefaultData.Type)) {
+  if ((Bed->Vendor.Type != DefaultData.Type)) {
     Offset = BERT_FLASH_OFFSET +
-             OFFSET_OF (APEI_CRASH_DUMP_DATA, vendor) +
+             OFFSET_OF (APEI_CRASH_DUMP_DATA, Vendor) +
              OFFSET_OF (APEI_BERT_ERROR_DATA, Type);
     Length = sizeof (DefaultData.Type);
     FlashEraseCommand ((UINT8 *)Offset, Length);
@@ -237,9 +239,9 @@ WriteSpinorDefaultBertTable (
       );
   }
 
-  if ((Bed->vendor.SubType != DefaultData.SubType)) {
+  if ((Bed->Vendor.SubType != DefaultData.SubType)) {
     Offset = BERT_FLASH_OFFSET +
-             OFFSET_OF (APEI_CRASH_DUMP_DATA, vendor) +
+             OFFSET_OF (APEI_CRASH_DUMP_DATA, Vendor) +
              OFFSET_OF (APEI_BERT_ERROR_DATA, SubType);
     Length = sizeof (DefaultData.SubType);
     FlashEraseCommand ((UINT8 *)Offset, Length);
@@ -250,9 +252,9 @@ WriteSpinorDefaultBertTable (
       );
   }
 
-  if ((Bed->vendor.Instance != DefaultData.Instance)) {
+  if ((Bed->Vendor.Instance != DefaultData.Instance)) {
     Offset = BERT_FLASH_OFFSET +
-             OFFSET_OF (APEI_CRASH_DUMP_DATA, vendor) +
+             OFFSET_OF (APEI_CRASH_DUMP_DATA, Vendor) +
              OFFSET_OF (APEI_BERT_ERROR_DATA, Instance);
     Length = sizeof (DefaultData.Instance);
     FlashEraseCommand ((UINT8 *)Offset, Length);
@@ -263,10 +265,10 @@ WriteSpinorDefaultBertTable (
       );
   }
 
-  MsgDiff = AsciiStrnCmp (Bed->vendor.Msg, DefaultData.Msg, BERT_MSG_SIZE);
+  MsgDiff = AsciiStrnCmp (Bed->Vendor.Msg, DefaultData.Msg, BERT_MSG_SIZE);
   if (MsgDiff != 0) {
     Offset = BERT_FLASH_OFFSET +
-             OFFSET_OF (APEI_CRASH_DUMP_DATA, vendor) +
+             OFFSET_OF (APEI_CRASH_DUMP_DATA, Vendor) +
              OFFSET_OF (APEI_BERT_ERROR_DATA, Msg);
     Length = sizeof (DefaultData.Msg);
     FlashEraseCommand ((UINT8 *)Offset, Length);
@@ -289,9 +291,9 @@ WriteSpinorDefaultBertTable (
 
 /*
  * Checks Status of NV_SI_RAS_BERT_ENABLED
- * Returns 1 if enabled and 0 if disabled
+ * Returns TRUE if enabled and FALSE if disabled
  */
-UINT32
+BOOLEAN
 IsBertEnabled (
   VOID
   )
@@ -305,11 +307,11 @@ IsBertEnabled (
              &Value
              );
   if (EFI_ERROR (Status)) {
-    // Assume BERT is enabled
-    return 1;
+    // BERT is enabled by default
+    return TRUE;
   }
 
-  return Value;
+  return (Value != 0) ? TRUE : FALSE;
 }
 
 /*
@@ -320,13 +322,13 @@ WriteDDRBertTable (
   APEI_CRASH_DUMP_BERT_ERROR *Data
   )
 {
-  VOID *Blk = (void *)BERT_DDR_OFFSET;
+  VOID *Blk = (VOID *)BERT_DDR_OFFSET;
 
   /*
    * writing sizeof data to ddr produces alignment error
    * this is a temporary workaround
    */
-  CopyMem (Blk, Data, 0x30000);
+  CopyMem (Blk, Data, BERT_DDR_LENGTH);
 }
 
 /*
@@ -355,15 +357,16 @@ AcpiPopulateBert (
     }
     WriteSpinorDefaultBertTable (&(DDRError->Bed));
   }
+
   FreePool (DDRError);
   return EFI_SUCCESS;
 }
 
 /*
  * Checks Status of NV_SI_RAS_SDEI_ENABLED
- * Returns 1 if enabled and 0 if disabled or error occurred
+ * Returns TRUE if enabled and FALSE if disabled or error occurred
  */
-UINT32
+BOOLEAN
 IsSdeiEnabled (
   VOID
   )
@@ -376,8 +379,12 @@ IsSdeiEnabled (
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
              );
+  if (EFI_ERROR (Status)) {
+    // SDEI is disabled by default
+    return FALSE;
+  }
 
-  return (EFI_ERROR (Status)) ? 0 : Value;
+  return (Value != 0) ? TRUE : FALSE;
 }
 
 STATIC
@@ -460,7 +467,7 @@ AcpiApeiUpdate (
     }
   }
 
-  if (IsSdeiEnabled () == 0) {
+  if (!IsSdeiEnabled ()) {
     AcpiApeiUninstallTable (EFI_ACPI_6_3_SOFTWARE_DELEGATED_EXCEPTIONS_INTERFACE_TABLE_SIGNATURE);
   }
 

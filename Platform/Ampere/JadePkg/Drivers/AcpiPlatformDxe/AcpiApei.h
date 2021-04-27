@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef ACPIAPEI_H_
-#define ACPIAPEI_H_
+#ifndef ACPI_APEI_H_
+#define ACPI_APEI_H_
 
 #include <AcpiNVDataStruc.h>
 #include <Base.h>
@@ -29,7 +29,6 @@
 #define BERT_ERROR_TYPE              0x7F
 #define BERT_UEFI_FAILURE            5
 #define RAS_2P_TYPE                  0x03
-#define BERT_DEFAULT_BLOCK_TYPE      0x10
 #define BERT_DEFAULT_ERROR_SEVERITY  0x1
 #define GENERIC_ERROR_DATA_REVISION  0x300
 
@@ -42,26 +41,7 @@
 #define CURRENT_BERT_VERSION         0x10
 #define BERT_FLASH_OFFSET            0x91B30000ULL
 #define BERT_DDR_OFFSET              0x88230000ULL
-
-typedef struct {
-  UINT32 BlockStatus;
-  UINT32 RawDataOffset;
-  UINT32 RawDataLength;
-  UINT32 DataLength;
-  UINT32 ErrorSeverity;
-} APEI_GENERIC_ERROR_STATUS;
-
-typedef struct {
-  UINT8  SectionType[16];
-  UINT32 ErrorSeverity;
-  UINT16 Revision;
-  UINT8  ValidationBits;
-  UINT8  Flags;
-  UINT32 ErrorDataLength;
-  UINT8  FruId[16];
-  UINT8  FruText[20];
-  UINT64 Timestamp;
-} APEI_GENERIC_ERROR_DATA;
+#define BERT_DDR_LENGTH              0x30000
 
 typedef struct {
   UINT8  Type;
@@ -71,7 +51,7 @@ typedef struct {
 } APEI_BERT_ERROR_DATA;
 
 typedef struct {
-  APEI_BERT_ERROR_DATA vendor;
+  APEI_BERT_ERROR_DATA Vendor;
   UINT8                BertRev;
   UINT8                S0PmproRegisters[PMPRO_CRASH_SIZE];
   UINT8                S0SmproRegisters[SMPRO_CRASH_SIZE];
@@ -81,38 +61,44 @@ typedef struct {
 } APEI_CRASH_DUMP_DATA;
 
 typedef struct {
-  APEI_GENERIC_ERROR_STATUS Ges;
-  APEI_GENERIC_ERROR_DATA   Ged;
-  APEI_CRASH_DUMP_DATA      Bed;
+  EFI_ACPI_6_3_GENERIC_ERROR_STATUS_STRUCTURE     Ges;
+  EFI_ACPI_6_3_GENERIC_ERROR_DATA_ENTRY_STRUCTURE Ged;
+  APEI_CRASH_DUMP_DATA                            Bed;
 } APEI_CRASH_DUMP_BERT_ERROR;
 #pragma pack()
 
 VOID
+EFIAPI
 CreateDefaultBertData (
   APEI_BERT_ERROR_DATA *Data
   );
 
 VOID
+EFIAPI
 WrapBertErrorData (
   APEI_CRASH_DUMP_BERT_ERROR *WrappedError
   );
 
 VOID
+EFIAPI
 PullBertSpinorData (
   APEI_CRASH_DUMP_DATA *BertErrorData
   );
 
 VOID
+EFIAPI
 AdjustBERTRegionLen (
   UINT32 Len
   );
 
-UINT32
+BOOLEAN
+EFIAPI
 IsBertEnabled (
   VOID
   );
 
 VOID
+EFIAPI
 WriteDDRBertTable (
   APEI_CRASH_DUMP_BERT_ERROR *Data
   );
@@ -129,8 +115,9 @@ AcpiApeiUpdate (
   );
 
 EFI_STATUS
+EFIAPI
 AcpiPopulateBert (
   VOID
   );
 
-#endif /* ACPIAPEI_H_ */
+#endif /* ACPI_APEI_H_ */
