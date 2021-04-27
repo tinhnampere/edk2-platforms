@@ -27,7 +27,6 @@ formset
 
     subtitle text = STRING_TOKEN(STR_RAS_FORM);
 
-  grayoutif ideqval RasConfigNVData.EnableApeiSupport == 0;
     oneof varid  = RasConfigNVData.RasHardwareEinj,
       prompt      = STRING_TOKEN(STR_RAS_HARDWARE_EINJ_PROMPT),
       help        = STRING_TOKEN(STR_RAS_HARDWARE_EINJ_HELP),
@@ -45,9 +44,7 @@ formset
       option text = STRING_TOKEN(STR_RAS_COMMON_DISABLE), value = 0, flags = DEFAULT;
 
     endoneof;
-  endif;
 
-  grayoutif ideqval RasConfigNVData.EnableApeiSupport == 0;
     oneof varid  = RasConfigNVData.RasBertEnabled,
       prompt      = STRING_TOKEN(STR_RAS_BERT_ENABLED_PROMPT),
       help        = STRING_TOKEN(STR_RAS_BERT_ENABLED_HELP),
@@ -56,9 +53,7 @@ formset
       option text = STRING_TOKEN(STR_RAS_COMMON_DISABLE), value = 0, flags = 0;
 
     endoneof;
-  endif;
 
-  grayoutif ideqval RasConfigNVData.EnableApeiSupport == 0;
     oneof varid  = RasConfigNVData.RasSdeiEnabled,
       prompt      = STRING_TOKEN(STR_RAS_SDEI_ENABLED_PROMPT),
       help        = STRING_TOKEN(STR_RAS_SDEI_ENABLED_HELP),
@@ -67,9 +62,7 @@ formset
       option text = STRING_TOKEN(STR_RAS_COMMON_DISABLE), value = 0, flags = DEFAULT;
 
     endoneof;
-  endif;
 
-  grayoutif ideqval RasConfigNVData.EnableApeiSupport == 0;
     numeric varid   = RasConfigNVData.RasDdrCeThreshold,
       prompt  = STRING_TOKEN(STR_RAS_DDR_CE_THRESHOLD_PROMPT),
       help    = STRING_TOKEN(STR_RAS_DDR_CE_THRESHOLD_HELP),
@@ -79,7 +72,6 @@ formset
       default = 1,
 
     endnumeric;
-  endif;
 
     label LABEL_UPDATE;
     //
@@ -87,7 +79,6 @@ formset
     //
     label LABEL_END;
 
-  grayoutif ideqval RasConfigNVData.EnableApeiSupport == 0;
     numeric varid   = RasConfigNVData.RasCpmCeThreshold,
       prompt  = STRING_TOKEN(STR_RAS_CPM_CE_THRESHOLD_PROMPT),
       help    = STRING_TOKEN(STR_RAS_CPM_CE_THRESHOLD_HELP),
@@ -97,9 +88,7 @@ formset
       default = 1,
 
     endnumeric;
-  endif;
 
-  grayoutif ideqval RasConfigNVData.EnableApeiSupport == 0;
     numeric varid   = RasConfigNVData.RasLinkErrThreshold,
       prompt  = STRING_TOKEN(STR_RAS_LINK_ERR_THRESHOLD_PROMPT),
       help    = STRING_TOKEN(STR_RAS_LINK_ERR_THRESHOLD_HELP),
@@ -109,7 +98,6 @@ formset
       default = 1,
 
     endnumeric;
-  endif;
 
 
   endform;

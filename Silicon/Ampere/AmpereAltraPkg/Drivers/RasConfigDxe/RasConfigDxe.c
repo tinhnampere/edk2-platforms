@@ -15,6 +15,19 @@ RAS_CONFIG_PRIVATE_DATA *mPrivateData = NULL;
 
 EFI_GUID mRasConfigFormSetGuid = RAS_CONFIG_FORMSET_GUID;
 
+//
+// Default RAS Settings
+//
+#define RAS_DEFAULT_HARDWARE_EINJ_SUPPORT     0
+#define RAS_DEFAULT_PCIE_AER_FW_FIRST         0
+#define RAS_DEFAULT_BERT_SUPPORT              1
+#define RAS_DEFAULT_SDEI_SUPPORT              0
+#define RAS_DEFAULT_DDR_CE_THRESHOLD          1
+#define RAS_DEFAULT_2P_CE_THRESHOLD           1
+#define RAS_DEFAULT_PROCESSOR_CE_THRESHOLD    1
+#define RAS_DEFAULT_DDR_LINK_ERROR_THRESHOLD  1
+
+
 HII_VENDOR_DEVICE_PATH mRasConfigHiiVendorDevicePath = {
   {
     {
@@ -37,33 +50,6 @@ HII_VENDOR_DEVICE_PATH mRasConfigHiiVendorDevicePath = {
   }
 };
 
-// Return 0 when Apei is disable, else Apei enabled
-STATIC
-UINT32
-IsApeiSupport (
-  VOID
-  )
-{
-  EFI_STATUS                Status;
-  ACPI_CONFIG_VARSTORE_DATA AcpiConfigData;
-  UINTN                     BufferSize;
-
-  BufferSize = sizeof (ACPI_CONFIG_VARSTORE_DATA);
-  Status = gRT->GetVariable (
-                  L"AcpiConfigNVData",
-                  &gAcpiConfigFormSetGuid,
-                  NULL,
-                  &BufferSize,
-                  &AcpiConfigData
-                  );
-  if (!EFI_ERROR (Status)) {
-    return AcpiConfigData.EnableApeiSupport;
-  }
-
-  return 0;
-}
-
-STATIC
 EFI_STATUS
 RasConfigNvParamGet (
   OUT RAS_CONFIG_VARSTORE_DATA *Configuration
@@ -77,7 +63,21 @@ RasConfigNvParamGet (
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
              );
-  Configuration->RasHardwareEinj = (EFI_ERROR (Status)) ? 0 : Value;
+  if (EFI_ERROR (Status)) {
+    Value = RAS_DEFAULT_HARDWARE_EINJ_SUPPORT;
+    Status = NVParamSet (
+               NV_SI_HARDWARE_EINJ,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               Value
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a:%d NVParamSet() failed!\n", __FUNCTION__, __LINE__));
+      ASSERT_EFI_ERROR (Status);
+      Value = 0;
+    }
+  }
+  Configuration->RasHardwareEinj = Value;
 
   Status = NVParamGet (
              NV_SI_RAS_PCIE_AER_FW_FIRST,
@@ -85,11 +85,7 @@ RasConfigNvParamGet (
              &Value
              );
   if (EFI_ERROR (Status)) {
-    //
-    // The PCIe AER FW-First is disabled by default
-    // if any error happens when reading the parameter.
-    //
-    Value = 0;
+    Value = RAS_DEFAULT_PCIE_AER_FW_FIRST;
     Status = NVParamSet (
                NV_SI_RAS_PCIE_AER_FW_FIRST,
                NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
@@ -99,6 +95,7 @@ RasConfigNvParamGet (
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "%a:%d NVParamSet() failed!\n", __FUNCTION__, __LINE__));
       ASSERT_EFI_ERROR (Status);
+      Value = 0;
     }
   }
   Configuration->RasPcieAerFwFirstEnabled = Value;
@@ -108,109 +105,200 @@ RasConfigNvParamGet (
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
              );
-  Configuration->RasBertEnabled = (EFI_ERROR (Status)) ? 1 : Value;
+  if (EFI_ERROR (Status)) {
+    Value = RAS_DEFAULT_BERT_SUPPORT;
+    Status = NVParamSet (
+               NV_SI_RAS_BERT_ENABLED,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               Value
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a:%d NVParamSet() failed!\n", __FUNCTION__, __LINE__));
+      ASSERT_EFI_ERROR (Status);
+      Value = 0;
+    }
+  }
+  Configuration->RasBertEnabled = Value;
 
   Status = NVParamGet (
              NV_SI_RAS_SDEI_ENABLED,
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
              );
-  Configuration->RasSdeiEnabled = (EFI_ERROR (Status)) ? 0 : Value;
+  if (EFI_ERROR (Status)) {
+    Value = RAS_DEFAULT_SDEI_SUPPORT;
+    Status = NVParamSet (
+               NV_SI_RAS_SDEI_ENABLED,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               Value
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a:%d NVParamSet() failed!\n", __FUNCTION__, __LINE__));
+      ASSERT_EFI_ERROR (Status);
+      Value = 0;
+    }
+  }
+  Configuration->RasSdeiEnabled = Value;
 
   Status = NVParamGet (
              NV_SI_DDR_CE_RAS_THRESHOLD,
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
              );
-  Configuration->RasDdrCeThreshold = (EFI_ERROR (Status)) ? 1 : Value;
+  if (EFI_ERROR (Status)) {
+    Value = RAS_DEFAULT_DDR_CE_THRESHOLD;
+    Status = NVParamSet (
+               NV_SI_DDR_CE_RAS_THRESHOLD,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               Value
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a:%d NVParamSet() failed!\n", __FUNCTION__, __LINE__));
+      ASSERT_EFI_ERROR (Status);
+      Value = 0;
+    }
+  }
+  Configuration->RasDdrCeThreshold = Value;
 
   Status = NVParamGet (
              NV_SI_2P_CE_RAS_THRESHOLD,
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
              );
-  Configuration->Ras2pCeThreshold = (EFI_ERROR (Status)) ? 1 : Value;
+  if (EFI_ERROR (Status)) {
+    Value = RAS_DEFAULT_2P_CE_THRESHOLD;
+    Status = NVParamSet (
+               NV_SI_2P_CE_RAS_THRESHOLD,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               Value
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a:%d NVParamSet() failed!\n", __FUNCTION__, __LINE__));
+      ASSERT_EFI_ERROR (Status);
+      Value = 0;
+    }
+  }
+  Configuration->Ras2pCeThreshold = Value;
 
   Status = NVParamGet (
              NV_SI_CPM_CE_RAS_THRESHOLD,
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
              );
-  Configuration->RasCpmCeThreshold = (EFI_ERROR (Status)) ? 1 : Value;
+  if (EFI_ERROR (Status)) {
+    Value = RAS_DEFAULT_PROCESSOR_CE_THRESHOLD;
+    Status = NVParamSet (
+               NV_SI_CPM_CE_RAS_THRESHOLD,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               Value
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a:%d NVParamSet() failed!\n", __FUNCTION__, __LINE__));
+      ASSERT_EFI_ERROR (Status);
+      Value = 0;
+    }
+  }
+  Configuration->RasCpmCeThreshold = Value;
 
   Status = NVParamGet (
              NV_SI_LINK_ERR_THRESHOLD,
              NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
              &Value
              );
-  Configuration->RasLinkErrThreshold = (EFI_ERROR (Status)) ? 1 : Value;
-
-  Configuration->EnableApeiSupport = IsApeiSupport ();
+  if (EFI_ERROR (Status)) {
+    Value = RAS_DEFAULT_DDR_LINK_ERROR_THRESHOLD;
+    Status = NVParamSet (
+               NV_SI_LINK_ERR_THRESHOLD,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               Value
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a:%d NVParamSet() failed!\n", __FUNCTION__, __LINE__));
+      ASSERT_EFI_ERROR (Status);
+      Value = 0;
+    }
+  }
+  Configuration->RasLinkErrThreshold = Value;
 
   return EFI_SUCCESS;
 }
 
-STATIC
 EFI_STATUS
 RasConfigNvParamSet (
   IN RAS_CONFIG_VARSTORE_DATA *Configuration
   )
 {
-  NVParamSet (
-    NV_SI_HARDWARE_EINJ,
-    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
-    NV_PERM_BIOS | NV_PERM_MANU,
-    Configuration->RasHardwareEinj
-    );
+  EFI_STATUS Status;
 
-  NVParamSet (
-    NV_SI_RAS_PCIE_AER_FW_FIRST,
-    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
-    NV_PERM_BIOS | NV_PERM_MANU,
-    Configuration->RasPcieAerFwFirstEnabled
-    );
+  Status = NVParamSet (
+             NV_SI_HARDWARE_EINJ,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             Configuration->RasHardwareEinj
+             );
+  ASSERT_EFI_ERROR (Status);
 
-  NVParamSet (
-    NV_SI_RAS_BERT_ENABLED,
-    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
-    NV_PERM_BIOS | NV_PERM_MANU,
-    Configuration->RasBertEnabled
-    );
+  Status = NVParamSet (
+             NV_SI_RAS_PCIE_AER_FW_FIRST,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             Configuration->RasPcieAerFwFirstEnabled
+             );
+  ASSERT_EFI_ERROR (Status);
 
-  NVParamSet (
-    NV_SI_RAS_SDEI_ENABLED,
-    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
-    NV_PERM_BIOS | NV_PERM_MANU,
-    Configuration->RasSdeiEnabled
-    );
+  Status = NVParamSet (
+             NV_SI_RAS_BERT_ENABLED,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             Configuration->RasBertEnabled
+             );
+  ASSERT_EFI_ERROR (Status);
 
-  NVParamSet (
-    NV_SI_DDR_CE_RAS_THRESHOLD,
-    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU |NV_PERM_BMC,
-    NV_PERM_BIOS | NV_PERM_MANU,
-    Configuration->RasDdrCeThreshold
-    );
+  Status = NVParamSet (
+             NV_SI_RAS_SDEI_ENABLED,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             Configuration->RasSdeiEnabled
+             );
+  ASSERT_EFI_ERROR (Status);
 
-  NVParamSet (
-    NV_SI_2P_CE_RAS_THRESHOLD,
-    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU |NV_PERM_BMC,
-    NV_PERM_BIOS | NV_PERM_MANU,
-    Configuration->Ras2pCeThreshold
-    );
+  Status = NVParamSet (
+             NV_SI_DDR_CE_RAS_THRESHOLD,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             Configuration->RasDdrCeThreshold
+             );
+  ASSERT_EFI_ERROR (Status);
 
-  NVParamSet (
-    NV_SI_CPM_CE_RAS_THRESHOLD,
-    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU |NV_PERM_BMC,
-    NV_PERM_BIOS | NV_PERM_MANU,
-    Configuration->RasCpmCeThreshold
-    );
+  Status = NVParamSet (
+             NV_SI_2P_CE_RAS_THRESHOLD,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             Configuration->Ras2pCeThreshold
+             );
+  ASSERT_EFI_ERROR (Status);
 
-  NVParamSet (
-    NV_SI_LINK_ERR_THRESHOLD,
-    NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU |NV_PERM_BMC,
-    NV_PERM_BIOS | NV_PERM_MANU,
-    Configuration->RasLinkErrThreshold
-    );
+  Status = NVParamSet (
+             NV_SI_CPM_CE_RAS_THRESHOLD,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             Configuration->RasCpmCeThreshold
+             );
+  ASSERT_EFI_ERROR (Status);
+
+  Status = NVParamSet (
+             NV_SI_LINK_ERR_THRESHOLD,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             NV_PERM_BIOS | NV_PERM_MANU,
+             Configuration->RasLinkErrThreshold
+             );
+  ASSERT_EFI_ERROR (Status);
 
   return EFI_SUCCESS;
 }
@@ -468,30 +556,6 @@ RasConfigCallback (
   return EFI_SUCCESS;
 }
 
-STATIC
-UINT8 *
-HiiCreateGrayoutIf (
-  IN VOID            *OpCodeHandle,
-  IN EFI_QUESTION_ID QuestionId
-  )
-{
-  struct {
-    EFI_IFR_OP_HEADER Header;
-    EFI_IFR_EQ_ID_VAL Condition;
-  } Buffer;
-
-  Buffer.Header.OpCode=EFI_IFR_GRAY_OUT_IF_OP;
-  Buffer.Header.Length=sizeof (EFI_IFR_OP_HEADER);
-  Buffer.Header.Scope=1;
-  Buffer.Condition.Header.OpCode=EFI_IFR_EQ_ID_VAL_OP;
-  Buffer.Condition.Header.Scope=0;
-  Buffer.Condition.Header.Length=sizeof (EFI_IFR_EQ_ID_VAL);
-  Buffer.Condition.QuestionId=QuestionId;
-  Buffer.Condition.Value=1;
-  return HiiCreateRawOpCodes (OpCodeHandle, (UINT8 *)&Buffer, sizeof (Buffer));
-}
-
-STATIC
 EFI_STATUS
 UpdateRasConfigScreen (
   IN RAS_CONFIG_PRIVATE_DATA *PrivateData
@@ -502,6 +566,10 @@ UpdateRasConfigScreen (
   EFI_IFR_GUID_LABEL *StartLabel;
   VOID               *EndOpCodeHandle;
   EFI_IFR_GUID_LABEL *EndLabel;
+
+  if (!IsSlaveSocketActive ()) {
+    return EFI_SUCCESS;
+  }
 
   //
   // Initialize the container for dynamic opcodes
@@ -544,32 +612,23 @@ UpdateRasConfigScreen (
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
-  if (IsSlaveSocketActive ()) {
-    if (PrivateData->Configuration.EnableApeiSupport == 0) {
-      HiiCreateGrayoutIf (StartOpCodeHandle, 0x8005);
-    }
-    //
-    // Create the numeric for 2P CE threshold
-    //
-    HiiCreateNumericOpCode (
-      StartOpCodeHandle,                             // Container for dynamic created opcodes
-      0x8005,                                        // Question ID
-      RAS_CONFIG_VARSTORE_ID,                        // VarStore ID
-      (UINT16)RAS_2P_CE_THRESHOLD,                   // Offset in Buffer Storage
-      STRING_TOKEN (STR_RAS_2P_CE_THRESHOLD_PROMPT), // Question prompt text
-      STRING_TOKEN (STR_RAS_2P_CE_THRESHOLD_HELP),
-      EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
-      EFI_IFR_NUMERIC_SIZE_4,
-      1,
-      8192,
-      1,
-      NULL
-      );
-
-    if (PrivateData->Configuration.EnableApeiSupport == 0) {
-      HiiCreateEndOpCode (StartOpCodeHandle);
-    }
-  }
+  //
+  // Create the numeric for 2P CE threshold
+  //
+  HiiCreateNumericOpCode (
+    StartOpCodeHandle,                             // Container for dynamic created opcodes
+    0x8005,                                        // Question ID
+    RAS_CONFIG_VARSTORE_ID,                        // VarStore ID
+    (UINT16)RAS_2P_CE_THRESHOLD_OFST,              // Offset in Buffer Storage
+    STRING_TOKEN (STR_RAS_2P_CE_THRESHOLD_PROMPT), // Question prompt text
+    STRING_TOKEN (STR_RAS_2P_CE_THRESHOLD_HELP),
+    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
+    EFI_IFR_NUMERIC_SIZE_4,
+    1,
+    8192,
+    1,
+    NULL
+    );
 
   Status = HiiUpdateForm (
              PrivateData->HiiHandle,  // HII handle

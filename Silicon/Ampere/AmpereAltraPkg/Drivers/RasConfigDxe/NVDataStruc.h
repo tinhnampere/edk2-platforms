@@ -6,10 +6,8 @@
 
 **/
 
-#ifndef NVDATASTRUC_H_
-#define NVDATASTRUC_H_
-
-#include <AcpiNVDataStruc.h>
+#ifndef RAS_CONFIG_NVDATA_STRUC_H_
+#define RAS_CONFIG_NVDATA_STRUC_H_
 
 #define RAS_CONFIG_VARSTORE_ID       0x1234
 #define RAS_CONFIG_FORM_ID           0x1235
@@ -27,4 +25,22 @@
 #define LABEL_UPDATE                 0x3234
 #define LABEL_END                    0xffff
 
-#endif /* NVDATASTRUC_H_ */
+#pragma pack(1)
+
+//
+// Ras Configuration NV data structure definition
+//
+typedef struct {
+  UINT32 RasHardwareEinj;
+  UINT32 RasPcieAerFwFirstEnabled;
+  UINT32 RasBertEnabled;
+  UINT32 RasSdeiEnabled;
+  UINT32 RasDdrCeThreshold;
+  UINT32 Ras2pCeThreshold;
+  UINT32 RasCpmCeThreshold;
+  UINT32 RasLinkErrThreshold;
+} RAS_CONFIG_VARSTORE_DATA;
+
+#pragma pack()
+
+#endif /* RAS_CONFIG_NVDATA_STRUC_H_ */

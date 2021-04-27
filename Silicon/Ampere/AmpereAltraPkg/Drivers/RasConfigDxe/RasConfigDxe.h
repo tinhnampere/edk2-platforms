@@ -43,7 +43,7 @@ extern UINT8 VfrBin[];
 //
 extern UINT8 RasConfigDxeStrings[];
 
-#define RAS_2P_CE_THRESHOLD  OFFSET_OF (RAS_CONFIG_VARSTORE_DATA, Ras2pCeThreshold)
+#define RAS_2P_CE_THRESHOLD_OFST  OFFSET_OF (RAS_CONFIG_VARSTORE_DATA, Ras2pCeThreshold)
 
 #define RAS_CONFIG_PRIVATE_SIGNATURE SIGNATURE_32 ('R', 'A', 'S', 'C')
 
