@@ -26,13 +26,13 @@
 #string STR_RAS_SDEI_ENABLED_HELP                   #language en-US "Enable Software Delegated Exception Interface for NMI support"
 
 #string STR_RAS_DDR_CE_THRESHOLD_PROMPT             #language en-US "DDR CE Threshold"
-#string STR_RAS_DDR_CE_THRESHOLD_HELP               #language en-US "Number of DDR CEs to occur during time interval before reporting"
+#string STR_RAS_DDR_CE_THRESHOLD_HELP               #language en-US "Number of DDR CEs to occur before using SCI notification to OS rather than polled notification"
 
 #string STR_RAS_2P_CE_THRESHOLD_PROMPT              #language en-US "2P CE Threshold"
-#string STR_RAS_2P_CE_THRESHOLD_HELP                #language en-US "Number of 2P CEs to occur during time interval before reporting"
+#string STR_RAS_2P_CE_THRESHOLD_HELP                #language en-US "Number of 2P CEs to occur before using SCI notification to OS rather than polled notification"
 
 #string STR_RAS_CPM_CE_THRESHOLD_PROMPT             #language en-US "Processor CE Threshold"
-#string STR_RAS_CPM_CE_THRESHOLD_HELP               #language en-US "Number of processor CEs to occur during time interval before reporting"
+#string STR_RAS_CPM_CE_THRESHOLD_HELP               #language en-US "Number of processor CEs to occur before using SCI notification to OS rather than polled notification"
 
 #string STR_RAS_LINK_ERR_THRESHOLD_PROMPT           #language en-US "DDR Link Error Threshold"
 #string STR_RAS_LINK_ERR_THRESHOLD_HELP             #language en-US "Number of DDR link errors before considering it fatal severity"
