@@ -14,7 +14,7 @@
   VERSION_STRING                 = 1.0
 
 [Sources]
-  Bert.asl
+  Bert.aslc
   Dbg2.aslc
   Einj.asl
   Fadt.aslc
