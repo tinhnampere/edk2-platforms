@@ -14,8 +14,8 @@ STATIC EFI_EVENT mAcpiRegistration = NULL;
 /*
  * This GUID must match the FILE_GUID in AcpiTables.inf of each boards
  */
+STATIC CONST EFI_GUID mAcpiCommonTableFile = { 0xCEFA2AEB, 0x357E, 0x4F48, { 0x80, 0x66, 0xEA, 0x95, 0x08, 0x53, 0x05, 0x6E } } ;
 STATIC CONST EFI_GUID mJadeAcpiTableFile = { 0x5addbc13, 0x8634, 0x480c, { 0x9b, 0x94, 0x67, 0x1b, 0x78, 0x55, 0xcd, 0xb8 } };
-
 /**
  * Callback called when ACPI Protocol is installed
  */
@@ -27,6 +27,9 @@ AcpiNotificationEvent (
 {
   EFI_STATUS                                   Status;
   EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp;
+
+  Status = LocateAndInstallAcpiFromFv (&mAcpiCommonTableFile);
+  ASSERT_EFI_ERROR (Status);
 
   Status = LocateAndInstallAcpiFromFv (&mJadeAcpiTableFile);
   ASSERT_EFI_ERROR (Status);
