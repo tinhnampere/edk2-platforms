@@ -585,7 +585,6 @@
   # Timer
   #
   ArmPkg/Drivers/TimerDxe/TimerDxe.inf
-  MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
 
   #
   # ARM GIC Dxe

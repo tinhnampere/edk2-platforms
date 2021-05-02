@@ -75,6 +75,11 @@
   #
   RealTimeClockLib|EmbeddedPkg/Library/VirtualRealTimeClockLib/VirtualRealTimeClockLib.inf
 
+  #
+  # Library for FailSafe support
+  #
+  FailSafeLib|Platform/Ampere/AmperePlatformPkg/Library/FailSafeLib/FailSafeLib.inf
+
 ################################################################################
 #
 # Specific Platform Pcds
@@ -98,3 +103,7 @@
 #
 ################################################################################
 [Components.common]
+  #
+  # FailSafe and Watchdog Timer
+  #
+  Platform/Ampere/AmperePlatformPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
