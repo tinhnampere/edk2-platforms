@@ -25,6 +25,8 @@
   Include                        # Root include for the package
 
 [LibraryClasses]
+  ##  @libraryclass  Provides functions to create the ACPI PCCT Table which which advertises PCC mailbox channel information.
+  AcpiPccLib|Silicon/Ampere/AmpereSiliconPkg/Include/Library/AcpiPccLib.h
 
 [Guids]
   gAmpereTokenSpaceGuid = { 0xdbd4436e, 0x89cb, 0x44dc, { 0xb5, 0xc0, 0x49, 0xc3, 0x91, 0x35, 0xbf, 0xdf } }
