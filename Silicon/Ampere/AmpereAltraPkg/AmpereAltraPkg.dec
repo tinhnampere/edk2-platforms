@@ -37,6 +37,12 @@
   ##  @libraryclass  Defines a set of methods to communicate with secure parition over MM interface.
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/MmCommunicationLib.h
 
+  ##  @libraryclass  Defines a set of methods to initialize Pcie
+  Ac01PcieLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/Ac01PcieLib.h
+
+  ##  @libraryclass  Defines a set of platform PCIe functions
+  BoardPcieLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/BoardPcieLib.h
+
   ##  @libraryclass  Defines a set of methods to access flash memory.
   FlashLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/FlashLib.h
 
