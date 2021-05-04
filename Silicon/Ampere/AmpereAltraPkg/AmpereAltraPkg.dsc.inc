@@ -83,6 +83,7 @@
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Library/NVParamLib/NVParamLib.inf
   MailboxInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Library/MailboxInterfaceLib/MailboxInterfaceLib.inf
   SystemFirmwareInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Library/SystemFirmwareInterfaceLib/SystemFirmwareInterfaceLib.inf
+  PciePhyLib|Silicon/Ampere/AmpereAltraBinPkg/Library/PciePhyLib/PciePhyLib.inf
   PcieCoreLib|Silicon/Ampere/AmpereAltraPkg/Library/PcieCoreLib/PcieCoreLib.inf
   AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/AmpereCpuLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
@@ -647,6 +648,39 @@
   MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   FatPkg/EnhancedFatDxe/Fat.inf
+
+  #
+  # SCSI Bus and Disk Driver
+  #
+  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+
+  #
+  # SATA Support
+  #
+  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  MdeModulePkg/Bus/Pci/SataControllerDxe/SataControllerDxe.inf
+  MdeModulePkg/Bus/Pci/NonDiscoverablePciDeviceDxe/NonDiscoverablePciDeviceDxe.inf
+
+  #
+  # NVME Support
+  #
+  MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
+
+  #
+  # USB Support
+  #
+  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+
+  #
+  # PCIe Support
+  #
+  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
 
   #
   # Bds
