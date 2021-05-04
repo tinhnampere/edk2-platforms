@@ -149,7 +149,7 @@ WrapBertErrorData (
   CrashSize = PLAT_CRASH_ITERATOR_SIZE *
               GetNumberOfSupportedSockets () *
               GetMaximumNumberOfCores ();
-  CrashSize += 2 * (SMPRO_CRASH_SIZE + PMPRO_CRASH_SIZE);
+  CrashSize += 2 * (SMPRO_CRASH_SIZE + PMPRO_CRASH_SIZE + RASIP_CRASH_SIZE);
   CrashSize += sizeof (WrappedError->Bed.Vendor) + sizeof (WrappedError->Bed.BertRev);
 
   WrappedError->Ges.BlockStatus.ErrorDataEntryCount = 1;
@@ -437,8 +437,27 @@ AcpiApeiUpdate (
   VOID
   )
 {
-  if (!IsSlaveSocketActive ()) {
-    AcpiApeiHestUpdateTable1P ();
+  EFI_STATUS                Status;
+  ACPI_CONFIG_VARSTORE_DATA AcpiConfigData;
+  UINTN                     BufferSize;
+
+  BufferSize = sizeof (ACPI_CONFIG_VARSTORE_DATA);
+  Status = gRT->GetVariable (
+                  L"AcpiConfigNVData",
+                  &gAcpiConfigFormSetGuid,
+                  NULL,
+                  &BufferSize,
+                  &AcpiConfigData
+                  );
+  if (!EFI_ERROR (Status) && (AcpiConfigData.EnableApeiSupport == 0)) {
+    AcpiApeiUninstallTable (EFI_ACPI_6_3_BOOT_ERROR_RECORD_TABLE_SIGNATURE);
+    AcpiApeiUninstallTable (EFI_ACPI_6_3_HARDWARE_ERROR_SOURCE_TABLE_SIGNATURE);
+    AcpiApeiUninstallTable (EFI_ACPI_6_3_SOFTWARE_DELEGATED_EXCEPTIONS_INTERFACE_TABLE_SIGNATURE);
+    AcpiApeiUninstallTable (EFI_ACPI_6_3_ERROR_INJECTION_TABLE_SIGNATURE);
+  } else {
+    if (!IsSlaveSocketActive ()) {
+      AcpiApeiHestUpdateTable1P ();
+    }
   }
 
   if (!IsSdeiEnabled ()) {
