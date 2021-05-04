@@ -43,6 +43,12 @@
   ##  @libraryclass  Defines a set of methods to initialize PHY
   PcieHotPlugLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PcieHotPlugLib.h
 
+  ##  @libraryclass  Defines a set of platform dependent functions
+  BoardPcieLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/BoardPcieLib.h
+
+  ##  @libraryclass  Defines a set of methods to initialize Pcie
+  Ac01PcieLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/Ac01PcieLib.h
+
   ##  @libraryclass  Defines a set of methods to access flash memory.
   FlashLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/FlashLib.h
 

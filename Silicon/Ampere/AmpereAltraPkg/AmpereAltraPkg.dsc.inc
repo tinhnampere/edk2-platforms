@@ -85,6 +85,7 @@
   SystemFirmwareInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Library/SystemFirmwareInterfaceLib/SystemFirmwareInterfaceLib.inf
   PcieHotPlugLib|Silicon/Ampere/AmpereAltraPkg/Library/PcieHotPlugLib/PcieHotPlugLib.inf
   PciePhyLib|Silicon/Ampere/AmpereAltraPkg/Library/PciePhyLib/PciePhyLib.inf
+  Ac01PcieLib|Silicon/Ampere/AmpereAltraPkg/Library/Ac01PcieLib/Ac01PcieLib.inf
   AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/AmpereCpuLib.inf
   FlashLib|Silicon/Ampere/AmpereAltraPkg/Library/FlashLib/FlashLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
