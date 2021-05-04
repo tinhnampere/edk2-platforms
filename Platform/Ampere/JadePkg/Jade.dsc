@@ -52,6 +52,7 @@
   DEFINE EDK2_SKIP_PEICORE       = TRUE
   DEFINE SECURE_BOOT_ENABLE      = FALSE
   DEFINE INCLUDE_TFTP_COMMAND    = TRUE
+  DEFINE NVRAM_UUID              = 84BC921F-9D4A-4D1D-A1A1-1AE13EDD07E5
 
   #
   # Network definition
@@ -89,6 +90,10 @@
 ################################################################################
 [PcdsFeatureFlag.common]
 [PcdsFixedAtBuild.common]
+  #
+  # NVRAM
+  #
+  gAmpereTokenSpaceGuid.PcdNvramUuid|"$(NVRAM_UUID)"
 
 !if $(SECURE_BOOT_ENABLE) == TRUE
   # Override the default values from SecurityPkg to ensure images

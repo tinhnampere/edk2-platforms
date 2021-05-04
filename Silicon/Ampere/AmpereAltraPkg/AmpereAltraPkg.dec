@@ -37,6 +37,9 @@
   ##  @libraryclass  Defines a set of methods to communicate with secure parition over MM interface.
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/MmCommunicationLib.h
 
+  ##  @libraryclass  Defines a set of methods to access flash memory.
+  FlashLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/FlashLib.h
+
   ##  @libraryclass  Defines a set of methods to generate random numbers by using Hardware RNG.
   TrngLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/TrngLib.h
 

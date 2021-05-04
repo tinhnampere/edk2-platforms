@@ -32,6 +32,11 @@
 
 [PcdsFixedAtBuild]
   #
+  # NVRAM
+  #
+  gAmpereTokenSpaceGuid.PcdNvramUuid|"C416535D-970B-41B9-859A-3CAF0FAF198C"|VOID*|0x00000010
+
+  #
   # SMpro PMpro Pcds
   #
   gAmpereTokenSpaceGuid.PcdSmproDbBaseReg|0x100000540000|UINT64|0x00000001
@@ -44,3 +49,6 @@
   # Firmware Volume Pcds
   #
   gAmpereTokenSpaceGuid.PcdFvBlockSize|0|UINT32|0xB0000001
+
+  # NVRam Pcds
+  gAmpereTokenSpaceGuid.PcdNvramErased|FALSE|BOOLEAN|0xB0000009
