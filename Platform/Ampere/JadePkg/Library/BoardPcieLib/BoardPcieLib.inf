@@ -1,0 +1,59 @@
+## @file
+#
+# Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = BoardPcieLib
+  FILE_GUID                      = 062191A6-E113-4FD6-84C7-E400B4B34759
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = BoardPcieLib
+
+[Sources]
+  BoardPcie.c
+  BoardPcieCommon.c
+  BoardPcieScreen.c
+  BoardPcieScreen.h
+  BoardPcieScreen.uni
+  BoardPcieVfr.h
+  BoardPcieVfr.vfr
+
+[Packages]
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+
+[LibraryClasses]
+  AmpereCpuLib
+  BaseLib
+  DevicePathLib
+  GpioLib
+  HiiLib
+  HobLib
+  MemoryAllocationLib
+  SystemFirmwareInterfaceLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+
+[Protocols]
+  gEfiDevicePathProtocolGuid
+  gEfiHiiStringProtocolGuid                     ## CONSUMES
+  gEfiHiiConfigRoutingProtocolGuid              ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
+  gEfiHiiDatabaseProtocolGuid                   ## CONSUMES
+  gEfiConfigKeywordHandlerProtocolGuid          ## CONSUMES
+
+[Guids]
+  gEfiIfrTianoGuid                              ## CONSUMES
+  gPlatformManagerFormsetGuid                   ## CONSUMES
+  gPlatformHobGuid                              ## CONSUMES
+
+[Depex]
+  TRUE
