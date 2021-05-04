@@ -1,0 +1,50 @@
+## @file
+#
+# Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = WatchdogConfigDxe
+  FILE_GUID                      = 135A0CA5-4851-4EF5-9E1A-C6E4610C39A9
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = WatchdogConfigInitialize
+
+[Sources.common]
+  NVDataStruc.h
+  Vfr.vfr
+  VfrStrings.uni
+  WatchdogConfigDxe.c
+  WatchdogConfigDxe.h
+
+[Packages]
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  DevicePathLib
+  HiiLib
+  NVParamLib
+  PrintLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+
+[Guids]
+  gPlatformManagerFormsetGuid
+  gWatchdogConfigFormSetGuid
+
+[Protocols]
+  gEfiDevicePathProtocolGuid                    ## CONSUMES
+  gEfiHiiConfigRoutingProtocolGuid              ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
+
+[Depex]
+  TRUE
