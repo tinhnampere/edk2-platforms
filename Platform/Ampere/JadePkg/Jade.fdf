@@ -356,5 +356,6 @@ APRIORI DXE {
   #
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInfoDxe/PlatformInfoDxe.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/MemInfoDxe/MemInfoDxe.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/CpuConfigDxe/CpuConfigDxe.inf
 
 !include Platform/Ampere/AmperePlatformPkg/FvRules.fdf.inc
