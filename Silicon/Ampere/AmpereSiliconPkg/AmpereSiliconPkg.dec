@@ -44,3 +44,6 @@
   # Firmware Volume Pcds
   #
   gAmpereTokenSpaceGuid.PcdFvBlockSize|0|UINT32|0xB0000001
+
+  # NVRam Pcds
+  gAmpereTokenSpaceGuid.PcdNvramErased|FALSE|BOOLEAN|0xB0000009
