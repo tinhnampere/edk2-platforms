@@ -1,0 +1,22 @@
+//
+// Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+//
+// SPDX-License-Identifier: BSD-2-Clause-Patent
+//
+
+#langdef en-US  "English"
+
+#string STR_WATCHDOG_CONFIG_FORM        #language en-US "Watchdog Configuration"
+#string STR_WATCHDOG_CONFIG_FORM_HELP   #language en-US "Watchdog Configuration"
+
+#string STR_WDT_TIME_DISABLE            #language en-US  "Disabled"
+#string STR_WDT_TIME_3MIN               #language en-US  "3 minutes"
+#string STR_WDT_TIME_4MIN               #language en-US  "4 minutes"
+#string STR_WDT_TIME_5MIN               #language en-US  "5 minutes"
+#string STR_WDT_TIME_6MIN               #language en-US  "6 minutes"
+#string STR_WDT_TIME_10MIN              #language en-US  "10 minutes"
+#string STR_WDT_TIME_15MIN              #language en-US  "15 minutes"
+#string STR_WDT_TIME_20MIN              #language en-US  "20 minutes"
+
+#string STR_SWDT_TIMEOUT                #language en-US  "Secure Watchdog Timeout"
+#string STR_SWDT_TIMEOUT_HELP           #language en-US  "Timeout when SCP will reset system if it doesn't receive response from ARMv8."

@@ -1,0 +1,45 @@
+/** @file
+
+  Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+
+  SPDX-License-Identifier: BSD-2-Clause-Patent
+
+**/
+
+#include "WatchdogConfigNVDataStruct.h"
+
+formset
+  guid      = WATCHDOG_CONFIG_FORMSET_GUID,
+  title     = STRING_TOKEN(STR_WATCHDOG_CONFIG_FORM),
+  help      = STRING_TOKEN(STR_WATCHDOG_CONFIG_FORM_HELP),
+  classguid = gPlatformManagerFormsetGuid,
+
+  //
+  // Define a variable Storage
+  //
+  varstore WATCHDOG_CONFIG_VARSTORE_DATA,
+    varid   = WATCHDOG_CONFIG_VARSTORE_ID,
+    name    = WatchdogConfigNVData,
+    guid    = WATCHDOG_CONFIG_FORMSET_GUID;
+
+  form
+    formid = WATCHDOG_CONFIG_FORM_ID,
+    title  = STRING_TOKEN(STR_WATCHDOG_CONFIG_FORM);
+    subtitle text = STRING_TOKEN(STR_WATCHDOG_CONFIG_FORM_HELP);
+
+    oneof varid = WatchdogConfigNVData.SecureWatchdogTimerTimeout,
+      prompt      = STRING_TOKEN(STR_SWDT_TIMEOUT),
+      help        = STRING_TOKEN(STR_SWDT_TIMEOUT_HELP),
+      flags       = RESET_REQUIRED,
+      option text = STRING_TOKEN (STR_WDT_TIME_DISABLE), value = 0, flags = 0;
+      option text = STRING_TOKEN (STR_WDT_TIME_5MIN), value = 300, flags = 0;
+      option text = STRING_TOKEN (STR_WDT_TIME_6MIN), value = 360, flags = 0;
+      option text = STRING_TOKEN (STR_WDT_TIME_10MIN), value = 600, flags = 0;
+      option text = STRING_TOKEN (STR_WDT_TIME_15MIN), value = 900, flags = 0;
+      option text = STRING_TOKEN (STR_WDT_TIME_20MIN), value = 1200, flags = 0;
+      default = SWDT_DEFAULT_VALUE,
+    endoneof;
+
+  endform;
+
+endformset;
