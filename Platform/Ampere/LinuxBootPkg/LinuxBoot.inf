@@ -1,0 +1,17 @@
+## @file
+#
+# Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                   = 0x0001001B
+  BASE_NAME                     = LinuxBoot
+  FILE_GUID                     = D834A5AD-459C-4AED-B0D0-8CBCB28838D7
+  MODULE_TYPE                   = UEFI_APPLICATION
+  VERSION_STRING                = 1.0
+
+[Binaries.AArch64]
+  PE32|AArch64/flashkernel|*
