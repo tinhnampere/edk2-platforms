@@ -315,6 +315,7 @@ APRIORI DXE {
   # PCIe Support
   #
   INF MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  INF MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
 
   #
   # Network PCIe I210

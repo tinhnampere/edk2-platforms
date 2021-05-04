@@ -753,6 +753,7 @@
   # PCIe Support
   #
   MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
 
   #
   # Random Number Generator Support
