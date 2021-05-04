@@ -64,6 +64,7 @@
   gArmMpCoreInfoGuid
   gEfiAcpiTableGuid
   gEfiEventReadyToBootGuid
+  gAcpiConfigFormSetGuid
   gPlatformHobGuid
 
 [Protocols]
