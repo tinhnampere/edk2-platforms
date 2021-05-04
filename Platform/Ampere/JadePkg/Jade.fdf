@@ -340,4 +340,12 @@ APRIORI DXE {
   INF RuleOverride=ACPITABLE Silicon/Ampere/AmpereAltraPkg/AcpiCommonTables/AcpiCommonTables.inf
   INF RuleOverride=ACPITABLE Platform/Ampere/JadePkg/AcpiTables/AcpiTables.inf
 
+  #
+  # SMBIOS
+  #
+  INF MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+  INF Platform/Ampere/JadePkg/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.inf
+  INF Platform/Ampere/JadePkg/Drivers/SmbiosCpuDxe/SmbiosCpuDxe.inf
+  INF Platform/Ampere/JadePkg/Drivers/SmbiosMemInfoDxe/SmbiosMemInfoDxe.inf
+
 !include Platform/Ampere/AmperePlatformPkg/FvRules.fdf.inc
