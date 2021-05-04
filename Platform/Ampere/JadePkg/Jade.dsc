@@ -115,6 +115,13 @@
 !endif
 
 
+[PcdsPatchableInModule]
+  #
+  # Console Resolution (HD mode)
+  #
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|1024
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|768
+
 ################################################################################
 #
 # Specific Platform Component
@@ -136,3 +143,8 @@
   Platform/Ampere/JadePkg/Drivers/AcpiPlatformDxe/AcpiPlatformDxe.inf
   Silicon/Ampere/AmpereAltraPkg/AcpiCommonTables/AcpiCommonTables.inf
   Platform/Ampere/JadePkg/AcpiTables/AcpiTables.inf
+
+  #
+  # VGA Aspeed
+  #
+  Drivers/ASpeed/ASpeedGopBinPkg/ASpeedAst2500GopDxe.inf
