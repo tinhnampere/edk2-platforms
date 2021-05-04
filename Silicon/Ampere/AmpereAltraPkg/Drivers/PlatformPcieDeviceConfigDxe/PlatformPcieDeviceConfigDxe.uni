@@ -1,0 +1,24 @@
+﻿//
+// Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+//
+// SPDX-License-Identifier: BSD-2-Clause-Patent
+//
+
+#langdef   en-US "English"    // English
+
+#string STR_DEVICE_CONFIG_FORM  #language en-US "PCIE Device Configuration"
+#string STR_DEVICE_CONFIG_HELP  #language en-US "PCIE Device Configuration"
+
+#string STR_DEVICE_FORM         #language en-US "PCIE Device Form"
+#string STR_DEVICE_GOTO_HELP    #language en-US "PCIE Device Configuration"
+
+#string STR_PCIE_MPS            #language en-US "Max Payload Size"
+#string STR_PCIE_MPS_HELP       #language en-US "Max Payload Size"
+#string STR_PCIE_MRR            #language en-US "Max Read Request Size"
+#string STR_PCIE_MRR_HELP       #language en-US "Max Read Request Size"
+#string STR_128                 #language en-US "128 bytes"
+#string STR_256                 #language en-US "256 bytes"
+#string STR_512                 #language en-US "512 bytes"
+#string STR_1024                #language en-US "1024 bytes"
+#string STR_2048                #language en-US "2048 bytes"
+#string STR_4096                #language en-US "4096 bytes"

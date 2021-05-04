@@ -202,3 +202,4 @@
   Silicon/Ampere/AmpereAltraPkg/Drivers/AcpiConfigDxe/AcpiConfigDxe.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/RasConfigDxe/RasConfigDxe.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/WatchdogConfigDxe/WatchdogConfigDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformPcieDeviceConfigDxe/PlatformPcieDeviceConfigDxe.inf
