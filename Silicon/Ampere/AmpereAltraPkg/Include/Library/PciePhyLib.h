@@ -12,47 +12,6 @@
 #define PHY_TX_PARAM_SIZE           2
 #define PHY_RX_PARAM_SIZE           2
 
-#define BUG_67112                   1
-#define UPDATE_SRAM                 0
-
-#define MULTWRITE_ENABLE            0
-#define MULTI_WR_EN                 0
-#define PHY_N_ADDR_OFFSET           0x40000
-#define SNPS_PHY0_BASE_ADDR         0x100000
-#define SNPS_PHY1_BASE_ADDR         (SNPS_PHY0_BASE_ADDR + PHY_N_ADDR_OFFSET)
-#define SNPS_PHY2_BASE_ADDR         (SNPS_PHY1_BASE_ADDR + PHY_N_ADDR_OFFSET)
-#define SNPS_PHY3_BASE_ADDR         (SNPS_PHY2_BASE_ADDR + PHY_N_ADDR_OFFSET)
-
-#define BROADCAST_PMA(Src)          ((Src | (0x5 << 12)) * 4)
-#define BROADCAST_RAW_PCS(Src)      ((Src | (0x6 << 12)) * 4)
-#define BROADCAST_RAW_PCS_AON(Src)  ((Src | (0x7 << 12)) * 4)
-
-#define PHY_CALIB_TO_VALUE          1000
-#define SRAM_INIT_TO_VALUE          1000
-#define MRDY_DELAY                  10
-
-#define SRAM_BYPASS_0               0
-#define SRAM_BYPASS_1               1
-#define SRAM_BYPASS_2               2
-#define SRAM_BYPASS_3               3
-
-#define SRAM_BOOTLOAD_BYPASS_0      0x1
-#define SRAM_BOOTLOAD_BYPASS_1      0x2
-#define SRAM_BOOTLOAD_BYPASS_2      0x4
-#define SRAM_BOOTLOAD_BYPASS_3      0x8
-
-#define SRIS_MODE_EN                0
-#define CLK_REF_SEL                 0
-#define CLK_SSC_SEL                 1
-
-#define CRP_SEL                     1
-#define MAX_PHY                     3
-
-#define LANE_PER_PHY_NUM_MAX        4
-
-#define HOST_SECURE_ACCESS(Addr)    (UINT64)(Addr | 0x40000000000000)
-#define STARTING_SRAM_ADDRESS       0x130000
-
 /*
  * PCIe PHY error code
  */
@@ -96,19 +55,19 @@ typedef struct {
  * @MmioWr: Writes 32-bit unsigned integer
  */
 typedef struct {
-  VOID (*Puts)(CONST CHAR8 *Msg);
-  VOID (*PutInt)(UINT32 Val);
-  VOID (*PutHex)(UINT32 Val);
-  VOID (*PutHex64)(UINT64 Val);
+  VOID  (*Puts)(CONST CHAR8 *Msg);
+  VOID  (*PutInt)(UINT32 Val);
+  VOID  (*PutHex)(UINT32 Val);
+  VOID  (*PutHex64)(UINT64 Val);
   INT32 (*DebugPrint)(CONST CHAR8 *Fmt, ...);
-  VOID (*MmioRd)(UINT64 Addr, UINT32 *Val);
-  VOID (*MmioWr)(UINT64 Addr, UINT32 Val);
-  VOID (*UsDelay)(UINT32 Val);
+  VOID  (*MmioRd)(UINT64 Addr, UINT32 *Val);
+  VOID  (*MmioWr)(UINT64 Addr, UINT32 Val);
+  VOID  (*UsDelay)(UINT32 Val);
 } PHY_PLAT_RESOURCE;
 
 typedef struct {
-  UINT64 SdsAddr;                     /* PHY base address */
-  UINT64 PcieCtrlInfo;                /* PCIe controller related information
+  UINT64            SdsAddr;          /* PHY base address */
+  UINT64            PcieCtrlInfo;     /* PCIe controller related information
                                        * BIT0-1: SoC revision
                                        *      0: Ampere Altra, 1: Ampere Altra Max, 2: Siryn
                                        * BIT2  : SocketID (0: Socket0, 1: Socket1)
