@@ -29,7 +29,7 @@
   As each non-volatile parameter requires 8 bytes, there is a total of 8K
   parameters.
 
-  Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 

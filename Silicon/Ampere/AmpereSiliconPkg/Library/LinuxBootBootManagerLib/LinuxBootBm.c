@@ -5,7 +5,7 @@
   Copyright (c) 2014 - 2019, ARM Ltd. All rights reserved.<BR>
   Copyright (c) 2004 - 2018, Intel Corporation. All rights reserved.<BR>
   Copyright (c) 2016, Linaro Ltd. All rights reserved.<BR>
-  Copyright (c) 2020, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
