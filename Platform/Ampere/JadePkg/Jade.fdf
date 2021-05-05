@@ -361,4 +361,9 @@ APRIORI DXE {
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/WatchdogConfigDxe/WatchdogConfigDxe.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/PcieDeviceConfigDxe/PcieDeviceConfigDxe.inf
 
+  #
+  # Misc
+  #
+  INF Platform/Ampere/JadePkg/Drivers/BootOptionsRecoveryDxe/BootOptionsRecoveryDxe.inf
+
 !include Platform/Ampere/AmperePlatformPkg/FvRules.fdf.inc
