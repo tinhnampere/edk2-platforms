@@ -34,6 +34,9 @@
 
 #define PCIE_GOTO_ID_BASE         0x8040
 
+#define PCIE_NVPARAM_VARSTORE_NAME  L"PcieIfrNVParamData"
+#define PCIE_NVPARAM_VARSTORE_ID    0x1233
+
 #pragma pack(1)
 
 //
@@ -45,6 +48,13 @@ typedef struct {
   UINT8   RCBifurHi[MAX_AC01_PCIE_SCREEN_ROOT_COMPLEX];
   UINT32  SmmuPmu;
 } PCIE_VARSTORE_DATA;
+
+//
+// NVParam data structure definition
+//
+typedef struct {
+  BOOLEAN PcieStrongOrdering;
+} PCIE_NVPARAM_VARSTORE_DATA;
 
 //
 // Labels definition

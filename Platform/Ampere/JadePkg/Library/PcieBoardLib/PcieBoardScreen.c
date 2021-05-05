@@ -22,13 +22,12 @@
 #define BIT(nr) (1 << (nr))
 #endif
 
-#define MAX_STRING_SIZE     32
+BOOLEAN    mReadOnlyStrongOrdering;
+CHAR16     mPcieNvparamVarstoreName[] = PCIE_NVPARAM_VARSTORE_NAME;
+CHAR16     gPcieVarstoreName[]        = PCIE_VARSTORE_NAME;
+EFI_GUID   gPcieFormSetGuid           = PCIE_FORM_SET_GUID;
 
-CHAR16   VariableName[]     = PCIE_VARSTORE_NAME;
-EFI_GUID gPcieFormSetGuid   = PCIE_FORM_SET_GUID;
-
-EFI_HANDLE               DriverHandle = NULL;
-PCIE_SCREEN_PRIVATE_DATA *mPrivateData = NULL;
+PCIE_SCREEN_PRIVATE_DATA *mPrivateData  = NULL;
 
 AC01_RC RCList[MAX_AC01_PCIE_ROOT_COMPLEX];
 
@@ -91,20 +90,23 @@ ExtractConfig (
   PCIE_SCREEN_PRIVATE_DATA        *PrivateData;
   EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
   EFI_STRING                      ConfigRequest;
-  EFI_STRING                      ConfigRequestHdr;
   UINTN                           Size;
   CHAR16                          *StrPointer;
   BOOLEAN                         AllocatedRequest;
-  PCIE_VARSTORE_DATA              *VarStoreConfig;
+  UINT8                           *VarStoreConfig;
+  UINT32                          Value;
 
   if (Progress == NULL || Results == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
+  if (Request == NULL) {
+    return EFI_NOT_FOUND;
+  }
+
   //
   // Initialize the local variables.
   //
-  ConfigRequestHdr  = NULL;
   ConfigRequest     = NULL;
   Size              = 0;
   *Progress         = Request;
@@ -112,118 +114,103 @@ ExtractConfig (
 
   PrivateData = PCIE_SCREEN_PRIVATE_FROM_THIS (This);
   HiiConfigRouting = PrivateData->HiiConfigRouting;
-  VarStoreConfig = &PrivateData->VarStoreConfig;
-  ASSERT (VarStoreConfig != NULL);
 
   //
-  // Get Buffer Storage data from EFI variable.
-  // Try to get the current setting from variable.
+  // Check routing data in <ConfigHdr>.
+  // Note: if only one Storage is used, then this checking could be skipped.
   //
-  BufferSize = sizeof (PCIE_VARSTORE_DATA);
-  Status = gRT->GetVariable (
-                  VariableName,
-                  &gPcieFormSetGuid,
-                  NULL,
-                  &BufferSize,
-                  VarStoreConfig
-                  );
-  if (EFI_ERROR (Status)) {
-    return EFI_NOT_FOUND;
-  }
+  if (HiiIsConfigHdrMatch (Request, &gPcieFormSetGuid, mPcieNvparamVarstoreName)) {
+    VarStoreConfig = (UINT8 *)&PrivateData->NVParamVarStoreConfig;
+    ASSERT (VarStoreConfig != NULL);
 
-  if (Request == NULL) {
-    //
-    // Request is set to NULL, construct full request string.
-    //
-
-    //
-    // Allocate and fill a buffer large enough to hold the <ConfigHdr> template
-    // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a
-    // Null-terminator
-    //
-    ConfigRequestHdr = HiiConstructConfigHdr (
-                         &gPcieFormSetGuid,
-                         VariableName,
-                         PrivateData->DriverHandle
-                         );
-    if (ConfigRequestHdr == NULL) {
-      return EFI_OUT_OF_RESOURCES;
+    Status = NVParamGet (
+               NV_SI_MESH_S0_CXG_RC_STRONG_ORDERING_EN,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               &Value
+               );
+    ASSERT_EFI_ERROR (Status);
+    if (Value != 0) {
+      PrivateData->NVParamVarStoreConfig.PcieStrongOrdering = TRUE;
     }
-    Size = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest = AllocateZeroPool (Size);
-    ASSERT (ConfigRequest != NULL);
-    AllocatedRequest = TRUE;
-    UnicodeSPrint (
-      ConfigRequest,
-      Size,
-      L"%s&OFFSET=0&WIDTH=%016LX",
-      ConfigRequestHdr,
-      (UINT64)BufferSize
-      );
-    FreePool (ConfigRequestHdr);
-    ConfigRequestHdr = NULL;
-  } else {
+
+    Status = NVParamGet (
+               NV_SI_MESH_S1_CXG_RC_STRONG_ORDERING_EN,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               &Value
+               );
+    ASSERT_EFI_ERROR (Status);
+    if (Value != 0) {
+      PrivateData->NVParamVarStoreConfig.PcieStrongOrdering = TRUE;
+    }
+
+    BufferSize = sizeof (PCIE_NVPARAM_VARSTORE_DATA);
+
+  } else if (HiiIsConfigHdrMatch (Request, &gPcieFormSetGuid, gPcieVarstoreName)) {
+    VarStoreConfig = (UINT8 *)&PrivateData->VarStoreConfig;
+    ASSERT (VarStoreConfig != NULL);
+
     //
-    // Check routing data in <ConfigHdr>.
-    // Note: if only one Storage is used, then this checking could be skipped.
+    // Get Buffer Storage data from EFI variable.
+    // Try to get the current setting from variable.
     //
-    if (!HiiIsConfigHdrMatch (Request, &gPcieFormSetGuid, NULL)) {
+    BufferSize = sizeof (PCIE_VARSTORE_DATA);
+    Status = gRT->GetVariable (
+                    gPcieVarstoreName,
+                    &gPcieFormSetGuid,
+                    NULL,
+                    &BufferSize,
+                    VarStoreConfig
+                    );
+    if (EFI_ERROR (Status)) {
       return EFI_NOT_FOUND;
     }
 
-    //
-    // Set Request to the unified request string.
-    //
-    ConfigRequest = Request;
+  } else {
+    return EFI_NOT_FOUND;
+  }
 
+  //
+  // Set Request to the unified request string.
+  //
+  ConfigRequest = Request;
+
+  //
+  // Check whether Request includes Request Element.
+  //
+  if (StrStr (Request, L"OFFSET") == NULL) {
     //
-    // Check whether Request includes Request Element.
+    // Check Request Element does exist in Request String
     //
-    if (StrStr (Request, L"OFFSET") == NULL) {
-      //
-      // Check Request Element does exist in Request String
-      //
-      StrPointer = StrStr (Request, L"PATH");
-      if (StrPointer == NULL) {
-        return EFI_INVALID_PARAMETER;
-      }
-      if (StrStr (StrPointer, L"&") == NULL) {
-        Size = (StrLen (Request) + 32 + 1) * sizeof (CHAR16);
-        ConfigRequest    = AllocateZeroPool (Size);
-        ASSERT (ConfigRequest != NULL);
-        AllocatedRequest = TRUE;
-        UnicodeSPrint (
-          ConfigRequest,
-          Size,
-          L"%s&OFFSET=0&WIDTH=%016LX",
-          Request,
-          (UINT64)BufferSize
-          );
-      }
+    StrPointer = StrStr (Request, L"PATH");
+    if (StrPointer == NULL) {
+      return EFI_INVALID_PARAMETER;
+    }
+    if (StrStr (StrPointer, L"&") == NULL) {
+      Size = (StrLen (Request) + 32 + 1) * sizeof (CHAR16);
+      ConfigRequest = AllocateZeroPool (Size);
+      ASSERT (ConfigRequest != NULL);
+      AllocatedRequest = TRUE;
+      UnicodeSPrint (
+        ConfigRequest,
+        Size,
+        L"%s&OFFSET=0&WIDTH=%016LX",
+        Request,
+        (UINT64)BufferSize
+        );
     }
   }
 
   //
-  // Check if requesting Name/Value storage
+  // Convert buffer data to <ConfigResp> by helper function BlockToConfig()
   //
-  if (StrStr (ConfigRequest, L"OFFSET") == NULL) {
-    //
-    // Don't have any Name/Value storage names
-    //
-    Status = EFI_SUCCESS;
-  } else {
-    //
-    // Convert buffer data to <ConfigResp> by helper function BlockToConfig()
-    //
-    Status = HiiConfigRouting->BlockToConfig (
-                                 HiiConfigRouting,
-                                 ConfigRequest,
-                                 (UINT8 *)VarStoreConfig,
-                                 BufferSize,
-                                 Results,
-                                 Progress
-                                 );
-  }
+  Status = HiiConfigRouting->BlockToConfig (
+                               HiiConfigRouting,
+                               ConfigRequest,
+                               VarStoreConfig,
+                               BufferSize,
+                               Results,
+                               Progress
+                               );
 
   //
   // Free the allocated config request string.
@@ -232,9 +219,6 @@ ExtractConfig (
     FreePool (ConfigRequest);
   }
 
-  if (ConfigRequestHdr != NULL) {
-    FreePool (ConfigRequestHdr);
-  }
   //
   // Set Progress string to the original request string.
   //
@@ -274,7 +258,8 @@ RouteConfig (
   UINTN                           BufferSize;
   PCIE_SCREEN_PRIVATE_DATA        *PrivateData;
   EFI_HII_CONFIG_ROUTING_PROTOCOL *HiiConfigRouting;
-  PCIE_VARSTORE_DATA              *VarStoreConfig;
+  UINT8                           *VarStoreConfig;
+  UINT32                          Value;
 
   if (Configuration == NULL || Progress == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -283,31 +268,15 @@ RouteConfig (
   PrivateData = PCIE_SCREEN_PRIVATE_FROM_THIS (This);
   HiiConfigRouting = PrivateData->HiiConfigRouting;
   *Progress = Configuration;
-  VarStoreConfig = &PrivateData->VarStoreConfig;
+
+  if (HiiIsConfigHdrMatch (Configuration, &gPcieFormSetGuid, mPcieNvparamVarstoreName)) {
+    VarStoreConfig = (UINT8 *)&PrivateData->NVParamVarStoreConfig;
+    BufferSize = sizeof (PCIE_NVPARAM_VARSTORE_DATA);
+  } else if (HiiIsConfigHdrMatch (Configuration, &gPcieFormSetGuid, gPcieVarstoreName)) {
+    BufferSize = sizeof (PCIE_VARSTORE_DATA);
+    VarStoreConfig = (UINT8 *)&PrivateData->VarStoreConfig;
+  }
   ASSERT (VarStoreConfig != NULL);
-
-  //
-  // Check routing data in <ConfigHdr>.
-  // Note: if only one Storage is used, then this checking could be skipped.
-  //
-  if (!HiiIsConfigHdrMatch (Configuration, &gPcieFormSetGuid, NULL)) {
-    return EFI_NOT_FOUND;
-  }
-
-  //
-  // Get Buffer Storage data from EFI variable
-  //
-  BufferSize = sizeof (PCIE_VARSTORE_DATA);
-  Status = gRT->GetVariable (
-                  VariableName,
-                  &gPcieFormSetGuid,
-                  NULL,
-                  &BufferSize,
-                  VarStoreConfig
-                  );
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
 
   //
   // Check if configuring Name/Value storage
@@ -322,7 +291,6 @@ RouteConfig (
   //
   // Convert <ConfigResp> to buffer data by helper function ConfigToBlock()
   //
-  BufferSize = sizeof (PCIE_VARSTORE_DATA);
   Status = HiiConfigRouting->ConfigToBlock (
                                HiiConfigRouting,
                                Configuration,
@@ -335,17 +303,48 @@ RouteConfig (
   }
 
   //
-  // Store Buffer Storage back to variable
+  // Check routing data in <ConfigHdr>.
   //
-  Status = gRT->SetVariable (
-                  VariableName,
-                  &gPcieFormSetGuid,
-                  EFI_VARIABLE_NON_VOLATILE |
-                  EFI_VARIABLE_BOOTSERVICE_ACCESS |
-                  EFI_VARIABLE_RUNTIME_ACCESS,
-                  sizeof (PCIE_VARSTORE_DATA),
-                  VarStoreConfig
-                  );
+  if (HiiIsConfigHdrMatch (Configuration, &gPcieFormSetGuid, mPcieNvparamVarstoreName)) {
+    Value = PrivateData->NVParamVarStoreConfig.PcieStrongOrdering ? PCIE_STRONG_ORDERING_DEFAULT_NVPARAM_VALUE : 0;
+
+    if (!mReadOnlyStrongOrdering) {
+      //
+      // Update whole 16 RCs.
+      //
+      Status = NVParamSet (
+                 NV_SI_MESH_S0_CXG_RC_STRONG_ORDERING_EN,
+                 NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+                 NV_PERM_BIOS | NV_PERM_MANU,
+                 Value
+                 );
+      ASSERT_EFI_ERROR (Status);
+
+      //
+      // FIXME: No need to check slave present
+      //
+      Status = NVParamSet (
+                 NV_SI_MESH_S1_CXG_RC_STRONG_ORDERING_EN,
+                 NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+                 NV_PERM_BIOS | NV_PERM_MANU,
+                 Value
+                 );
+      ASSERT_EFI_ERROR (Status);
+    }
+  } else if (HiiIsConfigHdrMatch (Configuration, &gPcieFormSetGuid, gPcieVarstoreName)) {
+    //
+    // Store Buffer Storage back to variable
+    //
+    Status = gRT->SetVariable (
+                    gPcieVarstoreName,
+                    &gPcieFormSetGuid,
+                    EFI_VARIABLE_NON_VOLATILE |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
+                    sizeof (PCIE_VARSTORE_DATA),
+                    (PCIE_VARSTORE_DATA *)VarStoreConfig
+                    );
+  }
 
   return Status;
 }
@@ -380,7 +379,6 @@ DriverCallback (
   OUT      EFI_BROWSER_ACTION_REQUEST     *ActionRequest
   )
 {
-  PCIE_VARSTORE_DATA       *VarStoreConfig;
   PCIE_SCREEN_PRIVATE_DATA *PrivateData;
   EFI_STATUS               Status;
 
@@ -393,8 +391,6 @@ DriverCallback (
   }
 
   PrivateData = PCIE_SCREEN_PRIVATE_FROM_THIS (This);
-  VarStoreConfig = &PrivateData->VarStoreConfig;
-  ASSERT (VarStoreConfig != NULL);
 
   Status = EFI_SUCCESS;
 
@@ -408,8 +404,18 @@ DriverCallback (
   case EFI_BROWSER_ACTION_DEFAULT_STANDARD:
   case EFI_BROWSER_ACTION_DEFAULT_MANUFACTURING:
     if (QuestionId == 0x9000) {
-      /* SMMU PMU */
-      Value->u32 = 0; /* default disable */
+      //
+      // SMMU PMU
+      //
+      Value->u32 = 0;
+      break;
+    }
+
+    if (QuestionId == 0x9001) {
+      //
+      // Strong Ordering
+      //
+      Value->u8 = PCIE_STRONG_ORDERING_DEFAULT_OPTION_VALUE;
       break;
     }
 
@@ -439,35 +445,6 @@ DriverCallback (
   }
 
   return Status;
-}
-
-EFI_STATUS
-PcieScreenUnload (
-  IN EFI_HANDLE ImageHandle
-  )
-{
-  ASSERT (mPrivateData != NULL);
-
-  if (DriverHandle != NULL) {
-    gBS->UninstallMultipleProtocolInterfaces (
-           DriverHandle,
-           &gEfiDevicePathProtocolGuid,
-           &mHiiVendorDevicePath,
-           &gEfiHiiConfigAccessProtocolGuid,
-           &mPrivateData->ConfigAccess,
-           NULL
-           );
-    DriverHandle = NULL;
-  }
-
-  if (mPrivateData->HiiHandle != NULL) {
-    HiiRemovePackages (mPrivateData->HiiHandle);
-  }
-
-  FreePool (mPrivateData);
-  mPrivateData = NULL;
-
-  return EFI_SUCCESS;
 }
 
 /**
@@ -843,6 +820,7 @@ PcieMainScreenSetup (
   UINTN                RC;
   PCIE_SETUP_GOTO_DATA *GotoItem = NULL;
   EFI_QUESTION_ID      GotoId;
+  UINT8                QuestionFlags;
 
   // Initialize the container for dynamic opcodes
   StartOpCodeHandle = HiiAllocateOpCodeHandle ();
@@ -870,6 +848,8 @@ PcieMainScreenSetup (
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
+  QuestionFlags = EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED;
+
   HiiCreateCheckBoxOpCode (
     StartOpCodeHandle,                       // Container for dynamic created opcodes
     0x9000,                                  // Question ID
@@ -877,8 +857,24 @@ PcieMainScreenSetup (
     (UINT16)PCIE_SMMU_PMU_OFFSET,            // Offset in Buffer Storage
     STRING_TOKEN (STR_PCIE_SMMU_PMU_PROMPT), // Question prompt text
     STRING_TOKEN (STR_PCIE_SMMU_PMU_HELP),   // Question help text
-    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
+    QuestionFlags,
     0,
+    NULL
+    );
+
+  if (mReadOnlyStrongOrdering) {
+    QuestionFlags |= EFI_IFR_FLAG_READ_ONLY;
+  }
+
+  HiiCreateCheckBoxOpCode (
+    StartOpCodeHandle,                              // Container for dynamic created opcodes
+    0x9001,                                         // Question ID
+    PCIE_NVPARAM_VARSTORE_ID,                       // VarStore ID
+    (UINT16)PCIE_STRONG_ODERING_OFFSET,             // Offset in Buffer Storage
+    STRING_TOKEN (STR_PCIE_STRONG_ORDERING_PROMPT), // Question prompt text
+    STRING_TOKEN (STR_PCIE_STRONG_ORDERING_HELP),   // Question help text
+    QuestionFlags,
+    PCIE_STRONG_ORDERING_DEFAULT_OPTION_VALUE,
     NULL
     );
 
@@ -939,6 +935,111 @@ PcieMainScreenSetup (
   return EFI_SUCCESS;
 }
 
+VOID
+NVParamVarstoreInit (
+  VOID
+  )
+{
+  BOOLEAN    BoardSettingValid;
+  BOOLEAN    UserSettingValid;
+  BOOLEAN    Update;
+  EFI_STATUS Status;
+  UINT32     UserValue;
+  UINT32     InitValue;
+
+  mReadOnlyStrongOrdering = FALSE;
+
+  // S0
+  UserSettingValid = FALSE;
+  Status = NVParamGet (
+             NV_SI_MESH_S0_CXG_RC_STRONG_ORDERING_EN,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &UserValue
+             );
+  if (!EFI_ERROR (Status)) {
+    UserSettingValid = TRUE;
+  }
+
+  //
+  // InitValue will be default value or board setting value.
+  //
+  BoardSettingValid = FALSE;
+  Status = NVParamGet (
+             NV_SI_RO_BOARD_MESH_S0_CXG_RC_STRONG_ORDERING_EN,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &InitValue
+             );
+  if (!EFI_ERROR (Status) && InitValue > 0) {
+    BoardSettingValid = TRUE;
+    mReadOnlyStrongOrdering = TRUE;
+  } else {
+    InitValue = PCIE_STRONG_ORDERING_DEFAULT_NVPARAM_VALUE;
+  }
+
+  Update = TRUE;
+  if ((UserSettingValid && (UserValue == InitValue))
+      || (!BoardSettingValid && UserSettingValid && (UserValue == 0)))
+  {
+    Update = FALSE;
+  }
+
+  if (Update) {
+    Status = NVParamSet (
+               NV_SI_MESH_S0_CXG_RC_STRONG_ORDERING_EN,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               InitValue
+               );
+    ASSERT_EFI_ERROR (Status);
+  }
+
+  //
+  // FIXME: No need to check slave present.
+  //
+  UserSettingValid = FALSE;
+  Status = NVParamGet (
+             NV_SI_MESH_S1_CXG_RC_STRONG_ORDERING_EN,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &UserValue
+             );
+  if (!EFI_ERROR (Status)) {
+    UserSettingValid = TRUE;
+  }
+
+  //
+  // InitValue will be default value or board setting value.
+  //
+  BoardSettingValid = FALSE;
+  Status = NVParamGet (
+             NV_SI_RO_BOARD_MESH_S1_CXG_RC_STRONG_ORDERING_EN,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &InitValue
+             );
+  if (!EFI_ERROR (Status) && InitValue > 0) {
+    BoardSettingValid = TRUE;
+    mReadOnlyStrongOrdering = TRUE;
+  } else {
+    InitValue = PCIE_STRONG_ORDERING_DEFAULT_NVPARAM_VALUE;
+  }
+
+  Update = TRUE;
+  if ((UserSettingValid && (UserValue == InitValue))
+      || (!BoardSettingValid && UserSettingValid && (UserValue == 0)))
+  {
+    Update = FALSE;
+  }
+
+  if (Update) {
+    Status = NVParamSet (
+               NV_SI_MESH_S1_CXG_RC_STRONG_ORDERING_EN,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               NV_PERM_BIOS | NV_PERM_MANU,
+               InitValue
+               );
+    ASSERT_EFI_ERROR (Status);
+  }
+}
+
 EFI_STATUS
 PcieBoardScreenInitialize (
   IN EFI_HANDLE       ImageHandle,
@@ -947,6 +1048,7 @@ PcieBoardScreenInitialize (
   )
 {
   EFI_STATUS                          Status;
+  EFI_HANDLE                          DriverHandle;
   EFI_HII_HANDLE                      HiiHandle;
   EFI_HII_DATABASE_PROTOCOL           *HiiDatabase;
   EFI_HII_STRING_PROTOCOL             *HiiString;
@@ -1024,6 +1126,7 @@ PcieBoardScreenInitialize (
   }
   mPrivateData->HiiKeywordHandler = HiiKeywordHandler;
 
+  DriverHandle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &DriverHandle,
                   &gEfiDevicePathProtocolGuid,
@@ -1056,6 +1159,11 @@ PcieBoardScreenInitialize (
   CopyMem ((VOID *)RCList, (VOID *)NewRCList, sizeof (RCList));
 
   //
+  // Initialize NVParam varstore configuration data
+  //
+  NVParamVarstoreInit ();
+
+  //
   // Initialize efi varstore configuration data
   //
   VarStoreConfig = &mPrivateData->VarStoreConfig;
@@ -1064,7 +1172,7 @@ PcieBoardScreenInitialize (
   // Get Buffer Storage data from EFI variable
   BufferSize = sizeof (PCIE_VARSTORE_DATA);
   Status = gRT->GetVariable (
-                  VariableName,
+                  gPcieVarstoreName,
                   &gPcieFormSetGuid,
                   NULL,
                   &BufferSize,
@@ -1096,7 +1204,7 @@ PcieBoardScreenInitialize (
   if (IsUpdated) {
     // Update Buffer Storage
     Status = gRT->SetVariable (
-                    VariableName,
+                    gPcieVarstoreName,
                     &gPcieFormSetGuid,
                     EFI_VARIABLE_NON_VOLATILE |
                     EFI_VARIABLE_BOOTSERVICE_ACCESS |

@@ -68,7 +68,7 @@
 #define BIT(nr)                         (1 << (nr))
 #endif
 
-extern CHAR16   VariableName[];
+extern CHAR16   gPcieVarstoreName[];
 extern EFI_GUID gPcieFormSetGuid;
 
 VOID
@@ -190,7 +190,7 @@ PcieBoardParseRCParams (
   // Get RC activation status
   BufferSize = sizeof (PCIE_VARSTORE_DATA);
   Status = gRT->GetVariable (
-                  VariableName,
+                  gPcieVarstoreName,
                   &gPcieFormSetGuid,
                   NULL,
                   &BufferSize,
@@ -416,7 +416,6 @@ PcieBoardCheckSmmuPmuEnabled (
   VOID
   )
 {
-  EFI_GUID           PcieFormSetGuid = PCIE_FORM_SET_GUID;
   PCIE_VARSTORE_DATA VarStoreConfig;
   UINTN              BufferSize;
   EFI_STATUS         Status;
@@ -424,8 +423,8 @@ PcieBoardCheckSmmuPmuEnabled (
   // Get Buffer Storage data from EFI variable
   BufferSize = sizeof (PCIE_VARSTORE_DATA);
   Status = gRT->GetVariable (
-                  PCIE_VARSTORE_NAME,
-                  &PcieFormSetGuid,
+                  gPcieVarstoreName,
+                  &gPcieFormSetGuid,
                   NULL,
                   &BufferSize,
                   &VarStoreConfig

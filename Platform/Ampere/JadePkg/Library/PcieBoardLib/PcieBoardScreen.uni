@@ -97,3 +97,6 @@
 
 #string STR_PCIE_SMMU_PMU_PROMPT        #language en-US "SMMU Pmu"
 #string STR_PCIE_SMMU_PMU_HELP          #language en-US "Enable/Disable PMU feature for SMMU"
+
+#string STR_PCIE_STRONG_ORDERING_PROMPT #language en-US "PCIe Strong Ordering"
+#string STR_PCIE_STRONG_ORDERING_HELP   #language en-US "Enable/disable PCIe Strong Ordering with internal bus"

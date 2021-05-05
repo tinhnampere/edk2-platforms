@@ -54,7 +54,15 @@ extern UINT8 PcieDxeStrings[];
 #define PCIE_SMMU_PMU_OFFSET  \
   OFFSET_OF (PCIE_VARSTORE_DATA, SmmuPmu)
 
+#define PCIE_STRONG_ODERING_OFFSET  \
+  OFFSET_OF (PCIE_NVPARAM_VARSTORE_DATA, PcieStrongOrdering)
+
 #define PCIE_SCREEN_PRIVATE_DATA_SIGNATURE SIGNATURE_32 ('P', 'C', 'I', 'E')
+
+#define MAX_STRING_SIZE                    32
+
+#define PCIE_STRONG_ORDERING_DEFAULT_OPTION_VALUE  1
+#define PCIE_STRONG_ORDERING_DEFAULT_NVPARAM_VALUE 0xFFFFFFFF
 
 typedef struct {
   UINTN Signature;
@@ -62,6 +70,7 @@ typedef struct {
   EFI_HANDLE         DriverHandle;
   EFI_HII_HANDLE     HiiHandle;
   PCIE_VARSTORE_DATA VarStoreConfig;
+  PCIE_NVPARAM_VARSTORE_DATA          NVParamVarStoreConfig;
 
   //
   // Consumed protocol

@@ -22,6 +22,11 @@ formset
     name  = PcieIfrNVData,
     guid  = PCIE_FORM_SET_GUID;
 
+  varstore PCIE_NVPARAM_VARSTORE_DATA,
+    varid = PCIE_NVPARAM_VARSTORE_ID,
+    name  = PcieIfrNVParamData,
+    guid  = PCIE_FORM_SET_GUID;
+
   form
     formid = PCIE_FORM_ID,
     title = STRING_TOKEN(STR_PCIE_FORM);
