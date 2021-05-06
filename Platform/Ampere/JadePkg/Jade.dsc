@@ -202,6 +202,8 @@
   #
   Platform/Ampere/AmperePlatformPkg/Drivers/GigUndiDxe/GigUndiDxe.inf
 
+  Platform/Ampere/AmperePlatformPkg/Drivers/UsbCdcEthernetDxe/UsbCdcEthernetDxe.inf
+
   #
   # VGA Aspeed
   #

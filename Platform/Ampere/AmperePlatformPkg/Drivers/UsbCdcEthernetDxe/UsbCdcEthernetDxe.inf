@@ -1,0 +1,43 @@
+#/** @file
+#
+#  Copyright (c) 2021, Ampere Computing. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = UsbCdcEthernetDxe
+  FILE_GUID                      = 333A4935-3DFC-4FB8-BAC3-B0A7920298D5
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = UsbCdcEthernetEntryPoint
+
+[Sources.common]
+  ComponentName.c
+  DriverBinding.c
+  SimpleNetwork.c
+  UsbCdcEthernet.c
+  UsbCdcEthernet.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  NetworkPkg/NetworkPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiUsbLib
+
+[Protocols]
+  ## BY_START
+  ## TO_START
+  gEfiDevicePathProtocolGuid
+  gEfiSimpleNetworkProtocolGuid        ## BY_START
+  gEfiUsbIoProtocolGuid                ## TO_START
