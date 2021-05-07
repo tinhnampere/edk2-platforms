@@ -28,11 +28,14 @@
 #endif
 
 #define MAX_REINIT                       3
-#define MAX_RETRAIN                      10
 
-#define LINK_RETRAIN_SUCCESS             0
-#define LINK_RETRAIN_FAILED              -1
-#define LINK_RETRAIN_WRONG_PARAMETER     1
+#define LINK_CHECK_SUCCESS               0
+#define LINK_CHECK_FAILED                -1
+#define LINK_CHECK_WRONG_PARAMETER       1
+
+#define PFA_REG_ENABLE                   0
+#define PFA_REG_READ                     1
+#define PFA_REG_CLEAR                    2
 
 #define AMPERE_PCIE_VENDORID             0x1DEF
 #define AC01_HOST_BRIDGE_DEVICEID_RCA    0xE100
@@ -40,9 +43,11 @@
 #define AC01_PCIE_BRIDGE_DEVICEID_RCA    0xE101
 #define AC01_PCIE_BRIDGE_DEVICEID_RCB    0xE111
 
-#define PCIE_MEMRDY_TIMEOUT     10            // 10 us
-#define PCIE_PIPE_CLOCK_TIMEOUT 20000         // 20,000 us
-#define PCIE_RETRAIN_TRANSITION_TIMEOUT 20000 // 20,000 us
+#define PCIE_MEMRDY_TIMEOUT              10          // 10 us
+#define PCIE_PIPE_CLOCK_TIMEOUT          20000       // 20,000 us
+#define PCIE_LTSSM_TRANSITION_TIMEOUT    100000      // 100 ms in total
+#define PCIE_EP_LINKUP_TIMEOUT           (10 * 1000) // 10ms
+#define PCIE_LINK_WAIT_INTERVAL_US       50
 
 #define LINK_POLL_US_TIMER      1
 #define IO_SPACE                0x2000
@@ -286,6 +291,7 @@
 #define REVISION_ID_SET(dst, src) (((dst) & ~0xFF) | (((UINT32) (src)) & 0xFF))
 
 // SEC_LAT_TIMER_SUB_BUS_SEC_BUS_PRI_BUS_REG
+#define DEFAULT_SUB_BUS       0xFF
 #define SUB_BUS_SET(dst, src) (((dst) & ~0xFF0000) | (((UINT32) (src) << 16) & 0xFF0000))
 #define SEC_BUS_SET(dst, src) (((dst) & ~0xFF00) | (((UINT32) (src) << 8) & 0xFF00))
 #define PRIM_BUS_SET(dst, src) (((dst) & ~0xFF) | (((UINT32) (src)) & 0xFF))
@@ -335,6 +341,7 @@
 #define PCIE_CAP_RETRAIN_LINK_SET(dst, src) (((dst) & ~0x20) | (((UINT32) (src) << 5) & 0x20))
 #define PCIE_CAP_COMMON_CLK_SET(dst, src) (((dst) & ~0x40) | (((UINT32) (src) << 6) & 0x40))
 #define PCIE_CAP_LINK_TRAINING_GET(val)     ((val & 0x8000000) >> 27)
+#define PCIE_CAP_LINK_DISABLE_SET(dst, src) (((dst) & ~0x10) | (((UINT32)(src) << 4) & 0x10))
 
 // LINK_CAPABILITIES2_REG
 #define LINK_SPEED_VECTOR_25                    BIT(0)
@@ -448,6 +455,22 @@
 #define AUX_CLK_FREQ_SET(dst, src) (((dst) & ~0x1FF) | (((UINT32) (src)) & 0x1FF))
 
 #define EXT_CAP_OFFSET_START 0x100
+
+// EVENT_COUNTER_CONTROL_REG
+#define ECCR_GROUP_EVENT_SEL_SET(dst, src) (((dst) & ~0xFFF0000) | (((UINT32)(src) << 16) & 0xFFF0000))
+#define ECCR_GROUP_SEL_SET(dst, src) (((dst) & ~0xF000000) | (((UINT32)(src) << 24) & 0xF000000))
+#define ECCR_EVENT_SEL_SET(dst, src) (((dst) & ~0xFF0000) | (((UINT32)(src) << 16) & 0xFF0000))
+#define ECCR_LANE_SEL_SET(dst, src) (((dst) & ~0xF00) | (((UINT32)(src) << 8) & 0xF00))
+#define ECCR_EVENT_COUNTER_ENABLE_SET(dst, src) (((dst) & ~0x1C) | (((UINT32)(src) << 2) & 0x1C))
+#define ECCR_EVENT_COUNTER_CLEAR_SET(dst, src) (((dst) & ~0x3) | (((UINT32)(src)) & 0x3))
+
+// PFA Registers offests
+#define RAS_DES_CAP_ID                              0xB
+#define EVENT_COUNTER_CONTROL_REG_OFF               0x8
+#define EVENT_COUNTER_DATA_REG_OFF                  0xC
+
+#define MAX_NUM_ERROR_CODE                          47
+#define DEFAULT_COMMON_LANE_NUM                     15
 
 enum LTSSM_STATE {
   S_DETECT_QUIET = 0,

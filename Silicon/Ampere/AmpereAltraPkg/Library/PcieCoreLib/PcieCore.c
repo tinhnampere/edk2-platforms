@@ -1191,6 +1191,382 @@ PcieLinkUpCheck (
 }
 
 VOID
+Ac01PcieCoreEndEnumeration (
+  AC01_RC *RC
+  )
+{
+  //
+  // Reserved for hook from stack ending of enumeration phase processing.
+  // Emptry for now.
+  //
+}
+
+/**
+   Comparing current link status with the max capabilities of the link
+
+   @param RC            Pointer to AC01_RC structure
+   @param PcieIndex     PCIe index
+   @param EpMaxWidth    EP max link width
+   @param EpMaxGen      EP max link speed
+   @retval              -1: Link status do not match with link max capabilities
+                         1: Link capabilites are invalid
+                         0: Link status are correct
+**/
+INT32
+Ac01PcieCoreLinkCheck (
+  IN AC01_RC  *RC,
+  IN INTN      PcieIndex,
+  IN UINT8     EpMaxWidth,
+  IN UINT8     EpMaxGen
+  )
+{
+  VOID         *CsrAddr, *CfgAddr;
+  UINT32        Val, LinkStat;
+  UINT32        MaxWidth, MaxGen;
+
+  CsrAddr = (VOID *)RC->Pcie[PcieIndex].CsrAddr;
+  CfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+
+  Ac01PcieCsrIn32 (CfgAddr + LINK_CAPABILITIES_REG, &Val);
+  if ((PCIE_CAP_MAX_LINK_WIDTH_GET (Val) == 0) ||
+      (PCIE_CAP_MAX_LINK_SPEED_GET (Val) == 0)) {
+    PCIE_DEBUG ("\tPCIE%d.%d: Wrong RC capabilities\n", RC->ID, PcieIndex);
+    return LINK_CHECK_WRONG_PARAMETER;
+  }
+
+  if ((EpMaxWidth == 0) || (EpMaxGen == 0)) {
+    PCIE_DEBUG ("\tPCIE%d.%d: Wrong EP capabilities\n", RC->ID, PcieIndex);
+    return LINK_CHECK_FAILED;
+  }
+
+  // Compare RC and EP capabilities
+  if (PCIE_CAP_MAX_LINK_WIDTH_GET (Val) > EpMaxWidth) {
+    MaxWidth = EpMaxWidth;
+  } else {
+    MaxWidth = PCIE_CAP_MAX_LINK_WIDTH_GET (Val);
+  }
+
+  // Compare RC and EP capabilities
+  if (PCIE_CAP_MAX_LINK_SPEED_GET (Val) > EpMaxGen) {
+    MaxGen = EpMaxGen;
+  } else {
+    MaxGen = PCIE_CAP_MAX_LINK_SPEED_GET (Val);
+  }
+
+  Ac01PcieCsrIn32 (CsrAddr + LINKSTAT, &LinkStat);
+  Ac01PcieCsrIn32 (CfgAddr + LINK_CONTROL_LINK_STATUS_REG, &Val);
+  PCIE_DEBUG (
+    "PCIE%d.%d: Link MaxWidth %d MaxGen %d, LINKSTAT 0x%x",
+    RC->ID,
+    PcieIndex,
+    MaxWidth,
+    MaxGen,
+    LinkStat
+    );
+
+  // Checking all conditions of the link
+  // If one of them is not sastified, return link up fail
+  if ((PCIE_CAP_NEGO_LINK_WIDTH_GET (Val) != MaxWidth) ||
+      (PCIE_CAP_LINK_SPEED_GET (Val) != MaxGen) ||
+      (RDLH_SMLH_LINKUP_STATUS_GET (LinkStat) != (SMLH_LINK_UP_MASK_BIT | RDLH_LINK_UP_MASK_BIT)))
+  {
+    PCIE_DEBUG ("\tLinkCheck FAILED\n");
+    return LINK_CHECK_FAILED;
+  }
+
+  PCIE_DEBUG ("\tLinkCheck SUCCESS\n");
+  return LINK_CHECK_SUCCESS;
+}
+
+INT32
+Ac01PFAEnableAll (
+  IN AC01_RC   *RC,
+  IN INTN      PcieIndex,
+  IN INTN      PFAMode
+  )
+{
+  VOID   *RasDesVSecBase;
+  VOID   *CfgAddr;
+  UINT8  ErrCode, ErrGrpNum;
+  UINT32 Val;
+  INT32  Ret = LINK_CHECK_SUCCESS;
+
+  UINT32 ErrCtrlCfg[MAX_NUM_ERROR_CODE] = {
+    0x000, 0x001, 0x002, 0x003, 0x004, 0x005, 0x006, 0x007, 0x008, 0x009, 0x00A, // Per Lane
+    0x105, 0x106, 0x107, 0x108, 0x109, 0x10A,
+    0x200, 0x201, 0x202, 0x203, 0x204, 0x205, 0x206, 0x207,
+    0x300, 0x301, 0x302, 0x303, 0x304, 0x305,
+    0x400, 0x401,                                                                // Per Lane
+    0x500, 0x501, 0x502, 0x503, 0x504, 0x505, 0x506, 0x507, 0x508, 0x509, 0x50A, 0x50B, 0x50C, 0x50D
+  };
+
+  CfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+
+  // Allow programming to config space
+  Ac01PcieCsrIn32 (CfgAddr + MISC_CONTROL_1_OFF, &Val);
+  Val = DBI_RO_WR_EN_SET (Val, 1);
+  Ac01PcieCsrOut32 (CfgAddr + MISC_CONTROL_1_OFF, Val);
+
+  // Generate the RAS DES capability address
+  // RAS_DES_CAP_ID = 0xB
+  RasDesVSecBase = (VOID *)PcieCheckCap (RC, PcieIndex, 0x1, RAS_DES_CAP_ID);
+  if (RasDesVSecBase == 0) {
+    PCIE_DEBUG ("PCIE%d.%d: Cannot get RAS DES capability address\n", RC->ID, PcieIndex);
+    return LINK_CHECK_WRONG_PARAMETER;
+  }
+
+  if (PFAMode == PFA_REG_ENABLE) {
+    // PFA Counters Enable
+    Ac01PcieCsrIn32 (RasDesVSecBase + EVENT_COUNTER_CONTROL_REG_OFF, &Val);
+    Val = ECCR_EVENT_COUNTER_ENABLE_SET (Val, 0x7);
+    Val = ECCR_EVENT_COUNTER_CLEAR_SET (Val, 0);
+    Ac01PcieCsrOut32 (RasDesVSecBase + EVENT_COUNTER_CONTROL_REG_OFF, Val);
+  } else if (PFAMode == PFA_REG_CLEAR) {
+    // PFA Counters Clear
+    Ac01PcieCsrIn32 (RasDesVSecBase + EVENT_COUNTER_CONTROL_REG_OFF, &Val);
+    Val = ECCR_EVENT_COUNTER_ENABLE_SET (Val, 0);
+    Val = ECCR_EVENT_COUNTER_CLEAR_SET (Val, 0x3);
+    Ac01PcieCsrOut32 (RasDesVSecBase + EVENT_COUNTER_CONTROL_REG_OFF, Val);
+  } else {
+    // PFA Counters Read
+    for (ErrCode = 0; ErrCode < MAX_NUM_ERROR_CODE; ErrCode++) {
+      ErrGrpNum = (ErrCtrlCfg[ErrCode] & 0xF00) >> 8;
+      // Skipping per lane group
+      // Checking common lane group because AER error are included in common group only
+      if ((ErrGrpNum != 0) && (ErrGrpNum != 4)) {
+        Ac01PcieCsrIn32 (RasDesVSecBase + EVENT_COUNTER_CONTROL_REG_OFF, &Val);
+        if (RC->Type == RCA) { // RCA - 4 PCIe controller per port, 1 controller in charge of 4 lanes
+          Val = ECCR_LANE_SEL_SET (Val, PcieIndex*4);
+        } else { // RCB - 8 PCIe controller per port, 1 controller in charge of 2 lanes
+          Val = ECCR_LANE_SEL_SET (Val, PcieIndex*2);
+        }
+        Val = ECCR_GROUP_EVENT_SEL_SET (Val, ErrCtrlCfg[ErrCode]);
+        Ac01PcieCsrOut32 (RasDesVSecBase + EVENT_COUNTER_CONTROL_REG_OFF, Val);
+
+        // After setting Counter Control reg
+        // This delay just to make sure Counter Data reg is update with new value
+        MicroSecondDelay (1);
+        Ac01PcieCsrIn32 (RasDesVSecBase + EVENT_COUNTER_DATA_REG_OFF, &Val);
+        if (Val != 0) {
+          Ret = LINK_CHECK_FAILED;
+          PCIE_DEBUG (
+            "\tS%d RC%d RP%d \t%s: %d \tGROUP:%d-EVENT:%d\n",
+            RC->Socket,
+            RC->ID,
+            PcieIndex,
+            Val,
+            ((ErrCtrlCfg[ErrCode] & 0xF00) >> 8),  // Group
+            (ErrCtrlCfg[ErrCode] & 0x0FF)          // Event
+            );
+        }
+      }
+    }
+  }
+
+  // Disable programming to config space
+  Ac01PcieCsrIn32 (CfgAddr + MISC_CONTROL_1_OFF, &Val);
+  Val = DBI_RO_WR_EN_SET (Val, 0);
+  Ac01PcieCsrOut32 (CfgAddr + MISC_CONTROL_1_OFF, Val);
+
+  return Ret;
+}
+
+/**
+   Get link capabilities link width and speed of endpoint
+
+   @param RC[in]           Pointer to AC01_RC structure
+   @param PcieIndex[in]    PCIe controller index
+   @param EpMaxWidth[out]  EP max link width
+   @param EpMaxGen[out]    EP max link speed
+**/
+VOID
+Ac01PcieCoreGetEndpointInfo (
+  IN  AC01_RC  *RC,
+  IN  INTN     PcieIndex,
+  OUT UINT8    *EpMaxWidth,
+  OUT UINT8    *EpMaxGen
+  )
+{
+  VOID         *PcieCapBaseAddr, *EpCfgAddr;
+  VOID         *RcCfgAddr;
+  UINT32       Val, RestoreVal;
+  UINTN        TimeOut;
+
+  RcCfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
+
+  // Allow programming to config space
+  Ac01PcieCsrIn32 (RcCfgAddr + MISC_CONTROL_1_OFF, &Val);
+  Val = DBI_RO_WR_EN_SET (Val, 1);
+  Ac01PcieCsrOut32 (RcCfgAddr + MISC_CONTROL_1_OFF, Val);
+
+  Ac01PcieCsrIn32 (RcCfgAddr + SEC_LAT_TIMER_SUB_BUS_SEC_BUS_PRI_BUS_REG, &Val);
+  RestoreVal = Val;
+  Val = SUB_BUS_SET (Val, DEFAULT_SUB_BUS);             /* Set DEFAULT_SUB_BUS to Subordinate bus */
+  Val = SEC_BUS_SET (Val, RC->Pcie[PcieIndex].DevNum);  /* Set RC->Pcie[PcieIndex].DevNum to Secondary bus */
+  Val = PRIM_BUS_SET (Val, 0x0);                        /* Set 0x0 to Primary bus */
+  Ac01PcieCsrOut32 (RcCfgAddr + SEC_LAT_TIMER_SUB_BUS_SEC_BUS_PRI_BUS_REG, Val);
+  EpCfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 20)); /* Bus 1, dev 0, func 0 */
+
+  // Loop read EpCfgAddr value until got valid value or
+  // reach to timeout PCIE_EP_LINKUP_TIMEOUT (or more depend on card)
+  TimeOut = PCIE_EP_LINKUP_TIMEOUT;
+  do {
+    Ac01PcieCsrIn32 (EpCfgAddr, &Val);
+    if (Val != 0xFFFF0001 && Val != 0xFFFFFFFF) {
+      break;
+    }
+    MicroSecondDelay (PCIE_LINK_WAIT_INTERVAL_US);
+    TimeOut -= PCIE_LINK_WAIT_INTERVAL_US;
+  } while (TimeOut > 0);
+
+  Ac01PcieCsrIn32 (EpCfgAddr, &Val);
+
+  // Check whether EP config space is accessible or not
+  if (Val == 0xFFFFFFFF) {
+    *EpMaxWidth = 0;   // Invalid Width
+    *EpMaxGen = 0;     // Invalid Speed
+    PCIE_DEBUG ("PCIE%d.%d Cannot access EP config space!\n", RC->ID, PcieIndex);
+  } else {
+    PcieCapBaseAddr = (VOID *)PcieCheckCap (RC, PcieIndex, 0x0, PCIE_CAP_ID);
+    if (PcieCapBaseAddr == 0) {
+      *EpMaxWidth = 0;   // Invalid Width
+      *EpMaxGen = 0;     // Invalid Speed
+      PCIE_DEBUG (
+        "PCIE%d.%d Cannot get PCIe capability extended address!\n",
+        RC->ID,
+        PcieIndex
+        );
+    } else {
+      Ac01PcieCsrIn32 (PcieCapBaseAddr + LINK_CAPABILITIES_REG_OFF, &Val);
+      *EpMaxWidth = (Val >> 4) & 0x3F;
+      *EpMaxGen = Val & 0xF;
+      PCIE_DEBUG (
+        "PCIE%d.%d EP MaxWidth %d EP MaxGen %d \n", RC->ID,
+        PcieIndex,
+        *EpMaxWidth,
+        *EpMaxGen
+        );
+
+      // From EP, enabling common clock for upstream
+      Ac01PcieCsrIn32 (PcieCapBaseAddr + LINK_CONTROL_LINK_STATUS_OFF, &Val);
+      Val = PCIE_CAP_SLOT_CLK_CONFIG_SET (Val, 1);
+      Val = PCIE_CAP_COMMON_CLK_SET (Val, 1);
+      Ac01PcieCsrOut32 (PcieCapBaseAddr + LINK_CONTROL_LINK_STATUS_OFF, Val);
+    }
+  }
+
+  // Restore value in order to not affect enumeration process
+  Ac01PcieCsrOut32 (RcCfgAddr + SEC_LAT_TIMER_SUB_BUS_SEC_BUS_PRI_BUS_REG, RestoreVal);
+
+  // Disable programming to config space
+  Ac01PcieCsrIn32 (RcCfgAddr + MISC_CONTROL_1_OFF, &Val);
+  Val = DBI_RO_WR_EN_SET (Val, 0);
+  Ac01PcieCsrOut32 (RcCfgAddr + MISC_CONTROL_1_OFF, Val);
+}
+
+/**
+  Check active PCIe controllers of RC, retrain or soft reset if needed
+
+  @param RC[in]         Pointer to AC01_RC structure
+  @param PcieIndex[in]  PCIe controller index
+
+  @retval               -1: Link recovery had failed
+                        1: Link width and speed are not correct
+                        0: Link recovery succeed
+**/
+INT32
+Ac01PcieCoreQoSLinkCheckRecovery (
+  IN AC01_RC   *RC,
+  IN INTN      PcieIndex
+  )
+{
+  VOID        *CsrAddr;
+  UINT32      Ltssm, LinkStat;
+  INTN        TimeOut;
+  INT32       NumberOfReset = MAX_REINIT; // Number of soft reset retry
+  UINT8       EpMaxWidth, EpMaxGen;
+  INT32       LinkStatusCheck, RasdesChecking;
+
+  // PCIe controller is not active or Link is not up
+  // Nothing to be done
+  if ((!RC->Pcie[PcieIndex].Active) || (!RC->Pcie[PcieIndex].LinkUp)) {
+    return LINK_CHECK_WRONG_PARAMETER;
+  }
+
+  do {
+    // Enable all of RASDES register to detect any training error
+    Ac01PFAEnableAll (RC, PcieIndex, PFA_REG_ENABLE);
+
+    // Accessing Endpoint and checking current link capabilities
+    Ac01PcieCoreGetEndpointInfo (RC, PcieIndex, &EpMaxWidth, &EpMaxGen);
+    LinkStatusCheck = Ac01PcieCoreLinkCheck (RC, PcieIndex, EpMaxWidth, EpMaxGen);
+
+    // Delay to allow the link to perform internal operation and generate
+    // any error status update. This allows detection of any error observed
+    // during initial link training. Possible evaluation time can be
+    // between 100ms to 200ms.
+    MicroSecondDelay (100000);
+
+    // Check for error
+    RasdesChecking = Ac01PFAEnableAll (RC, PcieIndex, PFA_REG_READ);
+
+    // Clear error counter
+    Ac01PFAEnableAll (RC, PcieIndex, PFA_REG_CLEAR);
+
+    // If link check functions return passed, then breaking out
+    // else go to soft reset
+    if (LinkStatusCheck != LINK_CHECK_FAILED &&
+        RasdesChecking != LINK_CHECK_FAILED &&
+        PcieLinkUpCheck (&RC->Pcie[PcieIndex], &Ltssm))
+    {
+      RC->Pcie[PcieIndex].LinkUp = TRUE;
+      break;
+    }
+
+    RC->Pcie[PcieIndex].LinkUp = FALSE;
+
+    // Trigger controller soft reset
+    PCIE_DEBUG ("PCIE%d.%d Start link re-initialization..\n", RC->ID, PcieIndex);
+    Ac01PcieCoreSetupRC (RC, 1, PcieIndex);
+
+    // Poll till linkstat is equal to 0x3
+    // This checking for linkup status and
+    // give LTSSM state the time to transit from DECTECT state to L0 state
+    // Total delay are 100ms, smaller number of delay cannot always make sure
+    // the state transition is completed
+    TimeOut = PCIE_LTSSM_TRANSITION_TIMEOUT;
+    CsrAddr = (VOID *)RC->Pcie[PcieIndex].CsrAddr;
+    do {
+      Ac01PcieCsrIn32 (CsrAddr + LINKSTAT, &LinkStat);
+      if ((RDLH_SMLH_LINKUP_STATUS_GET (LinkStat) == (SMLH_LINK_UP_MASK_BIT | RDLH_LINK_UP_MASK_BIT)) &&
+          (SMLH_LTSSM_STATE_GET (LinkStat) == S_L0))
+      {
+        PCIE_DEBUG (
+          "\tPCIE%d.%d LinkStat is correct after soft reset, transition time: %d\n",
+          RC->ID,
+          PcieIndex,
+          TimeOut
+          );
+        break;
+      }
+
+      MicroSecondDelay (100);
+      TimeOut -= 100;
+    } while (TimeOut > 0);
+
+    if (TimeOut <= 0) {
+      PCIE_DEBUG ("\tPCIE%d.%d LinkStat TIMEOUT after re-init\n", RC->ID, PcieIndex);
+    } else {
+      PCIE_DEBUG ("PCIE%d.%d Link re-initialization passed!\n", RC->ID, PcieIndex);
+    }
+
+    NumberOfReset--;
+  } while (NumberOfReset > 0);
+
+  return LINK_CHECK_SUCCESS;
+}
+
+VOID
 Ac01PcieCoreUpdateLink (
   IN  AC01_RC *RC,
   OUT BOOLEAN *IsNextRoundNeeded,
@@ -1221,7 +1597,7 @@ Ac01PcieCoreUpdateLink (
 
     if (Pcie->Active && !Pcie->LinkUp) {
       if (PcieLinkUpCheck (Pcie, &Ltssm)) {
-        Pcie->LinkUp = 1;
+        Pcie->LinkUp = TRUE;
         Ac01PcieCsrIn32 (CfgAddr + LINK_CONTROL_LINK_STATUS_REG, &Val);
         PCIE_DEBUG (
           "%a S%d RC%d RP%d NEGO_LINK_WIDTH: 0x%x LINK_SPEED: 0x%x\n",
@@ -1233,6 +1609,9 @@ Ac01PcieCoreUpdateLink (
           PCIE_CAP_LINK_SPEED_GET (Val)
           );
 
+        // Doing link checking and recovery if needed
+        Ac01PcieCoreQoSLinkCheckRecovery (RC, PcieIndex);
+
         // Un-mask Completion Timeout
         Ac01PcieCsrIn32 (CfgAddr + AMBA_LINK_TIMEOUT_OFF, &Val);
         Val = LINK_TIMEOUT_PERIOD_DEFAULT_SET (Val, 32);
@@ -1241,21 +1620,10 @@ Ac01PcieCoreUpdateLink (
         Val = CMPLT_TIMEOUT_ERR_MASK_SET (Val, 0);
         Ac01PcieCsrOut32 (CfgAddr + UNCORR_ERR_MASK_OFF, Val);
       } else {
-        *IsNextRoundNeeded = TRUE;
+        *IsNextRoundNeeded = FALSE;
         FailedPciePtr[*FailedPcieCount] = PcieIndex;
         *FailedPcieCount += 1;
       }
     }
   }
-}
-
-VOID
-Ac01PcieCoreEndEnumeration (
-  AC01_RC *RC
-  )
-{
-  //
-  // Reserved for hook from stack ending of enumeration phase processing.
-  // Emptry for now.
-  //
 }
