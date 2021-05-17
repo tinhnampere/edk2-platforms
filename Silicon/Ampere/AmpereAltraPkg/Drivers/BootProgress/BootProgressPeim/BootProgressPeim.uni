@@ -16,4 +16,3 @@
 #string STR_MODULE_ABSTRACT             #language en-US "Boot Progress Pei Module."
 
 #string STR_MODULE_DESCRIPTION          #language en-US "Updates SCP with boot progress information during boot. This module register report status code listener to collect boot progress information and post to SCP."
-
