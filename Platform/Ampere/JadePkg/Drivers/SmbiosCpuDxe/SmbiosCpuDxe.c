@@ -269,7 +269,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L3 = {
     0,                       // unkown speed
     CacheErrorParity,        // parity checking
     CacheTypeUnified,        // Unified cache
-    CacheAssociativity32Way, // 32-way
+    CacheAssociativity16Way, // 16-way
   },
   "L3 Cache\0"
 };
