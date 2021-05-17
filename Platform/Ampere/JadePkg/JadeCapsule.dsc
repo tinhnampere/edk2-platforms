@@ -26,4 +26,4 @@
   # Defines for default states.  These can be changed on the command line.
   # -D FLAG=VALUE
   #
-  DEFINE UEFI_ATF_IMAGE          = Build/Jade/jade_atfedk2.img.signed
+  DEFINE UEFI_ATF_IMAGE          = Build/Jade/jade_tianocore_atf.img
