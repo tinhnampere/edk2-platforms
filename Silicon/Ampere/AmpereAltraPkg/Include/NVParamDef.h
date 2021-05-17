@@ -78,7 +78,7 @@ typedef enum {
   NV_SI_SLC_SIZE                            = (30 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_SLC_SCRUB                           = (31 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_CCIX_DISABLE                        = (32 * 8) + NV_PREBOOT_PARAM_START,
-  NV_SI_ESM_SPEED                           = (33 * 8) + NV_PREBOOT_PARAM_START,
+  NV_SI_ESM_RESERVED                        = (33 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_PHY_CAL_MODE                    = (34 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_RAS_TEST_EN                         = (35 * 8) + NV_PREBOOT_PARAM_START,
   NV_SI_DDR_EYE_SCREEN_TEST_EN              = (36 * 8) + NV_PREBOOT_PARAM_START,
@@ -283,8 +283,9 @@ typedef enum {
   NV_SI_2P_RESERVED2                        = (61 * 8) + NV_USER_PARAM_START,
   NV_SI_HCR_EL2_CTL_LOW                     = (62 * 8) + NV_USER_PARAM_START,
   NV_SI_HCR_EL2_CTL_HIGH                    = (63 * 8) + NV_USER_PARAM_START,
+  NV_SI_ESM_SPEED                           = (64 * 8) + NV_USER_PARAM_START,
   /* NOTE: Add before NV_USER_PARAM_MAX and increase its value */
-  NV_USER_PARAM_MAX                         = (63 * 8) + NV_USER_PARAM_START,
+  NV_USER_PARAM_MAX                         = (64 * 8) + NV_USER_PARAM_START,
   NV_PMPRO_REGION3_LOAD_START               = NV_USER_PARAM_START,
   NV_PMPRO_REGION3_LOAD_END                 = NV_USER_PARAM_MAX,
 
@@ -507,9 +508,13 @@ typedef enum {
   NV_SI_RO_BOARD_MESH_S0_CXG_RC_STRONG_ORDERING_EN  = (197 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_MESH_S1_CXG_RC_STRONG_ORDERING_EN  = (198 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_GPIO_SW_WATCHDOG_EN                = (199 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
-  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_GPIO_SW_WATCHDOG_EN,
+  NV_SI_RO_BOARD_PCIE_HP_DISABLE                    = (200 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
+  NV_SI_RO_BOARD_I2C_VRD_VOUT_FORMAT                = (201 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
+  NV_SI_RO_BOARD_I2C_VRD_SMBUS_CMD_FLAGS            = (202 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
+  NV_SI_RO_BOARD_CUST_SPM_LOCATION                  = (203 * 8) + NV_BOARD_PARAM_START,
+  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_CUST_SPM_LOCATION,
   /* NOTE: Add before NV_BOARD_PARAM_MAX and increase its value */
-  NV_BOARD_PARAM_MAX                                = (199 * 8) + NV_BOARD_PARAM_START,
+  NV_BOARD_PARAM_MAX                                = (203 * 8) + NV_BOARD_PARAM_START,
 } NVPARAM;
 
 #endif /* NVPARAMDEF_H_ */
