@@ -62,6 +62,7 @@
   DEFINE NETWORK_HTTP_BOOT_ENABLE            = TRUE
   DEFINE NETWORK_ALLOW_HTTP_CONNECTIONS      = TRUE
   DEFINE NETWORK_TLS_ENABLE                  = TRUE
+  DEFINE REDFISH_ENABLE                      = TRUE
 
 !include MdePkg/MdeLibs.dsc.inc
 
@@ -106,6 +107,15 @@
   # Pcie Board
   #
   PcieBoardLib|Platform/Ampere/JadePkg/Library/PcieBoardLib/PcieBoardLib.inf
+
+  #
+  # EFI Redfish drivers
+  #
+!if $(REDFISH_ENABLE) == TRUE
+  RedfishPlatformHostInterfaceLib|EmulatorPkg/Library/RedfishPlatformHostInterfaceLib/RedfishPlatformHostInterfaceLib.inf
+  RedfishPlatformCredentialLib|Platform/Ampere/JadePkg/Library/RedfishPlatformCredentialLib/RedfishPlatformCredentialLib.inf
+  RedfishContentCodingLib|RedfishPkg/Library/RedfishContentCodingLibNull/RedfishContentCodingLibNull.inf
+!endif
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibFmp/DxeRuntimeCapsuleLib.inf
@@ -154,6 +164,19 @@
   gEfiSecurityPkgTokenSpaceGuid.PcdOptionRomImageVerificationPolicy|0x04
   gEfiSecurityPkgTokenSpaceGuid.PcdFixedMediaImageVerificationPolicy|0x04
   gEfiSecurityPkgTokenSpaceGuid.PcdRemovableMediaImageVerificationPolicy|0x04
+!endif
+
+!if $(REDFISH_ENABLE) == TRUE
+  gEfiRedfishPkgTokenSpaceGuid.PcdRedfishRestExServiceDevicePath.DevicePathMatchMode|DEVICE_PATH_MATCH_MAC_NODE
+  gEfiRedfishPkgTokenSpaceGuid.PcdRedfishRestExServiceDevicePath.DevicePathNum|1
+  #
+  # Below is the MAC address of network adapter on EDK2 Emulator platform.
+  # You can use ifconfig under EFI shell to get the MAC address of network adapter on EDK2 Emulator platform.
+  #
+  gEfiRedfishPkgTokenSpaceGuid.PcdRedfishRestExServiceDevicePath.DevicePath|{ DEVICE_PATH("MAC(001B21DC35B0,0x1)") }
+
+  # Allow Redish Service while Secure boot is disabled
+  gAmpereTokenSpaceGuid.PcdRedfishServiceStopIfSecureBootDisabled|FALSE
 !endif
 
 [PcdsDynamicDefault.common.DEFAULT]
@@ -243,3 +266,8 @@
   #
   Platform/Ampere/JadePkg/Drivers/BootOptionsRecoveryDxe/BootOptionsRecoveryDxe.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/IpmiBootDxe/IpmiBootDxe.inf
+
+  #
+  # Redfish
+  #
+!include RedfishPkg/Redfish.dsc.inc
