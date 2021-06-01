@@ -39,7 +39,8 @@
   gPlatformManagerEntryEventGuid
 
 [Pcd]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile                     ## CONSUMES
+  gAmpereTokenSpaceGuid.PcdNvramErased
+  gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile
 
 [Depex]
   TRUE
