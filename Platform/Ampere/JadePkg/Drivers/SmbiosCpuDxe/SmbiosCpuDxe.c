@@ -30,13 +30,14 @@
 #define CACHE_SIZE(x)   (UINT16) (0x8000 | (x) >> 16)
 #define CACHE_SIZE_2(x) (0x80000000 | (x) >> 16)
 
-#define TYPE4_ADDITIONAL_STRINGS                                  \
-  "SOCKET 0\0"                       /* socket type */            \
-  "Ampere(R)\0"                      /* manufacturer */           \
-  "Ampere(R) Altra(R) Processor\0"   /* processor description */  \
-  "NotSet\0"                         /* part number */
+#define TYPE4_ADDITIONAL_STRINGS                                       \
+  "SOCKET 0\0"                            /* socket type */            \
+  "Ampere(R)\0"                           /* manufacturer */           \
+  "Ampere(R) Altra(R) Processor\0"        /* processor description */  \
+  "NotSet\0"                              /* part number */            \
+  "Not Specified                     \0"  /* processor serial number */
 
-#define TYPE7_ADDITIONAL_STRINGS                                  \
+#define TYPE7_ADDITIONAL_STRINGS                                       \
   "L1 Cache\0" /* L1 Cache  */
 
 //
@@ -95,7 +96,7 @@ STATIC ARM_TYPE4 mArmDefaultType4Sk0 = {
     0xFFFF,                 // l1 cache handle
     0xFFFF,                 // l2 cache handle
     0xFFFF,                 // l3 cache handle
-    0,                      // serial not set
+    ADDITIONAL_STR_INDEX_5, // serial not set
     0,                      // asset not set
     ADDITIONAL_STR_INDEX_4, // part number
     80,                     // core count in socket
@@ -130,7 +131,7 @@ STATIC ARM_TYPE4 mArmDefaultType4Sk1 = {
     0xFFFF,                 // l1 cache handle
     0xFFFF,                 // l2 cache handle
     0xFFFF,                 // l3 cache handle
-    0,                      // serial not set
+    ADDITIONAL_STR_INDEX_5, // serial not set
     0,                      // asset not set
     ADDITIONAL_STR_INDEX_4, // part number
     80,                     // core count in socket
@@ -447,7 +448,7 @@ UpdateSmbiosType4 (
     *((UINT32 *)&Table->ProcessorId + 1) = 0;
     *((UINT8 *)&Table->Voltage) = 0x80 | PlatformHob->CoreVoltage[Index] / 100;
 
-    /* Type 4 Part number */
+    /* Type 4 Part number and processor serial number */
     if (Table->EnabledCoreCount) {
       if ((PlatformHob->ScuProductId[Index] & 0xff) == 0x01) {
         AsciiSPrint (
@@ -468,6 +469,18 @@ UpdateSmbiosType4 (
       }
 
       UpdateStringPack (StringPack, Str, ADDITIONAL_STR_INDEX_4);
+
+      AsciiSPrint (
+        Str,
+        sizeof (Str),
+        "%08X%08X%08X%08X",
+        PlatformHob->Ecid[Index][0],
+        PlatformHob->Ecid[Index][1],
+        PlatformHob->Ecid[Index][2],
+        PlatformHob->Ecid[Index][3]
+        );
+
+      UpdateStringPack (StringPack, Str, ADDITIONAL_STR_INDEX_5);
     }
   }
 }
