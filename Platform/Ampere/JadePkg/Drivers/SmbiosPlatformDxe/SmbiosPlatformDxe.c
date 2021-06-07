@@ -15,6 +15,7 @@
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 #include <PlatformInfoHob.h>
@@ -23,7 +24,7 @@
 
 // Type0 Data
 #define VENDOR_TEMPLATE       "Ampere(R)\0"
-#define BIOS_VERSION_TEMPLATE "TianoCore EDKII\0"
+#define BIOS_VERSION_TEMPLATE "TianoCore 0.00.00000000 (SYS: 0.00.00000000)\0"
 #define RELEASE_DATE_TEMPLATE "MM/DD/YYYY\0"
 
 #define TYPE0_ADDITIONAL_STRINGS                    \
@@ -804,6 +805,85 @@ GetBiosVerMinor (
 }
 
 STATIC
+UINTN
+GetStringPackSize (
+  CHAR8 *StringPack
+  )
+{
+  UINTN StrCount;
+  CHAR8 *StrStart;
+
+  if ((*StringPack == 0) && (*(StringPack + 1) == 0)) {
+    return 0;
+  }
+
+  // String section ends in double-null (0000h)
+  for (StrCount = 0, StrStart = StringPack;
+       ((*StrStart != 0) || (*(StrStart + 1) != 0)); StrStart++, StrCount++)
+  {
+  }
+
+  return StrCount + 2; // Included the double NULL
+}
+
+// Update String at String number to String Pack
+EFI_STATUS
+UpdateStringPack (
+  CHAR8 *StringPack,
+  CHAR8 *String,
+  UINTN StringNumber
+  )
+{
+  CHAR8 *StrStart;
+  UINTN StrIndex;
+  UINTN InputStrLen;
+  UINTN TargetStrLen;
+  UINTN BufferSize;
+  CHAR8 *Buffer;
+
+  StrStart = StringPack;
+  for (StrIndex = 1; StrIndex < StringNumber; StrStart++) {
+    // A string ends in 00h
+    if (*StrStart == 0) {
+      StrIndex++;
+    }
+    // String section ends in double-null (0000h)
+    if ((*StrStart == 0) && (*(StrStart + 1) == 0)) {
+      return EFI_NOT_FOUND;
+    }
+  }
+
+  if (*StrStart == 0) {
+    StrStart++;
+  }
+
+  InputStrLen = AsciiStrLen (String);
+  TargetStrLen = AsciiStrLen (StrStart);
+  BufferSize = GetStringPackSize (StrStart + TargetStrLen + 1);
+
+  // Replace the String if length matched
+  // OR this is the last string
+  if (InputStrLen == TargetStrLen || (BufferSize == 0)) {
+    CopyMem (StrStart, String, InputStrLen);
+  }
+  // Otherwise, buffer is needed to apply new string
+  else {
+    Buffer = AllocateZeroPool (BufferSize);
+    if (Buffer == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
+
+    CopyMem (Buffer, StrStart + TargetStrLen + 1, BufferSize);
+    CopyMem (StrStart, String, InputStrLen + 1);
+    CopyMem (StrStart + InputStrLen + 1, Buffer, BufferSize);
+
+    FreePool (Buffer);
+  }
+
+  return EFI_SUCCESS;
+}
+
+STATIC
 EFI_STATUS
 UpdateSmbiosType0 (
   PLATFORM_INFO_HOB  *PlatformHob
@@ -815,10 +895,15 @@ UpdateSmbiosType0 (
   CHAR8                               *PcdReleaseDate = NULL;
   CHAR8                               AsciiVersion[32];
   UINTN                               Index;
+  CHAR8                               BiosVersionStr[128];
+  CHAR8                               *StringPack;
+  CHAR8                               SizeOfFirmwareVer;
+  UINT16                              *FirmwareVersionPcdPtr;
 
   //
   //  Update Type0 information
   //
+
   ReleaseDateBuf = &mArmDefaultType0.Strings[0]
                    + sizeof (VENDOR_TEMPLATE) - 1
                    + sizeof (BIOS_VERSION_TEMPLATE) - 1;
@@ -860,6 +945,33 @@ UpdateSmbiosType0 (
   // field, the value is 0FFh
   mArmDefaultType0.Base.SystemBiosMajorRelease = GetBiosVerMajor ();
   mArmDefaultType0.Base.SystemBiosMinorRelease = GetBiosVerMinor ();
+
+  //
+  // Format of PcdFirmwareVersionString is
+  // "(MAJOR_VER).(MINOR_VER).(BUILD) Build YYYY.MM.DD", we only need
+  // "(MAJOR_VER).(MINOR_VER).(BUILD)" showed in Bios version. Using
+  // space character to determine this string. Another case uses null
+  // character to end while loop.
+  //
+  SizeOfFirmwareVer = 0;
+  FirmwareVersionPcdPtr = (UINT16 *)PcdGetPtr (PcdFirmwareVersionString);
+  while (*FirmwareVersionPcdPtr != ' ' && *FirmwareVersionPcdPtr != '\0') {
+    SizeOfFirmwareVer++;
+    FirmwareVersionPcdPtr++;
+  }
+
+  AsciiSPrint (
+    BiosVersionStr,
+    sizeof (BiosVersionStr),
+    "TianoCore %.*s (SYS: %a.%a)",
+    SizeOfFirmwareVer,
+    PcdGetPtr (PcdFirmwareVersionString),
+    PlatformHob->SmPmProVer,
+    PlatformHob->SmPmProBuild
+    );
+  StringPack = mArmDefaultType0.Strings;
+
+  UpdateStringPack (StringPack, BiosVersionStr, ADDITIONAL_STR_INDEX_2);
 
   /* Update SMBIOS Type 0 EC Info */
   CopyMem (
