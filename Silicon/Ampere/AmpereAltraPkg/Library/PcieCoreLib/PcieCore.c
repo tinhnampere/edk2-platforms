@@ -259,7 +259,7 @@ Ac01PcieCfgIn32 (
   )
 {
   UINT32 RegC, Reg18;
-  UINT8  MfHt, Primary = 0, Sec = 0, Sub = 0;
+  UINT8  MfHt, Ht, Primary = 0, Sec = 0, Sub = 0;
 
   if ((BUS_NUM (Addr) > 0) && (DEV_NUM (Addr) > 0) && (CFG_REG (Addr) == 0)) {
     *Val = MmioRead32 ((UINT64)Addr);
@@ -277,7 +277,8 @@ Ac01PcieCfgIn32 (
       MfHt = RegC >> 16;
       PCIE_DEBUG_CFG ("  Peek RD8 MfHt=0x%02X\n", MfHt);
 
-      if ((MfHt & 0x7F)!= 0) { /* Type 1 header */
+      Ht = MfHt & 0x7F;
+      if (Ht != 0) { /* Type 1 header */
         Reg18 = MmioRead32 ((UINT64)Addr + 0x18);
         Primary = Reg18; Sec = Reg18 >> 8; Sub = Reg18 >> 16;
         PCIE_DEBUG_CFG (
@@ -289,7 +290,7 @@ Ac01PcieCfgIn32 (
           Reg18
           );
       }
-      if ((MfHt == 0) || (Primary != 0)) { /* QS RPs Primary Bus is 0b */
+      if ((Ht == 0) || (Primary != 0)) { /* Ampere Altra RPs Primary Bus is 0b */
         *Val = 0xffffffff;
         PCIE_DEBUG_CFG (
           "  Skip RD32 B%X|D%X PCIE CFG RD: 0x%p return 0xffffffff\n",
