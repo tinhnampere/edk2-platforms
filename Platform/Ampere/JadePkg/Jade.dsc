@@ -63,6 +63,8 @@
   DEFINE NETWORK_ALLOW_HTTP_CONNECTIONS      = TRUE
   DEFINE NETWORK_TLS_ENABLE                  = TRUE
 
+!include MdePkg/MdeLibs.dsc.inc
+
 # Include default Ampere Platform DSC file
 !include Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dsc.inc
 

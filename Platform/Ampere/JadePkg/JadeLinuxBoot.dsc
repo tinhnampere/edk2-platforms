@@ -30,6 +30,8 @@
   DEFINE FIRMWARE_VER            = 0.01.001
   DEFINE EDK2_SKIP_PEICORE       = TRUE
 
+!include MdePkg/MdeLibs.dsc.inc
+
 # Include default Ampere Platform DSC file
 !include Silicon/Ampere/AmpereAltraPkg/AmpereAltraLinuxBootPkg.dsc.inc
 
