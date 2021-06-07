@@ -57,13 +57,6 @@
 #define TCU_OFFSET              0
 #define HB_CSR_OFFSET           0x01000000
 #define PCIE0_CSR_OFFSET        0x01010000
-#define PCIE1_CSR_OFFSET        0x01020000
-#define PCIE2_CSR_OFFSET        0x01030000
-#define PCIE3_CSR_OFFSET        0x01040000
-#define PCIE4_CSR_OFFSET        0x01010000
-#define PCIE5_CSR_OFFSET        0x01020000
-#define PCIE6_CSR_OFFSET        0x01030000
-#define PCIE7_CSR_OFFSET        0x01040000
 #define SNPSRAM_OFFSET          0x9000
 #define SERDES_CSR_OFFSET       0x01200000
 #define MMCONFIG_OFFSET         0x10000000

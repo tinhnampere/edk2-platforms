@@ -17,9 +17,6 @@
 #include "Pcie.h"
 #include "PcieCore.h"
 
-#define DEV_MASK 0x00F8000
-#define BUS_MASK 0xFF00000
-
 STATIC INT32
 Ac01PcieCsrOut32 (
   VOID   *Addr,
