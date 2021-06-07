@@ -883,8 +883,9 @@ Ac01PcieCoreSetupRC (
     // the one is used for detecting the disk when it is inserted.
     Ac01PcieCsrIn32 (CfgAddr + SLOT_CAPABILITIES_REG, &Val);
     Val = SLOT_HPC_SET (Val, 1);
+    // Program the power limit
+    Val = PCIE_SLOT_CAP_SLOT_POWER_LIMIT_VALUE_SET (Val, PCIE_SLOT_POWER_LIMIT);
     Ac01PcieCsrOut32 (CfgAddr + SLOT_CAPABILITIES_REG, Val);
-
 
     // Apply RASDP error mitigation for all x8, x4, and x2 controllers
     // This includes all RCB root ports, and every RCA root port controller

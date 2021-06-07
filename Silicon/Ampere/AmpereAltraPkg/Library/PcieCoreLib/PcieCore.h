@@ -187,6 +187,10 @@
 // SLOTCAP
 #define SLOT_HPC_SET(dst, src) (((dst) & ~0x40) | (((UINT32) (src) << 6) & 0x40))
 
+// SLOT_CAPABILITIES_REG, PCIE_CAP_SLOT_POWER_LIMIT_VALUE bits[14:7]
+#define PCIE_SLOT_CAP_SLOT_POWER_LIMIT_VALUE_SET(dst, src) \
+                            (((dst) & ~0x7F80) | (((UINT32)(src) << 7) & 0x7F80))
+
 // HOTPLUGSTAT
 #define PWR_IND_SET(dst, src) (((dst) & ~0x1) | (((UINT32) (src)) & 0x1))
 #define ATTEN_IND_SET(dst, src) (((dst) & ~0x2) | (((UINT32) (src) << 1) & 0x2))

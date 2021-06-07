@@ -65,6 +65,8 @@
 
 #define PCIE_ERRATA_SPEED1      0x0001 // Limited speed errata
 
+#define PCIE_SLOT_POWER_LIMIT   75     // Watt
+
 #define PRESET_INVALID          0xFF
 
 /* Max number for AC01 PCIE Root Complexes */
