@@ -1115,6 +1115,11 @@ Ac01PcieCoreSetupRC (
     Val = PCIE_CAP_COMMON_CLK_SET (Val, 1);
     Ac01PcieCsrOut32 (CfgAddr + LINK_CONTROL_LINK_STATUS_REG, Val);
 
+    // Match aux_clk to system
+    Ac01PcieCsrIn32 (CfgAddr + AUX_CLK_FREQ_OFF, &Val);
+    Val = AUX_CLK_FREQ_SET (Val, AUX_CLK_500MHZ);
+    Ac01PcieCsrOut32 (CfgAddr + AUX_CLK_FREQ_OFF, Val);
+
     // Assert PERST low to reset endpoint
     PcieBoardAssertPerst (RC, PcieIndex, 0, FALSE);
 
@@ -1126,18 +1131,13 @@ Ac01PcieCoreSetupRC (
     // Complete the PERST pulse
     PcieBoardAssertPerst (RC, PcieIndex, 0, TRUE);
 
-    // Match aux_clk to system
-    Ac01PcieCsrIn32 (CfgAddr + AUX_CLK_FREQ_OFF, &Val);
-    Val = AUX_CLK_FREQ_SET (Val, AUX_CLK_500MHZ);
-    Ac01PcieCsrOut32 (CfgAddr + AUX_CLK_FREQ_OFF, Val);
-
     // Lock programming of config space
     Ac01PcieCsrIn32 (CfgAddr + MISC_CONTROL_1_OFF, &Val);
     Val = DBI_RO_WR_EN_SET (Val, 0);
     Ac01PcieCsrOut32 (CfgAddr + MISC_CONTROL_1_OFF, Val);
 
     if (ReInit == 1) {
-      break;
+      return 0;
     }
   }
 
@@ -1155,10 +1155,9 @@ Ac01PcieCoreSetupRC (
   return 0;
 }
 
-STATIC BOOLEAN
+BOOLEAN
 PcieLinkUpCheck (
-  IN  AC01_PCIE *Pcie,
-  OUT UINT32    *LtssmState
+  IN  AC01_PCIE *Pcie
   )
 {
   VOID   *CsrAddr;
@@ -1175,19 +1174,20 @@ PcieLinkUpCheck (
   LinkStat = LinkStat & (SMLH_LTSSM_STATE_MASK | PHY_STATUS_MASK_BIT |
                          SMLH_LINK_UP_MASK_BIT | RDLH_LINK_UP_MASK_BIT);
   if (LinkStat == 0x0000) {
-    return 0;
+    return FALSE;
   }
 
   Ac01PcieCsrIn32 (CsrAddr +  BLOCKEVENTSTAT, &BlockEvent);
   Ac01PcieCsrIn32 (CsrAddr +  LINKSTAT, &LinkStat);
 
-  if ((BlockEvent & LINKUP_MASK) != 0) {
-    *LtssmState = SMLH_LTSSM_STATE_GET (LinkStat);
-    PCIE_DEBUG ("%a *LtssmState=%lx Linkup\n", __func__, *LtssmState);
-    return 1;
+  if (((BlockEvent & LINKUP_MASK) != 0)
+      && (SMLH_LTSSM_STATE_GET(LinkStat) == S_L0))
+  {
+    PCIE_DEBUG ("%a Linkup\n", __FUNCTION__);
+    return TRUE;
   }
 
-  return 0;
+  return FALSE;
 }
 
 VOID
@@ -1195,10 +1195,26 @@ Ac01PcieCoreEndEnumeration (
   AC01_RC *RC
   )
 {
-  //
-  // Reserved for hook from stack ending of enumeration phase processing.
-  // Emptry for now.
-  //
+  VOID            *Reg = NULL;
+  UINTN           Index;
+  UINT32          Val;
+
+  if (RC == NULL || !RC->Active) {
+    return;
+  }
+
+  // Clear uncorrectable error during enumuration phase. Mainly completion timeout.
+  for (Index = 0; Index < RC->MaxPcieController; Index++) {
+    Reg = (VOID *)((UINT64)RC->MmcfgAddr + ((Index + 1) << 15) + UNCORR_ERR_STATUS_OFF);
+    if (!RC->Pcie[Index].Active) {
+      continue;
+    }
+    Ac01PcieCfgIn32 (Reg, &Val);
+    if (Val != 0) {
+      // Clear error by writting
+      Ac01PcieCfgOut32 (Reg, Val);
+    }
+  }
 }
 
 /**
@@ -1481,7 +1497,6 @@ Ac01PcieCoreQoSLinkCheckRecovery (
   )
 {
   VOID        *CsrAddr;
-  UINT32      Ltssm, LinkStat;
   INTN        TimeOut;
   INT32       NumberOfReset = MAX_REINIT; // Number of soft reset retry
   UINT8       EpMaxWidth, EpMaxGen;
@@ -1494,42 +1509,43 @@ Ac01PcieCoreQoSLinkCheckRecovery (
   }
 
   do {
-    // Enable all of RASDES register to detect any training error
-    Ac01PFAEnableAll (RC, PcieIndex, PFA_REG_ENABLE);
+    if (RC->Pcie[PcieIndex].LinkUp) {
+      // Enable all of RASDES register to detect any training error
+      Ac01PFAEnableAll (RC, PcieIndex, PFA_REG_ENABLE);
 
-    // Accessing Endpoint and checking current link capabilities
-    Ac01PcieCoreGetEndpointInfo (RC, PcieIndex, &EpMaxWidth, &EpMaxGen);
-    LinkStatusCheck = Ac01PcieCoreLinkCheck (RC, PcieIndex, EpMaxWidth, EpMaxGen);
+      // Accessing Endpoint and checking current link capabilities
+      Ac01PcieCoreGetEndpointInfo (RC, PcieIndex, &EpMaxWidth, &EpMaxGen);
+      LinkStatusCheck = Ac01PcieCoreLinkCheck (RC, PcieIndex, EpMaxWidth, EpMaxGen);
 
-    // Delay to allow the link to perform internal operation and generate
-    // any error status update. This allows detection of any error observed
-    // during initial link training. Possible evaluation time can be
-    // between 100ms to 200ms.
-    MicroSecondDelay (100000);
+      // Delay to allow the link to perform internal operation and generate
+      // any error status update. This allows detection of any error observed
+      // during initial link training. Possible evaluation time can be
+      // between 100ms to 200ms.
+      MicroSecondDelay (100000);
 
-    // Check for error
-    RasdesChecking = Ac01PFAEnableAll (RC, PcieIndex, PFA_REG_READ);
+      // Check for error
+      RasdesChecking = Ac01PFAEnableAll (RC, PcieIndex, PFA_REG_READ);
 
-    // Clear error counter
-    Ac01PFAEnableAll (RC, PcieIndex, PFA_REG_CLEAR);
+      // Clear error counter
+      Ac01PFAEnableAll (RC, PcieIndex, PFA_REG_CLEAR);
 
-    // If link check functions return passed, then breaking out
-    // else go to soft reset
-    if (LinkStatusCheck != LINK_CHECK_FAILED &&
-        RasdesChecking != LINK_CHECK_FAILED &&
-        PcieLinkUpCheck (&RC->Pcie[PcieIndex], &Ltssm))
-    {
-      RC->Pcie[PcieIndex].LinkUp = TRUE;
-      break;
+      // If link check functions return passed, then breaking out
+      // else go to soft reset
+      if (LinkStatusCheck != LINK_CHECK_FAILED &&
+          RasdesChecking != LINK_CHECK_FAILED &&
+          PcieLinkUpCheck (&RC->Pcie[PcieIndex]))
+      {
+        return LINK_CHECK_SUCCESS;
+      }
+
+      RC->Pcie[PcieIndex].LinkUp = FALSE;
     }
-
-    RC->Pcie[PcieIndex].LinkUp = FALSE;
 
     // Trigger controller soft reset
     PCIE_DEBUG ("PCIE%d.%d Start link re-initialization..\n", RC->ID, PcieIndex);
     Ac01PcieCoreSetupRC (RC, 1, PcieIndex);
 
-    // Poll till linkstat is equal to 0x3
+    // Poll until link up
     // This checking for linkup status and
     // give LTSSM state the time to transit from DECTECT state to L0 state
     // Total delay are 100ms, smaller number of delay cannot always make sure
@@ -1537,16 +1553,14 @@ Ac01PcieCoreQoSLinkCheckRecovery (
     TimeOut = PCIE_LTSSM_TRANSITION_TIMEOUT;
     CsrAddr = (VOID *)RC->Pcie[PcieIndex].CsrAddr;
     do {
-      Ac01PcieCsrIn32 (CsrAddr + LINKSTAT, &LinkStat);
-      if ((RDLH_SMLH_LINKUP_STATUS_GET (LinkStat) == (SMLH_LINK_UP_MASK_BIT | RDLH_LINK_UP_MASK_BIT)) &&
-          (SMLH_LTSSM_STATE_GET (LinkStat) == S_L0))
-      {
+      if (PcieLinkUpCheck (&RC->Pcie[PcieIndex])) {
         PCIE_DEBUG (
           "\tPCIE%d.%d LinkStat is correct after soft reset, transition time: %d\n",
           RC->ID,
           PcieIndex,
           TimeOut
           );
+        RC->Pcie[PcieIndex].LinkUp = TRUE;
         break;
       }
 
@@ -1576,7 +1590,7 @@ Ac01PcieCoreUpdateLink (
 {
   INTN      PcieIndex;
   AC01_PCIE *Pcie;
-  UINT32    Ltssm, i;
+  UINT32    i;
   UINT32    Val;
   VOID      *CfgAddr;
 
@@ -1596,7 +1610,7 @@ Ac01PcieCoreUpdateLink (
     CfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
     if (Pcie->Active && !Pcie->LinkUp) {
-      if (PcieLinkUpCheck (Pcie, &Ltssm)) {
+      if (PcieLinkUpCheck (Pcie)) {
         Pcie->LinkUp = TRUE;
         Ac01PcieCsrIn32 (CfgAddr + LINK_CONTROL_LINK_STATUS_REG, &Val);
         PCIE_DEBUG (

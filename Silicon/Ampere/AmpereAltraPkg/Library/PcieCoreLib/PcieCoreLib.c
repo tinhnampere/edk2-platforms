@@ -526,6 +526,10 @@ Ac01PcieHostBridgeNotifyPhase (
     break;
 
   case EfiPciHostBridgeBeginEnumeration:
+    /* FIXME: 100ms that help fixing completion timeout issue */
+    MicroSecondDelay (100000);
+    break;
+
   case EfiPciHostBridgeBeginBusAllocation:
   case EfiPciHostBridgeEndBusAllocation:
   case EfiPciHostBridgeBeginResourceAllocation:
