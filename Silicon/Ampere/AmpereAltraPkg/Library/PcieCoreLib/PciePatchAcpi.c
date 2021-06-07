@@ -7,18 +7,21 @@
 **/
 
 #include <AcpiHeader.h>
+#include <Guid/PlatformInfoHobGuid.h>
 #include <IndustryStandard/Acpi30.h>
 #include <IndustryStandard/IoRemappingTable.h>
 #include <Library/AcpiHelperLib.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/HobLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PcieBoardLib.h>
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Platform/Ac01.h>
+#include <PlatformInfoHob.h>
 #include <Protocol/AcpiTable.h>
 
 #include "Pcie.h"
@@ -396,7 +399,7 @@ ConstructIort (
       0,
       0x0,
       0x0,
-      0,
+      0,  // Proximity domain - need fill in
       .DeviceIdMapping = 1,
     },
     __AC01_ID_MAPPING (0x0, 0xffff, 0, SmmuNode, 0),
@@ -418,11 +421,21 @@ ConstructIort (
     0, /* Page 1 Base. Need to be filled. */
   };
 
-  UINT32  Idx, Idx1, SmmuNodeOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
-  VOID    *TIortPtr = IortPtr, *SmmuPtr, *PmcgPtr;
-  UINT32  ItsOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
-  AC01_RC *Rc;
-  UINTN   NumTbuPmu;
+  AC01_RC             *Rc;
+  PLATFORM_INFO_HOB   *PlatformHob;
+  UINT32              Idx, Idx1, SmmuNodeOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
+  UINT32              ItsOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
+  UINTN               NumTbuPmu;
+  VOID                *Hob;
+  VOID                *TIortPtr = IortPtr, *SmmuPtr, *PmcgPtr;
+
+  /* Get the Platform HOB */
+  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  if (Hob == NULL) {
+    return;
+  }
+
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   TIort.Header.Length = HeaderCount;
   CopyMem (TIortPtr, &TIort, sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE));
@@ -444,6 +457,24 @@ ConstructIort (
     TSmmuNode.InterruptMsiMapping.OutputReference = ItsOffset[Idx];
     TSmmuNode.InterruptMsiMappingSingle.OutputBase = PciSegEnabled[Idx] << 16;
     TSmmuNode.InterruptMsiMappingSingle.OutputReference = ItsOffset[Idx];
+    /* All RCs on master be assigned to node 0, while remote RCs be assigned to first remote node */
+    TSmmuNode.Node.Flags = EFI_ACPI_IORT_SMMUv3_FLAG_PROXIMITY_DOMAIN;
+    TSmmuNode.Node.ProximityDomain = 0;
+    if ((Rc->TcuAddr & SLAVE_SOCKET_BASE_ADDRESS_OFFSET) != 0) {
+      /* RC on remote socket */
+      TSmmuNode.Node.Flags = EFI_ACPI_IORT_SMMUv3_FLAG_PROXIMITY_DOMAIN;
+      switch (PlatformHob->SubNumaMode[0]) {
+      case SUBNUMA_MODE_MONOLITHIC:
+        TSmmuNode.Node.ProximityDomain += MONOLITIC_NUM_OF_REGION;
+        break;
+      case SUBNUMA_MODE_HEMISPHERE:
+        TSmmuNode.Node.ProximityDomain += HEMISPHERE_NUM_OF_REGION;
+        break;
+      case SUBNUMA_MODE_QUADRANT:
+        TSmmuNode.Node.ProximityDomain += QUADRANT_NUM_OF_REGION;
+        break;
+      }
+    }
     CopyMem (SmmuPtr, &TSmmuNode, sizeof (AC01_SMMU_NODE));
     SmmuPtr += sizeof (AC01_SMMU_NODE);
 

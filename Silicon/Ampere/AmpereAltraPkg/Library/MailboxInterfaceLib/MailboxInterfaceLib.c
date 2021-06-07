@@ -16,6 +16,7 @@
 #include <Library/MailboxInterfaceLib.h>
 #include <Library/TimerLib.h>
 #include <Library/IoLib.h>
+#include <Platform/Ac01.h>
 
 //
 // Hardware Doorbells
@@ -25,8 +26,6 @@
 
 #define PMPRO_DB0_IRQ_OFST               56
 #define PMPRO_DB0_BASE_ADDRESS           (FixedPcdGet64 (PcdPmproDbBaseReg))
-
-#define SLAVE_SOCKET_BASE_ADDRESS_OFFSET 0x400000000000
 
 //
 // The base SPI interrupt number of the Slave socket

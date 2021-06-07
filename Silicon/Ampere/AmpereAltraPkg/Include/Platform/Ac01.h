@@ -143,4 +143,6 @@
 #define CFG2P_OFFSET                0x200
 #define SLAVE_PRESENT_N             BIT1 // Slave socket present
 
+#define SLAVE_SOCKET_BASE_ADDRESS_OFFSET 0x400000000000
+
 #endif /* PLATFORM_AC01_H_ */
