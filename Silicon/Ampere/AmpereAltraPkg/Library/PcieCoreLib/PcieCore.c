@@ -1195,9 +1195,10 @@ Ac01PcieCoreEndEnumeration (
   AC01_RC *RC
   )
 {
-  VOID            *Reg = NULL;
+  VOID            *Reg;
   UINTN           Index;
   UINT32          Val;
+  VOID            *CfgAddr;
 
   if (RC == NULL || !RC->Active) {
     return;
@@ -1205,10 +1206,18 @@ Ac01PcieCoreEndEnumeration (
 
   // Clear uncorrectable error during enumuration phase. Mainly completion timeout.
   for (Index = 0; Index < RC->MaxPcieController; Index++) {
-    Reg = (VOID *)((UINT64)RC->MmcfgAddr + ((Index + 1) << 15) + UNCORR_ERR_STATUS_OFF);
     if (!RC->Pcie[Index].Active) {
       continue;
     }
+    if (!PcieLinkUpCheck(&RC->Pcie[Index])) {
+      // If link down/disabled after enumeration, disable completed time out
+      CfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[Index].DevNum << 15));
+      Ac01PcieCsrIn32 (CfgAddr + UNCORR_ERR_MASK_OFF, &Val);
+      Val = CMPLT_TIMEOUT_ERR_MASK_SET (Val, 1);
+      Ac01PcieCsrOut32 (CfgAddr + UNCORR_ERR_MASK_OFF, Val);
+    }
+    // Clear all errors
+    Reg = (VOID *)((UINT64)RC->MmcfgAddr + ((Index + 1) << 15) + UNCORR_ERR_STATUS_OFF);
     Ac01PcieCfgIn32 (Reg, &Val);
     if (Val != 0) {
       // Clear error by writting
