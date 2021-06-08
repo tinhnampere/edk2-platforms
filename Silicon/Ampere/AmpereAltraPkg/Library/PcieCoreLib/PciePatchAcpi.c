@@ -30,6 +30,9 @@
 #define RCA_NUM_TBU_PMU         6
 #define RCB_NUM_TBU_PMU         10
 
+// Required to be 1 to match the kernel quirk for ECAM
+#define EFI_ACPI_MCFG_OEM_REVISION 1
+
 STATIC UINT32 gTbuPmuIrqArray[] = { SMMU_TBU_PMU_IRQ_START_ARRAY };
 STATIC UINT32 gTcuPmuIrqArray[] = { SMMU_TCU_PMU_IRQ_START_ARRAY };
 
@@ -248,7 +251,7 @@ ConstructMcfg (
       0x00,                        // Checksum will be updated at runtime
       EFI_ACPI_OEM_ID,
       EFI_ACPI_OEM_TABLE_ID,
-      EFI_ACPI_OEM_REVISION,
+      EFI_ACPI_MCFG_OEM_REVISION,
       EFI_ACPI_CREATOR_ID,
       EFI_ACPI_CREATOR_REVISION
     },
