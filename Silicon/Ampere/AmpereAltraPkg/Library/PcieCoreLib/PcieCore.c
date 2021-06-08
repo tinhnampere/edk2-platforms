@@ -404,11 +404,6 @@ Ac01PcieCfgIn8 (
   )
 {
   UINT64 AlignedAddr = (UINT64)Addr & ~0x3;
-  if ((((UINT64)Addr & DEV_MASK) >> 15 )> 0 && (((UINT64)Addr & BUS_MASK)  >> 20)> 0) {
-    *Val = 0xff;
-    return 0;
-  }
-
   UINT32 Val32 = MmioRead32 (AlignedAddr);
   switch ((UINT64)Addr & 0x3) {
   case 3:
