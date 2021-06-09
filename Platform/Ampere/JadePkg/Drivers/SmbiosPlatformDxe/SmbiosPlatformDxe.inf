@@ -71,6 +71,9 @@
   gAmpereTokenSpaceGuid.PcdFruProductFruFileId
   gAmpereTokenSpaceGuid.PcdFruProductExtra
 
+  # FRU MultiRecord
+  gAmpereTokenSpaceGuid.PcdFruSystemUniqueID
+
 [Guids]
   gPlatformHobGuid
 

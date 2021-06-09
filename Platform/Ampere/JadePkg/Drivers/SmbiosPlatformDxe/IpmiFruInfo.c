@@ -11,11 +11,14 @@
 
 **/
 
+#include <IndustryStandard/IpmiNetFnApp.h>
 #include <IndustryStandard/SmBios.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/IpmiCommandLib.h>
+#include <Library/IpmiCommandLibExt.h>
+#include <Library/IpmiLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 
@@ -264,6 +267,8 @@ UpdateFruPcds (
   CHAR8                  *String;
   UINTN                  StringSize;
   UINT8                  FruData[FRU_AREA_LENGTH_MAX];
+  UINT32                        SystemGuidResponseSize;
+  IPMI_GET_SYSTEM_GUID_RESPONSE SystemGuidResponse;
 
   Status = InternalReadFruData (0, sizeof (IPMI_FRU_COMMON_HEADER), FruData);
   if (EFI_ERROR (Status)) {
@@ -490,6 +495,26 @@ UpdateFruPcds (
         String = NULL;
       }
     }
+  }
+
+  //
+  // Read MultiRecord Area
+  //
+  SystemGuidResponseSize = sizeof (SystemGuidResponse);
+
+  Status = IpmiSubmitCommand (
+             IPMI_NETFN_APP,
+             IPMI_APP_GET_SYSTEM_GUID,
+             NULL,
+             0,
+             (UINT8 *)&SystemGuidResponse,
+             &SystemGuidResponseSize
+             );
+
+  if (!EFI_ERROR (Status)) {
+    CopyMem (PcdGetPtr (PcdFruSystemUniqueID), (VOID *)SystemGuidResponse.Guid, sizeof (EFI_GUID));
+  } else {
+    DEBUG ((DEBUG_ERROR, "%a: Failed to read MultiRecord Area - %r\n", __FUNCTION__, Status));
   }
 
   return Status;

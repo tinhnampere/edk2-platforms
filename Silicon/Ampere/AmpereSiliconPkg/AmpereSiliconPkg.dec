@@ -130,3 +130,6 @@
   gAmpereTokenSpaceGuid.PcdFruProductAssetTag|"To be filled by O.E.M.                             "|VOID*|0xB0000046
   gAmpereTokenSpaceGuid.PcdFruProductFruFileId|"To be filled by O.E.M.                             "|VOID*|0xB0000047
   gAmpereTokenSpaceGuid.PcdFruProductExtra|"To be filled by O.E.M.                             "|VOID*|0xB0000048
+
+  # FRU MultiRecord
+  gAmpereTokenSpaceGuid.PcdFruSystemUniqueID|{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }|VOID*|0xB0000049

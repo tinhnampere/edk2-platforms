@@ -1113,6 +1113,39 @@ SmbiosUpdateString (
 }
 
 VOID
+ConvertIpmiGuidToSmbiosGuid (
+  IN OUT UINT8 *SmbiosGuid,
+  IN     UINT8 *IpmiGuid
+  )
+{
+  UINT8 Index;
+
+  //
+  // Node and clock seq field within the GUID
+  // are stored most-significant byte first in
+  // SMBIOS spec but LSB first in IPMI spec
+  // ->change its offset and byte-order
+  //
+  for (Index = 0; Index < 8; Index++) {
+    *(SmbiosGuid + 15 - Index) = *(IpmiGuid + Index);
+  }
+  //
+  // Time high, time mid and time low field
+  // are stored LSB first in both IPMI spec
+  // and SMBIOS spec
+  // ->only need change offset
+  //
+  *(SmbiosGuid + 6) = *(IpmiGuid + 8);
+  *(SmbiosGuid + 7) = *(IpmiGuid + 9);
+  *(SmbiosGuid + 4) = *(IpmiGuid + 10);
+  *(SmbiosGuid + 5) = *(IpmiGuid + 11);
+  *SmbiosGuid       = *(IpmiGuid + 12);
+  *(SmbiosGuid + 1) = *(IpmiGuid + 13);
+  *(SmbiosGuid + 2) = *(IpmiGuid + 14);
+  *(SmbiosGuid + 3) = *(IpmiGuid + 15);
+}
+
+VOID
 UpdateSmbiosType123 (
   EFI_SMBIOS_PROTOCOL *Smbios
   )
@@ -1121,6 +1154,7 @@ UpdateSmbiosType123 (
   EFI_SMBIOS_HANDLE       SmbiosHandle;
   EFI_SMBIOS_TABLE_HEADER *Record;
   UINTN                   StringIndex;
+  UINT8                   *GuidPtr;
 
   ASSERT (Smbios != NULL);
 
@@ -1131,6 +1165,8 @@ UpdateSmbiosType123 (
     // Update SMBIOS Type 1
     //
     if (Record->Type == SMBIOS_TYPE_SYSTEM_INFORMATION) {
+      GuidPtr = (UINT8 *)&((SMBIOS_TABLE_TYPE1 *)Record)->Uuid;
+      ConvertIpmiGuidToSmbiosGuid (GuidPtr, (UINT8 *)PcdGetPtr (PcdFruSystemUniqueID));
       StringIndex = ((SMBIOS_TABLE_TYPE1 *)Record)->Manufacturer;
       SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductManufacturerName));
       SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductName));

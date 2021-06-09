@@ -35,6 +35,14 @@ typedef struct {
   UINT8   InstanceSelector;
 } IPMI_BOOT_FLAGS_INFO;
 
+//
+// Structure definition for IPMI "Get System GUID" response data
+//
+typedef struct {
+  UINT8  CompletionCode;
+  UINT8  Guid[16];
+} IPMI_GET_SYSTEM_GUID_RESPONSE;
+
 /**
   Get BMC Lan IP Address.
 
