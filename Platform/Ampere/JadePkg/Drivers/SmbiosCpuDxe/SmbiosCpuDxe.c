@@ -23,7 +23,7 @@
 #include <PlatformInfoHob.h>
 #include <Protocol/Smbios.h>
 
-#define CPU_CACHE_LEVEL_MAX 3
+#define CPU_CACHE_LEVEL_MAX 2
 
 #define MHZ_SCALE_FACTOR 1000000
 
@@ -188,28 +188,6 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L2 = {
 };
 
 // Type 7 Cache Information
-STATIC ARM_TYPE7 mArmDefaultType7Sk0L3 = {
-  {
-    {                                    // SMBIOS_STRUCTURE Hdr
-      EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
-      sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
-      SMBIOS_HANDLE_PI_RESERVED,
-    },
-    ADDITIONAL_STR_INDEX_1,
-    0x182,                   // L3 enabled, Write Back
-    0x8200,                  // 32M cache max
-    0x8200,                  // 32M installed
-    {0, 0, 0, 0, 0, 1},      // SRAM type
-    {0, 0, 0, 0, 0, 1},      // SRAM type
-    0,                       // unkown speed
-    CacheErrorParity,        // parity checking
-    CacheTypeUnified,        // Unified cache
-    CacheAssociativity16Way, // 16-way
-  },
-  "L3 Cache\0"
-};
-
-// Type 7 Cache Information
 STATIC ARM_TYPE7 mArmDefaultType7Sk1L1 = {
   {
     {                                    // SMBIOS_STRUCTURE Hdr
@@ -253,28 +231,6 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L2 = {
   "L2 Cache\0"
 };
 
-// Type 7 Cache Information
-STATIC ARM_TYPE7 mArmDefaultType7Sk1L3 = {
-  {
-    {                                    // SMBIOS_STRUCTURE Hdr
-      EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
-      sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
-      SMBIOS_HANDLE_PI_RESERVED,
-    },
-    ADDITIONAL_STR_INDEX_1,
-    0x182,                   // L3 enabled, Write Back
-    0x8200,                  // 32M cache max
-    0x8200,                  // 32M installed
-    {0, 0, 0, 0, 0, 1},      // SRAM type
-    {0, 0, 0, 0, 0, 1},      // SRAM type
-    0,                       // unkown speed
-    CacheErrorParity,        // parity checking
-    CacheTypeUnified,        // Unified cache
-    CacheAssociativity16Way, // 16-way
-  },
-  "L3 Cache\0"
-};
-
 STATIC CONST VOID *DefaultCommonTables[] =
 {
   &mArmDefaultType4Sk0,
@@ -286,7 +242,6 @@ STATIC CONST VOID *DefaultType7Sk0Tables[] =
 {
   &mArmDefaultType7Sk0L1,
   &mArmDefaultType7Sk0L2,
-  &mArmDefaultType7Sk0L3,
   NULL
 };
 
@@ -294,7 +249,6 @@ STATIC CONST VOID *DefaultType7Sk1Tables[] =
 {
   &mArmDefaultType7Sk1L1,
   &mArmDefaultType7Sk1L2,
-  &mArmDefaultType7Sk1L3,
   NULL
 };
 
@@ -522,18 +476,6 @@ UpdateSmbiosType7 (
     Table->InstalledSize     = CACHE_SIZE (CpuGetCacheSize (2));
     Table->MaximumCacheSize2 = CACHE_SIZE_2 (CpuGetCacheSize (2));
     Table->InstalledSize2    = CACHE_SIZE_2 (CpuGetCacheSize (2));
-
-    if (Index == 0) {
-      Table = &mArmDefaultType7Sk0L3.Base;
-    } else {
-      Table = &mArmDefaultType7Sk1L3.Base;
-    }
-
-    // CpuGetCacheSize() not return L3 size, set it to 32MB
-    Table->MaximumCacheSize  = CACHE_SIZE (32 << 20);
-    Table->InstalledSize     = CACHE_SIZE (32 << 20);
-    Table->MaximumCacheSize2 = CACHE_SIZE_2 (32 << 20);
-    Table->InstalledSize2    = CACHE_SIZE_2 (32 << 20);
   }
 
   if (GetNumberOfSupportedSockets () == 2 && GetNumberOfActiveCoresPerSocket (1) == 0) {
@@ -541,10 +483,7 @@ UpdateSmbiosType7 (
     mArmDefaultType7Sk1L1.Base.InstalledSize2 = 0;
     mArmDefaultType7Sk1L2.Base.InstalledSize = 0;
     mArmDefaultType7Sk1L2.Base.InstalledSize2 = 0;
-    mArmDefaultType7Sk1L3.Base.InstalledSize = 0;
-    mArmDefaultType7Sk1L3.Base.InstalledSize2 = 0;
   }
-
 }
 
 STATIC
@@ -620,8 +559,6 @@ InstallType7Structures (
         Type4Table->L1CacheHandle = SmbiosHandle;
       } else if (Level == 1) { // L2 cache
         Type4Table->L2CacheHandle = SmbiosHandle;
-      } else if (Level == 2) { // L3 cache
-        Type4Table->L3CacheHandle = SmbiosHandle;
       }
     }
   }
