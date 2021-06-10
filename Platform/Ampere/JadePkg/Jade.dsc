@@ -53,7 +53,7 @@
   DEFINE SECURE_BOOT_ENABLE      = FALSE
   DEFINE TPM2_ENABLE             = TRUE
   DEFINE INCLUDE_TFTP_COMMAND    = TRUE
-  DEFINE UEFI_UUID               = 25DA8336-BEFF-4700-BD9D-397E7EDA3C91
+  DEFINE PLATFORM_CONFIG_UUID    = 25DA8336-BEFF-4700-BD9D-397E7EDA3C91
 
   #
   # Network definition
@@ -151,6 +151,11 @@
   gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap|0x3F
 
 [PcdsFixedAtBuild.common]
+  #
+  # Platform config UUID
+  #
+  gAmpereTokenSpaceGuid.PcdPlatformConfigUuid|"$(PLATFORM_CONFIG_UUID)"
+
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|$(MAJOR_VER)
   gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|$(MINOR_VER)
 

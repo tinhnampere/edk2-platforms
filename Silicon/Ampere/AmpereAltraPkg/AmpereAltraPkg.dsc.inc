@@ -14,7 +14,6 @@
 
 [BuildOptions]
   GCC:RELEASE_*_*_CC_FLAGS  = -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -DUEFI_UUID=$(UEFI_UUID)
 
 [LibraryClasses.common]
 !if $(TARGET) == RELEASE

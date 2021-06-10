@@ -18,19 +18,7 @@
 #include <Library/ResetSystemLib.h>
 #include <MmLib.h>
 
-// Convert to string
-#define _STR(x)          #x
-
-// Make sure the argument is expanded before converting to string
-#define STR(x)          _STR(x)
-
-// Use dynamic UEFI_UUID of each build time
-#define UEFI_UUID_BUILD      STR(UEFI_UUID)
-
 EFI_MM_COMM_REQUEST mEfiMmSpiNorReq;
-
-STATIC CHAR8 mBuildUuid[sizeof (UEFI_UUID_BUILD)];
-STATIC CHAR8 mStoredUuid[sizeof (UEFI_UUID_BUILD)];
 
 STATIC
 EFI_STATUS
@@ -68,14 +56,16 @@ FlashPeiEntryPoint (
   IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
-  UINT64                               FWNvRamStartOffset;
-  EFI_STATUS                           Status;
-  EFI_MM_COMMUNICATE_SPINOR_RES        *MmSpiNorRes;
+  CHAR8                                BuildUuid[PcdGetSize (PcdPlatformConfigUuid)];
+  CHAR8                                StoredUuid[PcdGetSize (PcdPlatformConfigUuid)];
   EFI_MM_COMMUNICATE_SPINOR_NVINFO_RES *MmSpiNorNVInfoRes;
+  EFI_MM_COMMUNICATE_SPINOR_RES        *MmSpiNorRes;
+  EFI_STATUS                           Status;
+  UINT64                               FWNvRamStartOffset;
   UINT64                               MmData[5];
+  UINTN                                NvRamSize;
   UINTN                                Size;
   VOID                                 *NvRamAddress;
-  UINTN                                NvRamSize;
 
 #if defined(RAM_BLOCKIO_START_ADDRESS) && defined(RAM_BLOCKIO_SIZE)
   EFI_MM_COMMUNICATE_SPINOR_NVINFO_RES *MmSpiNorNV2InfoRes;
@@ -106,8 +96,8 @@ FlashPeiEntryPoint (
   }
   FWNvRamStartOffset = MmSpiNorNVInfoRes->NVBase;
 
-  CopyMem ((VOID *)mBuildUuid, (VOID *)UEFI_UUID_BUILD, sizeof (UEFI_UUID_BUILD));
-  if (MmSpiNorNVInfoRes->NVSize < (NvRamSize * 2 + sizeof (mBuildUuid))) {
+  CopyMem ((VOID *)BuildUuid, PcdGetPtr (PcdPlatformConfigUuid), sizeof (BuildUuid));
+  if (MmSpiNorNVInfoRes->NVSize < (NvRamSize * 2 + sizeof (BuildUuid))) {
     /* NVRAM size provided by FW is not enough */
     return EFI_INVALID_PARAMETER;
   }
@@ -116,8 +106,8 @@ FlashPeiEntryPoint (
   ZeroMem ((VOID *)MmData, sizeof (MmData));
   MmData[0] = MM_SPINOR_FUNC_READ;
   MmData[1] = (UINT64)(FWNvRamStartOffset + NvRamSize * 2);
-  MmData[2] = (UINT64)sizeof (mStoredUuid);
-  MmData[3] = (UINT64)mStoredUuid;
+  MmData[2] = (UINT64)sizeof (StoredUuid);
+  MmData[3] = (UINT64)StoredUuid;
   UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
   Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
@@ -132,7 +122,7 @@ FlashPeiEntryPoint (
     return Status;
   }
 
-  if (CompareMem ((VOID *)mStoredUuid, (VOID *)mBuildUuid, sizeof (mBuildUuid))) {
+  if (CompareMem ((VOID *)StoredUuid, (VOID *)BuildUuid, sizeof (BuildUuid))) {
     ZeroMem ((VOID *)MmData, sizeof (MmData));
     MmData[0] = MM_SPINOR_FUNC_ERASE;
     MmData[1] = (UINT64)FWNvRamStartOffset;
@@ -174,7 +164,7 @@ FlashPeiEntryPoint (
     ZeroMem ((VOID *)MmData, sizeof (MmData));
     MmData[0] = MM_SPINOR_FUNC_ERASE;
     MmData[1] = (UINT64)(FWNvRamStartOffset + NvRamSize * 2);
-    MmData[2] = (UINT64)sizeof (mBuildUuid);
+    MmData[2] = (UINT64)sizeof (BuildUuid);
     UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
     Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
@@ -192,8 +182,8 @@ FlashPeiEntryPoint (
     ZeroMem ((VOID *)MmData, sizeof (MmData));
     MmData[0] = MM_SPINOR_FUNC_WRITE;
     MmData[1] = (UINT64)(FWNvRamStartOffset + NvRamSize * 2);
-    MmData[2] = (UINT64)sizeof (mBuildUuid);
-    MmData[3] = (UINT64)mBuildUuid;
+    MmData[2] = (UINT64)sizeof (BuildUuid);
+    MmData[3] = (UINT64)BuildUuid;
     UefiMmCreateSpiNorReq ((VOID *)&MmData, sizeof (MmData));
 
     Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
