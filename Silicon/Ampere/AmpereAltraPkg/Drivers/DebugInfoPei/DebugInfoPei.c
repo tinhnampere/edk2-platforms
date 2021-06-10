@@ -19,34 +19,14 @@
 #include <Library/PeimEntryPoint.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/PeiServicesTablePointerLib.h>
-#include <Library/PrintLib.h>
-#include <Library/SerialPortLib.h>
-#include <NVParamDef.h>
-#include <Pcie.h>
-#include <PlatformInfoHob.h>
 
-#define MAX_PRINT_LEN       512
+#include <NVParamDef.h>
+#include <PlatformInfoHob.h>
 
 #define GB_SCALE_FACTOR     1073741824
 #define MB_SCALE_FACTOR     1048576
 #define KB_SCALE_FACTOR     1024
 #define MHZ_SCALE_FACTOR    1000000
-
-STATIC VOID
-SerialPrint (
-  IN CONST CHAR8 *FormatString,
-  ...
-  )
-{
-  CHAR8   Buf[MAX_PRINT_LEN];
-  VA_LIST Marker;
-  UINTN   NumberOfPrinted;
-
-  VA_START (Marker, FormatString);
-  NumberOfPrinted = AsciiVSPrint (Buf, sizeof (Buf), FormatString, Marker);
-  SerialPortWrite ((UINT8 *)Buf, NumberOfPrinted);
-  VA_END (Marker);
-}
 
 /**
   Print any existence NVRAM.
@@ -67,10 +47,10 @@ PrintNVRAM (
     Status = NVParamGet (Idx, ACLRd, &Val);
     if (!EFI_ERROR (Status)) {
       if (!Flag) {
-        SerialPrint ("Pre-boot Configuration Setting:\n");
+        DebugPrint (DEBUG_INIT, "Pre-boot Configuration Setting:\n");
         Flag = TRUE;
       }
-      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
+      DebugPrint (DEBUG_INIT, "    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
     }
   }
 
@@ -79,10 +59,10 @@ PrintNVRAM (
     Status = NVParamGet (Idx, ACLRd, &Val);
     if (!EFI_ERROR (Status)) {
       if (!Flag) {
-        SerialPrint ("Manufacturer Configuration Setting:\n");
+        DebugPrint (DEBUG_INIT, "Manufacturer Configuration Setting:\n");
         Flag = TRUE;
       }
-      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
+      DebugPrint (DEBUG_INIT, "    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
     }
   }
 
@@ -91,10 +71,10 @@ PrintNVRAM (
     Status = NVParamGet (Idx, ACLRd, &Val);
     if (!EFI_ERROR (Status)) {
       if (!Flag) {
-        SerialPrint ("User Configuration Setting:\n");
+        DebugPrint (DEBUG_INIT, "User Configuration Setting:\n");
         Flag = TRUE;
       }
-      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
+      DebugPrint (DEBUG_INIT, "    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
     }
   }
 
@@ -103,10 +83,10 @@ PrintNVRAM (
     Status = NVParamGet (Idx, ACLRd, &Val);
     if (!EFI_ERROR (Status)) {
       if (!Flag) {
-        SerialPrint ("Board Configuration Setting:\n");
+        DebugPrint (DEBUG_INIT, "Board Configuration Setting:\n");
         Flag = TRUE;
       }
-      SerialPrint ("    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
+      DebugPrint (DEBUG_INIT, "    %04X: 0x%X (%d)\n", (UINT32)Idx, Val, Val);
     }
   }
 }
@@ -160,52 +140,52 @@ PrintSystemInfo (
 
   PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
-  SerialPrint ("SCP FW version    : %a\n", (const CHAR8 *)PlatformHob->SmPmProVer);
-  SerialPrint ("SCP FW build date : %a\n", (const CHAR8 *)PlatformHob->SmPmProBuild);
+  DebugPrint (DEBUG_INIT, "SCP FW version    : %a\n", (const CHAR8 *)PlatformHob->SmPmProVer);
+  DebugPrint (DEBUG_INIT, "SCP FW build date : %a\n", (const CHAR8 *)PlatformHob->SmPmProBuild);
 
-  SerialPrint ("Failsafe status                 : %d\n", PlatformHob->FailSafeStatus);
-  SerialPrint ("Reset status                    : %d\n", PlatformHob->ResetStatus);
-  SerialPrint ("CPU info\n");
-  SerialPrint ("    CPU ID                      : %X\n", ArmReadMidr ());
-  SerialPrint ("    CPU Clock                   : %d MHz\n", PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
-  SerialPrint ("    Number of active sockets    : %d\n", GetNumberOfActiveSockets ());
-  SerialPrint ("    Number of active cores      : %d\n", GetNumberOfActiveCores ());
+  DebugPrint (DEBUG_INIT, "Failsafe status                 : %d\n", PlatformHob->FailSafeStatus);
+  DebugPrint (DEBUG_INIT, "Reset status                    : %d\n", PlatformHob->ResetStatus);
+  DebugPrint (DEBUG_INIT, "CPU info\n");
+  DebugPrint (DEBUG_INIT, "    CPU ID                      : %X\n", ArmReadMidr ());
+  DebugPrint (DEBUG_INIT, "    CPU Clock                   : %d MHz\n", PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
+  DebugPrint (DEBUG_INIT, "    Number of active sockets    : %d\n", GetNumberOfActiveSockets ());
+  DebugPrint (DEBUG_INIT, "    Number of active cores      : %d\n", GetNumberOfActiveCores ());
   if (IsSlaveSocketActive ()) {
-    SerialPrint (
+    DebugPrint (DEBUG_INIT,
       "    Inter Socket Connection 0   : Width: x%d / Speed %a\n",
       PlatformHob->Link2PWidth[0],
       GetCCIXLinkSpeed (PlatformHob->Link2PSpeed[0])
       );
-    SerialPrint (
+    DebugPrint (DEBUG_INIT,
       "    Inter Socket Connection 1   : Width: x%d / Speed %a\n",
       PlatformHob->Link2PWidth[1],
       GetCCIXLinkSpeed (PlatformHob->Link2PSpeed[1])
       );
   }
   for (Idx = 0; Idx < GetNumberOfActiveSockets (); Idx++) {
-    SerialPrint ("    Socket[%d]: Core voltage     : %d\n", Idx, PlatformHob->CoreVoltage[Idx]);
-    SerialPrint ("    Socket[%d]: SCU ProductID    : %X\n", Idx, PlatformHob->ScuProductId[Idx]);
-    SerialPrint ("    Socket[%d]: Max cores        : %d\n", Idx, PlatformHob->MaxNumOfCore[Idx]);
-    SerialPrint ("    Socket[%d]: Warranty         : %d\n", Idx, PlatformHob->Warranty[Idx]);
-    SerialPrint ("    Socket[%d]: Subnuma          : %d\n", Idx, PlatformHob->SubNumaMode[Idx]);
-    SerialPrint ("    Socket[%d]: RC disable mask  : %X\n", Idx, PlatformHob->RcDisableMask[Idx]);
-    SerialPrint ("    Socket[%d]: AVS enabled      : %d\n", Idx, PlatformHob->AvsEnable[Idx]);
-    SerialPrint ("    Socket[%d]: AVS voltage      : %d\n", Idx, PlatformHob->AvsVoltageMV[Idx]);
-    SerialPrint ("    Socket[%d]: VDM Capability   : %d\n", Idx, PlatformHob->VDMCapability[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: Core voltage     : %d\n", Idx, PlatformHob->CoreVoltage[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: SCU ProductID    : %X\n", Idx, PlatformHob->ScuProductId[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: Max cores        : %d\n", Idx, PlatformHob->MaxNumOfCore[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: Warranty         : %d\n", Idx, PlatformHob->Warranty[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: Subnuma          : %d\n", Idx, PlatformHob->SubNumaMode[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: RC disable mask  : %X\n", Idx, PlatformHob->RcDisableMask[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: AVS enabled      : %d\n", Idx, PlatformHob->AvsEnable[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: AVS voltage      : %d\n", Idx, PlatformHob->AvsVoltageMV[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: VDM Capability   : %d\n", Idx, PlatformHob->VDMCapability[Idx]);
   }
 
-  SerialPrint ("SOC info\n");
-  SerialPrint ("    DDR Frequency               : %d MHz\n", PlatformHob->DramInfo.MaxSpeed);
+  DebugPrint (DEBUG_INIT, "SOC info\n");
+  DebugPrint (DEBUG_INIT, "    DDR Frequency               : %d MHz\n", PlatformHob->DramInfo.MaxSpeed);
   for (Idx = 0; Idx < GetNumberOfActiveSockets (); Idx++) {
-    SerialPrint ("    Socket[%d]: Soc voltage      : %d\n", Idx, PlatformHob->SocVoltage[Idx]);
-    SerialPrint ("    Socket[%d]: DIMM1 voltage    : %d\n", Idx, PlatformHob->Dimm1Voltage[Idx]);
-    SerialPrint ("    Socket[%d]: DIMM2 voltage    : %d\n", Idx, PlatformHob->Dimm2Voltage[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: Soc voltage      : %d\n", Idx, PlatformHob->SocVoltage[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: DIMM1 voltage    : %d\n", Idx, PlatformHob->Dimm1Voltage[Idx]);
+    DebugPrint (DEBUG_INIT, "    Socket[%d]: DIMM2 voltage    : %d\n", Idx, PlatformHob->Dimm2Voltage[Idx]);
   }
 
-  SerialPrint ("    PCP Clock                   : %d MHz\n", PlatformHob->PcpClk / MHZ_SCALE_FACTOR);
-  SerialPrint ("    SOC Clock                   : %d MHz\n", PlatformHob->SocClk / MHZ_SCALE_FACTOR);
-  SerialPrint ("    SYS Clock                   : %d MHz\n", PlatformHob->SysClk / MHZ_SCALE_FACTOR);
-  SerialPrint ("    AHB Clock                   : %d MHz\n", PlatformHob->AhbClk / MHZ_SCALE_FACTOR);
+  DebugPrint (DEBUG_INIT, "    PCP Clock                   : %d MHz\n", PlatformHob->PcpClk / MHZ_SCALE_FACTOR);
+  DebugPrint (DEBUG_INIT, "    SOC Clock                   : %d MHz\n", PlatformHob->SocClk / MHZ_SCALE_FACTOR);
+  DebugPrint (DEBUG_INIT, "    SYS Clock                   : %d MHz\n", PlatformHob->SysClk / MHZ_SCALE_FACTOR);
+  DebugPrint (DEBUG_INIT, "    AHB Clock                   : %d MHz\n", PlatformHob->AhbClk / MHZ_SCALE_FACTOR);
 }
 
 /**

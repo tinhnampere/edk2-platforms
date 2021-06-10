@@ -28,11 +28,10 @@
 [LibraryClasses]
   AmpereCpuLib
   ArmLib
+  DebugLib
   HobLib
   NVParamLib
   PeimEntryPoint
-  PrintLib
-  SerialPortLib
 
 [Guids]
   gPlatformHobGuid
