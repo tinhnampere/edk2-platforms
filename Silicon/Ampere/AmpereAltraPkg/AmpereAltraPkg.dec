@@ -38,7 +38,7 @@
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/MmCommunicationLib.h
 
   ##  @libraryclass  Defines a set of methods to initialize Pcie
-  PcieCoreLib|Silicon/Ampere/AmpereAltraP/Include/Library/PcieCoreLib.h
+  PcieCoreLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PcieCoreLib.h
 
   ##  @libraryclass  Defines a set of methods to initialize PHY
   PciePhyLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/PciePhyLib.h
