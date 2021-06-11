@@ -563,6 +563,7 @@ InternalI2cRead (
   Status = EFI_SUCCESS;
   Base = mI2cBusList[Bus].Base;
   Count = 0;
+  ReadCount = 0;
 
   DEBUG ((DEBUG_VERBOSE, "%a: Read Bus %d Buf %p Length:%d\n",
     __FUNCTION__,
@@ -599,7 +600,6 @@ InternalI2cRead (
     }
   }
 
-  ReadCount = 0;
   WriteCount = 0;
   while ((*Length - ReadCount) != 0) {
     TxLimit = mI2cBusList[Bus].TxFifo - MmioRead32 (Base + DW_IC_TXFLR);

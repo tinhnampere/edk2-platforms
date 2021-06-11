@@ -54,6 +54,8 @@ GetBBSTypeFromMessagingDevicePath (
 
   ASSERT (Node != NULL);
 
+  Result = BBS_TYPE_UNKNOWN;
+
   switch (DevicePathSubType (Node)) {
   case MSG_MAC_ADDR_DP:
     Result = BBS_TYPE_EMBEDDED_NETWORK;
@@ -80,7 +82,6 @@ GetBBSTypeFromMessagingDevicePath (
     break;
 
   default:
-    Result = BBS_TYPE_UNKNOWN;
     break;
   }
 
@@ -105,6 +106,8 @@ GetBBSTypeFromMediaDevicePath (
 
   ASSERT (Node != NULL);
 
+  Result = BBS_TYPE_UNKNOWN;
+
   switch (DevicePathSubType (Node)) {
   case MEDIA_CDROM_DP:
     Result = BBS_TYPE_CDROM;
@@ -124,7 +127,6 @@ GetBBSTypeFromMediaDevicePath (
     break;
 
   default:
-    Result = BBS_TYPE_UNKNOWN;
     break;
   }
 
