@@ -58,7 +58,7 @@
 #define PCF85063_SEC_DEC(s) (((((s) & 0x70) >> 4) * 10) + ((s) & 0xf))
 #define PCF85063_MIN_DEC(m) (((((m) & 0x70) >> 4) * 10) + ((m) & 0xf))
 #define PCF85063_HR_DEC(h)  (((((h) & 0x30) >> 4) * 10) + ((h) & 0xf))
-#define PCF85063_DAY_DEC(d) (((((d) & 0x30) >> 4)* 10) + ((d) & 0xf))
+#define PCF85063_DAY_DEC(d) (((((d) & 0x30) >> 4) * 10) + ((d) & 0xf))
 #define PCF85063_WKD_DEC(w) ((w) & 0x7)
 #define PCF85063_MON_DEC(m) (((((m) & 0x10) >> 4) * 10) + ((m) & 0xf))
 #define PCF85063_YEA_DEC(y) (((((y) & 0xf0) >> 4) * 10) + ((y) & 0xf))
