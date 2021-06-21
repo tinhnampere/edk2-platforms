@@ -28,7 +28,7 @@ MmCommunicationLibConstructor (
   )
 {
   mNsCommBuffMemRegion.PhysicalBase = PcdGet64 (PcdMmBufferBase);
-  // During boot , Virtual and Physical are same
+  // During UEFI boot, virtual and physical address are the same
   mNsCommBuffMemRegion.VirtualBase = mNsCommBuffMemRegion.PhysicalBase;
   mNsCommBuffMemRegion.Length = PcdGet64 (PcdMmBufferSize);
 
