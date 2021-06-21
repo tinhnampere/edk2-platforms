@@ -17,6 +17,8 @@
 #include <Library/PcdLib.h>
 #include <PlatformInfoHob.h>
 
+#include "PlatformMemoryMap.h"
+
 /* Number of Virtual Memory Map Descriptors */
 #define MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS          50
 
@@ -63,9 +65,9 @@ ArmPlatformGetVirtualMemoryMap (
   /* For Address space 0x1000_0000_0000 to 0x1001_00FF_FFFF
    *  - Device memory
    */
-  VirtualMemoryTable[Index].PhysicalBase = 0x100000000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x100000000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x102000000ULL;
+  VirtualMemoryTable[Index].PhysicalBase = AC01_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /* For Address space 0x5000_0000_0000 to 0x5001_00FF_FFFF
@@ -73,146 +75,146 @@ ArmPlatformGetVirtualMemoryMap (
    */
   if (IsSlaveSocketActive ())
   {
-    VirtualMemoryTable[++Index].PhysicalBase = 0x500000000000ULL;
-    VirtualMemoryTable[Index].VirtualBase  = 0x500000000000ULL;
-    VirtualMemoryTable[Index].Length       = 0x101000000ULL;
+    VirtualMemoryTable[++Index].PhysicalBase = AC01_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].VirtualBase  = AC01_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].Length       = AC01_DEVICE_MEMORY_S1_SIZE;
     VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
   }
 
   /*
    *  - PCIe RCA0 Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x300000000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x300000000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA0_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA0_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA0_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket0 RCA0 32-bit Device memory
    *  - 1P/PCIe consolidated to RCB2 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x20000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x20000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA0_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA0_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA0_32_BIT_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - PCIe RCA1 Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x340000000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x340000000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA1_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA1_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA1_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket0 RCA1 32-bit Device memory
    *  - 1P/PCIe consolidated to RCB2 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x28000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x28000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA1_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA1_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA1_32_BIT_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - PCIe RCA2 Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x380000000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x380000000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA2_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA2_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA2_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket0 RCA2 32-bit Device memory
    *  - 1P/PCIe consolidated to RCB3 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x30000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x30000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA2_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA2_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA2_32_BIT_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - PCIe RCA3 Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x3C0000000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x3C0000000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA3_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA3_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA3_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket0 RCA3 32-bit Device memory
    *  - 1P/PCIe consolidated to RCB3 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x38000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x38000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA3_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA3_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA3_32_BIT_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - PCIe RCB0 Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x200000000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x200000000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB0_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB0_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB0_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket0 RCB0 32-bit Device memory
    *  - 1P/PCIe consolidated to RCB0 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x00000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x00000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB0_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB0_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB0_32_BIT_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - PCIe RCB1 Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x240000000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x240000000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB1_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB1_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB1_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket0 RCB1 32-bit Device memory
    *  - 1P/PCIe consolidated to RCB0 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x08000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x08000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB1_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB1_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB1_32_BIT_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - PCIe RCB2 Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x280000000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x280000000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB2_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB2_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB2_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket0 RCB2 32-bit Device memory
    *  - 1P/PCIe consolidated to RCB1 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x10000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x10000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB2_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB2_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB2_32_BIT_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - PCIe RCB3 Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x2C0000000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x2C0000000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB3_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB3_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB3_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket0 RCB3 32-bit Device memory
    *  - 1P/PCIe consolidated to RCB1 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x18000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x18000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB3_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB3_32_BIT_DEVICE_MEMORY_S0_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB3_32_BIT_DEVICE_MEMORY_S0_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   if (IsSlaveSocketActive ()) {
@@ -220,65 +222,65 @@ ArmPlatformGetVirtualMemoryMap (
     /*
      *  - PCIe RCA0 Device memory
      */
-    VirtualMemoryTable[++Index].PhysicalBase = 0x700000000000ULL;
-    VirtualMemoryTable[Index].VirtualBase  = 0x700000000000ULL;
-    VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+    VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA0_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].VirtualBase  = AC01_RCA0_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].Length       = AC01_RCA0_DEVICE_MEMORY_S1_SIZE;
     VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
     /*
      *  - PCIe RCA1 Device memory
      */
-    VirtualMemoryTable[++Index].PhysicalBase = 0x740000000000ULL;
-    VirtualMemoryTable[Index].VirtualBase  = 0x740000000000ULL;
-    VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+    VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA1_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].VirtualBase  = AC01_RCA1_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].Length       = AC01_RCA1_DEVICE_MEMORY_S1_SIZE;
     VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
     /*
      *  - PCIe RCA2 Device memory
      */
-    VirtualMemoryTable[++Index].PhysicalBase = 0x780000000000ULL;
-    VirtualMemoryTable[Index].VirtualBase  = 0x780000000000ULL;
-    VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+    VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA2_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].VirtualBase  = AC01_RCA2_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].Length       = AC01_RCA2_DEVICE_MEMORY_S1_SIZE;
     VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
     /*
      *  - PCIe RCA3 Device memory
      */
-    VirtualMemoryTable[++Index].PhysicalBase = 0x7C0000000000ULL;
-    VirtualMemoryTable[Index].VirtualBase  = 0x7C0000000000ULL;
-    VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+    VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA3_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].VirtualBase  = AC01_RCA3_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].Length       = AC01_RCA3_DEVICE_MEMORY_S1_SIZE;
     VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
     /*
      *  - PCIe RCB0 Device memory
      */
-    VirtualMemoryTable[++Index].PhysicalBase = 0x600000000000ULL;
-    VirtualMemoryTable[Index].VirtualBase  = 0x600000000000ULL;
-    VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+    VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB0_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].VirtualBase  = AC01_RCB0_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].Length       = AC01_RCB0_DEVICE_MEMORY_S1_SIZE;
     VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
     /*
      *  - PCIe RCB1 Device memory
      */
-    VirtualMemoryTable[++Index].PhysicalBase = 0x640000000000ULL;
-    VirtualMemoryTable[Index].VirtualBase  = 0x640000000000ULL;
-    VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+    VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB1_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].VirtualBase  = AC01_RCB1_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].Length       = AC01_RCB1_DEVICE_MEMORY_S1_SIZE;
     VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
     /*
      *  - PCIe RCB2 Device memory
      */
-    VirtualMemoryTable[++Index].PhysicalBase = 0x680000000000ULL;
-    VirtualMemoryTable[Index].VirtualBase  = 0x680000000000ULL;
-    VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+    VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB2_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].VirtualBase  = AC01_RCB2_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].Length       = AC01_RCB2_DEVICE_MEMORY_S1_SIZE;
     VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
     /*
      *  - PCIe RCB3 Device memory
      */
-    VirtualMemoryTable[++Index].PhysicalBase = 0x6C0000000000ULL;
-    VirtualMemoryTable[Index].VirtualBase  = 0x6C0000000000ULL;
-    VirtualMemoryTable[Index].Length       = 0x40000000000ULL;
+    VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB3_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].VirtualBase  = AC01_RCB3_DEVICE_MEMORY_S1_BASE;
+    VirtualMemoryTable[Index].Length       = AC01_RCB3_DEVICE_MEMORY_S1_SIZE;
     VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
   }
 
@@ -286,80 +288,80 @@ ArmPlatformGetVirtualMemoryMap (
    *  - 2P/PCIe Socket1 RCA0 32-bit Device memory
    *  - 1P/PCIe consolidated to RCA2 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x60000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x60000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA0_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA0_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA0_32_BIT_DEVICE_MEMORY_S1_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket1 RCA1 32-bit Device memory
    *  - 1P/PCIe consolidated to RCA2 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x68000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x68000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA1_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA1_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA1_32_BIT_DEVICE_MEMORY_S1_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket1 RCA2 32-bit Device memory
    *  - 1P/PCIe consolidated to RCA3 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x70000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x70000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA2_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA2_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA2_32_BIT_DEVICE_MEMORY_S1_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket1 RCA3 32-bit Device memory
    *  - 1P/PCIe consolidated to RCA3 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x78000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x78000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCA3_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCA3_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCA3_32_BIT_DEVICE_MEMORY_S1_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket1 RCB0 32-bit Device memory
    *  - 1P/PCIe consolidated to RCA0 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x40000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x40000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB0_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB0_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB0_32_BIT_DEVICE_MEMORY_S1_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket1 RCB1 32-bit Device memory
    *  - 1P/PCIe consolidated to RCA0 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x48000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x48000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB1_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB1_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB1_32_BIT_DEVICE_MEMORY_S1_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket1 RCB2 32-bit Device memory
    *  - 1P/PCIe consolidated to RCA1 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x50000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x50000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB2_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB2_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB2_32_BIT_DEVICE_MEMORY_S1_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - 2P/PCIe Socket1 RCB3 32-bit Device memory
    *  - 1P/PCIe consolidated to RCA1 32-bit Device memory
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x58000000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x58000000ULL;
-  VirtualMemoryTable[Index].Length       = 0x8000000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_RCB3_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_RCB3_32_BIT_DEVICE_MEMORY_S1_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_RCB3_32_BIT_DEVICE_MEMORY_S1_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
    *  - BERT memory region
    */
-  VirtualMemoryTable[++Index].PhysicalBase = 0x88230000ULL;
-  VirtualMemoryTable[Index].VirtualBase  = 0x88230000ULL;
-  VirtualMemoryTable[Index].Length       = 0x50000ULL;
+  VirtualMemoryTable[++Index].PhysicalBase = AC01_BERT_MEMORY_BASE;
+  VirtualMemoryTable[Index].VirtualBase  = AC01_BERT_MEMORY_BASE;
+  VirtualMemoryTable[Index].Length       = AC01_BERT_MEMORY_SIZE;
   VirtualMemoryTable[Index].Attributes   = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   /*
