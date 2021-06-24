@@ -6,6 +6,28 @@
 
 **/
 
+#include <Uefi.h>
+
+#include <Guid/MdeModuleHii.h>
+#include <Library/AmpereCpuLib.h>
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/HiiLib.h>
+#include <Library/HobLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/NVParamLib.h>
+#include <Library/PrintLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
+#include <NVParamDef.h>
+#include <PlatformInfoHob.h>
+#include <Protocol/HiiConfigAccess.h>
+#include <Protocol/HiiConfigRouting.h>
+
 #include "RasConfigDxe.h"
 
 CHAR16 RasConfigVarstoreDataName[] = L"RasConfigNVData";
