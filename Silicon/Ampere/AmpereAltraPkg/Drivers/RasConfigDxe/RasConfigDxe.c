@@ -776,7 +776,7 @@ RasConfigEntryPoint (
                 &mRasConfigFormSetGuid,
                 mDriverHandle,
                 RasConfigDxeStrings,
-                VfrBin,
+                RasConfigVfrBin,
                 NULL
                 );
   if (HiiHandle == NULL) {

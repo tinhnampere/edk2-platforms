@@ -9,7 +9,7 @@
 #ifndef ACPI_APEI_H_
 #define ACPI_APEI_H_
 
-#include <AcpiNVDataStruc.h>
+#include <AcpiConfigNVDataStruct.h>
 #include <Base.h>
 #include <Guid/AcpiConfigFormSet.h>
 #include <IndustryStandard/Acpi63.h>

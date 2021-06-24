@@ -18,9 +18,9 @@
 [Sources.common]
   CpuConfigDxe.c
   CpuConfigDxe.h
-  NVDataStruc.h
-  Vfr.vfr
-  VfrStrings.uni
+  CpuConfigNVDataStruc.h
+  CpuConfigVfr.vfr
+  CpuConfigStrings.uni
 
 [Packages]
   MdeModulePkg/MdeModulePkg.dec

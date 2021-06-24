@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef NVDATASTRUC_H_
-#define NVDATASTRUC_H_
+#ifndef WATCHDOG_CONFIG_NV_DATA_STRUCT_H_
+#define WATCHDOG_CONFIG_NV_DATA_STRUCT_H_
 
 #include <Guid/WatchdogConfigHii.h>
 
@@ -24,4 +24,4 @@ typedef struct {
 } WATCHDOG_CONFIG_VARSTORE_DATA;
 #pragma pack()
 
-#endif
+#endif /* WATCHDOG_CONFIG_NV_DATA_STRUCT_H_ */

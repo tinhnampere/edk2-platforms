@@ -15,11 +15,11 @@
   ENTRY_POINT                    = RasConfigEntryPoint
 
 [Sources.common]
-  NVDataStruc.h
+  RasConfigNVDataStruct.h
   RasConfigDxe.c
   RasConfigDxe.h
-  Vfr.vfr
-  VfrStrings.uni
+  RasConfigVfr.vfr
+  RasConfigStrings.uni
 
 [Packages]
   MdeModulePkg/MdeModulePkg.dec

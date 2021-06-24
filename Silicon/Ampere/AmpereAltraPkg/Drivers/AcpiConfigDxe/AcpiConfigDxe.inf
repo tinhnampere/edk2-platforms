@@ -17,8 +17,8 @@
 [Sources.common]
   AcpiConfigDxe.c
   AcpiConfigDxe.h
-  Vfr.vfr
-  VfrStrings.uni
+  AcpiConfigVfr.vfr
+  AcpiConfigStrings.uni
 
 [Packages]
   MdeModulePkg/MdeModulePkg.dec

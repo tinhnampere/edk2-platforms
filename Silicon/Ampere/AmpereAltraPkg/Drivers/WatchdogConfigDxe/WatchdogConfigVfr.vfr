@@ -6,7 +6,7 @@
 
 **/
 
-#include "NVDataStruc.h"
+#include "WatchdogConfigNVDataStruct.h"
 
 formset
   guid      = WATCHDOG_CONFIG_FORMSET_GUID,

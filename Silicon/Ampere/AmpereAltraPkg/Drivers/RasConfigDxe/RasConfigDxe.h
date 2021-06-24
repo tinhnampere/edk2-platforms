@@ -31,12 +31,12 @@
 #include <Protocol/HiiConfigAccess.h>
 #include <Protocol/HiiConfigRouting.h>
 
-#include "NVDataStruc.h"
+#include "RasConfigNVDataStruct.h"
 
 //
 // This is the generated IFR binary data for each formset defined in VFR.
 //
-extern UINT8 VfrBin[];
+extern UINT8 RasConfigVfrBin[];
 
 //
 // This is the generated String package data for all .UNI files.

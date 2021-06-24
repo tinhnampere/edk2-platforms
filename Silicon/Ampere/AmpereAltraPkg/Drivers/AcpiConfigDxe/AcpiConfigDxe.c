@@ -6,6 +6,32 @@
 
 **/
 
+#include <Uefi.h>
+
+#include <AcpiConfigNVDataStruct.h>
+#include <Guid/AcpiConfigFormSet.h>
+#include <Guid/MdeModuleHii.h>
+#include <Guid/PlatformInfoHobGuid.h>
+#include <Library/AcpiHelperLib.h>
+#include <Library/AcpiHelperLib.h>
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/HiiLib.h>
+#include <Library/HobLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/SystemFirmwareInterfaceLib.h>
+#include <Library/PrintLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiDriverEntryPoint.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
+#include <PlatformInfoHob.h>
+#include <Protocol/AcpiSystemDescriptionTable.h>
+#include <Protocol/HiiConfigAccess.h>
+#include <Protocol/HiiConfigRouting.h>
+
 #include "AcpiConfigDxe.h"
 
 #define ACPI_VARSTORE_ATTRIBUTES EFI_VARIABLE_BOOTSERVICE_ACCESS | \
@@ -644,7 +670,7 @@ AcpiConfigEntryPoint (
                 &gAcpiConfigFormSetGuid,
                 mDriverHandle,
                 AcpiConfigDxeStrings,
-                VfrBin,
+                AcpiConfigVfrBin,
                 NULL
                 );
   if (HiiHandle == NULL) {

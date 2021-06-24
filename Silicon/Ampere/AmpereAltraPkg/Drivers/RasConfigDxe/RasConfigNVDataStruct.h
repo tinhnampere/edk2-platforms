@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef RAS_CONFIG_NVDATA_STRUC_H_
-#define RAS_CONFIG_NVDATA_STRUC_H_
+#ifndef RAS_CONFIG_NV_DATA_STRUCT_H_
+#define RAS_CONFIG_NV_DATA_STRUCT_H_
 
 #define RAS_CONFIG_VARSTORE_ID       0x1234
 #define RAS_CONFIG_FORM_ID           0x1235
@@ -43,4 +43,4 @@ typedef struct {
 
 #pragma pack()
 
-#endif /* RAS_CONFIG_NVDATA_STRUC_H_ */
+#endif /* RAS_CONFIG_NV_DATA_STRUCT_H_ */

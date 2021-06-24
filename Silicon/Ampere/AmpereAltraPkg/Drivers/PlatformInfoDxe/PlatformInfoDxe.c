@@ -30,7 +30,7 @@
 //
 // uni string and Vfr Binary data.
 //
-extern UINT8 VfrBin[];
+extern UINT8 PlatformInfoVfrBin[];
 extern UINT8 PlatformInfoDxeStrings[];
 
 EFI_HANDLE     mDriverHandle = NULL;
@@ -362,7 +362,7 @@ PlatformInfoEntryPoint (
                  &gPlatformInfoFormSetGuid,
                  mDriverHandle,
                  PlatformInfoDxeStrings,
-                 VfrBin,
+                 PlatformInfoVfrBin,
                  NULL
                  );
   if (mHiiHandle == NULL) {

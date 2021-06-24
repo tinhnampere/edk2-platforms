@@ -439,7 +439,7 @@ WatchdogConfigInitialize (
                 &gWatchdogConfigFormSetGuid,
                 mDriverHandle,
                 WatchdogConfigDxeStrings,
-                VfrBin,
+                WatchdogConfigVfrBin,
                 NULL
                 );
   if (HiiHandle == NULL) {

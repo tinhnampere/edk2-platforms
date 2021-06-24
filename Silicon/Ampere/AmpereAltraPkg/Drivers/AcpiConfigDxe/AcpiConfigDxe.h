@@ -6,46 +6,23 @@
 
 **/
 
-#ifndef DRIVER_SAMPLE_H_
-#define DRIVER_SAMPLE_H_
-
-#include <Uefi.h>
-
-#include <AcpiNVDataStruc.h>
-#include <Guid/AcpiConfigFormSet.h>
-#include <Guid/MdeModuleHii.h>
-#include <Guid/PlatformInfoHobGuid.h>
-#include <Library/AcpiHelperLib.h>
-#include <Library/AcpiHelperLib.h>
-#include <Library/BaseLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/DebugLib.h>
-#include <Library/DevicePathLib.h>
-#include <Library/HiiLib.h>
-#include <Library/HobLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/SystemFirmwareInterfaceLib.h>
-#include <Library/PrintLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiDriverEntryPoint.h>
-#include <Library/UefiLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
-#include <PlatformInfoHob.h>
-#include <Protocol/AcpiSystemDescriptionTable.h>
-#include <Protocol/HiiConfigAccess.h>
-#include <Protocol/HiiConfigRouting.h>
+#ifndef ACPI_CONFIG_DXE_H_
+#define ACPI_CONFIG_DXE_H_
 
 //
 // This is the generated IFR binary data for each formset defined in VFR.
 //
-extern UINT8 VfrBin[];
+extern UINT8 AcpiConfigVfrBin[];
 
 //
 // This is the generated String package data for all .UNI files.
 //
 extern UINT8 AcpiConfigDxeStrings[];
 
-#define ACPI_CONFIG_PRIVATE_SIGNATURE SIGNATURE_32 ('A', 'C', 'P', 'I')
+//
+// Signature: Ampere Computing ACPI Configuration
+//
+#define ACPI_CONFIG_PRIVATE_SIGNATURE SIGNATURE_32 ('A', 'C', 'A', 'C')
 
 typedef struct {
   UINTN Signature;

@@ -893,7 +893,7 @@ MemInfoMainPerformanceScreen (
     0
     );
 
-  for (Idx = 1; Idx <= 24; Idx++) {
+  for (Idx = 1; Idx <= MAX_NUMBER_OF_HOURS_IN_A_DAY; Idx++) {
     UnicodeSPrint (Str, sizeof (Str), L"%d", Idx);
     StringId = HiiSetString (
                  PrivateData->HiiHandle,
@@ -1271,7 +1271,7 @@ MemInfoScreenInitialize (
                 &gMemInfoFormSetGuid,
                 DriverHandle,
                 MemInfoDxeStrings,
-                VfrBin,
+                MemInfoScreenVfrBin,
                 NULL
                 );
   if (HiiHandle == NULL) {

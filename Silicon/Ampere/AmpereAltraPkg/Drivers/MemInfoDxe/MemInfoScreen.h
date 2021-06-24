@@ -32,14 +32,14 @@
 #include <Protocol/HiiDatabase.h>
 #include <Protocol/HiiString.h>
 
-#include "NVDataStruc.h"
+#include "MemInfoScreenNVDataStruct.h"
 
 //
 // This is the generated IFR binary data for each formset defined in VFR.
 // This data array is ready to be used as input of HiiAddPackages() to
 // create a packagelist (which contains Form packages, String packages, etc).
 //
-extern UINT8 VfrBin[];
+extern UINT8 MemInfoScreenVfrBin[];
 
 //
 // This is the generated String package data for all .UNI files.
@@ -92,6 +92,8 @@ enum DDR_ERROR_CTRL_MODE_FI {
 #define MEM_INFO_REFRESH2X_MODE_QUESTION_ID                      0x800B
 #define MEM_INFO_FORM_NVDIMM_QUESTION_ID                         0x800C
 #define MEM_INFO_FORM_NVDIMM_MODE_SEL_QUESTION_ID                0x800D
+
+#define MAX_NUMBER_OF_HOURS_IN_A_DAY      24
 
 #define DDR_DEFAULT_SCRUB_PATROL_DURATION 24
 #define DDR_DEFAULT_DEMAND_SCRUB          1

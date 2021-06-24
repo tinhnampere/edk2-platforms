@@ -9,7 +9,7 @@
 #include <Uefi/UefiMultiPhase.h>
 #include <Guid/PlatformManagerHii.h>
 #include <Guid/CpuConfigHii.h>
-#include "NVDataStruc.h"
+#include "CpuConfigNVDataStruc.h"
 
 #define SUBNUMA_MODE_FORM_ID 1
 

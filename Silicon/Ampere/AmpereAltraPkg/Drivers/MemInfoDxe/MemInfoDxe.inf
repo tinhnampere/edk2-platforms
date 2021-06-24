@@ -19,8 +19,8 @@
   MemInfoScreen.c
   MemInfoScreen.h
   MemInfoScreenStrings.uni
-  NVDataStruc.h
-  Vfr.vfr
+  MemInfoScreenNVDataStruct.h
+  MemInfoScreenVfr.vfr
 
 [Packages]
   ArmPkg/ArmPkg.dec

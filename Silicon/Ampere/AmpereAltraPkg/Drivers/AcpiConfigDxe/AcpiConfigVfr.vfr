@@ -8,7 +8,7 @@
 
 
 #include <Guid/AcpiConfigFormSet.h>
-#include <AcpiNVDataStruc.h>
+#include <AcpiConfigNVDataStruct.h>
 
 #define ACPI_CONFIG_FORM_ID  1
 

@@ -7,7 +7,7 @@
 **/
 
 #include <Guid/PlatformManagerHii.h>
-#include "NVDataStruc.h"
+#include "MemInfoScreenNVDataStruct.h"
 
 formset
   guid    = MEM_INFO_FORM_SET_GUID,

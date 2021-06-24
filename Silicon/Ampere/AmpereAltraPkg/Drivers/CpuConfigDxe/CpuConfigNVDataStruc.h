@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef CPU_NV_DATA_STRUC_H_
-#define CPU_NV_DATA_STRUC_H_
+#ifndef CPU_CONFIG_NV_DATA_STRUC_H_
+#define CPU_CONFIG_NV_DATA_STRUC_H_
 
 #pragma pack(1)
 typedef struct {
@@ -16,4 +16,4 @@ typedef struct {
 
 #pragma pack()
 
-#endif /* CPU_NV_DATA_STRUC_H_ */
+#endif /* CPU_CONFIG_NV_DATA_STRUC_H_ */

@@ -15,9 +15,9 @@
   ENTRY_POINT                    = WatchdogConfigInitialize
 
 [Sources.common]
-  NVDataStruc.h
-  Vfr.vfr
-  VfrStrings.uni
+  WatchdogConfigNVDataStruct.h
+  WatchdogConfigVfr.vfr
+  WatchdogConfigStrings.uni
   WatchdogConfigDxe.c
   WatchdogConfigDxe.h
 

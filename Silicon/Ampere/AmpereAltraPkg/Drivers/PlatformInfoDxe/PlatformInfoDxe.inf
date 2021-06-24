@@ -17,8 +17,8 @@
 [Sources.common]
   PlatformInfoDxe.c
   PlatformInfoHii.h
-  Vfr.vfr
-  VfrStrings.uni
+  PlatformInfoVfr.vfr
+  PlatformInfoStrings.uni
 
 [Packages]
   MdeModulePkg/MdeModulePkg.dec
