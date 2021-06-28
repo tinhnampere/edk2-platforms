@@ -109,6 +109,19 @@
   # Pcie HotPlug reset map
   gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap|0x0|UINT8|0xB000000A
 
+  ## Platform level Redfish Service control PCD
+  # These PCDs are used to stop the Redfish sevice when secure boot is disabled
+  # or exit boot service.
+  gAmpereTokenSpaceGuid.PcdRedfishServiceStopIfSecureBootDisabled|TRUE|BOOLEAN|0xB0000010
+  gAmpereTokenSpaceGuid.PcdRedfishServiceStopIfExitbootService|TRUE|BOOLEAN|0xB0000011
+  ##
+  # edk2 Redfish implementation on Emulator package is designed to access
+  # to Redfish simulator.
+  # https://github.com/DMTF/Redfish-Profile-Simulator
+  # The user ID and password are fixed as below.
+  gAmpereTokenSpaceGuid.PcdRedfishServiceUserId|"root"|VOID*|0xB0000012
+  gAmpereTokenSpaceGuid.PcdRedfishServicePassword|"0penBmc"|VOID*|0xB0000013
+
 [PcdsDynamic, PcdsDynamicEx]
   # FRU Chassis Information
   gAmpereTokenSpaceGuid.PcdFruChassisPartNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000021
