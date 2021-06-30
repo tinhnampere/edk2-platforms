@@ -112,9 +112,9 @@
   # EFI Redfish drivers
   #
 !if $(REDFISH_ENABLE) == TRUE
-  RedfishPlatformHostInterfaceLib|EmulatorPkg/Library/RedfishPlatformHostInterfaceLib/RedfishPlatformHostInterfaceLib.inf
-  RedfishPlatformCredentialLib|Platform/Ampere/JadePkg/Library/RedfishPlatformCredentialLib/RedfishPlatformCredentialLib.inf
   RedfishContentCodingLib|RedfishPkg/Library/RedfishContentCodingLibNull/RedfishContentCodingLibNull.inf
+  RedfishPlatformCredentialLib|Platform/Ampere/JadePkg/Library/RedfishPlatformCredentialLib/RedfishPlatformCredentialLib.inf
+  RedfishPlatformHostInterfaceLib|RedfishPkg/Library/PlatformHostInterfaceLibNull/PlatformHostInterfaceLibNull.inf
 !endif
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
@@ -271,3 +271,6 @@
   # Redfish
   #
 !include RedfishPkg/Redfish.dsc.inc
+!if $(REDFISH_ENABLE) == TRUE
+  Platform/Ampere/JadePkg/Drivers/SmbiosType42Dxe/SmbiosType42Dxe.inf
+!endif

@@ -419,6 +419,9 @@ APRIORI DXE {
   # EFI Redfish drivers
   #
 !include RedfishPkg/Redfish.fdf.inc
+!if $(REDFISH_ENABLE) == TRUE
+  INF Platform/Ampere/JadePkg/Drivers/SmbiosType42Dxe/SmbiosType42Dxe.inf
+!endif
 
 [FV.SystemFirmwareDescriptor]
 FvAlignment        = 8

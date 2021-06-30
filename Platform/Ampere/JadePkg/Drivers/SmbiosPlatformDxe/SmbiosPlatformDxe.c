@@ -689,18 +689,6 @@ STATIC ARM_TYPE41 mArmDefaultType41 = {
   TYPE41_ADDITIONAL_STRINGS
 };
 
-// Type 42 System Boot Information
-STATIC SMBIOS_TABLE_TYPE42 mArmDefaultType42 = {
-  { // SMBIOS_STRUCTURE Hdr
-    EFI_SMBIOS_TYPE_MANAGEMENT_CONTROLLER_HOST_INTERFACE,
-    sizeof (SMBIOS_TABLE_TYPE42),
-    SMBIOS_HANDLE_PI_RESERVED,
-  },
-  MCHostInterfaceTypeOemDefined,
-  4,
-  {0xFF, 0, 0, 0}
-};
-
 STATIC CONST VOID *DefaultCommonTables[] =
 {
   &mArmDefaultType0,
@@ -728,7 +716,6 @@ STATIC CONST VOID *DefaultCommonTables[] =
   &mArmDefaultType32,
   &mArmDefaultType38,
   &mArmDefaultType41,
-  &mArmDefaultType42,
   NULL
 };
 
