@@ -512,9 +512,12 @@ typedef enum {
   NV_SI_RO_BOARD_I2C_VRD_VOUT_FORMAT                = (201 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_I2C_VRD_SMBUS_CMD_FLAGS            = (202 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_CUST_SPM_LOCATION                  = (203 * 8) + NV_BOARD_PARAM_START,
-  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_CUST_SPM_LOCATION,
+  NV_SI_RO_BOARD_RAS_DDR_CE_WINDOW                  = (204 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
+  NV_SI_RO_BOARD_RAS_DDR_CE_TH1                     = (205 * 8) + NV_BOARD_PARAM_START, /* Default: 0x000001F4 */
+  NV_SI_RO_BOARD_RAS_DDR_CE_TH2                     = (206 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00001388 */
+  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_RAS_DDR_CE_TH2,
   /* NOTE: Add before NV_BOARD_PARAM_MAX and increase its value */
-  NV_BOARD_PARAM_MAX                                = (203 * 8) + NV_BOARD_PARAM_START,
+  NV_BOARD_PARAM_MAX                                = (206 * 8) + NV_BOARD_PARAM_START,
 } NVPARAM;
 
 #endif /* NVPARAMDEF_H_ */

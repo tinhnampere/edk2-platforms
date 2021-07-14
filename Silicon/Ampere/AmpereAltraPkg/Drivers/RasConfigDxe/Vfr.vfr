@@ -63,16 +63,6 @@ formset
 
     endoneof;
 
-    numeric varid   = RasConfigNVData.RasDdrCeThreshold,
-      prompt  = STRING_TOKEN(STR_RAS_DDR_CE_THRESHOLD_PROMPT),
-      help    = STRING_TOKEN(STR_RAS_DDR_CE_THRESHOLD_HELP),
-      flags   = NUMERIC_SIZE_4 | RESET_REQUIRED,
-      minimum = 1,
-      maximum = 8192,
-      default = 1,
-
-    endnumeric;
-
     label LABEL_UPDATE;
     //
     // This is where we will dynamically add other Action type op-code

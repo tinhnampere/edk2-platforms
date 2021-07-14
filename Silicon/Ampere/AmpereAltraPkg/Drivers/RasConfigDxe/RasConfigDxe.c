@@ -50,6 +50,26 @@ HII_VENDOR_DEVICE_PATH mRasConfigHiiVendorDevicePath = {
   }
 };
 
+BOOLEAN
+IsDdrCeWindowEnabled (
+  VOID
+  )
+{
+  UINT32      DdrCeWindow;
+  EFI_STATUS  Status;
+
+  Status = NVParamGet (
+             NV_SI_RO_BOARD_RAS_DDR_CE_WINDOW,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &DdrCeWindow
+             );
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
+
+  return (DdrCeWindow != 0) ? TRUE : FALSE;
+}
+
 EFI_STATUS
 RasConfigNvParamGet (
   OUT RAS_CONFIG_VARSTORE_DATA *Configuration
@@ -567,10 +587,6 @@ UpdateRasConfigScreen (
   VOID               *EndOpCodeHandle;
   EFI_IFR_GUID_LABEL *EndLabel;
 
-  if (!IsSlaveSocketActive ()) {
-    return EFI_SUCCESS;
-  }
-
   //
   // Initialize the container for dynamic opcodes
   //
@@ -613,22 +629,44 @@ UpdateRasConfigScreen (
   EndLabel->Number       = LABEL_END;
 
   //
+  // Create the numeric for DDR CE threshold
+  //
+  if (!IsDdrCeWindowEnabled ()) {
+    HiiCreateNumericOpCode (
+      StartOpCodeHandle,                              // Container for dynamic created opcodes
+      0x8004,                                         // Question ID
+      RAS_CONFIG_VARSTORE_ID,                         // VarStore ID
+      (UINT16)RAS_DDR_CE_THRESHOLD_OFST,              // Offset in Buffer Storage
+      STRING_TOKEN (STR_RAS_DDR_CE_THRESHOLD_PROMPT), // Question prompt text
+      STRING_TOKEN (STR_RAS_DDR_CE_THRESHOLD_HELP),
+      EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
+      EFI_IFR_NUMERIC_SIZE_4,
+      1,
+      8192,
+      1,
+      NULL
+      );
+  }
+
+  //
   // Create the numeric for 2P CE threshold
   //
-  HiiCreateNumericOpCode (
-    StartOpCodeHandle,                             // Container for dynamic created opcodes
-    0x8005,                                        // Question ID
-    RAS_CONFIG_VARSTORE_ID,                        // VarStore ID
-    (UINT16)RAS_2P_CE_THRESHOLD_OFST,              // Offset in Buffer Storage
-    STRING_TOKEN (STR_RAS_2P_CE_THRESHOLD_PROMPT), // Question prompt text
-    STRING_TOKEN (STR_RAS_2P_CE_THRESHOLD_HELP),
-    EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
-    EFI_IFR_NUMERIC_SIZE_4,
-    1,
-    8192,
-    1,
-    NULL
-    );
+  if (IsSlaveSocketActive ()) {
+    HiiCreateNumericOpCode (
+      StartOpCodeHandle,                             // Container for dynamic created opcodes
+      0x8005,                                        // Question ID
+      RAS_CONFIG_VARSTORE_ID,                        // VarStore ID
+      (UINT16)RAS_2P_CE_THRESHOLD_OFST,              // Offset in Buffer Storage
+      STRING_TOKEN (STR_RAS_2P_CE_THRESHOLD_PROMPT), // Question prompt text
+      STRING_TOKEN (STR_RAS_2P_CE_THRESHOLD_HELP),
+      EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
+      EFI_IFR_NUMERIC_SIZE_4,
+      1,
+      8192,
+      1,
+      NULL
+      );
+  }
 
   Status = HiiUpdateForm (
              PrivateData->HiiHandle,  // HII handle
