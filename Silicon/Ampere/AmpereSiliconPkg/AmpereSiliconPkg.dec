@@ -80,7 +80,7 @@
   # BMC
   #
   gAmpereTokenSpaceGuid.PcdBmcSlaveAddr|0x10|UINT8|0x00000009
-  gAmpereTokenSpaceGuid.PcdBmcReadyGpio|18|UINT8|0x0000000A
+  gAmpereTokenSpaceGuid.PcdBmcReadyGpio|0x18|UINT8|0x0000000A
 
   #
   # IPMI
