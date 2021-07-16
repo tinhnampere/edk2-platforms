@@ -208,7 +208,9 @@ BmcInfoScreenEntry (
   ASSERT (mHiiHandle != NULL);
 
   Status = UpdateMainForm ();
-  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a Failed to update BMC Info Screen\n", __FUNCTION__));
+  }
 
   return Status;
 }
