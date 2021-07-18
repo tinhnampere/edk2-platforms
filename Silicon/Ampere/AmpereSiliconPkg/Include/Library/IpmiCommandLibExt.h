@@ -43,21 +43,29 @@ typedef struct {
   UINT8  Guid[16];
 } IPMI_GET_SYSTEM_GUID_RESPONSE;
 
-/**
-  Get BMC Lan IP Address.
+//
+// Structure definition for BMC LAN info
+//
+typedef struct {
+  IPMI_LAN_IP_ADDRESS IpAddress;
+  IPMI_LAN_IP_ADDRESS SubnetMask;
+} BMC_LAN_INFO;
 
-  @param[in, out]    IpAddressBuffer   A pointer to array of pointers to callee allocated buffer that returns information about BMC Lan Ip
-  @param[in, out]    IpAddressSize     Size of input IpAddressBuffer. Size of Lan channel in return
+/**
+  Get BMC LAN Information of specific channel.
+
+  @param[in]     BmcChannel            BMC Channel to retrieve LAN information.
+  @param[out]    Info                  Pointer to return buffer.
 
   @retval EFI_SUCCESS                  The command byte stream was successfully submit to the device and a response was successfully received.
-  @retval EFI_INVALID_PARAMETER        IpAddressBuffer or IpAddressSize was NULL or *IpAddressSize > Max BMC Channel
-  @retval other                        Failed to write data to the device.
+  @retval EFI_INVALID_PARAMETER        Info was NULL.
+  @retval other                        Failed to get BMC LAN info.
 **/
 EFI_STATUS
 EFIAPI
-IpmiGetBmcIpAddress (
-  IN OUT IPMI_LAN_IP_ADDRESS **IpAddressBuffer,
-  IN OUT UINT8               *IpAddressSize
+IpmiGetBmcLanInfo (
+  IN  UINT8          BmcChannel,
+  OUT BMC_LAN_INFO   *Info
   );
 
 /**

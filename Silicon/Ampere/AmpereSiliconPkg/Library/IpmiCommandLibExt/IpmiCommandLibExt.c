@@ -17,20 +17,20 @@
 #include <Library/MemoryAllocationLib.h>
 
 /**
-  Get BMC Lan IP Address.
+  Get BMC LAN Information of specific channel.
 
-  @param[in, out]    IpAddressBuffer   A pointer to array of pointers to callee allocated buffer that returns information about BMC Lan Ip
-  @param[in, out]    IpAddressSize     Size of input IpAddressBuffer. Size of Lan channel in return
+  @param[in]     BmcChannel            BMC Channel to retrieve LAN information.
+  @param[out]    Info                  Pointer to return buffer.
 
   @retval EFI_SUCCESS                  The command byte stream was successfully submit to the device and a response was successfully received.
-  @retval EFI_INVALID_PARAMETER        IpAddressBuffer or IpAddressSize was NULL or *IpAddressSize > Max BMC Channel
-  @retval other                        Failed to write data to the device.
+  @retval EFI_INVALID_PARAMETER        Info was NULL.
+  @retval other                        Failed to get BMC LAN info.
 **/
 EFI_STATUS
 EFIAPI
-IpmiGetBmcIpAddress (
-  IN OUT IPMI_LAN_IP_ADDRESS **IpAddressBuffer,
-  IN OUT UINT8               *IpAddressSize
+IpmiGetBmcLanInfo (
+  IN  UINT8          BmcChannel,
+  OUT BMC_LAN_INFO   *Info
   )
 {
   EFI_STATUS                                     Status;
@@ -39,122 +39,118 @@ IpmiGetBmcIpAddress (
   IPMI_GET_LAN_CONFIGURATION_PARAMETERS_REQUEST  GetConfigurationParametersRequest;
   IPMI_GET_LAN_CONFIGURATION_PARAMETERS_RESPONSE *GetConfigurationParametersResponse;
   UINT32                                         ResponseSize;
-  UINT8                                          Idx;
-  UINT8                                          ChannelNumber;
-  UINT8                                          Count;
 
-  if (IpAddressBuffer == NULL
-      || IpAddressSize == NULL
-      || *IpAddressSize > BMC_MAX_CHANNEL)
-  {
+  if (Info == NULL) {
     return EFI_INVALID_PARAMETER;
-  }
-
-  Count = 0;
-  GetConfigurationParametersResponse = AllocateZeroPool (
-                                         sizeof (*GetConfigurationParametersResponse)
-                                         + sizeof (IPMI_LAN_IP_ADDRESS)
-                                         );
-  if (GetConfigurationParametersResponse == NULL) {
-    *IpAddressSize = 0;
-    return EFI_OUT_OF_RESOURCES;
   }
 
   //
   // Get Channel Information
   //
   ZeroMem (&GetChannelInfoRequest, sizeof (GetChannelInfoRequest));
-  for (ChannelNumber = 0; ChannelNumber < BMC_MAX_CHANNEL; ChannelNumber++) {
-    ResponseSize = sizeof (GetChannelInfoResponse);
-    GetChannelInfoRequest.Bits.ChannelNumber = ChannelNumber;
-    Status = IpmiSubmitCommand (
-               IPMI_NETFN_APP,
-               IPMI_APP_GET_CHANNEL_INFO,
-               (VOID *)&GetChannelInfoRequest,
-               sizeof (GetChannelInfoRequest),
-               (VOID *)&GetChannelInfoResponse,
-               &ResponseSize
-               );
+  GetChannelInfoRequest.Bits.ChannelNumber = BmcChannel;
 
-    if (EFI_ERROR (Status)) {
-      DEBUG ((
-        DEBUG_ERROR,
-        "%a Failed to get info of channel %d\n",
-        __FUNCTION__,
-        ChannelNumber
-        ));
-
-      *IpAddressSize = 0;
-      goto Exit;
-    }
-
-    //
-    // Check for Lan interface
-    //
-    if (GetChannelInfoResponse.CompletionCode != IPMI_COMP_CODE_NORMAL
-        || GetChannelInfoResponse.MediumType.Bits.ChannelMediumType != BMC_CHANNEL_MEDIUM_TYPE_ETHERNET)
-    {
-      continue;
-    }
-
-    //
-    // Get LAN IP Address
-    //
-    ZeroMem (&GetConfigurationParametersRequest, sizeof (GetConfigurationParametersRequest));
-    GetConfigurationParametersRequest.ChannelNumber.Uint8 = ChannelNumber;
-    GetConfigurationParametersRequest.ParameterSelector = IpmiLanIpAddress;
-    GetConfigurationParametersRequest.SetSelector = 0;
-    GetConfigurationParametersRequest.BlockSelector = 0;
-
-    ResponseSize = sizeof (*GetConfigurationParametersResponse)
-                   + sizeof (IPMI_LAN_IP_ADDRESS);
-
-    Status = IpmiSubmitCommand (
-               IPMI_NETFN_TRANSPORT,
-               IPMI_TRANSPORT_GET_LAN_CONFIG_PARAMETERS,
-               (VOID *)&GetConfigurationParametersRequest,
-               sizeof (GetConfigurationParametersRequest),
-               (VOID *)GetConfigurationParametersResponse,
-               &ResponseSize
-               );
-
-    if (EFI_ERROR (Status)
-        || GetConfigurationParametersResponse->CompletionCode != IPMI_COMP_CODE_NORMAL)
-    {
-      DEBUG ((
-        DEBUG_ERROR,
-        "%a Failed to get IP address of channel %d\n",
-        __FUNCTION__,
-        ChannelNumber
-        ));
-
-      *IpAddressSize = 0;
-      goto Exit;
-    }
-
-    DEBUG ((DEBUG_INFO, "IP DataSize %d\n", ResponseSize));
-    for (Idx = 0; Idx < ResponseSize; Idx++) {
-      DEBUG ((DEBUG_INFO, "0x%02x ", ((UINT8 *)GetConfigurationParametersResponse)[Idx]));
-    }
-    DEBUG ((DEBUG_INFO, "\n", ResponseSize));
-
-    //
-    // Copy IP Address to return buffer
-    //
-    if (Count <= *IpAddressSize) {
-      IpAddressBuffer[Count] = AllocateZeroPool (sizeof (IPMI_LAN_IP_ADDRESS));
-      if (IpAddressBuffer[Count] != NULL) {
-        CopyMem (
-          IpAddressBuffer[Count],
-          GetConfigurationParametersResponse->ParameterData,
-          sizeof (IPMI_LAN_IP_ADDRESS)
-          );
-        Count++;
-      }
-    }
+  ResponseSize = sizeof (GetChannelInfoResponse);
+  Status = IpmiSubmitCommand (
+              IPMI_NETFN_APP,
+              IPMI_APP_GET_CHANNEL_INFO,
+              (VOID *)&GetChannelInfoRequest,
+              sizeof (GetChannelInfoRequest),
+              (VOID *)&GetChannelInfoResponse,
+              &ResponseSize
+              );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a Failed to submit IPMI command\n", __FUNCTION__));
+    return Status;
   }
 
-  *IpAddressSize = Count;
+  //
+  // Check for LAN interface
+  //
+  if (EFI_ERROR (Status)
+      || GetChannelInfoResponse.CompletionCode != IPMI_COMP_CODE_NORMAL
+      || GetChannelInfoResponse.MediumType.Bits.ChannelMediumType != BMC_CHANNEL_MEDIUM_TYPE_ETHERNET)
+  {
+    return EFI_NOT_FOUND;
+  }
+
+  GetConfigurationParametersResponse = AllocateZeroPool (
+                                         sizeof (*GetConfigurationParametersResponse)
+                                         + sizeof (IPMI_LAN_IP_ADDRESS)
+                                         );
+  if (GetConfigurationParametersResponse == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  //
+  // Get LAN IP Address
+  //
+  ZeroMem (&GetConfigurationParametersRequest, sizeof (GetConfigurationParametersRequest));
+  GetConfigurationParametersRequest.ChannelNumber.Uint8 = BmcChannel;
+  GetConfigurationParametersRequest.ParameterSelector = IpmiLanIpAddress;
+  GetConfigurationParametersRequest.SetSelector = 0;
+  GetConfigurationParametersRequest.BlockSelector = 0;
+
+  ResponseSize = sizeof (*GetConfigurationParametersResponse) + sizeof (IPMI_LAN_IP_ADDRESS);
+
+  Status = IpmiSubmitCommand (
+             IPMI_NETFN_TRANSPORT,
+             IPMI_TRANSPORT_GET_LAN_CONFIG_PARAMETERS,
+             (VOID *)&GetConfigurationParametersRequest,
+             sizeof (GetConfigurationParametersRequest),
+             (VOID *)GetConfigurationParametersResponse,
+             &ResponseSize
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a Failed to submit IPMI command\n", __FUNCTION__));
+    goto Exit;
+  }
+
+  if (GetChannelInfoResponse.CompletionCode != IPMI_COMP_CODE_NORMAL) {
+    Status = EFI_NOT_FOUND;
+    goto Exit;
+  }
+
+  CopyMem (
+    Info->IpAddress.IpAddress,
+    GetConfigurationParametersResponse->ParameterData,
+    sizeof (IPMI_LAN_IP_ADDRESS)
+    );
+
+  //
+  // Get Subnet Mask
+  //
+  ZeroMem (&GetConfigurationParametersRequest, sizeof (GetConfigurationParametersRequest));
+  GetConfigurationParametersRequest.ChannelNumber.Uint8 = BmcChannel;
+  GetConfigurationParametersRequest.ParameterSelector = IpmiLanSubnetMask;
+  GetConfigurationParametersRequest.SetSelector = 0;
+  GetConfigurationParametersRequest.BlockSelector = 0;
+
+  ResponseSize = sizeof (*GetConfigurationParametersResponse) + sizeof (IPMI_LAN_IP_ADDRESS);
+
+  Status = IpmiSubmitCommand (
+             IPMI_NETFN_TRANSPORT,
+             IPMI_TRANSPORT_GET_LAN_CONFIG_PARAMETERS,
+             (VOID *)&GetConfigurationParametersRequest,
+             sizeof (GetConfigurationParametersRequest),
+             (VOID *)GetConfigurationParametersResponse,
+             &ResponseSize
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a Failed to send IPMI command\n", __FUNCTION__));
+    goto Exit;
+  }
+
+  if (GetChannelInfoResponse.CompletionCode != IPMI_COMP_CODE_NORMAL) {
+    Status = EFI_NOT_FOUND;
+    goto Exit;
+  }
+
+  CopyMem (
+    Info->SubnetMask.IpAddress,
+    GetConfigurationParametersResponse->ParameterData,
+    sizeof (IPMI_LAN_IP_ADDRESS)
+    );
 
 Exit:
   FreePool (GetConfigurationParametersResponse);

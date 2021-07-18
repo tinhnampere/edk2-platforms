@@ -14,6 +14,7 @@
 #include <IndustryStandard/Ipmi.h>
 #include <IndustryStandard/IpmiNetFnApp.h>
 #include <IndustryStandard/IpmiNetFnTransport.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HiiLib.h>
 #include <Library/IpmiCommandLib.h>
@@ -46,10 +47,9 @@ UpdateMainForm (
   EFI_IFR_GUID_LABEL          *StartLabel;
   EFI_STATUS                  Status;
   IPMI_GET_DEVICE_ID_RESPONSE DeviceId;
-  IPMI_LAN_IP_ADDRESS         *IpAddressBuffer[BMC_MAX_CHANNEL];
+  BMC_LAN_INFO                BmcLanInfo;
   UINT16                      StrBuf[MAX_STRING_SIZE];
-  UINT8                       Index;
-  UINT8                       IpAddressBufferSize;
+  UINT8                       BmcChannel;
   VOID                        *EndOpCodeHandle;
   VOID                        *StartOpCodeHandle;
 
@@ -81,11 +81,6 @@ UpdateMainForm (
       );
     HiiSetString (mHiiHandle, STRING_TOKEN (STR_BMC_IPMI_VER_VALUE), StrBuf, NULL);
   }
-
-  //
-  // Update BMC LAN IP Address
-  //
-  IpAddressBufferSize = BMC_MAX_CHANNEL;
 
   //
   // Initialize the container for dynamic opcodes
@@ -120,36 +115,23 @@ UpdateMainForm (
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
-  Status = IpmiGetBmcIpAddress (IpAddressBuffer, &IpAddressBufferSize);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "%a: Failed to get BMC LAN IP Address\n",
-      __FUNCTION__
-      ));
-    return Status;
-  }
-
-  DEBUG ((
-    DEBUG_INFO,
-    "%a: Number of BMC LAN Channel = %d\n",
-    __FUNCTION__,
-    IpAddressBufferSize
-    ));
-
-  for (Index = 0; Index < IpAddressBufferSize; Index++) {
-    if (IpAddressBuffer[Index]->IpAddress[0] == 0) {
-      continue;  // FIXME: Ignore IP with first byte is 0
+  for (BmcChannel = 0; BmcChannel < BMC_MAX_CHANNEL; BmcChannel++) {
+    ZeroMem (&BmcLanInfo, sizeof (BmcLanInfo));
+    Status = IpmiGetBmcLanInfo (BmcChannel, &BmcLanInfo);
+    if (EFI_ERROR (Status)
+        || (BmcLanInfo.IpAddress.IpAddress[0] == 0))
+    {
+      continue;
     }
 
     UnicodeSPrint (
       StrBuf,
       sizeof (StrBuf),
       L"%d.%d.%d.%d",
-      IpAddressBuffer[Index]->IpAddress[0],
-      IpAddressBuffer[Index]->IpAddress[1],
-      IpAddressBuffer[Index]->IpAddress[2],
-      IpAddressBuffer[Index]->IpAddress[3]
+      BmcLanInfo.IpAddress.IpAddress[0],
+      BmcLanInfo.IpAddress.IpAddress[1],
+      BmcLanInfo.IpAddress.IpAddress[2],
+      BmcLanInfo.IpAddress.IpAddress[3]
       );
 
     HiiCreateTextOpCode (
@@ -166,6 +148,8 @@ UpdateMainForm (
       StartOpCodeHandle,          // Label for where to insert opcodes
       EndOpCodeHandle             // Insert data
       );
+
+    break;
   }
 
   return Status;
