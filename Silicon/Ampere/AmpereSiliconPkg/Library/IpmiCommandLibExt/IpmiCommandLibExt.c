@@ -9,7 +9,7 @@
 #include <Uefi.h>
 
 #include <IndustryStandard/Ipmi.h>
-#include <IpmiNetFnAppExt.h>
+#include <IndustryStandard/IpmiNetFnAppExt.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/IpmiCommandLibExt.h>

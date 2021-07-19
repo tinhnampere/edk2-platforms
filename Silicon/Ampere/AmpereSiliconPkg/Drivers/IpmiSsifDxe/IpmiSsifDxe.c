@@ -10,7 +10,7 @@
 #include <Uefi.h>
 
 #include <IndustryStandard/IpmiNetFnApp.h>
-#include <IpmiNetFnAppExt.h>
+#include <IndustryStandard/IpmiNetFnAppExt.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>

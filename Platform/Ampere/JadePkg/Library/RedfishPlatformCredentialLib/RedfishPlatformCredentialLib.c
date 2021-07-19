@@ -8,12 +8,13 @@
 
 **/
 #include <Uefi.h>
+
 #include <IndustryStandard/IpmiNetFnGroupExtension.h>
+#include <IndustryStandard/IpmiNetFnGroupExtensionExt.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/IpmiLib.h>
-#include <Library/IpmiCommandLibExt.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiLib.h>
 
