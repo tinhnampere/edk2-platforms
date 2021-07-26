@@ -27,3 +27,4 @@
   # -D FLAG=VALUE
   #
   DEFINE UEFI_ATF_IMAGE          = Build/Jade/jade_tianocore_atf.img
+  DEFINE SCP_IMAGE               = Build/Jade/jade_scp.slim
