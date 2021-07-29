@@ -36,9 +36,10 @@
 #define PLAT_CRASH_ITERATOR_SIZE     0x398
 #define SMPRO_CRASH_SIZE             0x800
 #define PMPRO_CRASH_SIZE             0x800
+#define RASIP_CRASH_SIZE             0x1000
 #define HEST_NUM_ENTRIES_PER_SOC     3
 
-#define CURRENT_BERT_VERSION         0x10
+#define CURRENT_BERT_VERSION         0x11
 #define BERT_FLASH_OFFSET            0x91B30000ULL
 #define BERT_DDR_OFFSET              0x88230000ULL
 #define BERT_DDR_LENGTH              0x50000
@@ -55,8 +56,10 @@ typedef struct {
   UINT8                BertRev;
   UINT8                S0PmproRegisters[PMPRO_CRASH_SIZE];
   UINT8                S0SmproRegisters[SMPRO_CRASH_SIZE];
+  UINT8                S0RasIpRegisters[RASIP_CRASH_SIZE];
   UINT8                S1PmproRegisters[PMPRO_CRASH_SIZE];
   UINT8                S1SmproRegisters[SMPRO_CRASH_SIZE];
+  UINT8                S1RasIpRegisters[RASIP_CRASH_SIZE];
   UINT8                AtfDump[PLATFORM_CPU_MAX_NUM_CORES * PLAT_CRASH_ITERATOR_SIZE];
 } APEI_CRASH_DUMP_DATA;
 
