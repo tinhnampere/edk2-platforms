@@ -129,7 +129,7 @@
 [0001]               Encoded Access Width : 03 [DWord Access:32]
 [0008]                            Address : 0000100000543010
 
-[0008]                              Value : B1A00000
+[0008]                              Value : B1700000
 [0008]                               Mask : FFFFFFFF
 
 [0001]                             Action : 06 [Check Busy Status]
