@@ -1,0 +1,48 @@
+## @file
+#
+# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PciHostBridgeLib
+  FILE_GUID                      = 9D0522E5-B5FD-4E3F-9D10-52AE221FA314
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PciHostBridgeLib|DXE_DRIVER
+  CONSTRUCTOR                    = HostBridgeConstructor
+
+[Sources]
+  PciHostBridgeLib.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+
+[LibraryClasses]
+  Ac01PcieLib
+  AcpiLib
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  DevicePathLib
+  IoLib
+  MemoryAllocationLib
+  PrintLib
+  UefiBootServicesTableLib
+
+[Guids]
+  gEfiEventReadyToBootGuid
+
+[Protocols]
+  gEfiCpuIo2ProtocolGuid          ## CONSUMES
+
+[Depex]
+  gEfiCpuIo2ProtocolGuid
