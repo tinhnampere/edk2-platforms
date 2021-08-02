@@ -229,6 +229,11 @@
   Platform/Ampere/JadePkg/Ac02AcpiTables/Ac02AcpiTables.inf
 
   #
+  # PCIe
+  #
+  Platform/Ampere/JadePkg/Drivers/PciPlatformDxe/PciPlatformDxe.inf
+
+  #
   # Network PCIe I210
   #
   Platform/Ampere/AmperePlatformPkg/Drivers/GigUndiDxe/GigUndiDxe.inf
