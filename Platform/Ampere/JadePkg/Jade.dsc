@@ -149,6 +149,11 @@
   Platform/Ampere/JadePkg/AcpiTables/AcpiTables.inf
 
   #
+  # PCIe
+  #
+  Platform/Ampere/JadePkg/Drivers/PciPlatformDxe/PciPlatformDxe.inf
+
+  #
   # VGA Aspeed
   #
   Drivers/ASpeed/ASpeedGopBinPkg/ASpeedAst2500GopDxe.inf
