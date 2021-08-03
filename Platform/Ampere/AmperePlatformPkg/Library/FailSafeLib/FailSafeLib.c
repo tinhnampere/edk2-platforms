@@ -254,19 +254,12 @@ FailSafeBootSuccessfully (
   }
 
   /*
-   * If failsafe context is invalid, it is already indicate a successful boot
-   * and don't need to be cleared
-   */
-  if (!FailSafeValidCRC (&FailSafeBuf)) {
-    return EFI_SUCCESS;
-  }
-
-  /*
    * If failsafe context is valid, and:
    *    - The status indicate non-failure, then don't clear it
    *    - The status indicate a failure, then go and clear it
    */
-  if (!FailSafeFailureStatus (FailSafeBuf.Status)) {
+  if (FailSafeValidCRC (&FailSafeBuf)
+      && !FailSafeFailureStatus (FailSafeBuf.Status)) {
     return EFI_SUCCESS;
   }
 
