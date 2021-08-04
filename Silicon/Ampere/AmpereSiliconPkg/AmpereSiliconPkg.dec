@@ -25,9 +25,6 @@
   Include                        # Root include for the package
 
 [LibraryClasses]
-  ##  @libraryclass  Provides functions to create the ACPI PCCT Table which which advertises PCC mailbox channel information.
-  AcpiPccLib|Silicon/Ampere/AmpereSiliconPkg/Include/Library/AcpiPccLib.h
-
   ##  @libraryclass  Provides helper functions to update ACPI DSDT Table.
   AcpiHelperLib|Silicon/Ampere/AmpereSiliconPkg/Include/Library/AcpiHelperLib.h
 
