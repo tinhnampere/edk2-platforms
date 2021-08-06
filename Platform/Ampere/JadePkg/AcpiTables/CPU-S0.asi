@@ -30,7 +30,7 @@ Device(C000) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -74,7 +74,7 @@ Device(C001) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -118,7 +118,7 @@ Device(C002) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x12c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x134, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x13c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -162,7 +162,7 @@ Device(C003) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -206,7 +206,7 @@ Device(C004) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x22c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x234, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x23c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -250,7 +250,7 @@ Device(C005) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -294,7 +294,7 @@ Device(C006) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x32c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x334, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x33c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -338,7 +338,7 @@ Device(C007) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -382,7 +382,7 @@ Device(C008) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x42c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x434, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x43c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -426,7 +426,7 @@ Device(C009) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x4ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x4b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x4bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -470,7 +470,7 @@ Device(C010) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x52c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x534, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x53c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -514,7 +514,7 @@ Device(C011) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x5ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x5b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x5bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -558,7 +558,7 @@ Device(C012) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x62c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x634, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x63c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -602,7 +602,7 @@ Device(C013) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x6ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x6b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x6bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -646,7 +646,7 @@ Device(C014) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x72c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x734, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x73c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -690,7 +690,7 @@ Device(C015) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x7ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x7b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x7bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -734,7 +734,7 @@ Device(C016) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x82c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x834, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x83c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -778,7 +778,7 @@ Device(C017) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x8ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x8b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x8bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -822,7 +822,7 @@ Device(C018) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x92c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x934, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x93c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -866,7 +866,7 @@ Device(C019) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x9ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x9b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x9bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -910,7 +910,7 @@ Device(C020) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xa2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xa34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xa3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -954,7 +954,7 @@ Device(C021) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xaac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xab4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xabc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -998,7 +998,7 @@ Device(C022) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xb2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xb34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xb3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1042,7 +1042,7 @@ Device(C023) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xbac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xbb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xbbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1086,7 +1086,7 @@ Device(C024) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xc2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xc34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xc3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1130,7 +1130,7 @@ Device(C025) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xcac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xcb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xcbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1174,7 +1174,7 @@ Device(C026) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xd2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xd34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xd3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1218,7 +1218,7 @@ Device(C027) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xdac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xdb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xdbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1262,7 +1262,7 @@ Device(C028) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xe2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xe34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xe3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1306,7 +1306,7 @@ Device(C029) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xeac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xeb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xebc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1350,7 +1350,7 @@ Device(C030) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xf2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xf34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xf3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1394,7 +1394,7 @@ Device(C031) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0xfac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0xfb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0xfbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1438,7 +1438,7 @@ Device(C032) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x102c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1034, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x103c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1482,7 +1482,7 @@ Device(C033) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x10ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x10b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x10bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1526,7 +1526,7 @@ Device(C034) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x112c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1134, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x113c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1570,7 +1570,7 @@ Device(C035) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x11ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x11b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x11bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1614,7 +1614,7 @@ Device(C036) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x122c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1234, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x123c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1658,7 +1658,7 @@ Device(C037) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x12ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x12b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x12bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1702,7 +1702,7 @@ Device(C038) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x132c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1334, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x133c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1746,7 +1746,7 @@ Device(C039) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x13ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x13b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x13bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1790,7 +1790,7 @@ Device(C040) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x142c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1434, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x143c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1834,7 +1834,7 @@ Device(C041) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x14ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x14b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x14bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1878,7 +1878,7 @@ Device(C042) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x152c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1534, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x153c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1922,7 +1922,7 @@ Device(C043) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x15ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x15b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x15bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -1966,7 +1966,7 @@ Device(C044) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x162c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1634, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x163c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2010,7 +2010,7 @@ Device(C045) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x16ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x16b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x16bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2054,7 +2054,7 @@ Device(C046) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x172c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1734, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x173c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2098,7 +2098,7 @@ Device(C047) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x17ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x17b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x17bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2142,7 +2142,7 @@ Device(C048) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x182c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1834, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x183c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2186,7 +2186,7 @@ Device(C049) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x18ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x18b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x18bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2230,7 +2230,7 @@ Device(C050) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x192c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1934, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x193c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2274,7 +2274,7 @@ Device(C051) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x19ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x19b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x19bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2318,7 +2318,7 @@ Device(C052) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1a2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1a34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1a3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2362,7 +2362,7 @@ Device(C053) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1aac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1ab4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1abc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2406,7 +2406,7 @@ Device(C054) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1b2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1b34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1b3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2450,7 +2450,7 @@ Device(C055) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1bac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1bb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1bbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2494,7 +2494,7 @@ Device(C056) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1c2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1c34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1c3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2538,7 +2538,7 @@ Device(C057) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1cac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1cb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1cbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2582,7 +2582,7 @@ Device(C058) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1d2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1d34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1d3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2626,7 +2626,7 @@ Device(C059) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1dac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1db4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1dbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2670,7 +2670,7 @@ Device(C060) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1e2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1e34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1e3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2714,7 +2714,7 @@ Device(C061) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1eac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1eb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1ebc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2758,7 +2758,7 @@ Device(C062) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1f2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1f34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1f3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2802,7 +2802,7 @@ Device(C063) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x1fac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x1fb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x1fbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2846,7 +2846,7 @@ Device(C064) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x202c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2034, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x203c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2890,7 +2890,7 @@ Device(C065) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x20ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x20b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x20bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2934,7 +2934,7 @@ Device(C066) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x212c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2134, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x213c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -2978,7 +2978,7 @@ Device(C067) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x21ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x21b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x21bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3022,7 +3022,7 @@ Device(C068) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x222c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2234, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x223c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3066,7 +3066,7 @@ Device(C069) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x22ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x22b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x22bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3110,7 +3110,7 @@ Device(C070) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x232c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2334, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x233c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3154,7 +3154,7 @@ Device(C071) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x23ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x23b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x23bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3198,7 +3198,7 @@ Device(C072) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x242c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2434, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x243c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3242,7 +3242,7 @@ Device(C073) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x24ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x24b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x24bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3286,7 +3286,7 @@ Device(C074) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x252c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2534, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x253c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3330,7 +3330,7 @@ Device(C075) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x25ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x25b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x25bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3374,7 +3374,7 @@ Device(C076) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x262c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2634, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x263c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3418,7 +3418,7 @@ Device(C077) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x26ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x26b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x26bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3462,7 +3462,7 @@ Device(C078) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x272c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2734, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x273c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3506,7 +3506,7 @@ Device(C079) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x27ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x27b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x27bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3550,7 +3550,7 @@ Device(C080) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x282c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2834, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x283c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3594,7 +3594,7 @@ Device(C081) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x28ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x28b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x28bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3638,7 +3638,7 @@ Device(C082) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x292c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2934, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x293c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3682,7 +3682,7 @@ Device(C083) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x29ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x29b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x29bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3726,7 +3726,7 @@ Device(C084) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2a2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2a34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2a3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3770,7 +3770,7 @@ Device(C085) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2aac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2ab4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2abc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3814,7 +3814,7 @@ Device(C086) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2b2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2b34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2b3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3858,7 +3858,7 @@ Device(C087) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2bac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2bb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2bbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3902,7 +3902,7 @@ Device(C088) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2c2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2c34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2c3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3946,7 +3946,7 @@ Device(C089) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2cac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2cb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2cbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -3990,7 +3990,7 @@ Device(C090) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2d2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2d34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2d3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4034,7 +4034,7 @@ Device(C091) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2dac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2db4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2dbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4078,7 +4078,7 @@ Device(C092) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2e2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2e34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2e3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4122,7 +4122,7 @@ Device(C093) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2eac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2eb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2ebc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4166,7 +4166,7 @@ Device(C094) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2f2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2f34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2f3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4210,7 +4210,7 @@ Device(C095) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x2fac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x2fb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x2fbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4254,7 +4254,7 @@ Device(C096) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x302c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3034, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x303c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4298,7 +4298,7 @@ Device(C097) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x30ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x30b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x30bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4342,7 +4342,7 @@ Device(C098) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x312c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3134, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x313c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4386,7 +4386,7 @@ Device(C099) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x31ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x31b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x31bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4430,7 +4430,7 @@ Device(C100) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x322c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3234, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x323c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4474,7 +4474,7 @@ Device(C101) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x32ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x32b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x32bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4518,7 +4518,7 @@ Device(C102) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x332c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3334, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x333c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4562,7 +4562,7 @@ Device(C103) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x33ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x33b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x33bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4606,7 +4606,7 @@ Device(C104) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x342c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3434, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x343c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4650,7 +4650,7 @@ Device(C105) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x34ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x34b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x34bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4694,7 +4694,7 @@ Device(C106) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x352c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3534, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x353c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4738,7 +4738,7 @@ Device(C107) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x35ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x35b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x35bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4782,7 +4782,7 @@ Device(C108) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x362c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3634, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x363c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4826,7 +4826,7 @@ Device(C109) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x36ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x36b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x36bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4870,7 +4870,7 @@ Device(C110) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x372c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3734, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x373c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4914,7 +4914,7 @@ Device(C111) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x37ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x37b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x37bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -4958,7 +4958,7 @@ Device(C112) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x382c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3834, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x383c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5002,7 +5002,7 @@ Device(C113) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x38ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x38b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x38bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5046,7 +5046,7 @@ Device(C114) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x392c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3934, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x393c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5090,7 +5090,7 @@ Device(C115) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x39ac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x39b4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x39bc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5134,7 +5134,7 @@ Device(C116) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3a2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3a34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3a3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5178,7 +5178,7 @@ Device(C117) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3aac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3ab4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3abc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5222,7 +5222,7 @@ Device(C118) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3b2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3b34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3b3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5266,7 +5266,7 @@ Device(C119) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3bac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3bb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3bbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5310,7 +5310,7 @@ Device(C120) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3c2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3c34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3c3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5354,7 +5354,7 @@ Device(C121) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3cac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3cb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3cbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5398,7 +5398,7 @@ Device(C122) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3d2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3d34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3d3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5442,7 +5442,7 @@ Device(C123) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3dac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3db4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3dbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5486,7 +5486,7 @@ Device(C124) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3e2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3e34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3e3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5530,7 +5530,7 @@ Device(C125) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3eac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3eb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3ebc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5574,7 +5574,7 @@ Device(C126) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3f2c, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3f34, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3f3c, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
@@ -5618,7 +5618,7 @@ Device(C127) {
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Counter Wraparound Time
     ResourceTemplate(){Register(PCC, 64, 0, 0x3fac, 2)},         // Reference Counter Register
     ResourceTemplate(){Register(PCC, 64, 0, 0x3fb4, 2)},         // Delivered Counter Register
-    ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Performance Limited Register
+    ResourceTemplate(){Register(PCC, 32, 0, 0x3fbc, 2)},         // Performance Limited Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Enable Register
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Selection Enable
     ResourceTemplate(){Register(SystemMemory, 0, 0, 0, 0)},     // Autonomous Activity Window Register
