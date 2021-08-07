@@ -157,10 +157,14 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
         }
         Name(_CRS, ResourceTemplate ()
         {
-          I2cSerialBus (0x0010, ControllerInitiated, 0x00061A80,
-          AddressingMode7Bit, "\\_SB.I2C4",
-          0x00, ResourceConsumer,,
-          )
+          I2cSerialBusV2 (0x0010, ControllerInitiated, 0x00061A80,
+            AddressingMode7Bit, "\\_SB.I2C4",
+            0x00, ResourceConsumer,, Exclusive,
+            // Vendor specific data:
+            // "BMC0",
+            // Flags (2 bytes): SMBUS variable length (Bit 0), Read Checksum (Bit 1), Verify Checksum (Bit 2)
+            RawDataBuffer () { 0x42, 0x4D, 0x43, 0x30, 0x7, 0x0 }
+            )
         })
       }
       Name(SSCN, Package() { 0x3E2, 0x47D, 0 })
