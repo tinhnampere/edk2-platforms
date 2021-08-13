@@ -14,6 +14,7 @@
 #include <IndustryStandard/Ipmi.h>
 #include <IndustryStandard/IpmiNetFnApp.h>
 #include <IndustryStandard/IpmiNetFnTransport.h>
+#include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HiiLib.h>
@@ -63,9 +64,9 @@ UpdateMainForm (
     UnicodeSPrint (
       StrBuf,
       sizeof (StrBuf),
-      L"%d.%02x",
+      L"%d.%02d",
       DeviceId.FirmwareRev1.Bits.MajorFirmwareRev,
-      DeviceId.MinorFirmwareRev
+      BcdToDecimal8 (DeviceId.MinorFirmwareRev)
       );
     HiiSetString (mHiiHandle, STRING_TOKEN (STR_BMC_FIRMWARE_REV_VALUE), StrBuf, NULL);
 
