@@ -244,3 +244,140 @@ IsAcpiInstalled (
 
   return FALSE;
 }
+
+/**
+  This function outputs base address of a given OpRegion specified by its node path.
+
+  @param[in]   AsciiNodePath    Node path of the OpRegion whose base address will be retrieved.
+  @param[out]  Value            Address to put in the OpRegion's base address.
+
+  @retval EFI_SUCCESS           The base address of OpeRegion was got successfully.
+  @retval EFI_INVALID_PARAMETER The AsciiNodePath or Value parameter are NULL.
+  @retval EFI_NOT_FOUND         The Node path was not found.
+  @retval Others                Other failure occurs.
+
+**/
+EFI_STATUS
+EFIAPI
+AcpiDSDTGetOpRegionBase (
+  IN   CHAR8     *AsciiNodePath,
+  OUT  UINT32    *Value
+  )
+{
+  EFI_STATUS              Status;
+  EFI_ACPI_SDT_PROTOCOL   *AcpiTableProtocol;
+  EFI_ACPI_HANDLE         TableHandle;
+  EFI_ACPI_HANDLE         ChildHandle;
+  EFI_ACPI_DATA_TYPE      DataType;
+  CHAR8                   *Buffer;
+  UINTN                   DataSize;
+  AML_OP_REGION           *OpRegion;
+
+  if (AsciiNodePath == NULL || Value == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID **)&AcpiTableProtocol);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a %d Unable to locate ACPI table protocol \n", __FUNCTION__, __LINE__));
+    return Status;
+  }
+
+  Status = AcpiOpenDSDT (AcpiTableProtocol, &TableHandle);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  Status = AcpiTableProtocol->FindPath (TableHandle, AsciiNodePath, &ChildHandle);
+  if (EFI_ERROR (Status)) {
+    AcpiTableProtocol->Close (TableHandle);
+    return Status;
+  }
+
+  Status = AcpiTableProtocol->GetOption (ChildHandle, 0, &DataType, (VOID *)&Buffer, &DataSize);
+  if (!EFI_ERROR (Status) && Buffer != NULL) {
+    OpRegion = (AML_OP_REGION *)Buffer;
+
+    if (OpRegion->ExtOpCode != AML_EXT_REGION_OP
+         || OpRegion->RegionBase.DWordPrefix != AML_DWORD_PREFIX)
+    {
+      AcpiTableProtocol->Close (TableHandle);
+      return EFI_NOT_FOUND;
+    }
+
+    *Value = OpRegion->RegionBase.DWordData;
+  }
+
+  AcpiTableProtocol->Close (TableHandle);
+  AcpiDSDTUpdateChecksum (AcpiTableProtocol);
+
+  return EFI_SUCCESS;
+}
+
+/**
+  This function sets a given OpRegion's base address.
+
+  @param[in]   AsciiNodePath    Node path of the OpRegion whose base address will be set.
+  @param[in]   Value            Base address to set for the OpRegion.
+
+  @retval EFI_SUCCESS           The base address of OpeRegion was set successfully.
+  @retval EFI_INVALID_PARAMETER The AsciiNodePath parameter is NULL.
+  @retval EFI_NOT_FOUND         The Node path was not found.
+  @retval Others                Other failure occurs.
+
+**/
+EFI_STATUS
+EFIAPI
+AcpiDSDTSetOpRegionBase (
+  IN  CHAR8     *AsciiNodePath,
+  IN  UINT32    Value
+  )
+{
+  EFI_STATUS              Status;
+  EFI_ACPI_SDT_PROTOCOL   *AcpiTableProtocol;
+  EFI_ACPI_HANDLE         TableHandle;
+  EFI_ACPI_HANDLE         ChildHandle;
+  EFI_ACPI_DATA_TYPE      DataType;
+  CHAR8                   *Buffer;
+  UINTN                   DataSize;
+  AML_OP_REGION           *OpRegion;
+
+  if (AsciiNodePath == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (VOID **)&AcpiTableProtocol);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a %d Unable to locate ACPI table protocol \n", __FUNCTION__, __LINE__));
+    return Status;
+  }
+
+  Status = AcpiOpenDSDT (AcpiTableProtocol, &TableHandle);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  Status = AcpiTableProtocol->FindPath (TableHandle, AsciiNodePath, &ChildHandle);
+  if (EFI_ERROR (Status)) {
+    AcpiTableProtocol->Close (TableHandle);
+    return Status;
+  }
+
+  Status = AcpiTableProtocol->GetOption (ChildHandle, 0, &DataType, (VOID *)&Buffer, &DataSize);
+  if (!EFI_ERROR (Status) && Buffer != NULL) {
+    OpRegion = (AML_OP_REGION *)Buffer;
+
+    if (OpRegion->ExtOpCode != AML_EXT_REGION_OP
+         || OpRegion->RegionBase.DWordPrefix != AML_DWORD_PREFIX) {
+      AcpiTableProtocol->Close (TableHandle);
+      return EFI_NOT_FOUND;
+    }
+
+    OpRegion->RegionBase.DWordData = Value;
+  }
+
+  AcpiTableProtocol->Close (TableHandle);
+  AcpiDSDTUpdateChecksum (AcpiTableProtocol);
+
+  return EFI_SUCCESS;
+}

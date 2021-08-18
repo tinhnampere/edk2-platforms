@@ -84,6 +84,8 @@ AcpiPatchNvdimm (
   UINTN              NvdRegionNumSK0, NvdRegionNumSK1, NvdRegionNum, Count;
   PLATFORM_INFO_HOB  *PlatformHob;
   VOID               *Hob;
+  UINT32             OpRegionBase;;
+  EFI_STATUS         Status;
 
   Hob = GetFirstGuidHob (&gPlatformHobGuid);
   if (Hob == NULL) {
@@ -139,8 +141,26 @@ AcpiPatchNvdimm (
       }
     }
   }
-  /* Update NVDIMM Device _STA for SK1 */
+  /* Update NVDIMM Device _STA and OpRegions for SK1 */
   if (NvdRegionNumSK1 == 0) {
+    /* Use NVD1 OpRegion base for NVD3 */
+    OpRegionBase = 0;
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD1.BUF1");
+    Status = AcpiDSDTGetOpRegionBase (NodePath, &OpRegionBase);
+    ASSERT ((!EFI_ERROR (Status)) && (OpRegionBase != 0));
+
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD3.BUF1");
+    AcpiDSDTSetOpRegionBase (NodePath, OpRegionBase);
+
+    /* Use NVD2 OpRegion base for NVD4 */
+    OpRegionBase = 0;
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD2.BUF1");
+    Status = AcpiDSDTGetOpRegionBase (NodePath, &OpRegionBase);
+    ASSERT ((!EFI_ERROR (Status)) && (OpRegionBase != 0));
+
+    AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD4.BUF1");
+    AcpiDSDTSetOpRegionBase (NodePath, OpRegionBase);
+
     /* Disable NVD3/4 */
     AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD3._STA");
     AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
