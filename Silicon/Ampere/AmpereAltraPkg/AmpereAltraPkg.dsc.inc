@@ -524,6 +524,11 @@
   gArmTokenSpaceGuid.PcdMmBufferBase|0x88300000
   gArmTokenSpaceGuid.PcdMmBufferSize|0x100000
 
+  #
+  # Number of address lines in the I/O space for the CPU
+  #
+  gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|32
+
 [PcdsDynamicHii.common.DEFAULT]
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|L"Timeout"|gEfiGlobalVariableGuid|0x0|10
 !if $(TPM2_ENABLE) == TRUE
