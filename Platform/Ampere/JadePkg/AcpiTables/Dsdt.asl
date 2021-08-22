@@ -859,6 +859,108 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
         }
         Return (0x0)
       }
+
+      //
+      // Add opregions for doorbell and PPI CRB
+      // The addresses for these operation regions should be patched
+      // with information from HOB
+      //
+      OperationRegion (TPMD, SystemMemory, 0x100000542010, 0x04)
+      Field (TPMD, DWordAcc, NoLock, Preserve) {
+        DBB0, 32 // Doorbell out register
+      }
+
+      // PPI request CRB
+      OperationRegion (TPMC, SystemMemory, 0x88542038, 0x0C)
+      Field (TPMC, DWordAcc, NoLock, Preserve) {
+          PPIO, 32, // current PPI request
+          PPIR, 32, // last PPI request
+          PPIS, 32, // last PPI request status
+      }
+
+      // Create objects to hold return values
+      Name (PKG2, Package (2) { Zero, Zero })
+      Name (PKG3, Package (3) { Zero, Zero, Zero })
+
+      Method (_DSM, 0x4, Serialized) {
+        // Handle Physical Presence Interface(PPI) DSM method
+        If (LEqual (Arg0, ToUUID ("3DDDFAA6-361B-4eb4-A424-8D10089D1653"))) {
+          Switch (ToInteger (Arg2)) {
+            //
+            // Standard DSM query
+            //
+            Case (0) {
+              Return (Buffer () { 0xFF, 0x01 })
+            }
+
+            //
+            // Get Physical Presence Interface Version - support 1.3
+            //
+            Case (1) {
+              Return ("1.3")
+            }
+
+            //
+            // Submit TPM operation to pre-OS (Deprecated)
+            //
+            Case (2) {
+              Return (One) // Not supported
+            }
+
+            //
+            // Get pending TPM operation requested by OS
+            //
+            Case (3) {
+              PKG2[Zero] = Zero   // Success
+              PKG2[One] = PPIO    // current PPI request
+              Return (PKG2)
+            }
+
+            //
+            // Platform-specific action to transition to Pre-OS env
+            //
+            Case (4) {
+              Return (0x2) // Reboot
+            }
+
+            //
+            // TPM operation Response to OS
+            //
+            Case (5) {
+              PKG3[Zero] = Zero   // Success
+              PKG3[One] = PPIR    // last PPI request
+              PKG3[2] = PPIS      // last PPI request status
+              Return (PKG3)
+            }
+
+            //
+            // Preferred language code (Deprecated)
+            //
+            Case (6) {
+              Return (0x3) // Not implemented
+            }
+
+            //
+            // Submit TPM operation to pre-OS env 2
+            //
+            Case (7) {
+              Local0 = DerefOf (Arg3 [Zero])
+              // Write current PPI request and then to the doorbell
+              Store (Local0, PPIO)
+              Store (0x6a000000, DBB0) // MsgType: 6, Handler: 0xa (TPM-PPI)
+              Return (Zero)
+            }
+
+            //
+            // Get User confirmation status for op
+            //
+            Case (8) {
+              Return (0x4) // Allowed and physically present user not required
+            }
+          }
+        }
+        Return (Buffer () {0})
+      }
     }
 
     Include ("PCI-S0.Rca01.asi")
