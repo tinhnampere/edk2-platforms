@@ -49,10 +49,10 @@
 #define GPIO_DWAPB_PINS_PER_SOCKET        32
 
 /* The maximum number of I2C bus */
-#define MAX_PLATFORM_I2C_BUS_NUM          2
+#define MAX_PLATFORM_I2C_BUS_NUM          4
 
 /* The base address of DW I2C */
-#define PLATFORM_I2C_REGISTER_BASE        0x1000026B0000ULL, 0x100002750000ULL
+#define PLATFORM_I2C_REGISTER_BASE        0x1000026B0000ULL, 0x100002750000ULL, 0x100002770000ULL, 0x500002770000ULL
 
 /* Offset of failsafe testing feature */
 #define NV_UEFI_FAILURE_FAILSAFE_OFFSET   0x1F8
