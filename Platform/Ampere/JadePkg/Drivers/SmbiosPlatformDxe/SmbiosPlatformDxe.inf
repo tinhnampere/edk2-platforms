@@ -27,10 +27,12 @@
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
+  AmpereCpuLib
   BaseLib
   BaseMemoryLib
   DebugLib
   HobLib
+  IOExpanderLib
   IpmiCommandLib
   IpmiLib
   MemoryAllocationLib

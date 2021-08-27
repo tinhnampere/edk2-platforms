@@ -10,10 +10,12 @@
 
 #include <Guid/PlatformInfoHobGuid.h>
 #include <Guid/SmBios.h>
+#include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
+#include <Library/IOExpanderLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -74,6 +76,34 @@
 
 #define TYPE9_ADDITIONAL_STRINGS       \
   "Socket 0 Riser 1 x32 - Slot 1\0"
+
+#define  RISER_PRESENT      0
+//
+// IO Expander Assignment
+//
+#define S0_RISERX32_SLOT1_PRESENT_PIN     12 /* P12: S0_PCIERCB_3A_PRSNT_1C_L */
+#define S0_RISERX32_SLOT2_PRESENT_PIN     4  /* P04: S0_PCIERCA3_PRSNT_1C_L   */
+#define S0_RISERX32_SLOT3_PRESENT_PIN     10 /* P10: S0_PCIERCB_2B_PRSNT_1C_L */
+#define S1_RISERX24_SLOT1_PRESENT_PIN     0  /* P00: S1_PCIERCB1B_PRSNT_L     */
+#define S1_RISERX24_SLOT2_PRESENT_PIN     3  /* P03: S1_PCIERCA3_2_PRSNT_4C_L */
+#define S1_RISERX24_SLOT3_PRESENT_PIN     2  /* P02: S1_PCIERCA3_1_PRSNT_2C_L */
+#define S1_RISERX8_SLOT1_PRESENT_PIN      5  /* P05: S1_PCIERCB0A_PRSNT_L     */
+#define S0_OCP_SLOT_PRESENT_PIN           0  /* P00: OCP_PRSNTB0_L            */
+
+//
+// CPU I2C Bus for IO Expander
+//
+#define S0_RISER_I2C_BUS                  0x02
+#define S0_OCP_I2C_BUS                    0x02
+#define S1_RISER_I2C_BUS                  0x03
+
+//
+// I2C address of IO Expander devices
+//
+#define S0_RISERX32_I2C_ADDRESS           0x22
+#define S1_RISERX24_I2C_ADDRESS           0x22
+#define S1_RISERX8_I2C_ADDRESS            0x22
+#define S0_OCP_I2C_ADDRESS                0x20
 
 #define TYPE11_ADDITIONAL_STRINGS       \
   "www.amperecomputing.com\0"
@@ -149,7 +179,6 @@ enum {
   ADDITIONAL_STR_INDEX_6,
   ADDITIONAL_STR_INDEX_MAX
 };
-
 
 // Type 0 BIOS information
 STATIC ARM_TYPE0 mArmDefaultType0 = {
@@ -387,18 +416,18 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot1 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth16X,
     SlotUsageAvailable,
     SlotLengthLong,
-    0,
+    1,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
-    0,
+    4,
     0,
     0,
   },
-  "S0 Riser 1 x32 - Slot 1\0"
+  "S0 Riser x32 - Slot 1\0"
 };
 
 // Type 9 System Slots
@@ -410,14 +439,14 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot2 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
     SlotUsageAvailable,
     SlotLengthLong,
-    0,
+    2,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
-    4,
+    0,
     0,
     0,
   },
@@ -433,11 +462,11 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot3 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
     SlotUsageAvailable,
     SlotLengthLong,
-    0,
+    3,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
     5,
@@ -456,11 +485,11 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX24Slot1 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
     SlotUsageAvailable,
     SlotLengthLong,
-    0,
+    4,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
     7,
@@ -479,14 +508,14 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX24Slot2 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
     SlotUsageAvailable,
     SlotLengthLong,
-    0,
+    5,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
-    8,
+    7,
     0,
     0,
   },
@@ -502,11 +531,11 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX24Slot3 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
     SlotUsageAvailable,
     SlotLengthLong,
-    0,
+    6,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
     9,
@@ -525,11 +554,11 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX8Slot1 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
     SlotUsageAvailable,
     SlotLengthLong,
-    0,
+    7,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
     8,
@@ -548,11 +577,11 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0OcpNic = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth16X,
     SlotUsageAvailable,
     SlotLengthLong,
-    0,
+    8,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
     1,
@@ -571,11 +600,11 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1NvmeM2Slot1 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth4X,
     SlotUsageAvailable,
-    SlotLengthLong,
-    0,
+    SlotLengthShort,
+    9,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
     5,
@@ -594,11 +623,11 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1NvmeM2Slot2 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    SlotTypePciExpressGen3,
+    SlotTypePciExpressGen4,
     SlotDataBusWidth4X,
     SlotUsageAvailable,
-    SlotLengthLong,
-    0,
+    SlotLengthShort,
+    10,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
     5,
@@ -1131,6 +1160,98 @@ InstallStructures (
   return EFI_SUCCESS;
 }
 
+BOOLEAN
+GetPinStatus (
+  IN IO_EXPANDER_CONTROLLER *Controller,
+  IN UINT8                  Pin
+  )
+{
+  EFI_STATUS Status;
+  UINT8      PinValue;
+
+  Status = IOExpanderSetDir (
+             Controller,
+             Pin,
+             CONFIG_IOEXPANDER_PIN_AS_INPUT
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Failed to set IO pin direction\n", __FUNCTION__));
+    return FALSE;
+  }
+  Status = IOExpanderGetPin (
+             Controller,
+             Pin,
+             &PinValue
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Failed to get IO pin value\n", __FUNCTION__));
+    return FALSE;
+  }
+
+  return (PinValue > 0) ? FALSE : TRUE;
+}
+
+VOID
+UpdateSmbiosType9 (
+  VOID
+  )
+{
+  IO_EXPANDER_CONTROLLER Controller;
+
+  //
+  // Set IOExpander controller for Riser x32
+  //
+  Controller.ChipID     = IO_EXPANDER_TCA6424A;
+  Controller.I2cBus     = S0_RISER_I2C_BUS;
+  Controller.I2cAddress = S0_RISERX32_I2C_ADDRESS;
+
+  // Slot 1
+  mArmDefaultType9Sk0RiserX32Slot1.Base.CurrentUsage =
+    GetPinStatus (&Controller, S0_RISERX32_SLOT1_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+  // Slot 2
+  mArmDefaultType9Sk0RiserX32Slot2.Base.CurrentUsage =
+    GetPinStatus (&Controller, S0_RISERX32_SLOT2_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+  // Slot 3
+  mArmDefaultType9Sk0RiserX32Slot3.Base.CurrentUsage =
+    GetPinStatus (&Controller, S0_RISERX32_SLOT3_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+
+  //
+  // Set IOExpander controller for OCP NIC
+  //
+  Controller.ChipID = IO_EXPANDER_TCA9534;
+  Controller.I2cBus = S0_OCP_I2C_BUS;
+  Controller.I2cAddress = S0_OCP_I2C_ADDRESS;
+
+  mArmDefaultType9Sk0OcpNic.Base.CurrentUsage =
+    GetPinStatus (&Controller, S0_OCP_SLOT_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+
+  if (IsSlaveSocketActive ()) {
+    //
+    // Set IOExpander controller for Riser x24
+    //
+    Controller.ChipID = IO_EXPANDER_TCA6424A;
+    Controller.I2cBus = S1_RISER_I2C_BUS;
+    Controller.I2cAddress = S1_RISERX24_I2C_ADDRESS;
+
+    // Slot 1
+    mArmDefaultType9Sk1RiserX24Slot1.Base.CurrentUsage =
+      GetPinStatus (&Controller, S1_RISERX24_SLOT1_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+    // Slot 2
+    mArmDefaultType9Sk1RiserX24Slot2.Base.CurrentUsage =
+      GetPinStatus (&Controller, S1_RISERX24_SLOT2_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+    // Slot 3
+    mArmDefaultType9Sk1RiserX24Slot3.Base.CurrentUsage =
+      GetPinStatus (&Controller, S1_RISERX24_SLOT3_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+
+    //
+    // Set IOExpander controller for Riser x8
+    //
+    Controller.I2cAddress = S1_RISERX8_I2C_ADDRESS;
+    mArmDefaultType9Sk1RiserX8Slot1.Base.CurrentUsage =
+      GetPinStatus (&Controller, S1_RISERX8_SLOT1_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+  }
+}
+
 STATIC
 VOID
 UpdateSmbiosInfo (
@@ -1153,6 +1274,11 @@ UpdateSmbiosInfo (
   //  Update Type0 information
   //
   UpdateSmbiosType0 (PlatformHob);
+
+  //
+  // Update Type9 information
+  //
+  UpdateSmbiosType9 ();
 
 }
 
