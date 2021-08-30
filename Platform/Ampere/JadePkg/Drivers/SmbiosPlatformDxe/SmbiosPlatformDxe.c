@@ -261,7 +261,7 @@ STATIC CONST ARM_TYPE3 mArmDefaultType3 = {
     ChassisStateSafe,                // thermal state
     ChassisSecurityStatusNone,       // security state
     {0,0,0,0},                       // OEM defined
-    1,                               // 1U height
+    2,                               // 2U height
     2,                               // number of power cords
     0,                               // no contained elements
     3,                               // ContainedElementRecordLength;
