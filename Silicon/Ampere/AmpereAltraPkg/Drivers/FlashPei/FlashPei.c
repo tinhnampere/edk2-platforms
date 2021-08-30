@@ -9,13 +9,20 @@
 #include <PiPei.h>
 #include <Uefi.h>
 
+#include <Guid/GlobalVariable.h>
+#include <Guid/TcgEventHob.h>
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/HobLib.h>
 #include <Library/MmCommunicationLib.h>
+#include <Library/NVParamLib.h>
 #include <Library/PcdLib.h>
+#include <Library/PeiServicesLib.h>
 #include <Library/PeimEntryPoint.h>
+#include <Library/ResetSystemLib.h>
 #include <MmLib.h>
+#include <Ppi/ReadOnlyVariable2.h>
 
 // Convert to string
 #define _STR(x)          #x
@@ -75,6 +82,8 @@ FlashPeiEntryPoint (
   UINTN                                Size;
   VOID                                 *NvRamAddress;
   UINTN                                NvRamSize;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI      *VariablePpi;
+  UINTN                                DataSize;
 
 #if defined(RAM_BLOCKIO_START_ADDRESS) && defined(RAM_BLOCKIO_SIZE)
   EFI_MM_COMMUNICATE_SPINOR_NVINFO_RES *MmSpiNorNV2InfoRes;
@@ -208,8 +217,15 @@ FlashPeiEntryPoint (
     }
     DEBUG ((DEBUG_INFO, "UUID Changed, Update Storage with FV NVRAM\n"));
 
-    /* Indicate that NVRAM was cleared */
-    PcdSetBoolS (PcdNvramErased, TRUE);
+    Status = NVParamClrAll ();
+    if (!EFI_ERROR (Status)
+        && (GetFirstGuidHob (&gTpmErrorHobGuid) != NULL))
+    {
+      //
+      // Rest system if TPM is not available.
+      //
+      ResetCold ();
+    }
   } else {
     /* Copy the stored NVRAM to RAM */
     ZeroMem ((VOID *)MmData, sizeof (MmData));
@@ -278,6 +294,28 @@ FlashPeiEntryPoint (
       );
   }
 #endif
+
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid,
+             0,
+             NULL,
+             (VOID **)&VariablePpi
+             );
+  if (!EFI_ERROR (Status)) {
+    DataSize = 0;
+    Status = VariablePpi->GetVariable (
+                            VariablePpi,
+                            EFI_BOOT_ORDER_VARIABLE_NAME,
+                            &gEfiGlobalVariableGuid,
+                            NULL,
+                            &DataSize,
+                            NULL
+                            );
+    if (DataSize == 0) {
+      DEBUG((DEBUG_INFO, "BootOrder is not found, NVRAM maybe empty\n"));
+      PcdSetBoolS (PcdNvramErased, TRUE);
+    }
+  }
 
   return EFI_SUCCESS;
 }

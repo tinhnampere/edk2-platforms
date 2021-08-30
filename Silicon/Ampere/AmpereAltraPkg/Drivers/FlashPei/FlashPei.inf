@@ -21,6 +21,7 @@
   ArmPkg/ArmPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
+  SecurityPkg/SecurityPkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
@@ -29,11 +30,19 @@
   BaseMemoryLib
   DebugLib
   MmCommunicationLib
+  NVParamLib
   PcdLib
+  PeiServicesLib
   PeimEntryPoint
+  ResetSystemLib
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid
 
 [Guids]
+  gEfiGlobalVariableGuid
   gSpiNorMmGuid
+  gTpmErrorHobGuid
 
 [FixedPcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
@@ -48,4 +57,4 @@
   gAmpereTokenSpaceGuid.PcdNvramErased
 
 [Depex]
-  TRUE
+  gEfiPeiReadOnlyVariable2PpiGuid
