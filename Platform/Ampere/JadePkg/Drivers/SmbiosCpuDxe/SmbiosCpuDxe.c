@@ -416,7 +416,7 @@ UpdateSmbiosType4 (
         AsciiSPrint (
           Str,
           sizeof (Str),
-          "M%02d%02X",
+          "M%02d-%02X",
           PlatformHob->SkuMaxCore[Index],
           PlatformHob->SkuMaxTurbo[Index]
           );
