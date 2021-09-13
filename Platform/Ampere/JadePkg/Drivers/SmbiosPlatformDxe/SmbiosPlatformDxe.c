@@ -418,7 +418,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot1 = {
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
     SlotDataBusWidth16X,
-    SlotUsageAvailable,
+    SlotUsageUnavailable,
     SlotLengthLong,
     1,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
@@ -441,7 +441,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot2 = {
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
-    SlotUsageAvailable,
+    SlotUsageUnavailable,
     SlotLengthLong,
     2,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
@@ -464,7 +464,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot3 = {
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
-    SlotUsageAvailable,
+    SlotUsageUnavailable,
     SlotLengthLong,
     3,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
@@ -487,7 +487,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX24Slot1 = {
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
-    SlotUsageAvailable,
+    SlotUsageUnavailable,
     SlotLengthLong,
     4,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
@@ -510,7 +510,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX24Slot2 = {
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
-    SlotUsageAvailable,
+    SlotUsageUnavailable,
     SlotLengthLong,
     5,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
@@ -533,7 +533,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX24Slot3 = {
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
-    SlotUsageAvailable,
+    SlotUsageUnavailable,
     SlotLengthLong,
     6,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
@@ -556,7 +556,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX8Slot1 = {
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
     SlotDataBusWidth8X,
-    SlotUsageAvailable,
+    SlotUsageUnavailable,
     SlotLengthLong,
     7,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
@@ -579,7 +579,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0OcpNic = {
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
     SlotDataBusWidth16X,
-    SlotUsageAvailable,
+    SlotUsageUnavailable,
     SlotLengthLong,
     8,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
