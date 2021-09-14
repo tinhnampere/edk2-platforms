@@ -23,12 +23,12 @@
 #include <PlatformInfoHob.h>
 #include <Protocol/Smbios.h>
 
-#define CPU_CACHE_LEVEL_MAX 2
+#define CPU_CACHE_LEVEL_COUNT 3
 
 #define MHZ_SCALE_FACTOR 1000000
 
-#define CACHE_SIZE(x)   (UINT16) (0x8000 | (x) >> 16)
-#define CACHE_SIZE_2(x) (0x80000000 | (x) >> 16)
+#define CACHE_SIZE(x)            (UINT16) (0x8000 | (x >> 16))
+#define CACHE_SIZE_2(x)          (0x80000000 | (x >> 16))
 
 #define TYPE4_ADDITIONAL_STRINGS                                       \
   "SOCKET 0\0"                            /* socket type */            \
@@ -38,7 +38,7 @@
   "Not Specified                     \0"  /* processor serial number */
 
 #define TYPE7_ADDITIONAL_STRINGS                                       \
-  "L1 Cache\0" /* L1 Cache  */
+  "L1 Instruction Cache\0" /* L1 Instruction Cache  */
 
 //
 // Type definition and contents of the default SMBIOS table.
@@ -144,7 +144,7 @@ STATIC ARM_TYPE4 mArmDefaultType4Sk1 = {
 };
 
 // Type 7 Cache Information
-STATIC ARM_TYPE7 mArmDefaultType7Sk0L1 = {
+STATIC ARM_TYPE7 mArmDefaultType7Sk0L1I = {
   {
     {                                    // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
@@ -159,12 +159,33 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L1 = {
     {0, 0, 0, 0, 0, 1},     // SRAM type
     0,                      // unkown speed
     CacheErrorParity,       // parity checking
-    CacheTypeUnified,       // Unified cache
+    CacheTypeInstruction,   // Instruction cache
     CacheAssociativity4Way, // 4-way
   },
-  "L1 Cache\0"
+  "L1 Instruction Cache\0"
 };
 
+// Type 7 Cache Information
+STATIC ARM_TYPE7 mArmDefaultType7Sk0L1D = {
+  {
+    {                                    // SMBIOS_STRUCTURE Hdr
+      EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
+      sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
+      SMBIOS_HANDLE_PI_RESERVED,
+    },
+    ADDITIONAL_STR_INDEX_1,
+    0x180,                  // L1 enabled, Write Back
+    0x8001,                 // 64k i cache max
+    0x8001,                 // 64k installed
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    0,                      // unkown speed
+    CacheErrorParity,       // parity checking
+    CacheTypeData,          // Data cache
+    CacheAssociativity4Way, // 4-way
+  },
+  "L1 Data Cache\0"
+};
 // Type 7 Cache Information
 STATIC ARM_TYPE7 mArmDefaultType7Sk0L2 = {
   {
@@ -188,7 +209,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L2 = {
 };
 
 // Type 7 Cache Information
-STATIC ARM_TYPE7 mArmDefaultType7Sk1L1 = {
+STATIC ARM_TYPE7 mArmDefaultType7Sk1L1I = {
   {
     {                                    // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
@@ -203,12 +224,33 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L1 = {
     {0, 0, 0, 0, 0, 1},     // SRAM type
     0,                      // unkown speed
     CacheErrorParity,       // parity checking
-    CacheTypeUnified,       // Unified cache
+    CacheTypeInstruction,   // Instruction cache
     CacheAssociativity4Way, // 4-way
   },
-  "L1 Cache\0"
+  "L1 Instruction Cache\0"
 };
 
+// Type 7 Cache Information
+STATIC ARM_TYPE7 mArmDefaultType7Sk1L1D = {
+  {
+    {                                    // SMBIOS_STRUCTURE Hdr
+      EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
+      sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
+      SMBIOS_HANDLE_PI_RESERVED,
+    },
+    ADDITIONAL_STR_INDEX_1,
+    0x180,                  // L1 enabled, Write Back
+    0x8001,                 // 64k i cache max
+    0x8001,                 // 64k installed
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    {0, 0, 0, 0, 0, 1},     // SRAM type
+    0,                      // unkown speed
+    CacheErrorParity,       // parity checking
+    CacheTypeData,          // Data cache
+    CacheAssociativity4Way, // 4-way
+  },
+  "L1 Data Cache\0"
+};
 // Type 7 Cache Information
 STATIC ARM_TYPE7 mArmDefaultType7Sk1L2 = {
   {
@@ -240,14 +282,16 @@ STATIC CONST VOID *DefaultCommonTables[] =
 
 STATIC CONST VOID *DefaultType7Sk0Tables[] =
 {
-  &mArmDefaultType7Sk0L1,
+  &mArmDefaultType7Sk0L1I,
+  &mArmDefaultType7Sk0L1D,
   &mArmDefaultType7Sk0L2,
   NULL
 };
 
 STATIC CONST VOID *DefaultType7Sk1Tables[] =
 {
-  &mArmDefaultType7Sk1L1,
+  &mArmDefaultType7Sk1L1I,
+  &mArmDefaultType7Sk1L1D,
   &mArmDefaultType7Sk1L2,
   NULL
 };
@@ -441,48 +485,45 @@ UpdateSmbiosType4 (
 
 STATIC
 VOID
+UpdateCacheInfo (
+  SMBIOS_TABLE_TYPE7 *Table,
+  UINT32              Level
+  )
+{
+  ASSERT (Table != NULL);
+  ASSERT (Level > 0 && Level < 8);
+
+  Table->Associativity = (UINT8)CpuGetAssociativity (Level);
+  Table->CacheConfiguration = (1 << 7 | GetCacheConfig (Level) << 8 | (Level - 1));
+  Table->MaximumCacheSize  = CACHE_SIZE (CpuGetCacheSize (Level));
+  Table->InstalledSize     = CACHE_SIZE (CpuGetCacheSize (Level));
+  Table->MaximumCacheSize2 = CACHE_SIZE_2 (CpuGetCacheSize (Level));
+  Table->InstalledSize2    = CACHE_SIZE_2 (CpuGetCacheSize (Level));
+}
+
+STATIC
+VOID
 UpdateSmbiosType7 (
   PLATFORM_INFO_HOB  *PlatformHob
   )
 {
-  UINTN              Index;
   SMBIOS_TABLE_TYPE7 *Table;
 
   ASSERT (PlatformHob != NULL);
 
-  for (Index = 0; Index < GetNumberOfSupportedSockets (); Index++) {
-    if (Index == 0) {
-      Table = &mArmDefaultType7Sk0L1.Base;
-    } else {
-      Table = &mArmDefaultType7Sk1L1.Base;
-    }
-
-    Table->Associativity = (UINT8)CpuGetAssociativity (1);
-    Table->CacheConfiguration = (1 << 7 | GetCacheConfig (1) << 8); /* Enabled, Internal, L1 */
-    Table->MaximumCacheSize  = CACHE_SIZE (CpuGetCacheSize (1));
-    Table->InstalledSize     = CACHE_SIZE (CpuGetCacheSize (1));
-    Table->MaximumCacheSize2 = CACHE_SIZE_2 (CpuGetCacheSize (1));
-    Table->InstalledSize2    = CACHE_SIZE_2 (CpuGetCacheSize (1));
-
-    if (Index == 0) {
-      Table = &mArmDefaultType7Sk0L2.Base;
-    } else {
-      Table = &mArmDefaultType7Sk1L2.Base;
-    }
-
-    Table->Associativity = (UINT8)CpuGetAssociativity (2);
-    Table->CacheConfiguration = (1 << 7 | GetCacheConfig (2) << 8 | 1); /* Enabled, Internal, L2 */
-    Table->MaximumCacheSize  = CACHE_SIZE (CpuGetCacheSize (2));
-    Table->InstalledSize     = CACHE_SIZE (CpuGetCacheSize (2));
-    Table->MaximumCacheSize2 = CACHE_SIZE_2 (CpuGetCacheSize (2));
-    Table->InstalledSize2    = CACHE_SIZE_2 (CpuGetCacheSize (2));
-  }
-
-  if (GetNumberOfSupportedSockets () == 2 && GetNumberOfActiveCoresPerSocket (1) == 0) {
-    mArmDefaultType7Sk1L1.Base.InstalledSize = 0;
-    mArmDefaultType7Sk1L1.Base.InstalledSize2 = 0;
-    mArmDefaultType7Sk1L2.Base.InstalledSize = 0;
-    mArmDefaultType7Sk1L2.Base.InstalledSize2 = 0;
+    Table = &mArmDefaultType7Sk0L1I.Base;
+    UpdateCacheInfo (Table, 1);
+    Table = &mArmDefaultType7Sk0L1D.Base;
+    UpdateCacheInfo (Table, 1);
+    Table = &mArmDefaultType7Sk0L2.Base;
+    UpdateCacheInfo (Table, 2);
+  if (IsSlaveSocketActive ()) {
+    Table = &mArmDefaultType7Sk1L1I.Base;
+    UpdateCacheInfo (Table, 1);
+    Table = &mArmDefaultType7Sk1L1D.Base;
+    UpdateCacheInfo (Table, 1);
+    Table = &mArmDefaultType7Sk1L2.Base;
+    UpdateCacheInfo (Table, 2);
   }
 }
 
@@ -534,7 +575,7 @@ InstallType7Structures (
       Type4Table = &mArmDefaultType4Sk1.Base;
     }
 
-    for (Level = 0; Level < CPU_CACHE_LEVEL_MAX; Level++ ) {
+    for (Level = 0; Level < CPU_CACHE_LEVEL_COUNT; Level++ ) {
       SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER *)Tables[Level])->Handle;
       Status = Smbios->Add (
                          Smbios,
@@ -557,7 +598,7 @@ InstallType7Structures (
       // Save handle to Type 4
       if (Level == 0) { // L1 cache
         Type4Table->L1CacheHandle = SmbiosHandle;
-      } else if (Level == 1) { // L2 cache
+      } else if (Level == 2) { // L2 cache
         Type4Table->L2CacheHandle = SmbiosHandle;
       }
     }
