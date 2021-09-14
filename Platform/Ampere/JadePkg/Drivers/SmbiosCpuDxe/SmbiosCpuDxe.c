@@ -27,8 +27,8 @@
 
 #define MHZ_SCALE_FACTOR 1000000
 
-#define CACHE_SIZE(x)            (UINT16) (0x8000 | (x >> 16))
-#define CACHE_SIZE_2(x)          (0x80000000 | (x >> 16))
+#define CACHE_SIZE(x, y)            (UINT16) (0x8000 | ((x >> 16) * GetNumberOfActiveCoresPerSocket (y)))
+#define CACHE_SIZE_2(x, y)          (0x80000000 | ((x >> 16) * GetNumberOfActiveCoresPerSocket (y)))
 
 #define TYPE4_ADDITIONAL_STRINGS                                       \
   "SOCKET 0\0"                            /* socket type */            \
@@ -487,18 +487,20 @@ STATIC
 VOID
 UpdateCacheInfo (
   SMBIOS_TABLE_TYPE7 *Table,
-  UINT32              Level
+  UINT32              Level,
+  UINT32              Socket
   )
 {
   ASSERT (Table != NULL);
   ASSERT (Level > 0 && Level < 8);
+  ASSERT (Socket < 2);
 
   Table->Associativity = (UINT8)CpuGetAssociativity (Level);
   Table->CacheConfiguration = (1 << 7 | GetCacheConfig (Level) << 8 | (Level - 1));
-  Table->MaximumCacheSize  = CACHE_SIZE (CpuGetCacheSize (Level));
-  Table->InstalledSize     = CACHE_SIZE (CpuGetCacheSize (Level));
-  Table->MaximumCacheSize2 = CACHE_SIZE_2 (CpuGetCacheSize (Level));
-  Table->InstalledSize2    = CACHE_SIZE_2 (CpuGetCacheSize (Level));
+  Table->MaximumCacheSize  = CACHE_SIZE (CpuGetCacheSize (Level), Socket);
+  Table->InstalledSize     = CACHE_SIZE (CpuGetCacheSize (Level), Socket);
+  Table->MaximumCacheSize2 = CACHE_SIZE_2 (CpuGetCacheSize (Level), Socket);
+  Table->InstalledSize2    = CACHE_SIZE_2 (CpuGetCacheSize (Level), Socket);
 }
 
 STATIC
@@ -511,19 +513,19 @@ UpdateSmbiosType7 (
 
   ASSERT (PlatformHob != NULL);
 
-    Table = &mArmDefaultType7Sk0L1I.Base;
-    UpdateCacheInfo (Table, 1);
-    Table = &mArmDefaultType7Sk0L1D.Base;
-    UpdateCacheInfo (Table, 1);
-    Table = &mArmDefaultType7Sk0L2.Base;
-    UpdateCacheInfo (Table, 2);
+  Table = &mArmDefaultType7Sk0L1I.Base;
+  UpdateCacheInfo (Table, 1, 0);
+  Table = &mArmDefaultType7Sk0L1D.Base;
+  UpdateCacheInfo (Table, 1, 0);
+  Table = &mArmDefaultType7Sk0L2.Base;
+  UpdateCacheInfo (Table, 2, 0);
   if (IsSlaveSocketActive ()) {
     Table = &mArmDefaultType7Sk1L1I.Base;
-    UpdateCacheInfo (Table, 1);
+    UpdateCacheInfo (Table, 1, 1);
     Table = &mArmDefaultType7Sk1L1D.Base;
-    UpdateCacheInfo (Table, 1);
+    UpdateCacheInfo (Table, 1, 1);
     Table = &mArmDefaultType7Sk1L2.Base;
-    UpdateCacheInfo (Table, 2);
+    UpdateCacheInfo (Table, 2, 1);
   }
 }
 
