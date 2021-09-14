@@ -65,67 +65,7 @@ EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER MADTTableHeaderTemplate = {
     ),
 };
 
-UINT32 Ac01CoreOrderMonolithic[PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM] = {
-  36, 37, 40, 41, 52, 53, 56, 57, 32, 33,
-  44, 45, 48, 49, 60, 61, 20, 21, 24, 25,
-  68, 69, 72, 73, 16, 17, 28, 29, 64, 65,
-  76, 77,  4,  5,  8,  9,  0,  1, 12, 13,
-  38, 39, 42, 43, 54, 55, 58, 59, 34, 35,
-  46, 47, 50, 51, 62, 63, 22, 23, 26, 27,
-  70, 71, 74, 75, 18, 19, 30, 31, 66, 67,
-  78, 79,  6,  7, 10, 11,  2,  3, 14, 15,
-};
-
-UINT32 Ac01CoreOrderHemisphere[PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM] = {
-  32, 33, 48, 49, 16, 17, 64, 65, 36, 37,
-  52, 53,  0,  1, 20, 21, 68, 69,  4,  5,
-  34, 35, 50, 51, 18, 19, 66, 67, 38, 39,
-  54, 55,  2,  3, 22, 23, 70, 71,  6,  7,
-  44, 45, 60, 61, 28, 29, 76, 77, 40, 41,
-  56, 57, 12, 13, 24, 25, 72, 73,  8,  9,
-  46, 47, 62, 63, 30, 31, 78, 79, 42, 43,
-  58, 59, 14, 15, 26, 27, 74, 75, 10, 11,
-};
-
-UINT32 Ac01CoreOrderQuadrant[PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM] = {
-  16, 17, 32, 33,  0,  1, 20, 21,  4,  5,
-  18, 19, 34, 35,  2,  3, 22, 23,  6,  7,
-  48, 49, 64, 65, 52, 53, 68, 69, 36, 37,
-  50, 51, 66, 67, 54, 55, 70, 71, 38, 39,
-  28, 29, 44, 45, 12, 13, 24, 25,  8,  9,
-  30, 31, 46, 47, 14, 15, 26, 27, 10, 11,
-  60, 61, 76, 77, 56, 57, 72, 73, 40, 41,
-  62, 63, 78, 79, 58, 59, 74, 75, 42, 43,
-};
-
 EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER *MadtTablePointer;
-
-UINT32 *
-CpuGetCoreOrder (
-  VOID
-  )
-{
-  UINT8              SubNumaMode;
-
-  SubNumaMode = CpuGetSubNumaMode ();
-  switch (SubNumaMode) {
-  case SUBNUMA_MODE_MONOLITHIC:
-    return (UINT32 *)&Ac01CoreOrderMonolithic;
-
-  case SUBNUMA_MODE_HEMISPHERE:
-    return (UINT32 *)&Ac01CoreOrderHemisphere;
-
-  case SUBNUMA_MODE_QUADRANT:
-    return (UINT32 *)&Ac01CoreOrderQuadrant;
-
-  default:
-    // Should never reach here
-    ASSERT (FALSE);
-    return NULL;
-  }
-
-  return NULL;
-}
 
 UINT32
 AcpiInstallMadtProcessorNode (

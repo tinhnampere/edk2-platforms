@@ -44,6 +44,16 @@
 #define SOCKET_ID(CpuId)               ((CpuId) / (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM))
 #define CLUSTER_ID(CpuId)              (((CpuId) / PLATFORM_CPU_NUM_CORES_PER_CPM) % PLATFORM_CPU_MAX_CPM)
 
+/**
+  Get CPU Core order number.
+
+  @return   UINT8      The order number.
+
+**/
+UINT32 *
+CpuGetCoreOrder (
+  VOID
+  );
 
 /**
   Get the SubNUMA mode.
