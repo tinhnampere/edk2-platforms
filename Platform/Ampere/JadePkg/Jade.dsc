@@ -64,6 +64,15 @@
   DEFINE NETWORK_TLS_ENABLE                  = TRUE
   DEFINE REDFISH_ENABLE                      = TRUE
 
+  DEFINE DEFAULT_KEYS        = TRUE
+  DEFINE PK_DEFAULT_FILE     = Platform/Ampere/JadePkg/TestKeys/PK.cer
+  DEFINE KEK_DEFAULT_FILE1   = Platform/Ampere/JadePkg/TestKeys/MicCorKEKCA2011_2011-06-24.crt
+  DEFINE DB_DEFAULT_FILE1    = Platform/Ampere/JadePkg/TestKeys/MicCorUEFCA2011_2011-06-27.crt
+  DEFINE DB_DEFAULT_FILE2    = Platform/Ampere/JadePkg/TestKeys/MicWinProPCA2011_2011-10-19.crt
+  DEFINE DB_DEFAULT_FILE3    = Platform/Ampere/JadePkg/TestKeys/canonical-uefi-ca.der
+  DEFINE DB_DEFAULT_FILE4    = Platform/Ampere/JadePkg/TestKeys/SLES-UEFI-CA-Certificate.cer
+  DEFINE DB_DEFAULT_FILE5    = Platform/Ampere/JadePkg/TestKeys/fedora-ca.cer
+
 !include MdePkg/MdeLibs.dsc.inc
 
 # Include default Ampere Platform DSC file
