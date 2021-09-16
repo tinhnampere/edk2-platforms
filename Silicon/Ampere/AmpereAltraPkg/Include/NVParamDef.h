@@ -517,9 +517,10 @@ typedef enum {
   NV_SI_RO_BOARD_RAS_DDR_CE_WINDOW                  = (204 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_RAS_DDR_CE_TH1                     = (205 * 8) + NV_BOARD_PARAM_START, /* Default: 0x000001F4 */
   NV_SI_RO_BOARD_RAS_DDR_CE_TH2                     = (206 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00001388 */
-  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_RAS_DDR_CE_TH2,
+  NV_SI_RO_BOARD_RAS_DDR_CE_THC                     = (207 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
+  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_RAS_DDR_CE_THC,
   /* NOTE: Add before NV_BOARD_PARAM_MAX and increase its value */
-  NV_BOARD_PARAM_MAX                                = (206 * 8) + NV_BOARD_PARAM_START,
+  NV_BOARD_PARAM_MAX                                = (207 * 8) + NV_BOARD_PARAM_START,
 } NVPARAM;
 
 #endif /* NVPARAMDEF_H_ */
