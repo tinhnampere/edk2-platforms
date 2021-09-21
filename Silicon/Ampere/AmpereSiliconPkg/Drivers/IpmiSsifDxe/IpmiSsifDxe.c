@@ -171,8 +171,12 @@ SsifReadResponse (
                 mPecSupport
                 ),
               ResponseTemp,
-              NULL
+              &Status
               );
+
+  if (EFI_ERROR (Status)) {
+    goto Exit;
+  }
 
   if (ReadLen == 0) {
     Status = EFI_NOT_FOUND;
@@ -207,8 +211,12 @@ SsifReadResponse (
                   mPecSupport
                   ),
                 ResponseTemp,
-                NULL
+                &Status
                 );
+
+    if (EFI_ERROR (Status)) {
+      goto Exit;
+    }
 
     if (ReadLen == 0) {
       DEBUG ((DEBUG_ERROR, "%a: Response data error\n", __FUNCTION__));
