@@ -16,11 +16,11 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <MmLib.h>
-#include <Protocol/MmCommunication.h>
+#include <Protocol/MmCommunication2.h>
 
 
-STATIC EFI_MM_COMMUNICATION_PROTOCOL *mNVParamMmCommProtocol = NULL;
-STATIC EFI_MM_COMM_REQUEST           *mCommBuffer            = NULL;
+STATIC EFI_MM_COMMUNICATION2_PROTOCOL *mNVParamMmCommProtocol = NULL;
+STATIC EFI_MM_COMM_REQUEST            *mCommBuffer            = NULL;
 
 /**
   This is a notification function registered on EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE
@@ -55,7 +55,7 @@ NVParamLibConstructor (
   ASSERT (mCommBuffer != NULL);
 
   Status = gBS->LocateProtocol (
-                  &gEfiMmCommunicationProtocolGuid,
+                  &gEfiMmCommunication2ProtocolGuid,
                   NULL,
                   (VOID **)&mNVParamMmCommProtocol
                   );
@@ -85,6 +85,7 @@ NvParamMmCommunicate (
 
   return mNVParamMmCommProtocol->Communicate (
                                    mNVParamMmCommProtocol,
+                                   CommBuffer,
                                    CommBuffer,
                                    CommSize
                                    );

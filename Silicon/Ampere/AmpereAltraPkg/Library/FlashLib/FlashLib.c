@@ -15,10 +15,10 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <MmLib.h>
-#include <Protocol/MmCommunication.h>
+#include <Protocol/MmCommunication2.h>
 
-STATIC EFI_MM_COMMUNICATION_PROTOCOL *mMmCommunicationProtocol = NULL;
-STATIC EFI_MM_COMM_REQUEST           *mCommBuffer              = NULL;
+STATIC EFI_MM_COMMUNICATION2_PROTOCOL *mMmCommunicationProtocol = NULL;
+STATIC EFI_MM_COMM_REQUEST            *mCommBuffer              = NULL;
 
 BOOLEAN mIsEfiRuntime;
 UINT8   *mTmpBufVirt;
@@ -64,7 +64,7 @@ FlashLibConstructor (
   ASSERT (mTmpBufPhy != NULL);
 
   Status = gBS->LocateProtocol (
-                  &gEfiMmCommunicationProtocolGuid,
+                  &gEfiMmCommunication2ProtocolGuid,
                   NULL,
                   (VOID **)&mMmCommunicationProtocol
                   );
@@ -95,6 +95,7 @@ FlashMmCommunicate (
 
   return mMmCommunicationProtocol->Communicate (
                                      mMmCommunicationProtocol,
+                                     CommBuffer,
                                      CommBuffer,
                                      CommSize
                                      );

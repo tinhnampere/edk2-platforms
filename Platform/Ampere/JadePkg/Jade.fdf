@@ -154,7 +154,6 @@ APRIORI PEI {
   INF ArmPlatformPkg/PlatformPei/PlatformPeim.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/ATFHobPei/ATFHobPeim.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/MemoryInitPeim/MemoryInitPeim.inf
-  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationPei/MmCommunicationPei.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/FlashPei/FlashPei.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/BootProgress/BootProgressPeim/BootProgressPeim.inf
   INF ArmPkg/Drivers/CpuPei/CpuPei.inf
@@ -207,7 +206,8 @@ APRIORI DXE {
   INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
   INF MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
   INF MdeModulePkg/Universal/StatusCodeHandler/RuntimeDxe/StatusCodeHandlerRuntimeDxe.inf
-  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
+  INF ArmPkg/Drivers/CpuDxe/CpuDxe.inf
+  INF ArmPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/FlashFvbDxe/FlashFvbDxe.inf
 }
 
@@ -234,7 +234,7 @@ APRIORI DXE {
   INF EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
   INF EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
   INF MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
-  INF Silicon/Ampere/AmpereAltraPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
+  INF ArmPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
 
   #
   # Fixup memory map

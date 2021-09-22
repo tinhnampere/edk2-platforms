@@ -32,4 +32,4 @@
   gNVParamMmGuid
 
 [Protocols]
-  gEfiMmCommunicationProtocolGuid
+  gEfiMmCommunication2ProtocolGuid

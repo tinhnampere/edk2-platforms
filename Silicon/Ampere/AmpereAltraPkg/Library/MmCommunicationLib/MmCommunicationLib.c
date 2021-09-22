@@ -13,7 +13,7 @@
 #include <Library/DebugLib.h>
 #include <Library/MmCommunicationLib.h>
 #include <Library/PcdLib.h>
-#include <Protocol/MmCommunication.h>
+#include <Protocol/MmCommunication2.h>
 
 //
 // Address, Length of the pre-allocated buffer for communication with the secure

@@ -14,9 +14,9 @@
 #include <Library/DebugLib.h>
 #include <Library/PlatformFlashAccessLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include <Protocol/MmCommunication.h>
+#include <Protocol/MmCommunication2.h>
 
-EFI_MM_COMMUNICATION_PROTOCOL *mMmCommunication = NULL;
+EFI_MM_COMMUNICATION2_PROTOCOL *mMmCommunication = NULL;
 
 #define EFI_MM_MAX_PAYLOAD_U64_E 10
 #define EFI_MM_MAX_PAYLOAD_SIZE  (EFI_MM_MAX_PAYLOAD_U64_E * sizeof (UINT64))
@@ -129,13 +129,13 @@ MmFlashUpdate (
 
   if (mMmCommunication == NULL) {
     Status = gBS->LocateProtocol (
-                    &gEfiMmCommunicationProtocolGuid,
+                    &gEfiMmCommunication2ProtocolGuid,
                     NULL,
                     (VOID **)&mMmCommunication
                     );
 
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: Can't locate gEfiMmCommunicationProtocolGuid.\n", __FUNCTION__));
+      DEBUG ((DEBUG_ERROR, "%a: Can't locate gEfiMmCommunication2ProtocolGuid.\n", __FUNCTION__));
       return Status;
     }
   }
@@ -151,6 +151,7 @@ MmFlashUpdate (
     Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
     Status = mMmCommunication->Communicate (
                                  mMmCommunication,
+                                 (VOID *)&mEfiMmSysFwuReq,
                                  (VOID *)&mEfiMmSysFwuReq,
                                  &Size
                                  );

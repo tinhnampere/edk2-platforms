@@ -33,4 +33,4 @@
   gSpiNorMmGuid
 
 [Protocols]
-  gEfiMmCommunicationProtocolGuid
+  gEfiMmCommunication2ProtocolGuid

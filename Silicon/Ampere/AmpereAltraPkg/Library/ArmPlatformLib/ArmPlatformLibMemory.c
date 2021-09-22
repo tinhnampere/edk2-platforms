@@ -385,14 +385,14 @@ ArmPlatformGetVirtualMemoryMap (
     VirtualMemoryTable[Index].VirtualBase  = PlatformHob->DramInfo.Base[Count];
     VirtualMemoryTable[Index].Length       = PlatformHob->DramInfo.Size[Count];
     VirtualMemoryTable[Index].Attributes   = DDR_ATTRIBUTES_CACHED;
+    if (PlatformHob->DramInfo.Base[Count] == PcdGet64 (PcdMmBufferBase)) {
+      //
+      // Set uncached attribute for MM region
+      //
+      VirtualMemoryTable[Index].Attributes = DDR_ATTRIBUTES_UNCACHED;
+    }
     Count++;
   }
-
-  /* SPM MM NS Buffer for MmCommunicateDxe */
-  VirtualMemoryTable[++Index].PhysicalBase = PcdGet64 (PcdMmBufferBase);
-  VirtualMemoryTable[Index].VirtualBase  = PcdGet64 (PcdMmBufferBase);
-  VirtualMemoryTable[Index].Length       = PcdGet64 (PcdMmBufferSize);
-  VirtualMemoryTable[Index].Attributes   = DDR_ATTRIBUTES_CACHED;
 
   /* End of Table */
   VirtualMemoryTable[++Index].PhysicalBase = 0;

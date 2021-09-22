@@ -19,12 +19,12 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeLib.h>
 #include <Platform/Ac01.h>
-#include <Protocol/MmCommunication.h>
+#include <Protocol/MmCommunication2.h>
 
 #define EFI_MM_MAX_PAYLOAD_U64_E  10
 #define EFI_MM_MAX_PAYLOAD_SIZE   (EFI_MM_MAX_PAYLOAD_U64_E * sizeof (UINT64))
 
-EFI_MM_COMMUNICATION_PROTOCOL *mFlashLibMmCommProtocol = NULL;
+EFI_MM_COMMUNICATION2_PROTOCOL *mFlashLibMmCommProtocol = NULL;
 
 typedef struct {
   /* Allows for disambiguation of the message format */
@@ -170,12 +170,12 @@ FailSafeGetRegionInfo (
 
   if (mFlashLibMmCommProtocol == NULL) {
     Status = gBS->LocateProtocol (
-                    &gEfiMmCommunicationProtocolGuid,
+                    &gEfiMmCommunication2ProtocolGuid,
                     NULL,
                     (VOID **)&mFlashLibMmCommProtocol
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: Can't locate gEfiMmCommunicationProtocolGuid\n", __FUNCTION__));
+      DEBUG ((DEBUG_ERROR, "%a: Can't locate gEfiMmCommunication2ProtocolGuid\n", __FUNCTION__));
       return Status;
     }
   }
@@ -186,6 +186,7 @@ FailSafeGetRegionInfo (
   DataSize = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
   Status = mFlashLibMmCommProtocol->Communicate (
                                       mFlashLibMmCommProtocol,
+                                      (VOID *)&mEfiMmSpiNorReq,
                                       (VOID *)&mEfiMmSpiNorReq,
                                       &DataSize
                                       );
@@ -238,6 +239,7 @@ FailSafeBootSuccessfully (
   Status = mFlashLibMmCommProtocol->Communicate (
                                       mFlashLibMmCommProtocol,
                                       (VOID *)&mEfiMmSpiNorReq,
+                                      (VOID *)&mEfiMmSpiNorReq,
                                       &Size
                                       );
   ASSERT_EFI_ERROR (Status);
@@ -271,6 +273,7 @@ FailSafeBootSuccessfully (
   Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
   Status = mFlashLibMmCommProtocol->Communicate (
                                       mFlashLibMmCommProtocol,
+                                      (VOID *)&mEfiMmSpiNorReq,
                                       (VOID *)&mEfiMmSpiNorReq,
                                       &Size
                                       );
