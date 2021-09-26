@@ -26,12 +26,19 @@
 
 #pragma pack(1)
 #define BERT_MSG_SIZE                0x2C
-#define BERT_ERROR_TYPE              0x7F
 #define BERT_UEFI_FAILURE            5
-#define RAS_2P_TYPE                  0x03
 #define BERT_DEFAULT_ERROR_SEVERITY  0x1
 #define GENERIC_ERROR_DATA_REVISION  0x300
 
+#define RAS_TYPE_2P                  0x03
+#define RAS_TYPE_BERT                0x3F
+#define RAS_TYPE_ERROR_MASK          0x3F
+#define RAS_TYPE_PAYLOAD_MASK        0xC0
+#define RAS_TYPE_PAYLOAD0            0x00
+#define RAS_TYPE_PAYLOAD1            0x40
+#define RAS_TYPE_PAYLOAD2            0x80
+#define RAS_TYPE_PAYLOAD3            0xC0
+#define RAS_TYPE_BERT_PAYLOAD3       (RAS_TYPE_BERT | RAS_TYPE_PAYLOAD3)
 
 #define PLAT_CRASH_ITERATOR_SIZE     0x398
 #define SMPRO_CRASH_SIZE             0x800

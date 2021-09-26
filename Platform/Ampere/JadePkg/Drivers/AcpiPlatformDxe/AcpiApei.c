@@ -148,6 +148,8 @@ WrapBertErrorData (
   )
 {
   UINT32 CrashSize;
+  UINT8  CrashType;
+  UINT8  CrashSubType;
 
   CrashSize = PLAT_CRASH_ITERATOR_SIZE *
               GetNumberOfSupportedSockets () *
@@ -155,16 +157,16 @@ WrapBertErrorData (
   CrashSize += 2 * (SMPRO_CRASH_SIZE + PMPRO_CRASH_SIZE + RASIP_CRASH_SIZE);
   CrashSize += sizeof (WrappedError->Bed.Vendor) + sizeof (WrappedError->Bed.BertRev);
 
+  CrashType = WrappedError->Bed.Vendor.Type & RAS_TYPE_ERROR_MASK;
+  CrashSubType = WrappedError->Bed.Vendor.SubType;
+
   WrappedError->Ges.BlockStatus.ErrorDataEntryCount = 1;
   WrappedError->Ges.BlockStatus.UncorrectableErrorValid = 1;
   WrappedError->Ged.ErrorSeverity = BERT_DEFAULT_ERROR_SEVERITY;
   WrappedError->Ged.Revision = GENERIC_ERROR_DATA_REVISION;
 
-  if (WrappedError->Bed.Vendor.Type == RAS_2P_TYPE ||
-      (WrappedError->Bed.Vendor.Type == BERT_ERROR_TYPE &&
-       (WrappedError->Bed.Vendor.SubType == 0 ||
-        WrappedError->Bed.Vendor.SubType == BERT_UEFI_FAILURE)))
-  {
+  if ((CrashType == RAS_TYPE_BERT && (CrashSubType == 0 || CrashSubType == BERT_UEFI_FAILURE))
+    || (CrashType == RAS_TYPE_2P)) {
     WrappedError->Ged.ErrorDataLength = sizeof (WrappedError->Bed.Vendor) +
                                         sizeof (WrappedError->Bed.BertRev);
     WrappedError->Ges.DataLength = sizeof (WrappedError->Bed.Vendor) +
@@ -202,7 +204,7 @@ CreateDefaultBertData (
   APEI_BERT_ERROR_DATA *Data
   )
 {
-  Data->Type = BERT_ERROR_TYPE;
+  Data->Type = RAS_TYPE_BERT_PAYLOAD3;
   AsciiStrCpyS (
     Data->Msg,
     BERT_MSG_SIZE,
