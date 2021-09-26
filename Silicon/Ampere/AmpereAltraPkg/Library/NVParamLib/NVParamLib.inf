@@ -16,6 +16,7 @@
 
 [Sources.common]
   NVParamLib.c
+  NVParamLibCommon.c
 
 [Packages]
   ArmPkg/ArmPkg.dec

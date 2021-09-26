@@ -50,22 +50,22 @@
 
 #define NVPARAM_SIZE    0x8
 
-/*
- * Retrieve a non-volatile parameter
- *
- * @param:      Parameter ID to retrieve
- * @acl_rd:     Permission for read operation. See NV_PERM_XXX.
- * @val:        Pointer to an UINT32 to store the value
- * @return:     EFI_INVALID_PARAMETER if parameter is invalid
- *              EFI_NOT_FOUND if value is not set
- *              EFI_UNSUPPORTED if service unavailable
- *              EFI_ACCESS_DENIED if permission not allowed
- *              Otherwise, 0 for success
- *
- * NOTE: If you need a signed value, cast it. It is expected that the
- * caller will carry the correct permission over various call sequences.
- *
- */
+/**
+  Retrieve a non-volatile parameter.
+
+  NOTE: If you need a signed value, cast it. It is expected that the
+  caller will carry the correct permission over various call sequences.
+
+  @param[in]  Param               Parameter ID to retrieve
+  @param[in]  ACLRd               Permission for read operation.
+  @param[out] Val                 Pointer to an UINT32 to the return value.
+
+  @retval EFI_SUCCESS             Operation succeeded.
+  @retval EFI_ACCESS_DENIED       Permission not allowed.
+  @retval EFI_DEVICE_ERROR        Service is unavailable.
+  @retval EFI_INVALID_PARAMETER   Val is NULL or return status is invalid.
+  @retval EFI_NOT_FOUND           NVParam entry is not set.
+**/
 EFI_STATUS
 NVParamGet (
   IN  UINT32 Param,
@@ -73,24 +73,24 @@ NVParamGet (
   OUT UINT32 *Val
   );
 
-/*
- * Set a non-volatile parameter
- *
- * @param:      Parameter ID to set
- * @acl_rd:     Permission for read operation
- * @acl_wr:     Permission for write operation
- * @val:        Unsigned int value to set.
- * @return:     EFI_INVALID_PARAMETER if parameter is invalid
- *              EFI_UNSUPPORTED if service unavailable
- *              EFI_ACCESS_DENIED if permission not allowed
- *              Otherwise, 0 for success
- *
- * NOTE: If you have a signed value, cast to unsigned. If the parameter has
- * not being created before, the provied permission is used to create the
- * parameter. Otherwise, it is checked for access. It is expected that the
- * caller will carry the correct permission over various call sequences.
- *
- */
+/**
+  Set a non-volatile parameter.
+
+  NOTE: If you have a signed value, cast to unsigned. If the parameter has
+  not being created before, the provied permission is used to create the
+  parameter. Otherwise, it is checked for access. It is expected that the
+  caller will carry the correct permission over various call sequences.
+
+  @param[in] Param                Parameter ID to set
+  @param[in] ACLRd                Permission for read operation.
+  @param[in] ACLWr                Permission for write operation.
+  @param[in] Val                  Unsigned int value to set.
+
+  @retval EFI_SUCCESS             Operation succeeded.
+  @retval EFI_ACCESS_DENIED       Permission not allowed.
+  @retval EFI_DEVICE_ERROR        Service is unavailable.
+  @retval EFI_INVALID_PARAMETER   Return status is invalid.
+**/
 EFI_STATUS
 NVParamSet (
   IN UINT32 Param,
@@ -99,32 +99,33 @@ NVParamSet (
   IN UINT32 Val
   );
 
-/*
- * Clear a non-volatile parameter
- *
- * @param:      Parameter ID to set
- * @acl_wr:     Permission for write operation
- * @return:     EFI_INVALID_PARAMETER if parameter is invalid
- *              EFI_UNSUPPORTED if service unavailable
- *              EFI_ACCESS_DENIED if permission not allowed
- *              Otherwise, 0 for success
- *
- * NOTE: It is expected that the caller will carry the correct permission
- * over various call sequences.
- *
- */
+/**
+  Clear a non-volatile parameter.
+
+  NOTE: It is expected that the caller will carry the correct permission
+  over various call sequences.
+
+  @param[in] Param                Parameter ID to set
+  @param[in] ACLWr                Permission for write operation.
+
+  @retval EFI_SUCCESS             Operation succeeded.
+  @retval EFI_ACCESS_DENIED       Permission not allowed.
+  @retval EFI_DEVICE_ERROR        Service is unavailable.
+  @retval EFI_INVALID_PARAMETER   Return status is invalid.
+**/
 EFI_STATUS
 NVParamClr (
   IN UINT32 Param,
   IN UINT16 ACLWr
   );
 
-/*
- * Clear all non-volatile parameters
- *
- * @return:     EFI_UNSUPPORTED if service unavailable
- *              Otherwise, 0 for success
- */
+/**
+  Clear all non-volatile parameters
+
+  @retval EFI_SUCCESS             Operation succeeded.
+  @retval EFI_DEVICE_ERROR        Service is unavailable.
+  @retval EFI_INVALID_PARAMETER   Return status is invalid.
+**/
 EFI_STATUS
 NVParamClrAll (
   VOID
