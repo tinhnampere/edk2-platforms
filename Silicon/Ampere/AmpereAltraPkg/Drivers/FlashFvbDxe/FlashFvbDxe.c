@@ -260,9 +260,9 @@ FlashFvbDxeRead (
   }
 
   Status = FlashReadCommand (
-             (UINT8 *)(mNvFlashBase + Lba * mFlashBlockSize + Offset),
+             mNvFlashBase + Lba * mFlashBlockSize + Offset,
              Buffer,
-             NumBytes
+             *NumBytes
              );
 
   if (EFI_ERROR (Status)) {
@@ -350,14 +350,14 @@ FlashFvbDxeWrite (
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  Status = FlashProgramCommand (
-             (UINT8 *)(mNvFlashBase + Lba * mFlashBlockSize + Offset),
+  Status = FlashWriteCommand (
+             mNvFlashBase + Lba * mFlashBlockSize + Offset,
              Buffer,
-             NumBytes
+             *NumBytes
              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to do flash program\n"));
+    DEBUG ((DEBUG_ERROR, "Failed to do flash write\n"));
     return EFI_DEVICE_ERROR;
   }
 
@@ -434,7 +434,7 @@ FlashFvbDxeErase (
   {
     Length = VA_ARG (Args, UINTN);
     Status = FlashEraseCommand (
-               (UINT8 *)(mNvFlashBase + Start * mFlashBlockSize),
+               mNvFlashBase + Start * mFlashBlockSize,
                Length * mFlashBlockSize
                );
   }
@@ -486,7 +486,7 @@ FlashFvbDxeInitialize (
     ));
 
   // Get NV Flash information
-  Status = FlashGetNvRamInfo ((UINT64 *)&mNvFlashBase, (UINT32 *)&mNvFlashSize);
+  Status = FlashGetNvRamInfo (&mNvFlashBase, &mNvFlashSize);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Failed to get Flash info\n", __FUNCTION__));
     return EFI_DEVICE_ERROR;

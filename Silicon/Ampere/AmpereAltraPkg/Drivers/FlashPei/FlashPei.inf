@@ -27,14 +27,12 @@
 [LibraryClasses]
   BaseMemoryLib
   DebugLib
+  FlashLib
   MmCommunicationLib
   NVParamLib
   PcdLib
   PeimEntryPoint
   ResetSystemLib
-
-[Guids]
-  gSpiNorMmGuid
 
 [FixedPcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize

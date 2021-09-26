@@ -50,11 +50,11 @@ CreateDefaultBertStatus (
   BertStatus.PendingUefi = 0;
   BertStatus.PendingBmc = 0;
 
-  FlashEraseCommand ((UINT8 *)BERT_SPI_ADDRESS_STATUS, Length);
-  FlashProgramCommand (
-    (UINT8 *)BERT_SPI_ADDRESS_STATUS,
-    (UINT8 *)&BertStatus,
-    &Length
+  FlashEraseCommand (BERT_SPI_ADDRESS_STATUS, Length);
+  FlashWriteCommand (
+    BERT_SPI_ADDRESS_STATUS,
+    &BertStatus,
+    Length
     );
 }
 
@@ -74,11 +74,11 @@ UpdateBertStatus (
     BertStatus->Overflow = 0;
   }
 
-  FlashEraseCommand ((UINT8 *)BERT_SPI_ADDRESS_STATUS, Length);
-  FlashProgramCommand (
-    (UINT8 *)BERT_SPI_ADDRESS_STATUS,
-    (UINT8 *)BertStatus,
-    &Length
+  FlashEraseCommand (BERT_SPI_ADDRESS_STATUS, Length);
+  FlashWriteCommand (
+    BERT_SPI_ADDRESS_STATUS,
+    BertStatus,
+    Length
     );
 }
 
@@ -193,9 +193,9 @@ PullBertSpinorData (
   )
 {
   FlashReadCommand (
-    (UINT8 *)BertSpiAddress,
+    BertSpiAddress,
     BertData,
-    &Length
+    Length
     );
 }
 
@@ -341,7 +341,7 @@ AcpiPopulateBert (
           WriteDDRBertTable (DDRError);
         } else {
           // If we are here something is out of sync. Reinit BERT section
-          FlashEraseCommand ((UINT8 *)BERT_FLASH_OFFSET, 0x1000);
+          FlashEraseCommand (BERT_FLASH_OFFSET, 0x1000);
           CreateDefaultBertStatus ();
           goto AcpiPopulateBertEnd;
         }
@@ -352,7 +352,7 @@ AcpiPopulateBert (
       }
       UpdateBertStatus (&BertStatus);
     } else {
-      FlashEraseCommand ((UINT8 *)BERT_FLASH_OFFSET, 0x1000);
+      FlashEraseCommand (BERT_FLASH_OFFSET, 0x1000);
       CreateDefaultBertStatus ();
     }
   }
