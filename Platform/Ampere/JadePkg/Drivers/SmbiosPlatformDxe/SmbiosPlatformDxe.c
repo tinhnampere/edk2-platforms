@@ -423,7 +423,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot1 = {
     1,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
-    4,
+    5,
     0,
     0,
   },
@@ -469,7 +469,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot3 = {
     3,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
-    5,
+    4,
     0,
     0,
   },
@@ -492,7 +492,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX24Slot1 = {
     4,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
-    7,
+    9,
     0,
     0,
   },
@@ -538,7 +538,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1RiserX24Slot3 = {
     6,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
     {1},       // PME
-    9,
+    7,
     0,
     0,
   },
@@ -592,7 +592,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0OcpNic = {
 };
 
 // Type 9 System Slots
-STATIC ARM_TYPE9 mArmDefaultType9Sk1NvmeM2Slot1 = {
+STATIC ARM_TYPE9 mArmDefaultType9Sk0NvmeM2Slot1 = {
   {
     {                               // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_SYSTEM_SLOTS, // UINT8 Type
@@ -615,7 +615,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk1NvmeM2Slot1 = {
 };
 
 // Type 9 System Slots
-STATIC ARM_TYPE9 mArmDefaultType9Sk1NvmeM2Slot2 = {
+STATIC ARM_TYPE9 mArmDefaultType9Sk0NvmeM2Slot2 = {
   {
     {                               // SMBIOS_STRUCTURE Hdr
       EFI_SMBIOS_TYPE_SYSTEM_SLOTS, // UINT8 Type
@@ -738,8 +738,8 @@ STATIC CONST VOID *DefaultCommonTables[] =
   &mArmDefaultType9Sk1RiserX24Slot3,
   &mArmDefaultType9Sk1RiserX8Slot1,
   &mArmDefaultType9Sk0OcpNic,
-  &mArmDefaultType9Sk1NvmeM2Slot1,
-  &mArmDefaultType9Sk1NvmeM2Slot2,
+  &mArmDefaultType9Sk0NvmeM2Slot1,
+  &mArmDefaultType9Sk0NvmeM2Slot2,
   &mArmDefaultType11,
   &mArmDefaultType13,
   &mArmDefaultType24,
