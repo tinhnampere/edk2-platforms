@@ -417,8 +417,8 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot1 = {
     },
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
-    SlotDataBusWidth16X,
-    SlotUsageUnavailable,
+    SlotDataBusWidth8X,
+    SlotUsageAvailable,
     SlotLengthLong,
     1,         // Slot ID
     {0, 0, 1}, // Provides 3.3 Volts
@@ -440,7 +440,7 @@ STATIC ARM_TYPE9 mArmDefaultType9Sk0RiserX32Slot2 = {
     },
     ADDITIONAL_STR_INDEX_1,
     SlotTypePciExpressGen4,
-    SlotDataBusWidth8X,
+    SlotDataBusWidth16X,
     SlotUsageUnavailable,
     SlotLengthLong,
     2,         // Slot ID
