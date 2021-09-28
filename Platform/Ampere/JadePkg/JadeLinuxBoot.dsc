@@ -40,11 +40,6 @@
 #
 [LibraryClasses.common]
   #
-  # Library for FailSafe support
-  #
-  FailSafeLib|Platform/Ampere/AmperePlatformPkg/Library/FailSafeLib/FailSafeLib.inf
-
-  #
   # ACPI Libraries
   #
   AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf
@@ -105,4 +100,4 @@
   #
   # FailSafeDxe added to prevent watchdog from resetting the system
   #
-  Platform/Ampere/AmperePlatformPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/FailSafeDxe/FailSafeDxe.inf

@@ -96,11 +96,6 @@
   PlatformFlashAccessLib|Silicon/Ampere/AmpereAltraPkg/Library/PlatformFlashAccessLib/PlatformFlashAccessLib.inf
 
   #
-  # Library for FailSafe support
-  #
-  FailSafeLib|Platform/Ampere/AmperePlatformPkg/Library/FailSafeLib/FailSafeLib.inf
-
-  #
   # ACPI Libraries
   #
   AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf
@@ -220,7 +215,7 @@
   #
   # FailSafe and Watchdog Timer
   #
-  Platform/Ampere/AmperePlatformPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
+  Silicon/Ampere/AmpereAltraPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
 
   #
   # ACPI

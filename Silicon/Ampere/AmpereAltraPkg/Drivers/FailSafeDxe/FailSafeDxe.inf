@@ -26,21 +26,18 @@
   EmbeddedPkg/EmbeddedPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
-  Platform/Ampere/AmperePlatformPkg/AmperePlatformPkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  ArmSmcLib
   DebugLib
-  FailSafeLib
+  FlashLib
+  IoLib
   NVParamLib
-  PcdLib
   TimerLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
   UefiLib
-  UefiRuntimeServicesTableLib
 
 [Pcd]
   gArmTokenSpaceGuid.PcdGenericWatchdogControlBase
