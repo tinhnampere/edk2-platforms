@@ -6,6 +6,17 @@
 
 **/
 
+#include <Guid/MdeModuleHii.h>
+#include <Guid/PlatformInfoHob.h>
+#include <Library/AmpereCpuLib.h>
+#include <Library/BaseLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/HiiLib.h>
+#include <Library/HobLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/PrintLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+
 #include "MemInfoScreen.h"
 
 #define MAX_STRING_SIZE     64
@@ -342,21 +353,21 @@ DriverCallback (
       //
       // ECC mode default to be enabled
       //
-      Value->u32 = ECC_AUTO;
+      Value->u32 = EccAuto;
       break;
 
     case MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_DE_QUESTION_ID:
       //
       // ErrCtrl_DE default to be enabled
       //
-      Value->u32 = ERRCTLR_DE_ENABLE;
+      Value->u32 = ErrCtlrDeEnable;
       break;
 
     case MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_FI_QUESTION_ID:
       //
       // ErrCtrl_FI default to be enabled
       //
-      Value->u32 = ERRCTLR_FI_ENABLE;
+      Value->u32 = ErrCtlrDeEnable;
       break;
 
     case MEM_INFO_DDR_SLAVE_32BIT_QUESTION_ID:
@@ -406,34 +417,14 @@ DriverCallback (
 }
 
 EFI_STATUS
-MemInfoMainScreen (
+UpdateMemInfo (
   PLATFORM_INFO_HOB  *PlatformHob
   )
 {
   MEM_INFO_SCREEN_PRIVATE_DATA *PrivateData = mPrivateData;
-  EFI_STATUS                   Status;
-  VOID                         *StartOpCodeHandle;
-  VOID                         *OptionsOpCodeHandle;
-  VOID                         *OptionsOpCodeHandle1;
-  EFI_IFR_GUID_LABEL           *StartLabel;
-  EFI_STRING_ID                StringId;
-  VOID                         *EndOpCodeHandle;
-  EFI_IFR_GUID_LABEL           *EndLabel;
-  CHAR16                       Str[MAX_STRING_SIZE], Str1[MAX_STRING_SIZE];
+  CHAR16                       Str[MAX_STRING_SIZE];
   EFI_HOB_RESOURCE_DESCRIPTOR  *ResHob;
-  PLATFORM_DIMM_INFO           *DimmInfo;
   UINT64                       Size;
-  UINTN                        Count;
-
-  //
-  // Get Buffer Storage data from EFI variable
-  //
-  Status = MemInfoNvparamGet (&PrivateData->VarStoreConfig);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  Status = EFI_SUCCESS;
 
   /* Update Total memory */
   UnicodeSPrint (Str, sizeof (Str), L"%d GB", PlatformHob->DramInfo.TotalSize / GB_SCALE_FACTOR);
@@ -470,70 +461,22 @@ MemInfoMainScreen (
     NULL
     );
 
-  //
-  // Initialize the container for dynamic opcodes
-  //
-  StartOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (StartOpCodeHandle != NULL);
+  return EFI_SUCCESS;
+}
 
-  EndOpCodeHandle = HiiAllocateOpCodeHandle ();
-  ASSERT (EndOpCodeHandle != NULL);
+EFI_STATUS
+AddMemorySpeedSelection (
+  PLATFORM_INFO_HOB  *PlatformHob,
+  VOID               *StartOpCodeHandle
+  )
+{
+  VOID  *OptionsOpCodeHandle;
 
   //
   // Create Option OpCode to display speed configuration
   //
   OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
   ASSERT (OptionsOpCodeHandle != NULL);
-
-  //
-  // Create Option OpCode to display FGR mode configuration
-  //
-  OptionsOpCodeHandle1 = HiiAllocateOpCodeHandle ();
-  ASSERT (OptionsOpCodeHandle1 != NULL);
-
-  //
-  // Create Hii Extend Label OpCode as the start opcode
-  //
-  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
-  StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
-  StartLabel->Number       = LABEL_UPDATE;
-
-  //
-  // Create Hii Extend Label OpCode as the end opcode
-  //
-  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
-  EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
-  EndLabel->Number       = LABEL_END;
-
-  //
-  // Create a total mem title
-  //
-  HiiCreateTextOpCode (
-    StartOpCodeHandle,
-    STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM),
-    STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM),
-    STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM_VALUE)
-    );
-
-  //
-  // Create a effective mem title
-  //
-  HiiCreateTextOpCode (
-    StartOpCodeHandle,
-    STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM),
-    STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM),
-    STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM_VALUE)
-    );
-
-  //
-  // Create a current speed title
-  //
-  HiiCreateTextOpCode (
-    StartOpCodeHandle,
-    STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED),
-    STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED),
-    STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED_VALUE)
-    );
 
   HiiCreateOneOfOptionOpCode (
     OptionsOpCodeHandle,
@@ -596,23 +539,27 @@ MemInfoMainScreen (
     NULL                                                 // Default Opcode is NULl
     );
 
-  if (IsSlaveSocketActive ()) {
-    /* Display enable slave's 32bit region */
-    HiiCreateCheckBoxOpCode (
-      StartOpCodeHandle,                                    // Container for dynamic created opcodes
-      MEM_INFO_DDR_SLAVE_32BIT_QUESTION_ID,                 // Question ID
-      MEM_INFO_VARSTORE_ID,                                 // VarStore ID
-      (UINT16)MEM_INFO_ERR_SLAVE_32BIT_OFFSET,              // Offset in Buffer Storage
-      STRING_TOKEN (STR_MEM_INFO_ENABLE_32GB_SLAVE_PROMPT), // Question prompt text
-      STRING_TOKEN (STR_MEM_INFO_ENABLE_32GB_SLAVE_HELP),   // Question help text
-      EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
-      0,
-      NULL
-      );
-  }
+  HiiFreeOpCodeHandle (OptionsOpCodeHandle);
+
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+AddFgrModeSelection (
+  PLATFORM_INFO_HOB  *PlatformHob,
+  VOID               *StartOpCodeHandle
+  )
+{
+  VOID  *OptionsOpCodeHandle;
+
+  //
+  // Create Option OpCode to display FGR mode configuration
+  //
+  OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
+  ASSERT (OptionsOpCodeHandle != NULL);
 
   HiiCreateOneOfOptionOpCode (
-    OptionsOpCodeHandle1,
+    OptionsOpCodeHandle,
     STRING_TOKEN (STR_MEM_INFO_FGR_MODE_VALUE0),
     0,
     EFI_IFR_NUMERIC_SIZE_4,
@@ -620,7 +567,7 @@ MemInfoMainScreen (
     );
 
   HiiCreateOneOfOptionOpCode (
-    OptionsOpCodeHandle1,
+    OptionsOpCodeHandle,
     STRING_TOKEN (STR_MEM_INFO_FGR_MODE_VALUE1),
     0,
     EFI_IFR_NUMERIC_SIZE_4,
@@ -628,7 +575,7 @@ MemInfoMainScreen (
     );
 
   HiiCreateOneOfOptionOpCode (
-    OptionsOpCodeHandle1,
+    OptionsOpCodeHandle,
     STRING_TOKEN (STR_MEM_INFO_FGR_MODE_VALUE2),
     0,
     EFI_IFR_NUMERIC_SIZE_4,
@@ -644,33 +591,26 @@ MemInfoMainScreen (
     STRING_TOKEN (STR_MEM_INFO_FGR_MODE_HELP),           // Question help text
     EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED, // Question flag
     EFI_IFR_NUMERIC_SIZE_4,                              // Data type of Question Value
-    OptionsOpCodeHandle1,                                // Option Opcode list
+    OptionsOpCodeHandle,                                // Option Opcode list
     NULL                                                 // Default Opcode is NULl
     );
 
-  //
-  // Create a Goto OpCode to ras memory configuration
-  //
-  HiiCreateGotoOpCode (
-    StartOpCodeHandle,                                 // Container for dynamic created opcodes
-    MEM_INFO_FORM_PERFORMANCE_ID,                      // Target Form ID
-    STRING_TOKEN (STR_MEM_INFO_PERFORMANCE_FORM),      // Prompt text
-    STRING_TOKEN (STR_MEM_INFO_PERFORMANCE_FORM_HELP), // Help text
-    0,                                                 // Question flag
-    MEM_INFO_FORM_PERFORMANCE_QUESTION_ID              // Question ID
-    );
+  HiiFreeOpCodeHandle (OptionsOpCodeHandle);
 
-  //
-  // Create a Goto OpCode to nvdimm-n configuration
-  //
-  HiiCreateGotoOpCode (
-    StartOpCodeHandle,                            // Container for dynamic created opcodes
-    MEM_INFO_FORM_NVDIMM_ID,                      // Target Form ID
-    STRING_TOKEN (STR_MEM_INFO_NVDIMM_FORM),      // Prompt text
-    STRING_TOKEN (STR_MEM_INFO_NVDIMM_FORM_HELP), // Help text
-    0,                                            // Question flag
-    MEM_INFO_FORM_NVDIMM_QUESTION_ID              // Question ID
-    );
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+AddDimmListInfo (
+  PLATFORM_INFO_HOB  *PlatformHob,
+  VOID               *StartOpCodeHandle
+  )
+{
+  MEM_INFO_SCREEN_PRIVATE_DATA *PrivateData = mPrivateData;
+  CHAR16                       Str[MAX_STRING_SIZE], Str1[MAX_STRING_SIZE];
+  UINTN                        Count;
+  PLATFORM_DIMM_INFO           *DimmInfo;
+  EFI_STRING_ID                StringId;
 
   //
   // Display DIMM list info
@@ -734,6 +674,137 @@ MemInfoMainScreen (
       );
   }
 
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+MemInfoMainScreen (
+  PLATFORM_INFO_HOB  *PlatformHob
+  )
+{
+  MEM_INFO_SCREEN_PRIVATE_DATA  *PrivateData = mPrivateData;
+  EFI_IFR_GUID_LABEL            *StartLabel;
+  EFI_IFR_GUID_LABEL            *EndLabel;
+  VOID                          *StartOpCodeHandle;
+  VOID                          *EndOpCodeHandle;
+  EFI_STATUS                    Status;
+
+  Status = UpdateMemInfo (PlatformHob);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  //
+  // Get Buffer Storage data from EFI variable
+  //
+  Status = MemInfoNvparamGet (&PrivateData->VarStoreConfig);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  //
+  // Initialize the container for dynamic opcodes
+  //
+  StartOpCodeHandle = HiiAllocateOpCodeHandle ();
+  ASSERT (StartOpCodeHandle != NULL);
+
+  EndOpCodeHandle = HiiAllocateOpCodeHandle ();
+  ASSERT (EndOpCodeHandle != NULL);
+
+  //
+  // Create Hii Extend Label OpCode as the start opcode
+  //
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
+  StartLabel->Number       = LABEL_UPDATE;
+
+  //
+  // Create Hii Extend Label OpCode as the end opcode
+  //
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
+  EndLabel->Number       = LABEL_END;
+
+  //
+  // Create a total mem title
+  //
+  HiiCreateTextOpCode (
+    StartOpCodeHandle,
+    STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM),
+    STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM),
+    STRING_TOKEN (STR_MEM_INFO_TOTAL_MEM_VALUE)
+    );
+
+  //
+  // Create a effective mem title
+  //
+  HiiCreateTextOpCode (
+    StartOpCodeHandle,
+    STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM),
+    STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM),
+    STRING_TOKEN (STR_MEM_INFO_EFFECT_MEM_VALUE)
+    );
+
+  //
+  // Create a current speed title
+  //
+  HiiCreateTextOpCode (
+    StartOpCodeHandle,
+    STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED),
+    STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED),
+    STRING_TOKEN (STR_MEM_INFO_CURRENT_SPEED_VALUE)
+    );
+
+  if (IsSlaveSocketActive ()) {
+    //
+    // Display enable slave's 32bit region
+    //
+    HiiCreateCheckBoxOpCode (
+      StartOpCodeHandle,                                    // Container for dynamic created opcodes
+      MEM_INFO_DDR_SLAVE_32BIT_QUESTION_ID,                 // Question ID
+      MEM_INFO_VARSTORE_ID,                                 // VarStore ID
+      (UINT16)MEM_INFO_ERR_SLAVE_32BIT_OFFSET,              // Offset in Buffer Storage
+      STRING_TOKEN (STR_MEM_INFO_ENABLE_32GB_SLAVE_PROMPT), // Question prompt text
+      STRING_TOKEN (STR_MEM_INFO_ENABLE_32GB_SLAVE_HELP),   // Question help text
+      EFI_IFR_FLAG_CALLBACK | EFI_IFR_FLAG_RESET_REQUIRED,
+      0,
+      NULL
+      );
+  }
+
+  Status = AddMemorySpeedSelection (PlatformHob, StartOpCodeHandle);
+  ASSERT_EFI_ERROR (Status);
+
+  Status = AddFgrModeSelection (PlatformHob, StartOpCodeHandle);
+  ASSERT_EFI_ERROR (Status);
+
+  //
+  // Create a Goto OpCode to ras memory configuration
+  //
+  HiiCreateGotoOpCode (
+    StartOpCodeHandle,                                 // Container for dynamic created opcodes
+    MEM_INFO_FORM_PERFORMANCE_ID,                      // Target Form ID
+    STRING_TOKEN (STR_MEM_INFO_PERFORMANCE_FORM),      // Prompt text
+    STRING_TOKEN (STR_MEM_INFO_PERFORMANCE_FORM_HELP), // Help text
+    0,                                                 // Question flag
+    MEM_INFO_FORM_PERFORMANCE_QUESTION_ID              // Question ID
+    );
+
+  //
+  // Create a Goto OpCode to nvdimm-n configuration
+  //
+  HiiCreateGotoOpCode (
+    StartOpCodeHandle,                            // Container for dynamic created opcodes
+    MEM_INFO_FORM_NVDIMM_ID,                      // Target Form ID
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_FORM),      // Prompt text
+    STRING_TOKEN (STR_MEM_INFO_NVDIMM_FORM_HELP), // Help text
+    0,                                            // Question flag
+    MEM_INFO_FORM_NVDIMM_QUESTION_ID              // Question ID
+    );
+
+  Status = AddDimmListInfo (PlatformHob, StartOpCodeHandle);
+  ASSERT_EFI_ERROR (Status);
+
   HiiUpdateForm (
     PrivateData->HiiHandle,  // HII handle
     &gMemInfoFormSetGuid,    // Formset GUID
@@ -744,7 +815,6 @@ MemInfoMainScreen (
 
   HiiFreeOpCodeHandle (StartOpCodeHandle);
   HiiFreeOpCodeHandle (EndOpCodeHandle);
-  HiiFreeOpCodeHandle (OptionsOpCodeHandle);
 
   return Status;
 }
@@ -793,17 +863,6 @@ MemInfoMainPerformanceScreen (
   /* Display ECC mode selection */
   OptionsEccOpCodeHandle = HiiAllocateOpCodeHandle ();
   ASSERT (OptionsEccOpCodeHandle != NULL);
-
-  UnicodeSPrint (Str, sizeof (Str), L"Auto");
-  StringId = HiiSetString (PrivateData->HiiHandle, 0, Str, NULL);
-
-  HiiCreateOneOfOptionOpCode (
-    OptionsEccOpCodeHandle,
-    StringId,
-    0,
-    EFI_IFR_NUMERIC_SIZE_4,
-    3
-    );
 
   UnicodeSPrint (Str, sizeof (Str), L"Disabled");
   StringId = HiiSetString (PrivateData->HiiHandle, 0, Str, NULL);

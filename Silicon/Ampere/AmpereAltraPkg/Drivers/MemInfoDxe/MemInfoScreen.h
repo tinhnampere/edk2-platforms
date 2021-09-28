@@ -11,20 +11,7 @@
 
 #include <Uefi.h>
 
-#include <Guid/MdeModuleHii.h>
-#include <Guid/PlatformInfoHob.h>
-#include <Library/AmpereCpuLib.h>
-#include <Library/BaseLib.h>
-#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/DevicePathLib.h>
-#include <Library/HiiLib.h>
-#include <Library/HobLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/PrintLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiDriverEntryPoint.h>
-#include <Library/UefiLib.h>
 #include <Protocol/HiiConfigAccess.h>
 #include <Protocol/HiiConfigKeyword.h>
 #include <Protocol/HiiConfigRouting.h>
@@ -47,22 +34,24 @@ extern UINT8 MemInfoScreenVfrBin[];
 //
 extern UINT8 MemInfoDxeStrings[];
 
-enum DDR_ECC_MODE {
-  ECC_DISABLE = 0,
-  ECC_SECDED,
-  ECC_SYMBOL,
-  ECC_AUTO
-};
+typedef enum {
+  EccDisabled = 0,
+  EccSecded,
+  EccSymbol,
+  EccAuto
+} DDR_ECC_MODE;
 
-enum DDR_ERROR_CTRL_MODE_DE {
-  ERRCTLR_DE_DISABLE = 0,
-  ERRCTLR_DE_ENABLE,
-};
+typedef enum {
+  ErrCtlrDeDisable = 0,
+  ErrCtlrDeEnable,
+  ErrCtlrDeMax
+} DDR_ERROR_CTRL_MODE_DE;
 
-enum DDR_ERROR_CTRL_MODE_FI {
-  ERRCTLR_FI_DISABLE = 0,
-  ERRCTLR_FI_ENABLE,
-};
+typedef enum {
+  ErrCtlrFiDisable = 0,
+  ErrCtlrFiEnable,
+  ErrCtlrFiMax
+} DDR_ERROR_CTRL_MODE_FI;
 
 #define MEM_INFO_DDR_SPEED_SEL_OFFSET                     OFFSET_OF (MEM_INFO_VARSTORE_DATA, DDRSpeedSel)
 #define MEM_INFO_ECC_MODE_SEL_OFFSET                      OFFSET_OF (MEM_INFO_VARSTORE_DATA, EccMode)

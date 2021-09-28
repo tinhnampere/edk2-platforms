@@ -54,7 +54,7 @@ MemInfoNvparamGet (
              &Value
              );
   if (EFI_ERROR (Status)) {
-    VarStoreConfig->EccMode = ECC_AUTO;
+    VarStoreConfig->EccMode = EccAuto;
   } else {
     VarStoreConfig->EccMode = Value;
   }
@@ -65,8 +65,8 @@ MemInfoNvparamGet (
              &Value
              );
   if (EFI_ERROR (Status)) {
-    VarStoreConfig->ErrCtrl_DE = ERRCTLR_DE_ENABLE;
-    VarStoreConfig->ErrCtrl_FI = ERRCTLR_FI_ENABLE;
+    VarStoreConfig->ErrCtrl_DE = ErrCtlrDeEnable;
+    VarStoreConfig->ErrCtrl_FI = ErrCtlrFiEnable;
   } else {
     VarStoreConfig->ErrCtrl_DE = (Value & DDR_NVPARAM_ERRCTRL_DE_FIELD_MASK) >> DDR_NVPARAM_ERRCTRL_DE_FIELD_SHIFT;
     VarStoreConfig->ErrCtrl_FI = (Value & DDR_NVPARAM_ERRCTRL_FI_FIELD_MASK) >> DDR_NVPARAM_ERRCTRL_FI_FIELD_SHIFT;
@@ -189,7 +189,7 @@ MemInfoNvparamSet (
 
   TmpValue = VarStoreConfig->EccMode;
   if (EFI_ERROR (Status) || Value != TmpValue) {
-    if (TmpValue == ECC_AUTO) {
+    if (TmpValue == EccAuto) {
       Status = NVParamClr (
                  NV_SI_DDR_ECC_MODE,
                  NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC
