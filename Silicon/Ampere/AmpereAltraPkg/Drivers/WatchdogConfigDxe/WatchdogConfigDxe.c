@@ -6,6 +6,16 @@
 
 **/
 
+#include <Library/BaseLib.h>
+#include <Library/DebugLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/HiiLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/NVParamLib.h>
+#include <Library/PrintLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <NVParamDef.h>
+
 #include "WatchdogConfigDxe.h"
 
 CHAR16 WatchDogConfigVarstoreDataName[] = L"WatchdogConfigNVData";
