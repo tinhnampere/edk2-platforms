@@ -9,14 +9,14 @@
 #ifndef GPIO_LIB_H_
 #define GPIO_LIB_H_
 
-enum SocGpioConfigMode {
-  GPIO_CONFIG_OUT_LOW = 0,
-  GPIO_CONFIG_OUT_HI,
-  GPIO_CONFIG_OUT_LOW_TO_HIGH,
-  GPIO_CONFIG_OUT_HIGH_TO_LOW,
-  GPIO_CONFIG_IN,
-  MAX_GPIO_CONFIG_MODE
-};
+typedef enum {
+  GpioConfigOutLow = 0,
+  GpioConfigOutHigh,
+  GpioConfigOutLowToHigh,
+  GpioConfigOutHightToLow,
+  GpioConfigIn,
+  MaxGpioConfigMode
+} GPIO_CONFIG_MODE;
 
 /*
  *  GpioWriteBit: Use to Set/Clear GPIOs
@@ -55,8 +55,8 @@ GpioReadBit (
 EFI_STATUS
 EFIAPI
 GpioModeConfig (
-  UINT8 Pin,
-  UINTN Mode
+  UINT8            Pin,
+  GPIO_CONFIG_MODE Mode
   );
 
 /*

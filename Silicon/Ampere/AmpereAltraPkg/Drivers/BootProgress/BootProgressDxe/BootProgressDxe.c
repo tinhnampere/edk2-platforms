@@ -26,12 +26,13 @@ typedef struct {
   EFI_STATUS_CODE_VALUE Value;
 } STATUS_CODE_TO_CHECKPOINT;
 
-enum BOOT_PROGRESS_STATE {
-  BOOT_NOTSTART = 0,
-  BOOT_START    = 1,
-  BOOT_COMPLETE = 2,
-  BOOT_FAILED   = 3,
-};
+typedef enum {
+  BootNotStart = 0,
+  BootStart,
+  BootComplete,
+  BootFailed,
+  BootProgressStateMax
+} BOOT_PROGRESS_STATE;
 
 UINT32 DxeProgressCode[] = {
   (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_PC_ENTRY_POINT),                     // DXE Core is started
@@ -82,7 +83,7 @@ UINT32 DxeErrorCode[] = {
 
 EFI_RSC_HANDLER_PROTOCOL *mRscHandlerProtocol = NULL;
 
-STATIC UINT8 mBootstate = BOOT_START;
+STATIC UINT8 mBootstate = BootStart;
 
 STATIC
 BOOLEAN
@@ -156,10 +157,10 @@ BootProgressListenerDxe (
     ));
 
   if (IsError) {
-    mBootstate = BOOT_FAILED;
+    mBootstate = BootFailed;
   } else if (Value == (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_READY_TO_BOOT_EVENT)) {
     /* Set boot complete when reach to ReadyToBoot event */
-    mBootstate = BOOT_COMPLETE;
+    mBootstate = BootComplete;
   }
 
   MailboxMsgSetBootProgress (0, mBootstate, Value);

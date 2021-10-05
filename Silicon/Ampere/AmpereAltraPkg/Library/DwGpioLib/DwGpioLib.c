@@ -172,16 +172,16 @@ GpioConfig (
 EFI_STATUS
 EFIAPI
 GpioModeConfig (
-  UINT8 Pin,
-  UINTN Mode
+  UINT8            Pin,
+  GPIO_CONFIG_MODE Mode
   )
 {
   UINT32 NumberOfControllers = sizeof (GpioBaseAddr) / sizeof (UINT64);
   UINT32 NumersOfPins = NumberOfControllers * AC01_GPIO_PINS_PER_CONTROLLER;
   UINT32 Delay = 10;
 
-  if (Mode < GPIO_CONFIG_OUT_LOW
-      || Mode >= MAX_GPIO_CONFIG_MODE
+  if (Mode < GpioConfigOutLow
+      || Mode >= MaxGpioConfigMode
       || Pin > NumersOfPins - 1
       || Pin < 0)
   {
@@ -189,19 +189,19 @@ GpioModeConfig (
   }
 
   switch (Mode) {
-  case GPIO_CONFIG_OUT_LOW:
+  case GpioConfigOutLow:
     GpioConfig (Pin, GPIO_OUT);
     GpioWriteBit (Pin, 0);
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as output low\n", Pin));
     break;
 
-  case GPIO_CONFIG_OUT_HI:
+  case GpioConfigOutHigh:
     GpioConfig (Pin, GPIO_OUT);
     GpioWriteBit (Pin, 1);
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as output high\n", Pin));
     break;
 
-  case GPIO_CONFIG_OUT_LOW_TO_HIGH:
+  case GpioConfigOutLowToHigh:
     GpioConfig (Pin, GPIO_OUT);
     GpioWriteBit (Pin, 0);
     MicroSecondDelay (1000 * Delay);
@@ -209,7 +209,7 @@ GpioModeConfig (
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as output low->high\n", Pin));
     break;
 
-  case GPIO_CONFIG_OUT_HIGH_TO_LOW:
+  case GpioConfigOutHightToLow:
     GpioConfig (Pin, GPIO_OUT);
     GpioWriteBit (Pin, 1);
     MicroSecondDelay (1000 * Delay);
@@ -217,7 +217,7 @@ GpioModeConfig (
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as output high->low\n", Pin));
     break;
 
-  case GPIO_CONFIG_IN:
+  case GpioConfigIn:
     GpioConfig (Pin, GPIO_IN);
     DEBUG ((DEBUG_INFO, "GPIO pin %d configured as input\n", Pin));
     break;

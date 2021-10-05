@@ -148,7 +148,7 @@ AcpiNvdDataInit (
 
   NvdData[Socket].NvdRegionNum = NvdRegionNum;
   NvdData[Socket].NvdMode = PlatformHob->DramInfo.NvdimmMode[Socket];
-  if (NvdData[Socket].NvdMode == NVDIMM_HASHED) {
+  if (NvdData[Socket].NvdMode == NvdimmHashed) {
     NvdInfo = &NvdData[Socket].NvdInfo[NVDIMM_SK0];
     NvdInfo->DeviceHandle   =
       (Socket == 0) ? AC01_NVDIMM_NVD1_DEVICE_HANDLE :
@@ -182,7 +182,7 @@ AcpiNvdDataInit (
     }
     return EFI_SUCCESS;
   }
-  /* NVDIMM_NON_HASHED */
+  /* NvdimmNonHashed */
   NvdData[Socket].NvdNum = 0;
   for (Count = 0; Count < NvdData[Socket].NvdRegionNum; Count++) {
     RegionId = NvdData[Socket].NvdRegionId[Count];
@@ -340,7 +340,7 @@ AcpiNfitFillTableBySK (
   PlatformHob    = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
   NvdRegionIndex = (Socket == 0) ? 0 : NvdData[NVDIMM_SK0].NvdRegionNum;
   NvdIndex       = (Socket == 0) ? 0 : NvdData[NVDIMM_SK0].NvdNum;
-  if (NvdData[Socket].NvdMode == NVDIMM_HASHED) {
+  if (NvdData[Socket].NvdMode == NvdimmHashed) {
     /* Table Type 0: SPA Range Structure */
     NfitSpaPointer = NfitSpaPointerStart;
     CopyMem (
@@ -404,7 +404,7 @@ AcpiNfitFillTableBySK (
     NfitSpaPointer =
       (EFI_ACPI_6_3_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *)
       NfitControlRegionPointer;
-  } else { /* NVDIMM_NON_HASHED */
+  } else { /* NvdimmNonHashed */
     NfitSpaPointer = NfitSpaPointerStart;
     for (RegionCount = 0; RegionCount < NvdData[Socket].NvdRegionNum;
          RegionCount++)

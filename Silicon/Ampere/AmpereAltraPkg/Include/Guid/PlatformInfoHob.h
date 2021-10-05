@@ -82,8 +82,9 @@ typedef struct {
 // Algorithm ID defined in pre-UEFI firmware
 //
 typedef enum {
-  PLATFORM_ALGORITHM_SHA1 = 1,
-  PLATFORM_ALGORITHM_SHA256
+  PlatformAlgorithmSha1 = 1,
+  PlatformAlgorithmSha256,
+  PlatformAlgorithmMax,
 } PLATFORM_ALGORITHM_ID;
 
 //

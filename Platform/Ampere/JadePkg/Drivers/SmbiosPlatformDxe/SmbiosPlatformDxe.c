@@ -124,6 +124,13 @@
 #define TYPE41_ADDITIONAL_STRINGS       \
   "Onboard VGA\0"
 
+#define ADDITIONAL_STR_INDEX_1    0x01
+#define ADDITIONAL_STR_INDEX_2    0x02
+#define ADDITIONAL_STR_INDEX_3    0x03
+#define ADDITIONAL_STR_INDEX_4    0x04
+#define ADDITIONAL_STR_INDEX_5    0x05
+#define ADDITIONAL_STR_INDEX_6    0x06
+
 //
 // Type definition and contents of the default SMBIOS table.
 // This table covers only the minimum structures required by
@@ -176,19 +183,6 @@ typedef struct {
 } ARM_TYPE41;
 
 #pragma pack()
-
-//-------------------------------------
-//        SMBIOS Platform Common
-//-------------------------------------
-enum {
-  ADDITIONAL_STR_INDEX_1 = 1,
-  ADDITIONAL_STR_INDEX_2,
-  ADDITIONAL_STR_INDEX_3,
-  ADDITIONAL_STR_INDEX_4,
-  ADDITIONAL_STR_INDEX_5,
-  ADDITIONAL_STR_INDEX_6,
-  ADDITIONAL_STR_INDEX_MAX
-};
 
 // Type 0 BIOS information
 STATIC ARM_TYPE0 mArmDefaultType0 = {

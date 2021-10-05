@@ -20,12 +20,13 @@
 #include <Pi/PiStatusCode.h>
 #include <Ppi/ReportStatusCodeHandler.h>
 
-enum BOOT_PROGRESS_STATE {
-  BOOT_NOTSTART = 0,
-  BOOT_START    = 1,
-  BOOT_COMPLETE = 2,
-  BOOT_FAILED   = 3,
-};
+typedef enum  {
+  BootNotStart = 0,
+  BootStart,
+  BootComplete,
+  BootFailed,
+  BootProgressStateMax
+} BOOT_PROGRESS_STATE;
 
 UINT32 PeiProgressStatusCode[] = {
   // Regular boot
@@ -84,8 +85,8 @@ UINT32 PeiErrorStatusCode[] = {
   0
 };
 
-// Should always be BOOT_START when start
-STATIC UINT8 mBootstate = BOOT_START;
+// Should always be BootStart when start
+STATIC UINT8 mBootstate = BootStart;
 
 STATIC
 BOOLEAN
@@ -164,7 +165,7 @@ BootProgressListenerPei (
     ));
 
   if (IsError) {
-    mBootstate = BOOT_FAILED;
+    mBootstate = BootFailed;
   }
 
   MailboxMsgSetBootProgress (0, mBootstate, Value);

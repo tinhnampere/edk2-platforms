@@ -16,11 +16,12 @@
 #define NVDIMM_NUM_PER_SK   (AC01_NVDIMM_MAX_MCU_PER_SOCKET * AC01_NVDIMM_MAX_DIMM_PER_MCU)
 #define ONE_GB              (1024 * 1024 * 1024)
 
-enum NvdimmMode {
-  NVDIMM_DISABLED   = 0,
-  NVDIMM_NON_HASHED = 1,
-  NVDIMM_HASHED     = 2
-};
+typedef enum {
+  NvdimmDisabled = 0,
+  NvdimmNonHashed,
+  NvdimmHashed,
+  NvdimmModeMax
+} NVDIMM_MODE;
 
 typedef struct {
   BOOLEAN Enabled;

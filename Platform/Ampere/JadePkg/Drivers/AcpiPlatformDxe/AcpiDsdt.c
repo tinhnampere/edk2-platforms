@@ -119,7 +119,7 @@ AcpiPatchNvdimm (
     AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD2._STA");
     AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
   } else if (NvdRegionNumSK0 == 1) {
-    if (PlatformHob->DramInfo.NvdimmMode[NVDIMM_SK0] == NVDIMM_NON_HASHED) {
+    if (PlatformHob->DramInfo.NvdimmMode[NVDIMM_SK0] == NvdimmNonHashed) {
       for (Count = 0; Count < PlatformHob->DramInfo.NumRegion; Count++) {
         if (PlatformHob->DramInfo.NvdRegion[Count] > 0 &&
             PlatformHob->DramInfo.Socket[Count] == 0)
@@ -167,7 +167,7 @@ AcpiPatchNvdimm (
     AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD4._STA");
     AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
   } else if (NvdRegionNumSK1 == 1) {
-    if (PlatformHob->DramInfo.NvdimmMode[NVDIMM_SK1] == NVDIMM_NON_HASHED) {
+    if (PlatformHob->DramInfo.NvdimmMode[NVDIMM_SK1] == NvdimmNonHashed) {
       for (Count = 0; Count < PlatformHob->DramInfo.NumRegion; Count++) {
         if (PlatformHob->DramInfo.NvdRegion[Count] > 0 &&
             PlatformHob->DramInfo.Socket[Count] == 1)

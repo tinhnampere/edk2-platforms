@@ -942,7 +942,7 @@ ComplementPreUefiDigest (
   UINTN       CtxSize;
 
   switch (Algorithm) {
-  case PLATFORM_ALGORITHM_SHA1:
+  case PlatformAlgorithmSha1:
     CtxSize = Sha1GetContextSize ();
     Sha1Ctx = AllocatePool (CtxSize);
     ASSERT (Sha1Ctx != NULL);
@@ -954,7 +954,7 @@ ComplementPreUefiDigest (
     FreePool (Sha1Ctx);
     break;
 
-  case PLATFORM_ALGORITHM_SHA256:
+  case PlatformAlgorithmSha256:
     CtxSize = Sha256GetContextSize ();
     Sha256Ctx = AllocatePool (CtxSize);
     ASSERT (Sha256Ctx != NULL);
@@ -1025,7 +1025,7 @@ MeasurePreUefiFirmwareComponents (
     ZeroMem (&DigestList, sizeof (TPML_DIGEST_VALUES));
 
     switch (Event->AlgorithmId) {
-    case PLATFORM_ALGORITHM_SHA1:
+    case PlatformAlgorithmSha1:
       DigestList.digests[DigestCount].hashAlg = TPM_ALG_SHA1;
       CopyMem (
         (VOID *)&(DigestList.digests[DigestCount].digest),
@@ -1036,7 +1036,7 @@ MeasurePreUefiFirmwareComponents (
 
       DigestList.digests[DigestCount].hashAlg = TPM_ALG_SHA256;
       Status = ComplementPreUefiDigest (
-                 PLATFORM_ALGORITHM_SHA256,
+                 PlatformAlgorithmSha256,
                  (UINT8 *)&(Event->Hash.Sha1),
                  SHA1_DIGEST_SIZE,
                  (TPMU_HA *)&(DigestList.digests[DigestCount].digest)
@@ -1045,10 +1045,10 @@ MeasurePreUefiFirmwareComponents (
       DigestCount++;
       break;
 
-    case PLATFORM_ALGORITHM_SHA256:
+    case PlatformAlgorithmSha256:
       DigestList.digests[DigestCount].hashAlg = TPM_ALG_SHA1;
       Status = ComplementPreUefiDigest (
-                 PLATFORM_ALGORITHM_SHA1,
+                 PlatformAlgorithmSha1,
                  (UINT8 *)&(Event->Hash.Sha256),
                  SHA256_DIGEST_SIZE,
                  (TPMU_HA *)&(DigestList.digests[DigestCount].digest)
