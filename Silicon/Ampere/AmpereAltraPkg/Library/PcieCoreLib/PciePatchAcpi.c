@@ -389,7 +389,7 @@ ConstructIort (
         FIELD_OFFSET (AC01_SMMU_NODE, InterruptMsiMapping),
       },
       .Base = 0,
-      EFI_ACPI_IORT_SMMUv3_FLAG_COHAC_OVERRIDE,
+      EFI_ACPI_IORT_SMMUv3_FLAG_COHAC_OVERRIDE | EFI_ACPI_IORT_SMMUv3_FLAG_PROXIMITY_DOMAIN,
       0,
       0,
       0,
@@ -446,11 +446,9 @@ ConstructIort (
     TSmmuNode.InterruptMsiMappingSingle.OutputBase = PciSegEnabled[Idx] << 16;
     TSmmuNode.InterruptMsiMappingSingle.OutputReference = ItsOffset[Idx];
     /* All RCs on master be assigned to node 0, while remote RCs be assigned to first remote node */
-    TSmmuNode.Node.Flags = EFI_ACPI_IORT_SMMUv3_FLAG_PROXIMITY_DOMAIN;
     TSmmuNode.Node.ProximityDomain = 0;
     if ((Rc->TcuAddr & SLAVE_SOCKET_BASE_ADDRESS_OFFSET) != 0) {
       /* RC on remote socket */
-      TSmmuNode.Node.Flags = EFI_ACPI_IORT_SMMUv3_FLAG_PROXIMITY_DOMAIN;
       switch (CpuGetSubNumaMode ()) {
       case SUBNUMA_MODE_MONOLITHIC:
         TSmmuNode.Node.ProximityDomain += MONOLITIC_NUM_OF_REGION;
