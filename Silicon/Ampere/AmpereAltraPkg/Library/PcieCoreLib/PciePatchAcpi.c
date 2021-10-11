@@ -7,14 +7,12 @@
 **/
 
 #include <AcpiHeader.h>
-#include <Guid/PlatformInfoHobGuid.h>
 #include <IndustryStandard/Acpi30.h>
 #include <IndustryStandard/IoRemappingTable.h>
 #include <Library/AcpiHelperLib.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/HobLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PcieBoardLib.h>
@@ -422,20 +420,10 @@ ConstructIort (
   };
 
   AC01_RC             *Rc;
-  PLATFORM_INFO_HOB   *PlatformHob;
   UINT32              Idx, Idx1, SmmuNodeOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
   UINT32              ItsOffset[MAX_AC01_PCIE_ROOT_COMPLEX];
   UINTN               NumTbuPmu;
-  VOID                *Hob;
   VOID                *TIortPtr = IortPtr, *SmmuPtr, *PmcgPtr;
-
-  /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
-  if (Hob == NULL) {
-    return;
-  }
-
-  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
 
   TIort.Header.Length = HeaderCount;
   CopyMem (TIortPtr, &TIort, sizeof (EFI_ACPI_6_0_IO_REMAPPING_TABLE));
@@ -463,7 +451,7 @@ ConstructIort (
     if ((Rc->TcuAddr & SLAVE_SOCKET_BASE_ADDRESS_OFFSET) != 0) {
       /* RC on remote socket */
       TSmmuNode.Node.Flags = EFI_ACPI_IORT_SMMUv3_FLAG_PROXIMITY_DOMAIN;
-      switch (PlatformHob->SubNumaMode[0]) {
+      switch (CpuGetSubNumaMode ()) {
       case SUBNUMA_MODE_MONOLITHIC:
         TSmmuNode.Node.ProximityDomain += MONOLITIC_NUM_OF_REGION;
         break;
