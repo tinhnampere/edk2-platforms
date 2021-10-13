@@ -162,6 +162,7 @@ APRIORI PEI {
   INF MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
   INF MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
   INF MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/PcieInitPei/PcieInitPei.inf
 
 !if $(TPM2_ENABLE) == TRUE
   INF MdeModulePkg/Universal/ResetSystemPei/ResetSystemPei.inf
