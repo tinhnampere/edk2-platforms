@@ -20,7 +20,9 @@
   AcpiBdat.c
   AcpiBdat.h
   AcpiDsdt.c
+  AcpiIort.c
   AcpiMadt.c
+  AcpiMcfg.c
   AcpiNfit.c
   AcpiPcct.c
   AcpiPptt.c
@@ -48,6 +50,7 @@
   BaseLib
   DebugLib
   FlashLib
+  HobLib
   MailboxInterfaceLib
   SystemFirmwareInterfaceLib
   TimerLib
@@ -75,6 +78,7 @@
   gEfiEventReadyToBootGuid
   gAcpiConfigFormSetGuid
   gPlatformInfoHobGuid
+  gRootComplexInfoHobGuid
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## ALWAYS_CONSUMED

@@ -82,4 +82,14 @@ AcpiInstallBdatTable (
   VOID
   );
 
+EFI_STATUS
+AcpiInstallMcfg (
+  VOID
+  );
+
+EFI_STATUS
+AcpiInstallIort (
+  VOID
+  );
+
 #endif /* ACPI_PLATFORM_H_ */

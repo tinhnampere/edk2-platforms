@@ -99,6 +99,16 @@ InstallAcpiOnReadyToBoot (
     DEBUG ((DEBUG_ERROR, "Installed NFIT table\n"));
   }
 
+  Status = AcpiInstallIort ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "Installed IORT table\n"));
+  }
+
+  Status = AcpiInstallMcfg ();
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "Installed MCFG table\n"));
+  }
+
   Status = AcpiPopulateBert ();
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "Populate BERT record\n"));
