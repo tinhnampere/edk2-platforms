@@ -79,6 +79,7 @@
   gAcpiConfigFormSetGuid
   gPlatformInfoHobGuid
   gRootComplexInfoHobGuid
+  gRootComplexConfigFormSetGuid
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## ALWAYS_CONSUMED
