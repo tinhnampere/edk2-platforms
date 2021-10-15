@@ -56,6 +56,7 @@ IsDdrCeWindowEnabled (
   )
 {
   UINT32      DdrCeWindow;
+  UINT32      DdrCeControl;
   EFI_STATUS  Status;
 
   Status = NVParamGet (
@@ -67,7 +68,16 @@ IsDdrCeWindowEnabled (
     return FALSE;
   }
 
-  return (DdrCeWindow != 0) ? TRUE : FALSE;
+  Status = NVParamGet (
+             NV_SI_RO_BOARD_RAS_DDR_CE_THC,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &DdrCeControl
+             );
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
+
+  return ((DdrCeWindow != 0) && (DdrCeControl == 0)) ? TRUE : FALSE;
 }
 
 EFI_STATUS
