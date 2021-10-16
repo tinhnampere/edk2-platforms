@@ -353,9 +353,11 @@
   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize|0x1000
 
   #
-  # System Memory Base
+  # Maximum memory region that fits into the 32bit address space
+  # of 1-Processor and 2-Processor systems.
   #
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x90000000
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0x30000000
 
   #
   # UEFI region size
@@ -456,10 +458,6 @@
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|L"Timeout"|gEfiGlobalVariableGuid|0x0|0
 
 [PcdsDynamicDefault.common]
-  #
-  # Fist DRAM Memory region under 4GB address range
-  #
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0x70000000
 
 ################################################################################
 #
@@ -479,7 +477,7 @@
   }
   ArmPlatformPkg/PlatformPei/PlatformPeim.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/ATFHobPei/ATFHobPeim.inf
-  Silicon/Ampere/AmpereAltraPkg/Drivers/MemoryInitPeim/MemoryInitPeim.inf
+  ArmPlatformPkg/MemoryInitPei/MemoryInitPeim.inf
   ArmPkg/Drivers/CpuPei/CpuPei.inf
   UefiCpuPkg/CpuIoPei/CpuIoPei.inf
   MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
