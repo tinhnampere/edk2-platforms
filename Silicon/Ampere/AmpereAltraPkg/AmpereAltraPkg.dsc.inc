@@ -80,7 +80,6 @@
   # Ampere Altra specific Libraries
   #
   ArmPlatformLib|Silicon/Ampere/AmpereAltraPkg/Library/ArmPlatformLib/ArmPlatformLib.inf
-  PlatformPeiLib|Silicon/Ampere/AmpereAltraPkg/Library/PlatformPeiLib/PlatformPeiLib.inf
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Library/NVParamLib/NVParamLib.inf
   MailboxInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Library/MailboxInterfaceLib/MailboxInterfaceLib.inf
   SystemFirmwareInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Library/SystemFirmwareInterfaceLib/SystemFirmwareInterfaceLib.inf
@@ -229,6 +228,7 @@
 [LibraryClasses.common.SEC, LibraryClasses.common.PEIM]
   MemoryInitPeiLib|Silicon/Ampere/AmpereAltraPkg/Library/MemoryInitPeiLib/MemoryInitPeiLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+  PlatformPeiLib|ArmPlatformPkg/PlatformPei/PlatformPeiLib.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
