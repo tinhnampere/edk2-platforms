@@ -9,7 +9,7 @@
 #include <PiDxe.h>
 #include <Uefi.h>
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/DebugLib.h>
 #include <Library/DxeServicesTableLib.h>
 #include <Library/HobLib.h>
@@ -18,7 +18,6 @@
 #include <Library/TimerLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeLib.h>
-#include <PlatformInfoHob.h>
 
 #define I2cSync() { asm volatile ("dmb ish" : : : "memory"); }
 
@@ -871,7 +870,7 @@ I2cLibConstructor (
   PLATFORM_INFO_HOB  *PlatformHob;
 
   /* Get I2C Clock from the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return EFI_NOT_FOUND;
   }

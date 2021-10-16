@@ -12,7 +12,7 @@
 #include <Uefi.h>
 
 #include <Guid/MdeModuleHii.h>
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -25,7 +25,6 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiDriverEntryPoint.h>
 #include <Library/UefiLib.h>
-#include <PlatformInfoHob.h>
 #include <Protocol/HiiConfigAccess.h>
 #include <Protocol/HiiConfigKeyword.h>
 #include <Protocol/HiiConfigRouting.h>

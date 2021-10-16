@@ -7,7 +7,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Guid/TpmInstance.h>
 #include <IndustryStandard/TpmPtp.h>
 #include <Library/HobLib.h>
@@ -17,7 +17,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/Tpm2DeviceLib.h>
 #include <Library/MailboxInterfaceLib.h>
 #include <Library/SystemFirmwareInterfaceLib.h>
-#include <PlatformInfoHob.h>
 
 #include "Tcg2ConfigImpl.h"
 
@@ -124,7 +123,7 @@ RaiseTpm2PpClearRequest (
   PLATFORM_TPM2_PPI_REQUEST   *PpiRequest;
   MAILBOX_MESSAGE_DATA        Message;
 
-  GuidHob = GetFirstGuidHob (&gPlatformHobGuid);
+  GuidHob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (GuidHob == NULL) {
     return EFI_DEVICE_ERROR;
   }

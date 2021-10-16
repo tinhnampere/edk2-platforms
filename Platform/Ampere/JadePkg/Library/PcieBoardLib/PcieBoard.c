@@ -47,7 +47,7 @@
 
 **/
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
@@ -62,7 +62,6 @@
 #include <NVDataStruc.h>
 #include <NVParamDef.h>
 #include <Pcie.h>
-#include <PlatformInfoHob.h>
 
 #ifndef BIT
 #define BIT(nr)                         (1 << (nr))
@@ -253,7 +252,7 @@ PcieBoardParseRCParams (
     // Consolidate with E-fuse
     //
     Efuse = 0;
-    Hob = GetFirstGuidHob (&gPlatformHobGuid);
+    Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
     if (Hob != NULL) {
       PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
       Efuse = PlatformHob->RcDisableMask[0] | (PlatformHob->RcDisableMask[1] << RCS_PER_SOCKET);

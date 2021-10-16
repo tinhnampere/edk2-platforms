@@ -6,13 +6,12 @@
 
 **/
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/HobLib.h>
 #include <Library/PcieBoardLib.h>
 #include <Library/PciePhyLib.h>
 #include <Library/SystemFirmwareInterfaceLib.h>
-#include <PlatformInfoHob.h>
 
 #include "Pcie.h"
 #include "PcieCore.h"
@@ -740,7 +739,7 @@ RasdpMitigationCheck (
   PLATFORM_INFO_HOB  *PlatformHob;
   VOID               *Hob;
 
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (Hob);
   if ((PlatformHob->ScuProductId[0] & 0xff) == 0x01) {
     if (AsciiStrCmp ((CONST CHAR8 *)PlatformHob->CpuVer, "A0") == 0) {

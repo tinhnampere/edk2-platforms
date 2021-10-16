@@ -8,7 +8,7 @@
 
 #include <Uefi.h>
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/ArmLib.h>
 #include <Library/ArmPlatformLib.h>
@@ -21,7 +21,6 @@
 #include <Library/PL011UartLib.h>
 #include <Library/SerialPortLib.h>
 #include <Platform/Ac01.h>
-#include <PlatformInfoHob.h>
 #include <Ppi/ArmMpCoreInfo.h>
 #include <Ppi/TemporaryRamSupport.h>
 

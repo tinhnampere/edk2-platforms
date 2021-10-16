@@ -12,13 +12,12 @@
  * The protocols, PPI and GUID defintions for this module
  */
 #include <Guid/MemoryTypeInformation.h>
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PeimEntryPoint.h>
 #include <Library/PeiServicesLib.h>
-#include <PlatformInfoHob.h>
 #include <Ppi/BootInRecoveryMode.h>
 #include <Ppi/MasterBootMode.h>
 
@@ -81,7 +80,8 @@ InitializeMemory (
 
   DEBUG ((DEBUG_INFO, "Memory Init PEIM Loaded\n"));
 
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
+  ASSERT (Hob != NULL);
   if (Hob == NULL) {
     return EFI_DEVICE_ERROR;
   }

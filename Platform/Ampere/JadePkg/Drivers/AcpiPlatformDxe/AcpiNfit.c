@@ -87,7 +87,7 @@ AcpiNvdInfoInit (
   VOID               *Hob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL || NvdInfoPtr == NULL) {
     return EFI_INVALID_PARAMETER;
   }
@@ -127,7 +127,7 @@ AcpiNvdDataInit (
   UINTN              NvdRegionNum, RegionId;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;
   }
@@ -329,7 +329,7 @@ AcpiNfitFillTableBySK (
   UINTN RegionId, NvdRegionIndex, NvdIndex;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL
       || NfitSpaPointerStart == NULL
       || NfitSpaPointerNext == NULL)

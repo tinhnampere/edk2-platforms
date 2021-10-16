@@ -9,7 +9,7 @@
 #include <PiPei.h>
 #include <Uefi.h>
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <IndustryStandard/Tpm20.h>
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseLib.h>
@@ -20,7 +20,6 @@
 #include <Library/PcdLib.h>
 #include <Library/TimerLib.h>
 #include <Library/Tpm2DeviceLib.h>
-#include <PlatformInfoHob.h>
 
 //
 // Command Response Buffer (CRB) interface definition
@@ -412,7 +411,7 @@ Tpm2DeviceLibConstructor (
   VOID               *GuidHob;
   PLATFORM_INFO_HOB  *PlatformHob;
 
-  GuidHob = GetFirstGuidHob (&gPlatformHobGuid);
+  GuidHob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (GuidHob == NULL) {
     return EFI_DEVICE_ERROR;
   }

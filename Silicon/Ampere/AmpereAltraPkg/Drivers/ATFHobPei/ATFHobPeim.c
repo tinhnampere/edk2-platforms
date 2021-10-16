@@ -8,14 +8,13 @@
 
 #include <PiPei.h>
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PeimEntryPoint.h>
 #include <Library/PeiServicesLib.h>
-#include <PlatformInfoHob.h>
 #include <Uefi/UefiBaseType.h>
 
 VOID
@@ -27,12 +26,12 @@ BuildPlatformInformationHob (
 
   /* The ATF HOB handoff base is at PcdSystemMemoryBase */
   Hob = GetNextGuidHob (
-          &gPlatformHobGuid,
+          &gPlatformInfoHobGuid,
           (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
           );
   if (Hob != NULL) {
     BuildGuidDataHob (
-      &gPlatformHobGuid,
+      &gPlatformInfoHobGuid,
       GET_GUID_HOB_DATA (Hob),
       GET_GUID_HOB_DATA_SIZE (Hob)
       );

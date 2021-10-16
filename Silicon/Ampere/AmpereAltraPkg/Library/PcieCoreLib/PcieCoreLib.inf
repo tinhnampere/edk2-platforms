@@ -63,7 +63,7 @@
   gEfiAcpiSdtProtocolGuid # PROTOCOL ALWAYS_CONSUMED
 
 [Guids]
-  gPlatformHobGuid
+  gPlatformInfoHobGuid
 
 [Depex]
   gEfiAcpiTableProtocolGuid AND gEfiAcpiSdtProtocolGuid

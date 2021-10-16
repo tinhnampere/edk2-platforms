@@ -9,7 +9,7 @@
 #include <PiPei.h>
 #include <Uefi.h>
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -17,7 +17,6 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeLib.h>
-#include <PlatformInfoHob.h>
 
 EFI_EVENT   mRuntimeAmpereCpuLibVirtualNotifyEvent = NULL;
 VOID        *mPlatformInfoHob = NULL;
@@ -82,11 +81,11 @@ RuntimeAmpereCpuLibConstructor (
   VOID        *Hob;
 
   Hob = GetNextGuidHob (
-          &gPlatformHobGuid,
+          &gPlatformInfoHobGuid,
           (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
           );
   if (Hob == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to get gPlatformHobGuid!\n", __FUNCTION__));
+    DEBUG ((DEBUG_ERROR, "%a: Failed to get gPlatformInfoHobGuid!\n", __FUNCTION__));
     return EFI_DEVICE_ERROR;
   }
 

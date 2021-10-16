@@ -46,7 +46,7 @@
 
 [Guids]
   gEfiTpmDeviceInstanceTpm20DtpmGuid                            ## PRODUCES           ## GUID       # TPM device identifier
-  gPlatformHobGuid
+  gPlatformInfoHobGuid
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                                     ## CONSUMES

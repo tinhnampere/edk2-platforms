@@ -8,7 +8,7 @@
 
 #include "AcpiPlatform.h"
 #include "AcpiBdat.h"
-#include <PlatformInfoHob.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/HobLib.h>
 #include <Library/AmpereCpuLib.h>
 
@@ -205,7 +205,7 @@ AcpiInstallBdatTable (VOID)
   }
 
   // Get the Platform HOB
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return EFI_NOT_FOUND;
   }

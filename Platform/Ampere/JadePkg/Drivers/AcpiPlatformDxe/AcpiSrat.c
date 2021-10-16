@@ -40,7 +40,7 @@ SratCalculateNumMemoryRegion (
   UINTN              Result;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return 0;
   }
@@ -70,7 +70,7 @@ SratAddMemAffinity (
   UINTN              ProximityDomain;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return EFI_INVALID_PARAMETER;
   }

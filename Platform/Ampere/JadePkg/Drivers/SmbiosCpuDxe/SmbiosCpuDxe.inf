@@ -39,7 +39,7 @@
   gEfiSmbiosProtocolGuid                     ## CONSUMED
 
 [Guids]
-  gPlatformHobGuid
+  gPlatformInfoHobGuid
 
 [Depex]
   gEfiSmbiosProtocolGuid

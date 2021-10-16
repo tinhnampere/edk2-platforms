@@ -8,14 +8,13 @@
 
 #include <Uefi.h>
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/ArmPlatformLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
-#include <PlatformInfoHob.h>
 
 #include "PlatformMemoryMap.h"
 
@@ -48,7 +47,8 @@ ArmPlatformGetVirtualMemoryMap (
   VOID                         *Hob;
   PLATFORM_INFO_HOB            *PlatformHob;
 
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
+  ASSERT (Hob != NULL);
   if (Hob == NULL) {
     return;
   }

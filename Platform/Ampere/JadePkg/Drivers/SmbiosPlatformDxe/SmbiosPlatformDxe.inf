@@ -78,7 +78,7 @@
   gAmpereTokenSpaceGuid.PcdFruSystemUniqueID
 
 [Guids]
-  gPlatformHobGuid
+  gPlatformInfoHobGuid
 
 [Depex]
   gEfiSmbiosProtocolGuid

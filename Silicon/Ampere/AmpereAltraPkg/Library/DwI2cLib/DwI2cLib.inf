@@ -34,4 +34,4 @@
 
 [Guids]
   gEfiEventVirtualAddressChangeGuid
-  gPlatformHobGuid
+  gPlatformInfoHobGuid

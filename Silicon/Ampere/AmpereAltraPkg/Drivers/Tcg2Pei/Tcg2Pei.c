@@ -12,6 +12,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include <Guid/MeasuredFvHob.h>
 #include <Guid/MigratedFvInfo.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Guid/TcgEventHob.h>
 #include <Guid/TpmInstance.h>
 #include <IndustryStandard/UefiTcgPlatform.h>
@@ -31,7 +32,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/ResetSystemLib.h>
 #include <Library/Tpm2CommandLib.h>
 #include <Library/Tpm2DeviceLib.h>
-#include <PlatformInfoHob.h>
 #include <Ppi/EndOfPeiPhase.h>
 #include <Ppi/FirmwareVolume.h>
 #include <Ppi/FirmwareVolumeInfo.h>
@@ -1185,7 +1185,7 @@ PeimEntryMA (
     goto Done;
   }
 
-  GuidHob = GetFirstGuidHob (&gPlatformHobGuid);
+  GuidHob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (GuidHob == NULL) {
     Status = EFI_DEVICE_ERROR;
     goto Done;

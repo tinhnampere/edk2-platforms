@@ -9,7 +9,7 @@
 #include <Uefi.h>
 
 #include <Guid/MdeModuleHii.h>
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -23,7 +23,6 @@
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
-#include <PlatformInfoHob.h>
 
 #include "PlatformInfoHii.h"
 
@@ -122,7 +121,7 @@ UpdatePlatformInfoScreen (
   EFI_IFR_GUID_LABEL *EndLabel;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return EFI_DEVICE_ERROR;
   }

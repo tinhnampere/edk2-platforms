@@ -19,7 +19,6 @@
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Platform/Ac01.h>
-#include <PlatformInfoHob.h>
 #include <Protocol/AcpiTable.h>
 
 #include "Pcie.h"

@@ -57,7 +57,7 @@
   ## SOMETIMES_PRODUCES ## Variable:L"TCG2_CONFIGURATION"
   ## SOMETIMES_CONSUMES ## Variable:L"TCG2_CONFIGURATION"
   gTcg2ConfigFormSetGuid
-  gPlatformHobGuid
+  gPlatformInfoHobGuid
 
 [Protocols]
   gEfiHiiConfigAccessProtocolGuid               ## PRODUCES

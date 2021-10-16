@@ -9,6 +9,7 @@
 #include <PiPei.h>
 #include <Uefi.h>
 
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/ArmLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -17,7 +18,6 @@
 #include <Library/NVParamLib.h>
 #include <NVParamDef.h>
 #include <Platform/Ac01.h>
-#include <PlatformInfoHob.h>
 
 #define MAX_AMPERE_ALTRA_CORES        80
 #define MAX_AMPERE_ALTRA_MAX_CORES    128

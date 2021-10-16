@@ -8,7 +8,7 @@
 
 #include <Uefi.h>
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Guid/SmBios.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/ArmLib.h>
@@ -20,7 +20,6 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include <PlatformInfoHob.h>
 #include <Protocol/Smbios.h>
 
 #define CPU_CACHE_LEVEL_COUNT 3
@@ -550,7 +549,7 @@ UpdateSmbiosInfo (
   PLATFORM_INFO_HOB  *PlatformHob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   ASSERT (Hob != NULL);
   if (Hob == NULL) {
     return;

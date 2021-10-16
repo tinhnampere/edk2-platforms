@@ -10,6 +10,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <PiDxe.h>
 
 #include <AcpiHeader.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Guid/TpmInstance.h>
 #include <IndustryStandard/Acpi.h>
 #include <IndustryStandard/Tpm2Acpi.h>
@@ -28,7 +29,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/TpmMeasurementLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiDriverEntryPoint.h>
-#include <PlatformInfoHob.h>
 #include <Protocol/AcpiTable.h>
 #include <Protocol/Tcg2Protocol.h>
 
@@ -493,7 +493,7 @@ Tcg2AcpiEntryPoint (
     return EFI_UNSUPPORTED;
   }
 
-  GuidHob = GetFirstGuidHob (&gPlatformHobGuid);
+  GuidHob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (GuidHob == NULL) {
     return EFI_DEVICE_ERROR;
   }

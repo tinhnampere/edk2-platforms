@@ -35,7 +35,7 @@
   PeimEntryPoint
 
 [Guids]
-  gPlatformHobGuid
+  gPlatformInfoHobGuid
 
 [Depex]
   TRUE

@@ -9,7 +9,7 @@
 #include <PiPei.h>
 #include <Uefi.h>
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/ArmLib.h>
 #include <Library/DebugLib.h>
@@ -21,7 +21,6 @@
 #include <Library/PeiServicesTablePointerLib.h>
 
 #include <NVParamDef.h>
-#include <PlatformInfoHob.h>
 
 #define GB_SCALE_FACTOR     1073741824
 #define MB_SCALE_FACTOR     1048576
@@ -133,7 +132,7 @@ PrintSystemInfo (
   VOID               *Hob;
   PLATFORM_INFO_HOB  *PlatformHob;
 
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return;
   }

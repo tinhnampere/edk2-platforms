@@ -1193,7 +1193,7 @@ MemInfoScreenSetup (
   PLATFORM_INFO_HOB  *PlatformHob;
 
   /* Get the Platform HOB */
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return EFI_DEVICE_ERROR;
   }

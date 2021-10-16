@@ -55,7 +55,7 @@ AcpiPatchDmc620 (
   UINT32             McuMask;
   VOID               *Hob;
 
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return;
   }
@@ -87,7 +87,7 @@ AcpiPatchNvdimm (
   UINT32             OpRegionBase;;
   EFI_STATUS         Status;
 
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   if (Hob == NULL) {
     return;
   }

@@ -42,4 +42,4 @@
   gArmTokenSpaceGuid.PcdSystemMemoryBase
 
 [Guids]
-  gPlatformHobGuid
+  gPlatformInfoHobGuid

@@ -12,23 +12,28 @@
 #include <IndustryStandard/Tpm20.h>
 #include <Platform/Ac01.h>
 
-/* DIMM type */
-enum {
-  UDIMM,
-  RDIMM,
-  SODIMM,
-  RSODIMM,
-  LRDIMM,
-  NVRDIMM
-};
+#define PLATFORM_INFO_HOB_GUID \
+  { 0x7f73e372, 0x7183, 0x4022, { 0xb3, 0x76, 0x78, 0x30, 0x32, 0x6d, 0x79, 0xb4 } }
 
-/* DIMM status */
-enum {
-  DIMM_NOT_INSTALLED = 0,
-  DIMM_INSTALLED_OPERATIONAL,    /* installed and operational     */
-  DIMM_INSTALLED_NONOPERATIONAL, /* installed and non-operational */
-  DIMM_INSTALLED_FAILED          /* installed and failed          */
-};
+extern EFI_GUID gPlatformInfoHobGuid;
+
+//
+// DIMM type
+//
+#define UDIMM    0x00
+#define RDIMM    0x01
+#define SODIMM   0x02
+#define RSODIMM  0x03
+#define LRDIMM   0x04
+#define NVRDIMM  0x05
+
+//
+// DIMM status
+//
+#define DIMM_NOT_INSTALLED              0x00
+#define DIMM_INSTALLED_OPERATIONAL      0x01   // installed and operational
+#define DIMM_INSTALLED_NONOPERATIONAL   0x02   // installed and non-operational
+#define DIMM_INSTALLED_FAILED           0x03   // installed and failed
 
 typedef struct {
   UINT32 NumRegion;

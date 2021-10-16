@@ -11,7 +11,7 @@
 #include <AcpiConfigNVDataStruct.h>
 #include <Guid/AcpiConfigFormSet.h>
 #include <Guid/MdeModuleHii.h>
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AcpiHelperLib.h>
 #include <Library/AcpiHelperLib.h>
 #include <Library/BaseLib.h>
@@ -27,7 +27,6 @@
 #include <Library/UefiDriverEntryPoint.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <PlatformInfoHob.h>
 #include <Protocol/AcpiSystemDescriptionTable.h>
 #include <Protocol/HiiConfigAccess.h>
 #include <Protocol/HiiConfigRouting.h>
@@ -632,7 +631,7 @@ AcpiConfigEntryPoint (
   //
   // Get the Platform HOB
   //
-  Hob = GetFirstGuidHob (&gPlatformHobGuid);
+  Hob = GetFirstGuidHob (&gPlatformInfoHobGuid);
   ASSERT (Hob != NULL);
   if (Hob == NULL) {
     AcpiConfigUnload ();

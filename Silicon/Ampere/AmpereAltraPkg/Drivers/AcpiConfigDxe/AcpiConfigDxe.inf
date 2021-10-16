@@ -44,7 +44,7 @@
   gPlatformManagerFormsetGuid
   gAcpiConfigFormSetGuid
   gEfiEventReadyToBootGuid
-  gPlatformHobGuid
+  gPlatformInfoHobGuid
 
 [Protocols]
   gEfiDevicePathProtocolGuid                    ## CONSUMES

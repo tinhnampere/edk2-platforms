@@ -9,11 +9,10 @@
 #include <PiPei.h>
 #include <Uefi.h>
 
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
-#include <PlatformInfoHob.h>
 
 VOID *mPlatformInfoHob = NULL;
 
@@ -30,11 +29,11 @@ GetPlatformHob (
 {
   if (mPlatformInfoHob == NULL) {
     mPlatformInfoHob = GetNextGuidHob (
-                         &gPlatformHobGuid,
+                         &gPlatformInfoHobGuid,
                          (CONST VOID *)FixedPcdGet64 (PcdSystemMemoryBase)
                          );
     if (mPlatformInfoHob == NULL) {
-      DEBUG ((DEBUG_ERROR, "%a: Failed to get gPlatformHobGuid!\n", __FUNCTION__));
+      DEBUG ((DEBUG_ERROR, "%a: Failed to get gPlatformInfoHobGuid!\n", __FUNCTION__));
       return NULL;
     }
  }

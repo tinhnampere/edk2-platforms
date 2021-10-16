@@ -13,7 +13,7 @@
 
 #include <AcpiHeader.h>
 #include <Guid/EventGroup.h>
-#include <Guid/PlatformInfoHobGuid.h>
+#include <Guid/PlatformInfoHob.h>
 #include <IndustryStandard/Acpi63.h>
 #include <Library/ArmLib.h>
 #include <Library/AcpiHelperLib.h>
@@ -30,7 +30,6 @@
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Platform/Ac01.h>
-#include <PlatformInfoHob.h>
 #include <Protocol/AcpiTable.h>
 
 EFI_STATUS
