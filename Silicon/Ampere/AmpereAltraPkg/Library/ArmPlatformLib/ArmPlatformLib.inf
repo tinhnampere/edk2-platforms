@@ -49,8 +49,8 @@
 
   gArmTokenSpaceGuid.PcdArmPrimaryCore
 
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase
-  gEfiMdePkgTokenSpaceGuid.PcdUartDefaultBaudRate
+  gArmPlatformTokenSpaceGuid.PcdSerialDbgRegisterBase
+  gArmPlatformTokenSpaceGuid.PcdSerialDbgUartBaudRate
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultReceiveFifoDepth
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultDataBits
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultParity
