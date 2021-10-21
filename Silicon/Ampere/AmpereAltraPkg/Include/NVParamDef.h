@@ -419,7 +419,7 @@ typedef enum {
   NV_SI_RO_BOARD_S0_RCA4_CFG                        = (106 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02020202 */
   NV_SI_RO_BOARD_S0_RCA5_CFG                        = (107 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02020202 */
   NV_SI_RO_BOARD_S0_RCA6_CFG                        = (108 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02020202 */
-  NV_SI_RO_BOARD_S0_RCA7_CFG                        = (109 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02020202 */
+  NV_SI_RO_BOARD_S0_RCA7_CFG                        = (109 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00030003 */
   NV_SI_RO_BOARD_S0_RCA0_TXRX_G3PRESET              = (110 * 8) + NV_BOARD_PARAM_START,
   NV_SI_RO_BOARD_S0_RCA1_TXRX_G3PRESET              = (111 * 8) + NV_BOARD_PARAM_START,
   NV_SI_RO_BOARD_S0_RCA2_TXRX_G3PRESET              = (112 * 8) + NV_BOARD_PARAM_START,
@@ -453,7 +453,7 @@ typedef enum {
   NV_SI_RO_BOARD_S0_RCA6_TXRX_G4PRESET              = (140 * 8) + NV_BOARD_PARAM_START, /* Default: 0x57575757 */
   NV_SI_RO_BOARD_S0_RCA7_TXRX_G4PRESET              = (141 * 8) + NV_BOARD_PARAM_START, /* Default: 0x57575757 */
   NV_SI_RO_BOARD_S1_PCIE_CLK_CFG                    = (142 * 8) + NV_BOARD_PARAM_START,
-  NV_SI_RO_BOARD_S1_RCA4_CFG                        = (143 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02020202 */
+  NV_SI_RO_BOARD_S1_RCA4_CFG                        = (143 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00030003 */
   NV_SI_RO_BOARD_S1_RCA5_CFG                        = (144 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02020202 */
   NV_SI_RO_BOARD_S1_RCA6_CFG                        = (145 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02020202 */
   NV_SI_RO_BOARD_S1_RCA7_CFG                        = (146 * 8) + NV_BOARD_PARAM_START, /* Default: 0x02020202 */
