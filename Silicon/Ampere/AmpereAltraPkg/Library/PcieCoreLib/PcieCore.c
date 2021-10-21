@@ -574,10 +574,39 @@ Ac01PcieConfigureEqualization (
 
   CfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
+  // Equalization setting for Gen-3
+  // Since Gen3 and Gen-4 EQ process use the same setting registers which are
+  // GEN3_RELATED_OFF and GEN3_EQ_CONTROL_OFF. These registers are shadow register
+  // and are controlled by field RATE_SHADOW_SEL_SET
+  Ac01PcieCfgIn32 (CfgAddr + GEN3_RELATED_OFF, &Val);
+  Val = RATE_SHADOW_SEL_SET (Val, 0);
+  Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
+  Val = EQ_PHASE_2_3_SET (Val, 0);
+  Val = RXEQ_REGRDLESS_SET (Val, 1);
+  Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
+
+  // Select the FoM method, need double-write to convey settings
+  // It is supported to change Preset Vector Mask to 0x370
+  Ac01PcieCfgIn32 (CfgAddr + GEN3_EQ_CONTROL_OFF, &Val);
+  Val = GEN3_EQ_FB_MODE (Val, 0x1);
+  Val = GEN3_EQ_PRESET_VEC (Val, 0x370);
+  Val = GEN3_EQ_INIT_EVAL (Val, 0x1);
+  Ac01PcieCfgOut32 (CfgAddr + GEN3_EQ_CONTROL_OFF, Val);
+  Ac01PcieCfgOut32 (CfgAddr + GEN3_EQ_CONTROL_OFF, Val);
+  Ac01PcieCfgIn32 (CfgAddr + GEN3_EQ_CONTROL_OFF, &Val);
+
+  // Equalization setting for Gen-4
+  Ac01PcieCfgIn32 (CfgAddr + GEN3_RELATED_OFF, &Val);
+  Val = RATE_SHADOW_SEL_SET (Val, 1);
+  Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
+  Val = EQ_PHASE_2_3_SET (Val, 0);
+  Val = RXEQ_REGRDLESS_SET (Val, 1);
+  Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
+
   // Select the FoM method, need double-write to convey settings
   Ac01PcieCfgIn32 (CfgAddr + GEN3_EQ_CONTROL_OFF, &Val);
   Val = GEN3_EQ_FB_MODE (Val, 0x1);
-  Val = GEN3_EQ_PRESET_VEC (Val, 0x3FF);
+  Val = GEN3_EQ_PRESET_VEC (Val, 0x370);
   Val = GEN3_EQ_INIT_EVAL (Val, 0x1);
   Ac01PcieCfgOut32 (CfgAddr + GEN3_EQ_CONTROL_OFF, Val);
   Ac01PcieCfgOut32 (CfgAddr + GEN3_EQ_CONTROL_OFF, Val);
@@ -601,14 +630,6 @@ Ac01PcieConfigurePresetGen3 (
   UINT32 Val, Idx;
   CfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
-  // Bring to legacy mode
-  Ac01PcieCfgIn32 (CfgAddr + GEN3_RELATED_OFF, &Val);
-  Val = RATE_SHADOW_SEL_SET (Val, 0);
-  Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
-  Val = EQ_PHASE_2_3_SET (Val, 0);
-  Val = RXEQ_REGRDLESS_SET (Val, 1);
-  Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
-
   // Generate SPCIE capability address
   SpcieBaseAddr = (VOID *)PcieCheckCap (RC, PcieIndex, 0x1, SPCIE_CAP_ID);
   if (SpcieBaseAddr == 0) {
@@ -623,8 +644,8 @@ Ac01PcieConfigurePresetGen3 (
   for (Idx=0; Idx < RC->Pcie[PcieIndex].MaxWidth/2; Idx++) {
     // Program Preset to Gen3 EQ Lane Control
     Ac01PcieCfgIn32 (SpcieBaseAddr + CAP_OFF_0C + Idx*4, &Val);
-    Val = DSP_TX_PRESET0_SET (Val, 0x7);
-    Val = DSP_TX_PRESET1_SET (Val, 0x7);
+    Val = DSP_TX_PRESET0_SET (Val, 0x5);
+    Val = DSP_TX_PRESET1_SET (Val, 0x5);
     Ac01PcieCfgOut32 (SpcieBaseAddr + CAP_OFF_0C + Idx*4, Val);
   }
 }
@@ -648,14 +669,6 @@ Ac01PcieConfigurePresetGen4 (
   UINT8  Preset;
 
   CfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
-
-  // Bring to legacy mode
-  Ac01PcieCfgIn32 (CfgAddr + GEN3_RELATED_OFF, &Val);
-  Val = RATE_SHADOW_SEL_SET (Val, 1);
-  Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
-  Val = EQ_PHASE_2_3_SET (Val, 0);
-  Val = RXEQ_REGRDLESS_SET (Val, 1);
-  Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
 
   // Generate the PL16 capability address
   Pl16BaseAddr = (VOID *)PcieCheckCap (RC, PcieIndex, 0x1, PL16_CAP_ID);
@@ -681,7 +694,7 @@ Ac01PcieConfigurePresetGen4 (
 
   // Configure downstream Gen4 Tx preset
   if (RC->PresetGen4[PcieIndex] == PRESET_INVALID) {
-    Preset = 0x57; // Default Gen4 preset
+    Preset = 0x55; // Default Gen4 preset
   } else {
     Preset = RC->PresetGen4[PcieIndex];
   }
@@ -706,8 +719,8 @@ Ac01PcieConfigurePresetGen4 (
   // Configure Gen3 preset
   for (i = 0; i < LinkWidth/2; i++) {
     Ac01PcieCfgIn32 (SpcieBaseAddr + CAP_OFF_0C + i*4, &Val);
-    Val = DSP_TX_PRESET0_SET (Val, 0x7);
-    Val = DSP_TX_PRESET1_SET (Val, 0x7);
+    Val = DSP_TX_PRESET0_SET (Val, 0x5);
+    Val = DSP_TX_PRESET1_SET (Val, 0x5);
     Ac01PcieCfgOut32 (SpcieBaseAddr + CAP_OFF_0C + i*4, Val);
   }
 }
