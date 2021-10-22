@@ -211,9 +211,12 @@ typedef enum {
   NV_SI_DDR_TCAL_SOC_VOLT_CAP_MV            = (64 * 8) + NV_MANU_PARAM_START,
   NV_SI_ALTRAMAX_ICCMAX_EN                  = (65 * 8) + NV_MANU_PARAM_START,
   NV_SI_MESH_TURBO_ACTIVITY_THRESHOLD       = (66 * 8) + NV_MANU_PARAM_START,
-  NV_PMPRO_REGION2_LOAD_END                 = NV_SI_MESH_TURBO_ACTIVITY_THRESHOLD,
+  NV_SI_ALTRAMAX_ICCMAX_OC_LIMIT_MARGIN     = (67 * 8) + NV_MANU_PARAM_START,
+  NV_SI_SLT_VREF_EXT_PROG_EN                = (68 * 8) + NV_MANU_PARAM_START,
+  NV_PMPRO_REGION2_LOAD_END                 = NV_SI_SLT_VREF_EXT_PROG_EN,
+
   /* NOTE: Add before NV_MANU_PARAM_MAX and increase its value */
-  NV_MANU_PARAM_MAX                         = (66 * 8) + NV_MANU_PARAM_START,
+  NV_MANU_PARAM_MAX                         = (68 * 8) + NV_MANU_PARAM_START,
 
   /*
    * User non-volatile memory
