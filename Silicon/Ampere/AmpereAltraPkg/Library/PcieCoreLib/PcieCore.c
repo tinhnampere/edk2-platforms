@@ -522,9 +522,6 @@ Ac01PcieCoreBuildRCStruct (
   RC->Mmio32Addr = Mmio32Base;
   RC->IoAddr = Mmio32Base + MMIO32_SPACE - IO_SPACE;
 
-  RC->Type = (RC->ID < MAX_RCA) ? RCA : RCB;
-  RC->MaxPcieController = (RC->Type == RCB) ? MAX_PCIE_B : MAX_PCIE_A;
-
   PcieBoardParseRCParams (RC);
 
   for (PcieIndex = 0; PcieIndex < RC->MaxPcieController; PcieIndex++) {
@@ -586,7 +583,7 @@ Ac01PcieConfigureEqualization (
   Ac01PcieCfgOut32 (CfgAddr + GEN3_RELATED_OFF, Val);
 
   // Select the FoM method, need double-write to convey settings
-  // It is supported to change Preset Vector Mask to 0x370
+  // It is suggested to change Preset Vector Mask to 0x370
   Ac01PcieCfgIn32 (CfgAddr + GEN3_EQ_CONTROL_OFF, &Val);
   Val = GEN3_EQ_FB_MODE (Val, 0x1);
   Val = GEN3_EQ_PRESET_VEC (Val, 0x370);
@@ -628,6 +625,8 @@ Ac01PcieConfigurePresetGen3 (
 {
   VOID   *CfgAddr, *SpcieBaseAddr;
   UINT32 Val, Idx;
+  UINT8  Preset;
+
   CfgAddr = (VOID *)(RC->MmcfgAddr + (RC->Pcie[PcieIndex].DevNum << 15));
 
   // Generate SPCIE capability address
@@ -641,11 +640,18 @@ Ac01PcieConfigurePresetGen3 (
     return;
   }
 
+  // Configure downstream Gen3 Tx preset
+  if (RC->PresetGen3[PcieIndex] == PRESET_INVALID) {
+    Preset = 0x5; // Default Gen3 preset
+  } else {
+    Preset = RC->PresetGen3[PcieIndex];
+  }
+
   for (Idx=0; Idx < RC->Pcie[PcieIndex].MaxWidth/2; Idx++) {
     // Program Preset to Gen3 EQ Lane Control
     Ac01PcieCfgIn32 (SpcieBaseAddr + CAP_OFF_0C + Idx*4, &Val);
-    Val = DSP_TX_PRESET0_SET (Val, 0x5);
-    Val = DSP_TX_PRESET1_SET (Val, 0x5);
+    Val = DSP_TX_PRESET0_SET (Val, Preset);
+    Val = DSP_TX_PRESET1_SET (Val, Preset);
     Ac01PcieCfgOut32 (SpcieBaseAddr + CAP_OFF_0C + Idx*4, Val);
   }
 }

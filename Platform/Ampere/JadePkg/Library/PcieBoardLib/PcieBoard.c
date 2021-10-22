@@ -92,18 +92,34 @@ PcieBoardLoadPreset (
   if (RC->Socket == 0) {
     if (RC->Type == RCA) {
       if (RC->ID < 4) {
-        NvParam = NV_SI_RO_BOARD_S0_RCA0_TXRX_G3PRESET + RC->ID * NVPARAM_SIZE;
+        if (IsAc01Processor()) {
+          NvParam = NV_SI_RO_BOARD_S0_RCA0_TXRX_G3PRESET + RC->ID * NVPARAM_SIZE;
+        } else {
+          NvParam = NV_SI_RO_BOARD_MQ_S0_RCA0_TXRX_G3PRESET + RC->ID * NVPARAM_SIZE;
+        }
       } else {
-        NvParam = NV_SI_RO_BOARD_S0_RCA4_TXRX_G3PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+        if (IsAc01Processor()) {
+          NvParam = NV_SI_RO_BOARD_S0_RCA4_TXRX_G3PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+        } else {
+          NvParam = NV_SI_RO_BOARD_MQ_S0_RCA4_TXRX_G3PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+        }
       }
     } else {
       NvParam = NV_SI_RO_BOARD_S0_RCB0A_TXRX_G3PRESET + (RC->ID - 4) * (2 * NVPARAM_SIZE);
     }
   } else if (RC->Type == RCA) {
     if (RC->ID < 4) {
-      NvParam = NV_SI_RO_BOARD_S1_RCA2_TXRX_G3PRESET + (RC->ID - 2) * NVPARAM_SIZE;
+      if (IsAc01Processor()) {
+        NvParam = NV_SI_RO_BOARD_S1_RCA2_TXRX_G3PRESET + (RC->ID - 2) * NVPARAM_SIZE;
+      } else {
+        NvParam = NV_SI_RO_BOARD_MQ_S1_RCA2_TXRX_G3PRESET + (RC->ID - 2) * NVPARAM_SIZE;
+      }
     } else {
-      NvParam = NV_SI_RO_BOARD_S1_RCA4_TXRX_G3PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+      if (IsAc01Processor()) {
+        NvParam = NV_SI_RO_BOARD_S1_RCA4_TXRX_G3PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+      } else {
+        NvParam = NV_SI_RO_BOARD_MQ_S1_RCA4_TXRX_G3PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+      }
     }
   } else {
     NvParam = NV_SI_RO_BOARD_S1_RCB0A_TXRX_G3PRESET + (RC->ID - 4) * (2 * NVPARAM_SIZE);
@@ -129,18 +145,34 @@ PcieBoardLoadPreset (
   if (RC->Socket == 0) {
     if (RC->Type == RCA) {
       if (RC->ID < 4) {
-        NvParam = NV_SI_RO_BOARD_S0_RCA0_TXRX_G4PRESET + RC->ID * NVPARAM_SIZE;
+        if (IsAc01Processor()) {
+          NvParam = NV_SI_RO_BOARD_S0_RCA0_TXRX_G4PRESET + RC->ID * NVPARAM_SIZE;
+        } else {
+          NvParam = NV_SI_RO_BOARD_MQ_S0_RCA0_TXRX_G4PRESET + RC->ID * NVPARAM_SIZE;
+        }
       } else {
-        NvParam = NV_SI_RO_BOARD_S0_RCA4_TXRX_G4PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+        if (IsAc01Processor()) {
+          NvParam = NV_SI_RO_BOARD_S0_RCA4_TXRX_G4PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+        } else {
+          NvParam = NV_SI_RO_BOARD_MQ_S0_RCA4_TXRX_G4PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+        }
       }
     } else {
       NvParam = NV_SI_RO_BOARD_S0_RCB0A_TXRX_G4PRESET + (RC->ID - 4) * (2 * NVPARAM_SIZE);
     }
   } else if (RC->Type == RCA) {
     if (RC->ID < 4) {
-      NvParam = NV_SI_RO_BOARD_S1_RCA2_TXRX_G4PRESET + (RC->ID - 2) * NVPARAM_SIZE;
+      if (IsAc01Processor()) {
+        NvParam = NV_SI_RO_BOARD_S1_RCA2_TXRX_G4PRESET + (RC->ID - 2) * NVPARAM_SIZE;
+      } else {
+        NvParam = NV_SI_RO_BOARD_MQ_S1_RCA2_TXRX_G4PRESET + (RC->ID - 2) * NVPARAM_SIZE;
+      }
     } else {
-      NvParam = NV_SI_RO_BOARD_S1_RCA4_TXRX_G4PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+      if (IsAc01Processor()) {
+        NvParam = NV_SI_RO_BOARD_S1_RCA4_TXRX_G4PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+      } else {
+        NvParam = NV_SI_RO_BOARD_MQ_S1_RCA4_TXRX_G4PRESET + (RC->ID - 4) * NVPARAM_SIZE;
+      }
     }
   } else {
     NvParam = NV_SI_RO_BOARD_S1_RCB0A_TXRX_G4PRESET + (RC->ID - 4) * (2 * NVPARAM_SIZE);
@@ -244,9 +276,14 @@ PcieBoardParseRCParams (
         }
       }
     }
-
     RC->Active = (RC->Active && !(Efuse & BIT (PlatRCId))) ? TRUE : FALSE;
   }
+  if (IsAc01Processor ()) {
+    RC->Type = (RC->ID < MAX_RCA) ? RCA : RCB;
+  } else {
+    RC->Type = RCA;
+  }
+  RC->MaxPcieController = (RC->Type == RCB) ? MAX_PCIE_B : MAX_PCIE_A;
 
   /* Load Gen3/Gen4 preset */
   PcieBoardLoadPreset (RC);
@@ -341,7 +378,47 @@ PcieBoardAssertPerst (
 
   if (!isPullToHigh) { // Pull PERST to Low
     if (RC->Type == RCA) { // RCA: RC->ID: 0->3 ; PcieIndex: 0->3
-      GpioGroupVal = 62 - RC->ID*4 - PcieIndex;
+      if (RC->ID < MAX_PCIE_A) { /* Ampere Altra: 4 */
+        GpioGroupVal = 62 - RC->ID*4 - PcieIndex;
+      } else { /* Ampere Altra Max RC->ID: 4:7 */
+        if (PcieIndex < 2) {
+          switch (RC->ID) {
+          case 4:
+            GpioGroupVal = 34 - (PcieIndex*2);
+            break;
+          case 5:
+            GpioGroupVal = 38 - (PcieIndex*2);
+            break;
+          case 6:
+            GpioGroupVal = 30 - (PcieIndex*2);
+            break;
+          case 7:
+            GpioGroupVal = 26 - (PcieIndex*2);
+            break;
+          }
+        } else { /* PcieIndex 2:3 */
+          switch (RC->ID) {
+          case 4:
+            GpioGroupVal = 46 - ((PcieIndex - 2)*2);
+            break;
+
+          case 5:
+            GpioGroupVal = 42 - ((PcieIndex - 2)*2);
+            break;
+
+          case 6:
+            GpioGroupVal = 18 - ((PcieIndex - 2)*2);
+            break;
+
+          case 7:
+            GpioGroupVal = 22 - ((PcieIndex - 2)*2);
+            break;
+
+          default:
+            PCIE_ERR ("Invalid Root Complex ID %d\n", RC->ID);
+          }
+        }
+      }
     }
     else { // RCB: RC->ID: 4->7 ; PcieIndex: 0->7
       GpioGroupVal = 46 - (RC->ID - 4)*8 - PcieIndex;
@@ -395,8 +472,8 @@ PcieBoardGetRCSegmentNumber (
         *SegmentNumber = 0;
         break;
 
-        default:
-          *SegmentNumber = 16;
+        default: /* Ampere Altra Max */
+          *SegmentNumber = RC->ID - 2;
       }
     } else { /* Socket0, CCIX: RCA0 and RCA1 */
       *SegmentNumber = RC->ID - 2;

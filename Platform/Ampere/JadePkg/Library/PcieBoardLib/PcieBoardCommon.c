@@ -6,6 +6,7 @@
 
 **/
 
+#include <Library/AmpereCpuLib.h>
 #include <Library/DebugLib.h>
 #include <Library/NVParamLib.h>
 #include <Library/SystemFirmwareInterfaceLib.h>
@@ -124,13 +125,18 @@ PcieBoardGetLaneAllocation (
   )
 {
   INTN    RPIndex, Ret;
-  UINT32  Nv, Width;
+  UINT32  Nv, Width, Controller;
   NVPARAM NvParam;
 
   // Retrieve lane allocation and capabilities for each controller
   if (RC->Type == RCA) {
-    NvParam = NV_SI_RO_BOARD_S0_RCA0_CFG + RC->Socket * 96 +
+    if (RC->ID < MAX_PCIE_A) { /* Ampere Altra: 4 */
+      NvParam = NV_SI_RO_BOARD_S0_RCA0_CFG + RC->Socket * 96 +
                 RC->ID * 8;
+    } else {
+      NvParam = NV_SI_RO_BOARD_S0_RCA4_CFG + RC->Socket * 0x128 +
+                (RC->ID - 4) * 8;
+    }
   } else {
     NvParam = NV_SI_RO_BOARD_S0_RCB0_LO_CFG + RC->Socket * 96 +
               (RC->ID - MAX_RCA) * 16;
@@ -139,7 +145,12 @@ PcieBoardGetLaneAllocation (
   Ret = NVParamGet (NvParam, NV_PERM_ALL, &Nv);
   Nv = (Ret != EFI_SUCCESS) ? 0 : Nv;
 
-  for (RPIndex = 0; RPIndex < MAX_PCIE_A; RPIndex++) {
+  if (IsAc01Processor ()) {
+    Controller = MAX_PCIE_A;
+  } else {
+    Controller = RC->MaxPcieController;
+  }
+  for (RPIndex = 0; RPIndex < Controller; RPIndex++) {
     Width = (Nv >> (RPIndex * 8)) & 0xF;
     switch (Width) {
     case 1:
@@ -200,6 +211,9 @@ PcieBoardSetupDevmap (
   )
 {
   UINT32 Val;
+  UINT32 IsAc01;
+
+  IsAc01 = IsAc01Processor ();
 
   if (RC->Pcie[PCIE_0].Active
       && RC->Pcie[PCIE_1].Active
@@ -220,21 +234,24 @@ PcieBoardSetupDevmap (
     RC->DefaultDevMapLo = 0;
   }
 
-  if (RC->Pcie[PCIE_4].Active
-      && RC->Pcie[PCIE_5].Active
-      && RC->Pcie[PCIE_6].Active
-      && RC->Pcie[PCIE_7].Active)
-  {
-    RC->DefaultDevMapHi = 3;
-  } else if (RC->Pcie[PCIE_4].Active
-             && RC->Pcie[PCIE_6].Active
-             && RC->Pcie[PCIE_7].Active)
-  {
-    RC->DefaultDevMapHi = 2;
-  } else if (RC->Pcie[PCIE_4].Active
-             && RC->Pcie[PCIE_6].Active)
-  {
-    RC->DefaultDevMapHi = 1;
+  if (RC->Pcie[PCIE_4].Active &&
+      RC->Pcie[PCIE_5].Active &&
+      RC->Pcie[PCIE_6].Active &&
+      RC->Pcie[PCIE_7].Active) {
+    if (IsAc01) {
+      RC->DefaultDevMapHi = 3;
+    }
+  } else if (RC->Pcie[PCIE_4].Active &&
+            RC->Pcie[PCIE_6].Active &&
+            RC->Pcie[PCIE_7].Active) {
+    if (IsAc01) {
+      RC->DefaultDevMapHi = 2;
+    }
+  } else if (RC->Pcie[PCIE_4].Active &&
+            RC->Pcie[PCIE_6].Active) {
+    if (IsAc01) {
+      RC->DefaultDevMapHi = 1;
+    }
   } else {
     RC->DefaultDevMapHi = 0;
   }
@@ -277,7 +294,7 @@ PcieBoardGetSpeed (
   UINT8 MaxGenTblX8X4X4[MAX_PCIE_A] = { SPEED_GEN4, SPEED_GEN4, SPEED_GEN1, SPEED_GEN1 };   // Bifurcation 2: x8 x4 x4 (PCIE_ERRATA_SPEED1)
   UINT8 MaxGenTblX4X4X4X4[MAX_PCIE_A] = { SPEED_GEN1, SPEED_GEN1, SPEED_GEN1, SPEED_GEN1 }; // Bifurcation 3: x4 x4 x4 x4 (PCIE_ERRATA_SPEED1)
   UINT8 MaxGenTblRCB[MAX_PCIE_A] = { SPEED_GEN1, SPEED_GEN1, SPEED_GEN1, SPEED_GEN1 };      // RCB PCIE_ERRATA_SPEED1
-  INTN  RPIdx;
+  INTN  RPIdx, Controller;
   UINT8 *MaxGen;
 
   ASSERT (MAX_PCIE_A == 4);
@@ -314,7 +331,12 @@ PcieBoardGetSpeed (
     }
   }
 
-  for (RPIdx = 0; RPIdx < MAX_PCIE_A; RPIdx++) {
+  if (IsAc01Processor ()) {
+    Controller = MAX_PCIE_A;
+  } else {
+    Controller = RC->MaxPcieController;
+  }
+  for (RPIdx = 0; RPIdx < Controller; RPIdx++) {
     RC->Pcie[RPIdx].MaxGen = RC->Pcie[RPIdx].Active ? MaxGen[RPIdx] : 0;
   }
 
