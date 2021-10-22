@@ -51,7 +51,8 @@ extern UINT8 MemInfoDxeStrings[];
 enum DDR_ECC_MODE {
   ECC_DISABLE = 0,
   ECC_SECDED,
-  SYMBOL_ECC
+  ECC_SYMBOL,
+  ECC_AUTO
 };
 
 enum DDR_ERROR_CTRL_MODE_DE {

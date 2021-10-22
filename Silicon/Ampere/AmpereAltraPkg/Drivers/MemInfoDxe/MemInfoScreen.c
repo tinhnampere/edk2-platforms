@@ -342,7 +342,7 @@ DriverCallback (
       //
       // ECC mode default to be enabled
       //
-      Value->u32 = ECC_SECDED;
+      Value->u32 = ECC_AUTO;
       break;
 
     case MEM_INFO_FORM_PERFORMANCE_ERR_CTRL_DE_QUESTION_ID:
@@ -793,6 +793,17 @@ MemInfoMainPerformanceScreen (
   /* Display ECC mode selection */
   OptionsEccOpCodeHandle = HiiAllocateOpCodeHandle ();
   ASSERT (OptionsEccOpCodeHandle != NULL);
+
+  UnicodeSPrint (Str, sizeof (Str), L"Auto");
+  StringId = HiiSetString (PrivateData->HiiHandle, 0, Str, NULL);
+
+  HiiCreateOneOfOptionOpCode (
+    OptionsEccOpCodeHandle,
+    StringId,
+    0,
+    EFI_IFR_NUMERIC_SIZE_4,
+    3
+    );
 
   UnicodeSPrint (Str, sizeof (Str), L"Disabled");
   StringId = HiiSetString (PrivateData->HiiHandle, 0, Str, NULL);
