@@ -267,4 +267,16 @@ IsSlaveSocketActive (
   VOID
   );
 
+/**
+  Check if the CPU product ID is Ac01
+  @return   BOOLEAN     TRUE if the Product ID is Ac01
+                        FALSE otherwise.
+
+**/
+BOOLEAN
+EFIAPI
+IsAc01Processor (
+  VOID
+  );
+
 #endif /* AMPERE_CPU_LIB_H_ */
