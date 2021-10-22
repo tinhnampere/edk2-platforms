@@ -18,6 +18,70 @@
 UINT8 AMPERE_GUID[16] = {0x8d, 0x89, 0xed, 0xe8, 0x16, 0xdf, 0xcc, 0x43, 0x8e, 0xcc, 0x54, 0xf0, 0x60, 0xef, 0x15, 0x7f};
 CHAR8 DEFAULT_BERT_REBOOT_MSG[BERT_MSG_SIZE] = "Unknown reboot reason";
 
+BOOLEAN
+IsBertStatusValid (
+  BERT_ERROR_STATUS *BertStatus
+  )
+{
+  if (CompareMem (BertStatus->Guid, AMPERE_GUID, sizeof (AMPERE_GUID)) == 0) {
+    if (BertStatus->BertRev == CURRENT_BERT_VERSION) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/*
+  Create a default BertErrorStatus In SPINOR
+ */
+VOID
+CreateDefaultBertStatus (
+  VOID
+  )
+{
+  UINTN Length = sizeof (BERT_ERROR_STATUS);
+  BERT_ERROR_STATUS BertStatus = { 0 };
+
+  CopyMem (BertStatus.Guid, AMPERE_GUID, sizeof (AMPERE_GUID));
+  BertStatus.BertRev = CURRENT_BERT_VERSION;
+  BertStatus.DefaultBert = 1;
+  BertStatus.Overflow = 0;
+  BertStatus.PendingUefi = 0;
+  BertStatus.PendingBmc = 0;
+
+  FlashEraseCommand ((UINT8 *)BERT_SPI_ADDRESS_STATUS, Length);
+  FlashProgramCommand (
+    (UINT8 *)BERT_SPI_ADDRESS_STATUS,
+    (UINT8 *)&BertStatus,
+    &Length
+    );
+}
+
+/*
+  Update BertErrorStatus In SPINOR
+ */
+VOID
+UpdateBertStatus (
+  BERT_ERROR_STATUS *BertStatus
+  )
+{
+  UINTN Length = sizeof (BERT_ERROR_STATUS);
+
+  BertStatus->DefaultBert = 1;
+  BertStatus->PendingUefi = 0;
+  if (BertStatus->PendingBmc == 0) {
+    BertStatus->Overflow = 0;
+  }
+
+  FlashEraseCommand ((UINT8 *)BERT_SPI_ADDRESS_STATUS, Length);
+  FlashProgramCommand (
+    (UINT8 *)BERT_SPI_ADDRESS_STATUS,
+    (UINT8 *)BertStatus,
+    &Length
+    );
+}
+
 STATIC VOID
 AcpiApeiUninstallTable (
   UINT32 Signature
@@ -121,17 +185,16 @@ AdjustBERTRegionLen (
  * Retrieve Bert data from SPI NOR
  */
 VOID
+EFIAPI
 PullBertSpinorData (
-  APEI_CRASH_DUMP_DATA *BertErrorData
+  UINT8 *BertData,
+  UINT64 BertSpiAddress,
+  UINTN Length
   )
 {
-  UINTN Length;
-
-  Length = sizeof (*BertErrorData);
-
   FlashReadCommand (
-    (UINT8 *)BERT_FLASH_OFFSET,
-    (UINT8 *)BertErrorData,
+    (UINT8 *)BertSpiAddress,
+    BertData,
     &Length
     );
 }
@@ -201,95 +264,16 @@ WrapBertErrorData (
  */
 VOID
 CreateDefaultBertData (
-  APEI_BERT_ERROR_DATA *Data
+  APEI_CRASH_DUMP_DATA *Data
   )
 {
-  Data->Type = RAS_TYPE_BERT_PAYLOAD3;
+  Data->Vendor.Type = RAS_TYPE_BERT_PAYLOAD3;
+  Data->BertRev = CURRENT_BERT_VERSION;
   AsciiStrCpyS (
-    Data->Msg,
+    Data->Vendor.Msg,
     BERT_MSG_SIZE,
     DEFAULT_BERT_REBOOT_MSG
     );
-}
-
-/*
- * Ensures BertErrorData In SPINOR matches
- * the record produced by CreateDefaultBertData.
- * @param  Bed    Crash dump Data
- */
-VOID
-WriteSpinorDefaultBertTable (
-  APEI_CRASH_DUMP_DATA *Bed
-  )
-{
-  UINT8                BertRev;
-  UINTN                Length;
-  UINT64               Offset;
-  UINT32               MsgDiff;
-  APEI_BERT_ERROR_DATA DefaultData = {0};
-
-  CreateDefaultBertData (&DefaultData);
-  if ((Bed->Vendor.Type != DefaultData.Type)) {
-    Offset = BERT_FLASH_OFFSET +
-             OFFSET_OF (APEI_CRASH_DUMP_DATA, Vendor) +
-             OFFSET_OF (APEI_BERT_ERROR_DATA, Type);
-    Length = sizeof (DefaultData.Type);
-    FlashEraseCommand ((UINT8 *)Offset, Length);
-    FlashProgramCommand (
-      (UINT8 *)Offset,
-      (UINT8 *)&(DefaultData.Type),
-      &Length
-      );
-  }
-
-  if ((Bed->Vendor.SubType != DefaultData.SubType)) {
-    Offset = BERT_FLASH_OFFSET +
-             OFFSET_OF (APEI_CRASH_DUMP_DATA, Vendor) +
-             OFFSET_OF (APEI_BERT_ERROR_DATA, SubType);
-    Length = sizeof (DefaultData.SubType);
-    FlashEraseCommand ((UINT8 *)Offset, Length);
-    FlashProgramCommand (
-      (UINT8 *)Offset,
-      (UINT8 *)&(DefaultData.SubType),
-      &Length
-      );
-  }
-
-  if ((Bed->Vendor.Instance != DefaultData.Instance)) {
-    Offset = BERT_FLASH_OFFSET +
-             OFFSET_OF (APEI_CRASH_DUMP_DATA, Vendor) +
-             OFFSET_OF (APEI_BERT_ERROR_DATA, Instance);
-    Length = sizeof (DefaultData.Instance);
-    FlashEraseCommand ((UINT8 *)Offset, Length);
-    FlashProgramCommand (
-      (UINT8 *)Offset,
-      (UINT8 *)&(DefaultData.Instance),
-      &Length
-      );
-  }
-
-  MsgDiff = AsciiStrnCmp (Bed->Vendor.Msg, DefaultData.Msg, BERT_MSG_SIZE);
-  if (MsgDiff != 0) {
-    Offset = BERT_FLASH_OFFSET +
-             OFFSET_OF (APEI_CRASH_DUMP_DATA, Vendor) +
-             OFFSET_OF (APEI_BERT_ERROR_DATA, Msg);
-    Length = sizeof (DefaultData.Msg);
-    FlashEraseCommand ((UINT8 *)Offset, Length);
-    FlashProgramCommand (
-      (UINT8 *)Offset,
-      (UINT8 *)&(DefaultData.Msg),
-      &Length
-      );
-  }
-
-  if (Bed->BertRev != CURRENT_BERT_VERSION) {
-    Offset = BERT_FLASH_OFFSET + OFFSET_OF (APEI_CRASH_DUMP_DATA, BertRev);
-    Length = sizeof (Bed->BertRev);
-    BertRev = CURRENT_BERT_VERSION;
-    FlashEraseCommand ((UINT8 *)Offset, Length);
-    FlashProgramCommand ((UINT8 *)Offset, (UINT8 *)&BertRev, &Length);
-  }
-
 }
 
 /*
@@ -339,6 +323,7 @@ AcpiPopulateBert (
   )
 {
   APEI_CRASH_DUMP_BERT_ERROR *DDRError;
+  BERT_ERROR_STATUS          BertStatus;
 
   DDRError = (APEI_CRASH_DUMP_BERT_ERROR *)AllocateZeroPool (BERT_DDR_LENGTH);
 
@@ -347,14 +332,32 @@ AcpiPopulateBert (
   }
 
   if (IsBertEnabled ()) {
-    PullBertSpinorData (&(DDRError->Bed));
-    if ((DDRError->Bed.BertRev == CURRENT_BERT_VERSION)) {
-      WrapBertErrorData (DDRError);
-      WriteDDRBertTable (DDRError);
+    PullBertSpinorData ((UINT8 *)&BertStatus, BERT_SPI_ADDRESS_STATUS, sizeof (BERT_ERROR_STATUS));
+    if (IsBertStatusValid (&BertStatus)) {
+      if (BertStatus.PendingUefi == 1) {
+        PullBertSpinorData ((UINT8 *)&(DDRError->Bed), BERT_FLASH_OFFSET, sizeof (APEI_CRASH_DUMP_DATA));
+        if (DDRError->Bed.BertRev == BertStatus.BertRev) {
+          WrapBertErrorData (DDRError);
+          WriteDDRBertTable (DDRError);
+        } else {
+          // If we are here something is out of sync. Reinit BERT section
+          FlashEraseCommand ((UINT8 *)BERT_FLASH_OFFSET, 0x1000);
+          CreateDefaultBertStatus ();
+          goto AcpiPopulateBertEnd;
+        }
+      } else if (BertStatus.DefaultBert == 1) {
+        CreateDefaultBertData (&(DDRError->Bed));
+        WrapBertErrorData (DDRError);
+        WriteDDRBertTable (DDRError);
+      }
+      UpdateBertStatus (&BertStatus);
+    } else {
+      FlashEraseCommand ((UINT8 *)BERT_FLASH_OFFSET, 0x1000);
+      CreateDefaultBertStatus ();
     }
-    WriteSpinorDefaultBertTable (&(DDRError->Bed));
   }
 
+AcpiPopulateBertEnd:
   FreePool (DDRError);
   return EFI_SUCCESS;
 }
