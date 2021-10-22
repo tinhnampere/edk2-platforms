@@ -191,6 +191,7 @@ PrintSystemInfo (
     SerialPrint ("    Socket[%d]: RC disable mask  : %X\n", Idx, PlatformHob->RcDisableMask[Idx]);
     SerialPrint ("    Socket[%d]: AVS enabled      : %d\n", Idx, PlatformHob->AvsEnable[Idx]);
     SerialPrint ("    Socket[%d]: AVS voltage      : %d\n", Idx, PlatformHob->AvsVoltageMV[Idx]);
+    SerialPrint ("    Socket[%d]: VDM Capability   : %d\n", Idx, PlatformHob->VDMCapability[Idx]);
   }
 
   SerialPrint ("SOC info\n");

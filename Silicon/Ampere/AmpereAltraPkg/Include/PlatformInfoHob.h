@@ -179,6 +179,7 @@ typedef struct {
 
   UINT32 Ecid[2][4];
   UINT8  SkuMaxLink2PSpeed;
+  UINT8  VDMCapability[2];
 } PLATFORM_INFO_HOB;
 
 #endif /* PLATFORM_INFO_HOB_H_ */
