@@ -40,7 +40,9 @@
 #define SYS_VERSION_TEMPLATE  "PR010\0"
 #define SERIAL_TEMPLATE       "123456789ABCDEFF123456789ABCDEFF\0"
 #define SKU_TEMPLATE          "FEDCBA9876543211FEDCBA9876543211\0"
-#define FAMILY_TEMPLATE       "Altra\0"
+#define ALTRA_FAMILY          "Altra\0"
+#define ALTRA_MAX_FAMILY      "Altra Max\0"
+#define FAMILY_TEMPLATE       ALTRA_MAX_FAMILY
 
 #define TYPE1_ADDITIONAL_STRINGS                  \
   MANUFACTURER_TEMPLATE /* Manufacturer */  \
@@ -1192,6 +1194,33 @@ GetPinStatus (
 }
 
 VOID
+UpdateSegmentGroupAltraMax (
+  VOID
+  )
+{
+  //
+  // PCI Segment Groups defined in the system via the _SEG object in the ACPI name space.
+  // Refer to AC02 ACPI tables to check the fields below.
+  //
+  // Socket 0 RCA2
+  mArmDefaultType9Sk0OcpNic.Base.SegmentGroupNum = 1;
+  // Socket 0 RCA3
+  mArmDefaultType9Sk0RiserX32Slot2.Base.SegmentGroupNum = 0;
+  // Socket 0 RCA7
+  mArmDefaultType9Sk0RiserX32Slot1.Base.SegmentGroupNum = 5;
+  mArmDefaultType9Sk0RiserX32Slot3.Base.SegmentGroupNum = 5;
+  // Socket 0 RCA6
+  mArmDefaultType9Sk0NvmeM2Slot1.Base.SegmentGroupNum = 4;
+  mArmDefaultType9Sk0NvmeM2Slot2.Base.SegmentGroupNum = 4;
+  // Socket 1 RCA4
+  mArmDefaultType9Sk1RiserX24Slot1.Base.SegmentGroupNum = 8;
+  mArmDefaultType9Sk1RiserX8Slot1.Base.SegmentGroupNum  = 8;
+  // Socket 1 RCA3
+  mArmDefaultType9Sk1RiserX24Slot2.Base.SegmentGroupNum = 7;
+  mArmDefaultType9Sk1RiserX24Slot3.Base.SegmentGroupNum = 7;
+}
+
+VOID
 UpdateSmbiosType9 (
   VOID
   )
@@ -1249,6 +1278,14 @@ UpdateSmbiosType9 (
     Controller.I2cAddress = S1_RISERX8_I2C_ADDRESS;
     mArmDefaultType9Sk1RiserX8Slot1.Base.CurrentUsage =
       GetPinStatus (&Controller, S1_RISERX8_SLOT1_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+  }
+  //
+  // According to Mt.Jade schematic for Altra Max, PCIe block diagram,
+  // system slots connect to different Root Complex when we compare with
+  // Mt.Jade schematic for Altra, so the segment group is changed.
+  //
+  if ( !IsAc01Processor ()) {
+    UpdateSegmentGroupAltraMax ();
   }
 }
 
@@ -1380,6 +1417,7 @@ UpdateSmbiosType123 (
   EFI_SMBIOS_TABLE_HEADER *Record;
   UINTN                   StringIndex;
   UINT8                   *GuidPtr;
+  CHAR8                   *FamilyName;
 
   ASSERT (Smbios != NULL);
 
@@ -1392,12 +1430,14 @@ UpdateSmbiosType123 (
     if (Record->Type == SMBIOS_TYPE_SYSTEM_INFORMATION) {
       GuidPtr = (UINT8 *)&((SMBIOS_TABLE_TYPE1 *)Record)->Uuid;
       ConvertIpmiGuidToSmbiosGuid (GuidPtr, (UINT8 *)PcdGetPtr (PcdFruSystemUniqueID));
+      FamilyName = IsAc01Processor () ? ALTRA_FAMILY : ALTRA_MAX_FAMILY;
       StringIndex = ((SMBIOS_TABLE_TYPE1 *)Record)->Manufacturer;
       SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductManufacturerName));
       SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductName));
       SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductVersion));
       SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductSerialNumber));
       SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, (CHAR8 *)PcdGetPtr (PcdFruProductExtra));
+      SmbiosUpdateString (Smbios, SmbiosHandle, StringIndex++, FamilyName);
     }
 
     //

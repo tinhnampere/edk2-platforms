@@ -29,11 +29,13 @@
 
 #define CACHE_SIZE(x, y)            (UINT16) (0x8000 | ((x >> 16) * GetNumberOfActiveCoresPerSocket (y)))
 #define CACHE_SIZE_2(x, y)          (0x80000000 | ((x >> 16) * GetNumberOfActiveCoresPerSocket (y)))
+#define PROCESSOR_VERSION_ALTRA     "Ampere(R) Altra(R) Processor\0"
+#define PROCESSOR_VERSION_ALTRA_MAX "Ampere(R) Altra(R) Max Processor\0"
 
 #define TYPE4_ADDITIONAL_STRINGS                                       \
   "SOCKET 0\0"                            /* socket type */            \
   "Ampere(R)\0"                           /* manufacturer */           \
-  "Ampere(R) Altra(R) Processor\0"        /* processor description */  \
+  PROCESSOR_VERSION_ALTRA_MAX             /* processor description */  \
   "NotSet\0"                              /* part number */            \
   "Not Specified                     \0"  /* processor serial number */
 
@@ -409,6 +411,7 @@ UpdateSmbiosType4 (
   CHAR8              Str[40];
   CHAR8              *StringPack;
   SMBIOS_TABLE_TYPE4 *Table;
+  CHAR8              *VersionString;
 
   ASSERT (PlatformHob != NULL);
 
@@ -423,6 +426,14 @@ UpdateSmbiosType4 (
 
     AsciiSPrint (Str, sizeof (Str), "CPU %d", Index);
     UpdateStringPack (StringPack, Str, ADDITIONAL_STR_INDEX_1);
+
+    if (IsAc01Processor ()) {
+      VersionString = PROCESSOR_VERSION_ALTRA;
+    } else {
+      VersionString = PROCESSOR_VERSION_ALTRA_MAX;
+    }
+
+    UpdateStringPack (StringPack, VersionString, ADDITIONAL_STR_INDEX_3);
 
     Table->CoreCount = (UINT8)GetMaximumNumberOfCores ();
     Table->ThreadCount = (UINT8)GetMaximumNumberOfCores ();
