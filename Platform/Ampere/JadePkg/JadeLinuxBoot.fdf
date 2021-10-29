@@ -162,6 +162,7 @@ APRIORI DXE {
   INF Platform/Ampere/JadePkg/Drivers/AcpiPlatformDxe/AcpiPlatformDxe.inf
   INF RuleOverride=ACPITABLE Silicon/Ampere/AmpereAltraPkg/AcpiCommonTables/AcpiCommonTables.inf
   INF RuleOverride=ACPITABLE Platform/Ampere/JadePkg/AcpiTables/AcpiTables.inf
+  INF RuleOverride=ACPITABLE Platform/Ampere/JadePkg/Ac02AcpiTables/Ac02AcpiTables.inf
 
   #
   # SMBIOS
