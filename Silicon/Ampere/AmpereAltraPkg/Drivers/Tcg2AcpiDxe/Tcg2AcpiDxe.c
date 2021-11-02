@@ -7,10 +7,43 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-#include "Tcg2AcpiDxe.h"
+#include <PiDxe.h>
 
-PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS mPlatformTpm2InterfaceParams;
-PLATFORM_TPM2_CONFIG_DATA              mPlatformTpm2ConfigData;
+#include <AcpiHeader.h>
+#include <Guid/TpmInstance.h>
+#include <IndustryStandard/Acpi.h>
+#include <IndustryStandard/Tpm2Acpi.h>
+#include <IndustryStandard/TpmPtp.h>
+#include <Library/AcpiHelperLib.h>
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#include <Library/HobLib.h>
+#include <Library/IoLib.h>
+#include <Library/PcdLib.h>
+#include <Library/PrintLib.h>
+#include <Library/Tcg2PhysicalPresenceLib.h>
+#include <Library/Tpm2CommandLib.h>
+#include <Library/Tpm2DeviceLib.h>
+#include <Library/Tpm2DeviceLib.h>
+#include <Library/TpmMeasurementLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiDriverEntryPoint.h>
+#include <PlatformInfoHob.h>
+#include <Protocol/AcpiTable.h>
+#include <Protocol/Tcg2Protocol.h>
+
+//
+// PNP _HID for TPM2 device
+//
+#define TPM_HID_TAG                        "NNNN0000"
+#define TPM_HID_PNP_SIZE                   8
+#define TPM_HID_ACPI_SIZE                  9
+
+#define TPM_ACPI_OBJECT_PATH_LENGTH_MAX    256
+
+STATIC PLATFORM_TPM2_CRB_INTERFACE_PARAMETERS mPlatformTpm2InterfaceParams;
+STATIC PLATFORM_TPM2_CONFIG_DATA              mPlatformTpm2ConfigData;
 
 #pragma pack(1)
 
@@ -29,20 +62,16 @@ typedef struct {
 
 #pragma pack()
 
-TPM2_ACPI_TABLE_ARM_SMC mTpm2AcpiTemplate = {
-  {
+TPM2_ACPI_TABLE_ARM_SMC mTpm2AcpiTtable = {
+  __ACPI_HEADER (
     EFI_ACPI_6_3_TRUSTED_COMPUTING_PLATFORM_2_TABLE_SIGNATURE,
-    sizeof (mTpm2AcpiTemplate),
-    EFI_TPM2_ACPI_TABLE_REVISION,
-    //
-    // Compiler initializes the remaining bytes to 0
-    // These fields should be filled in in production
-    //
-  },
-  1, // BIT0~15:  PlatformClass
-     // BIT16~31: Reserved
-  0,                                    // Control Area
-  EFI_TPM2_ACPI_TABLE_START_METHOD_TIS, // StartMethod
+    TPM2_ACPI_TABLE_ARM_SMC,
+    EFI_TPM2_ACPI_TABLE_REVISION
+    ),
+  1,          // BIT0~15:  PlatformClass
+              // BIT16~31: Reserved
+  0,          // Control Area
+  EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE_WITH_SMC, // StartMethod
 };
 
 EFI_STATUS
@@ -388,46 +417,39 @@ PublishTpm2 (
     EV_POST_CODE,
     EV_POSTCODE_INFO_ACPI_DATA,
     ACPI_DATA_LEN,
-    &mTpm2AcpiTemplate,
-    mTpm2AcpiTemplate.Header.Length
+    &mTpm2AcpiTtable,
+    mTpm2AcpiTtable.Header.Length
     );
 
-  mTpm2AcpiTemplate.Header.Revision = PcdGet8 (PcdTpm2AcpiTableRev);
-  DEBUG ((DEBUG_INFO, "Tpm2 ACPI table revision is %d\n", mTpm2AcpiTemplate.Header.Revision));
+  mTpm2AcpiTtable.Header.Revision = PcdGet8 (PcdTpm2AcpiTableRev);
+  DEBUG ((DEBUG_INFO, "Tpm2 ACPI table revision is %d\n", mTpm2AcpiTtable.Header.Revision));
 
   //
   // PlatformClass is only valid for version 4 and above
   //    BIT0~15:  PlatformClass
   //    BIT16~31: Reserved
   //
-  if (mTpm2AcpiTemplate.Header.Revision >= EFI_TPM2_ACPI_TABLE_REVISION_4) {
-    mTpm2AcpiTemplate.Flags = (mTpm2AcpiTemplate.Flags & 0xFFFF0000) | PcdGet8 (PcdTpmPlatformClass);
-    DEBUG ((DEBUG_INFO, "Tpm2 ACPI table PlatformClass is %d\n", (mTpm2AcpiTemplate.Flags & 0x0000FFFF)));
+  if (mTpm2AcpiTtable.Header.Revision >= EFI_TPM2_ACPI_TABLE_REVISION_4) {
+    mTpm2AcpiTtable.Flags = (mTpm2AcpiTtable.Flags & 0xFFFF0000) | PcdGet8 (PcdTpmPlatformClass);
+    DEBUG ((DEBUG_INFO, "Tpm2 ACPI table PlatformClass is %d\n", (mTpm2AcpiTtable.Flags & 0x0000FFFF)));
   }
 
-  mTpm2AcpiTemplate.Laml = PcdGet32 (PcdTpm2AcpiTableLaml);
-  mTpm2AcpiTemplate.Lasa = PcdGet64 (PcdTpm2AcpiTableLasa);
-  if ((mTpm2AcpiTemplate.Header.Revision < EFI_TPM2_ACPI_TABLE_REVISION_4) ||
-      (mTpm2AcpiTemplate.Laml == 0) || (mTpm2AcpiTemplate.Lasa == 0))
+  mTpm2AcpiTtable.Laml = PcdGet32 (PcdTpm2AcpiTableLaml);
+  mTpm2AcpiTtable.Lasa = PcdGet64 (PcdTpm2AcpiTableLasa);
+  if ((mTpm2AcpiTtable.Header.Revision < EFI_TPM2_ACPI_TABLE_REVISION_4) ||
+      (mTpm2AcpiTtable.Laml == 0) || (mTpm2AcpiTtable.Lasa == 0))
   {
     //
     // If version is smaller than 4 or Laml/Lasa is not valid, rollback to original Length.
     //
-    mTpm2AcpiTemplate.Header.Length = sizeof (EFI_TPM2_ACPI_TABLE);
+    mTpm2AcpiTtable.Header.Length = sizeof (EFI_TPM2_ACPI_TABLE);
   }
-  mTpm2AcpiTemplate.Header.Length = sizeof (TPM2_ACPI_TABLE_ARM_SMC);
+  mTpm2AcpiTtable.Header.Length = sizeof (TPM2_ACPI_TABLE_ARM_SMC);
 
-  mTpm2AcpiTemplate.StartMethod = EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE_WITH_SMC;
-  mTpm2AcpiTemplate.AddressOfControlArea = mPlatformTpm2InterfaceParams.AddressOfControlArea;
-  mTpm2AcpiTemplate.PlatformSpecificParameters.Interrupt = mPlatformTpm2InterfaceParams.InterruptMode;
-  mTpm2AcpiTemplate.PlatformSpecificParameters.Flags = 0;
-  mTpm2AcpiTemplate.PlatformSpecificParameters.SmcFunctionId = mPlatformTpm2InterfaceParams.SmcFunctionId;
-
-  CopyMem (mTpm2AcpiTemplate.Header.OemId, PcdGetPtr (PcdAcpiDefaultOemId), sizeof (mTpm2AcpiTemplate.Header.OemId));
-  mTpm2AcpiTemplate.Header.OemTableId       = PcdGet64 (PcdAcpiDefaultOemTableId);
-  mTpm2AcpiTemplate.Header.OemRevision      = PcdGet32 (PcdAcpiDefaultOemRevision);
-  mTpm2AcpiTemplate.Header.CreatorId        = PcdGet32 (PcdAcpiDefaultCreatorId);
-  mTpm2AcpiTemplate.Header.CreatorRevision  = PcdGet32 (PcdAcpiDefaultCreatorRevision);
+  mTpm2AcpiTtable.AddressOfControlArea = mPlatformTpm2InterfaceParams.AddressOfControlArea;
+  mTpm2AcpiTtable.PlatformSpecificParameters.Interrupt = mPlatformTpm2InterfaceParams.InterruptMode;
+  mTpm2AcpiTtable.PlatformSpecificParameters.Flags = 0;
+  mTpm2AcpiTtable.PlatformSpecificParameters.SmcFunctionId = mPlatformTpm2InterfaceParams.SmcFunctionId;
 
   //
   // Construct ACPI table
@@ -437,8 +459,8 @@ PublishTpm2 (
 
   Status = AcpiTable->InstallAcpiTable (
                         AcpiTable,
-                        &mTpm2AcpiTemplate,
-                        mTpm2AcpiTemplate.Header.Length,
+                        &mTpm2AcpiTtable,
+                        mTpm2AcpiTtable.Header.Length,
                         &TableKey
                         );
   ASSERT_EFI_ERROR (Status);
