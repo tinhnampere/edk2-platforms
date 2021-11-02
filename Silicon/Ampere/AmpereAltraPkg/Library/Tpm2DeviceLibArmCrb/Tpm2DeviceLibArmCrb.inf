@@ -23,7 +23,6 @@
   CONSTRUCTOR                    = Tpm2DeviceLibConstructor
 
 [Sources]
-  Tpm2ArmCrb.c
   Tpm2DeviceLibArmCrb.c
 
 [Packages]
