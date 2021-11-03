@@ -25,6 +25,7 @@
   AcpiPlatform.h
   AcpiPlatformDxe.c
   AcpiSlit.c
+  AcpiSpmi.c
   AcpiSrat.c
 
 [Packages]
@@ -33,6 +34,7 @@
   EmbeddedPkg/EmbeddedPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
+  OutOfBandManagement/IpmiFeaturePkg/IpmiFeaturePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
@@ -45,6 +47,7 @@
   BaseLib
   DebugLib
   FlashLib
+  IpmiCommandLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
   UefiLib
@@ -60,6 +63,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
   gAmpereTokenSpaceGuid.PcdPmproDbBaseReg
   gAmpereTokenSpaceGuid.PcdSmproDbBaseReg
+  gAmpereTokenSpaceGuid.PcdBmcSlaveAddr
 
 [Guids]
   gArmMpCoreInfoGuid
