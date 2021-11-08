@@ -82,7 +82,7 @@ CpuNvParamGet (
              &Value
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a %d Fail to write NVParam \n", __FUNCTION__, __LINE__));
+    DEBUG ((DEBUG_ERROR, "%a %d Fail to get NVParam, %r\n", __FUNCTION__, __LINE__, Status));
     Configuration->CpuSubNumaMode = SUBNUMA_MODE_MONOLITHIC;
   } else {
     Configuration->CpuSubNumaMode = Value;
@@ -117,7 +117,7 @@ CpuNvParamSet (
                Configuration->CpuSubNumaMode
                );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a %d Fail to access NVParam \n", __FUNCTION__, __LINE__));
+      DEBUG ((DEBUG_ERROR, "%a %d Fail to set NVParam, %r\n", __FUNCTION__, __LINE__, Status));
       ASSERT_EFI_ERROR (Status);
       return Status;
     }
