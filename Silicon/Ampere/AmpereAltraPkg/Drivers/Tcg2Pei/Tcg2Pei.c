@@ -15,6 +15,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Guid/TcgEventHob.h>
 #include <Guid/TpmInstance.h>
 #include <IndustryStandard/UefiTcgPlatform.h>
+#include <Library/BaseCryptLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HashLib.h>
@@ -281,7 +282,7 @@ SyncPcrAllocationsAndPcrMask (
   UINT32                          Tpm2PcrMask;
   UINT32                          NewTpm2PcrMask;
 
-  DEBUG ((DEBUG_ERROR, "SyncPcrAllocationsAndPcrMask!\n"));
+  DEBUG ((DEBUG_INFO, "SyncPcrAllocationsAndPcrMask!\n"));
 
   //
   // Determine the current TPM support and the Platform PCR mask.
@@ -928,6 +929,183 @@ FirmwareVolumeInfoPpiNotifyCallback (
   return MeasureFvImage ((EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo, Fv->FvInfoSize);
 }
 
+EFI_STATUS
+ComplementPreUefiDigest (
+  IN        PLATFORM_ALGORITHM_ID   Algorithm,
+  IN  CONST UINT8                   *Data,
+  IN        UINTN                   DataLen,
+  OUT       TPMU_HA                 *Digest
+  )
+{
+  VOID        *Sha1Ctx;
+  VOID        *Sha256Ctx;
+  UINTN       CtxSize;
+
+  switch (Algorithm) {
+  case PLATFORM_ALGORITHM_SHA1:
+    CtxSize = Sha1GetContextSize ();
+    Sha1Ctx = AllocatePool (CtxSize);
+    ASSERT (Sha1Ctx != NULL);
+
+    Sha1Init (Sha1Ctx);
+    Sha1Update (Sha1Ctx, Data, DataLen);
+    Sha1Final (Sha1Ctx, (UINT8 *)Digest);
+
+    FreePool (Sha1Ctx);
+    break;
+
+  case PLATFORM_ALGORITHM_SHA256:
+    CtxSize = Sha256GetContextSize ();
+    Sha256Ctx = AllocatePool (CtxSize);
+    ASSERT (Sha256Ctx != NULL);
+
+    Sha256Init (Sha256Ctx);
+    Sha256Update (Sha256Ctx, Data, DataLen);
+    Sha256Final (Sha256Ctx, (UINT8 *)Digest);
+
+    FreePool (Sha256Ctx);
+    break;
+
+  default:
+    break;
+  }
+
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
+MeasurePreUefiFirmwareComponents (
+  VOID
+  )
+{
+  EFI_STATUS              Status;
+  TCG_PCR_EVENT_HDR       TcgEventHdr;
+  UINTN                   PreUefiEventLength;
+  UINT8                   *PreUefiEventData;
+  PLATFORM_PRE_UEFI_EVENT *Event;
+  UINTN                   EventCount;
+  TPML_DIGEST_VALUES      DigestList;
+  UINT32                  DigestCount;
+
+  if (mPlatformTpm2Config.EventLogAddress == 0
+      || mPlatformTpm2Config.EventLogLength == 0)
+  {
+    DEBUG ((DEBUG_ERROR, "%a: Pre-UEFI Event Log Data invalid.\n", __FUNCTION__));
+    return EFI_DEVICE_ERROR;
+  }
+
+  // Locate pre-UEFI Event Log
+  PreUefiEventData = (UINT8 *)mPlatformTpm2Config.EventLogAddress;
+  PreUefiEventLength = mPlatformTpm2Config.EventLogLength;
+
+  //
+  // In ATF, the last event, "Post SCP TPM Extend" (PSTE), is already extended to the TPM PCR[0/1]
+  // for the final vPCR Hash. Therefore, to avoid to mismatch between the expected PCR values that calculated
+  // by using the event log and the final TPM PCR values, the pre-UEFI event should be logged in reverse order.
+  //
+  Event = (PLATFORM_PRE_UEFI_EVENT *)(PreUefiEventData + PreUefiEventLength - sizeof (PLATFORM_PRE_UEFI_EVENT));
+  EventCount = PreUefiEventLength / sizeof (PLATFORM_PRE_UEFI_EVENT);
+
+  while (EventCount-- > 0) {
+    //
+    // Pre-UEFI firmware components are logged in the event log
+    // using the event type EV_POST_CODE.
+    //
+    if (Event->EventType != EV_POST_CODE) {
+      Event--;
+      continue;
+    }
+
+    ZeroMem (&TcgEventHdr, sizeof (TCG_PCR_EVENT_HDR));
+    TcgEventHdr.PCRIndex = Event->PcrIndex;
+    TcgEventHdr.EventType = Event->EventType;
+    TcgEventHdr.EventSize = Event->EventSize;
+
+    DigestCount = 0;
+    ZeroMem (&DigestList, sizeof (TPML_DIGEST_VALUES));
+
+    switch (Event->AlgorithmId) {
+    case PLATFORM_ALGORITHM_SHA1:
+      DigestList.digests[DigestCount].hashAlg = TPM_ALG_SHA1;
+      CopyMem (
+        (VOID *)&(DigestList.digests[DigestCount].digest),
+        (VOID *)&(Event->Hash.Sha1),
+        SHA1_DIGEST_SIZE
+        );
+      DigestCount++;
+
+      DigestList.digests[DigestCount].hashAlg = TPM_ALG_SHA256;
+      Status = ComplementPreUefiDigest (
+                 PLATFORM_ALGORITHM_SHA256,
+                 (UINT8 *)&(Event->Hash.Sha1),
+                 SHA1_DIGEST_SIZE,
+                 (TPMU_HA *)&(DigestList.digests[DigestCount].digest)
+                 );
+      ASSERT_EFI_ERROR (Status);
+      DigestCount++;
+      break;
+
+    case PLATFORM_ALGORITHM_SHA256:
+      DigestList.digests[DigestCount].hashAlg = TPM_ALG_SHA1;
+      Status = ComplementPreUefiDigest (
+                 PLATFORM_ALGORITHM_SHA1,
+                 (UINT8 *)&(Event->Hash.Sha256),
+                 SHA256_DIGEST_SIZE,
+                 (TPMU_HA *)&(DigestList.digests[DigestCount].digest)
+                 );
+      ASSERT_EFI_ERROR (Status);
+      DigestCount++;
+
+      DigestList.digests[DigestCount].hashAlg = TPM_ALG_SHA256;
+      CopyMem (
+        (VOID *)&(DigestList.digests[DigestCount].digest),
+        (VOID *)&(Event->Hash.Sha256),
+        SHA256_DIGEST_SIZE
+        );
+      DigestCount++;
+      break;
+
+    default:
+      //
+      // Should not reach here.
+      //
+      DEBUG ((DEBUG_ERROR, "%a: The algorithm %d is not supported! \n", __FUNCTION__, Event->AlgorithmId));
+      ASSERT (FALSE);
+      break;
+    }
+
+    DigestList.count = DigestCount;
+
+    if (DigestList.count != 0) {
+      if (AsciiStrCmp ((CHAR8 *)Event->Event, "PSTE") == 0) {
+        //
+        // The "Post SCP TPM Extend" (PSTE) event is an event log for Virtual PCR (VPCR)
+        // that has been done extending to the TPM hardware in the ATF.
+        // To avoid to extend twice, skip the extend in UEFI for the PSTE events.
+        //
+        Status = LogHashEvent (
+                   &DigestList,
+                   &TcgEventHdr,
+                   (UINT8 *)&Event->Event
+                   );
+      } else {
+        Status = HashLogExtendEvent (
+                   &mEdkiiTcgPpi,
+                   EDKII_TCG_PRE_HASH,
+                   (UINT8 *)&DigestList,
+                   (UINTN)sizeof (DigestList),
+                   &TcgEventHdr,
+                   (UINT8 *)&Event->Event
+                   );
+      }
+    }
+
+    Event--;
+  }
+
+  return EFI_SUCCESS;
+}
+
 /**
   Do measurement after memory is ready.
 
@@ -951,6 +1129,11 @@ PeimEntryMP (
   Status = PeiServicesInstallPpi (&mTcgPpiList);
   ASSERT_EFI_ERROR (Status);
 
+  Status = MeasurePreUefiFirmwareComponents ();
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
   if (PcdGet8 (PcdTpm2ScrtmPolicy) == 1) {
     Status = MeasureCRTMVersion ();
   }
@@ -969,90 +1152,6 @@ PeimEntryMP (
   ASSERT_EFI_ERROR (Status);
 
   return Status;
-}
-
-EFI_STATUS
-RecordPreUefiEventLog (
-  VOID
-  )
-{
-  TCG_PCR_EVENT2_HDR      *Tpm20Event;
-  UINT32                  Index;
-  UINTN                   PreUefiEventLength;
-  PLATFORM_PRE_UEFI_EVENT *PreUefiEventData;
-  UINT8                   *EventLogBuffer;
-  VOID                    *HobData;
-
-  if (mPlatformTpm2Config.EventLogAddress == 0
-      || mPlatformTpm2Config.EventLogLength == 0)
-  {
-    DEBUG ((DEBUG_ERROR, "%a: Pre-UEFI Event Log Data invalid.\n", __FUNCTION__));
-    return EFI_DEVICE_ERROR;
-  }
-
-  // Locate pre-UEFI Event Log
-  PreUefiEventData = (PLATFORM_PRE_UEFI_EVENT *)mPlatformTpm2Config.EventLogAddress;
-  PreUefiEventLength = mPlatformTpm2Config.EventLogLength;
-
-  Tpm20Event = AllocateZeroPool (sizeof (TCG_PCR_EVENT2_HDR));
-
-  for (Index = 0; Index < PreUefiEventLength; Index += sizeof (PLATFORM_PRE_UEFI_EVENT)) {
-    Tpm20Event->PCRIndex = PreUefiEventData->PcrIndex;
-    Tpm20Event->EventType = PreUefiEventData->EventType;
-    Tpm20Event->EventSize = PreUefiEventData->EventSize;
-    Tpm20Event->Digests.count = 1;
-
-    switch (PreUefiEventData->AlgorithmId) {
-    case PLATFORM_ALGORITHM_SHA1:
-      Tpm20Event->Digests.digests[0].hashAlg = TPM_ALG_SHA1;
-      CopyMem (
-        (VOID *)&(Tpm20Event->Digests.digests[0].digest),
-        (VOID *)&(PreUefiEventData->Hash.Sha1),
-        SHA1_DIGEST_SIZE
-        );
-      break;
-
-    case PLATFORM_ALGORITHM_SHA256:
-      Tpm20Event->Digests.digests[0].hashAlg = TPM_ALG_SHA256;
-      CopyMem (
-        (VOID *)&(Tpm20Event->Digests.digests[0].digest),
-        (VOID *)&(PreUefiEventData->Hash.Sha256),
-        SHA256_DIGEST_SIZE
-        );
-      break;
-
-    default:
-      //
-      // TODO: If an pre-UEFI event algorithm is not supported
-      // or zero value, then it should be handled. Whether it will
-      // be re-recorded in UEFI or not. This behavior is to be defined.
-      //
-      DEBUG ((DEBUG_ERROR, "%a: The algorithm is not supported! \n",__FUNCTION__));
-      break;
-    }
-
-    HobData = BuildGuidHob (
-                &gTcgEvent2EntryHobGuid,
-                sizeof (TCG_PCR_EVENT2_HDR) + Tpm20Event->EventSize
-                );
-    ASSERT (HobData != NULL);
-    if (HobData == NULL) {
-      DEBUG ((DEBUG_ERROR, "%a:%d BuildGuidHob() failed!\n", __FUNCTION__, __LINE__));
-      return EFI_OUT_OF_RESOURCES;
-    }
-
-    EventLogBuffer = (UINT8 *)HobData;
-    CopyMem (EventLogBuffer, Tpm20Event, sizeof (TCG_PCR_EVENT2_HDR));
-    Tpm20Event = Tpm20Event + sizeof (TCG_PCR_EVENT2_HDR);
-    CopyMem (EventLogBuffer, (UINT8 *)&(PreUefiEventData->Event), sizeof (Tpm20Event->EventSize));
-
-    ZeroMem ((VOID *)Tpm20Event, sizeof (TCG_PCR_EVENT2_HDR));
-    PreUefiEventData++;
-  }
-
-  FreePool (Tpm20Event);
-
-  return EFI_SUCCESS;
 }
 
 /**
@@ -1118,14 +1217,6 @@ PeimEntryMA (
     // Use PcdTpm2HashMask by default
     DEBUG ((DEBUG_ERROR, "%a:%d SupportedAlgorithmsBitMask invalid.\n", __FUNCTION__, __LINE__));
   }
-
-  //
-  // The hardware TPM is already initialized in Arm Trusted Firmware (ATF).
-  // And it is used during pre-UEFI firmware booting before jumping to UEFI.
-  // The pre-UEFI event log should be re-recorded first.
-  //
-  Status = RecordPreUefiEventLog ();
-  ASSERT_EFI_ERROR (Status);
 
   //
   // Only support dTPM 2.0 device

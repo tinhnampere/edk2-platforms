@@ -28,12 +28,14 @@
   Tcg2Pei.c
 
 [Packages]
+  CryptoPkg/CryptoPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
   SecurityPkg/SecurityPkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
 
 [LibraryClasses]
+  BaseCryptLib
   BaseMemoryLib
   DebugLib
   HashLib
