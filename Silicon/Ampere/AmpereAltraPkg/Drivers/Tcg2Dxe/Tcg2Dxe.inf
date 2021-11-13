@@ -77,6 +77,7 @@
   gEventExitBootServicesFailedGuid                   ## SOMETIMES_CONSUMES  ## Event
   gEfiTpmDeviceInstanceNoneGuid                      ## SOMETIMES_CONSUMES  ## GUID       # TPM device identifier
   gEfiTpmDeviceInstanceTpm12Guid                     ## SOMETIMES_CONSUMES  ## GUID       # TPM device identifier
+  gEfiTpmDeviceInstanceTpm20DtpmGuid
 
   gTcgEvent2EntryHobGuid                             ## SOMETIMES_CONSUMES  ## HOB
   gTpm2StartupLocalityHobGuid                        ## SOMETIMES_CONSUMES  ## HOB
