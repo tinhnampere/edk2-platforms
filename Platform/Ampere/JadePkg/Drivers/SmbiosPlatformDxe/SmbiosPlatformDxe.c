@@ -83,14 +83,23 @@
 //
 // IO Expander Assignment
 //
-#define S0_RISERX32_SLOT1_PRESENT_PIN     12 /* P12: S0_PCIERCB_3A_PRSNT_1C_L */
-#define S0_RISERX32_SLOT2_PRESENT_PIN     4  /* P04: S0_PCIERCA3_PRSNT_1C_L   */
-#define S0_RISERX32_SLOT3_PRESENT_PIN     10 /* P10: S0_PCIERCB_2B_PRSNT_1C_L */
-#define S1_RISERX24_SLOT1_PRESENT_PIN     1  /* P01: S1_PCIERCB1B_PRSNT_1C_L  */
+#define S0_RISERX32_SLOT1_PRESENT_PIN1    12 /* P12: S0_PCIERCB_3A_PRSNT_1C_L */
+#define S0_RISERX32_SLOT1_PRESENT_PIN2    13 /* P13: S0_PCIERCB_3A_PRSNT_2C_L */
+#define S0_RISERX32_SLOT2_PRESENT_PIN1    4  /* P04: S0_PCIERCA3_PRSNT_1C_L   */
+#define S0_RISERX32_SLOT2_PRESENT_PIN2    5  /* P05: S0_PCIERCA3_PRSNT_2C_L   */
+#define S0_RISERX32_SLOT2_PRESENT_PIN3    6  /* P06: S0_PCIERCA3_PRSNT_4C_L   */
+#define S0_RISERX32_SLOT3_PRESENT_PIN1    10 /* P10: S0_PCIERCB_2B_PRSNT_1C_L */
+#define S0_RISERX32_SLOT3_PRESENT_PIN2    11 /* P11: S0_PCIERCB_2B_PRSNT_2C_L */
+#define S1_RISERX24_SLOT1_PRESENT_PIN1    0  /* P00: S1_PCIERCB1B_PRSNT_L     */
+#define S1_RISERX24_SLOT1_PRESENT_PIN2    1  /* P01: S1_PCIERCB1B_PRSNT_1C_L  */
 #define S1_RISERX24_SLOT2_PRESENT_PIN     3  /* P03: S1_PCIERCA3_2_PRSNT_4C_L */
 #define S1_RISERX24_SLOT3_PRESENT_PIN     2  /* P02: S1_PCIERCA3_1_PRSNT_2C_L */
-#define S1_RISERX8_SLOT1_PRESENT_PIN      5  /* P05: S1_PCIERCB0A_PRSNT_L     */
-#define S0_OCP_SLOT_PRESENT_PIN           0  /* P00: OCP_PRSNTB0_L            */
+#define S1_RISERX8_SLOT1_PRESENT_PIN1     4  /* P04: S1_PCIERCB0A_PRSNT_2C_L  */
+#define S1_RISERX8_SLOT1_PRESENT_PIN2     5  /* P05: S1_PCIERCB0A_PRSNT_L     */
+#define S0_OCP_SLOT_PRESENT_PIN1          0  /* P00: OCP_PRSNTB0_L            */
+#define S0_OCP_SLOT_PRESENT_PIN2          1  /* P01: OCP_PRSNTB1_L            */
+#define S0_OCP_SLOT_PRESENT_PIN3          2  /* P02: OCP_PRSNTB2_L            */
+#define S0_OCP_SLOT_PRESENT_PIN4          3  /* P03: OCP_PRSNTB3_D            */
 
 //
 // CPU I2C Bus for IO Expander
@@ -1235,14 +1244,30 @@ UpdateSmbiosType9 (
   Controller.I2cAddress = S0_RISERX32_I2C_ADDRESS;
 
   // Slot 1
-  mArmDefaultType9Sk0RiserX32Slot1.Base.CurrentUsage =
-    GetPinStatus (&Controller, S0_RISERX32_SLOT1_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+  if (GetPinStatus (&Controller, S0_RISERX32_SLOT1_PRESENT_PIN1)
+    || GetPinStatus (&Controller, S0_RISERX32_SLOT1_PRESENT_PIN2))
+  {
+    mArmDefaultType9Sk0RiserX32Slot1.Base.CurrentUsage = SlotUsageInUse;
+  } else {
+    mArmDefaultType9Sk0RiserX32Slot1.Base.CurrentUsage = SlotUsageAvailable;
+  }
   // Slot 2
-  mArmDefaultType9Sk0RiserX32Slot2.Base.CurrentUsage =
-    GetPinStatus (&Controller, S0_RISERX32_SLOT2_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+  if (GetPinStatus (&Controller, S0_RISERX32_SLOT2_PRESENT_PIN1)
+    || GetPinStatus (&Controller, S0_RISERX32_SLOT2_PRESENT_PIN2)
+    || GetPinStatus (&Controller, S0_RISERX32_SLOT2_PRESENT_PIN3))
+  {
+    mArmDefaultType9Sk0RiserX32Slot2.Base.CurrentUsage = SlotUsageInUse;
+  } else {
+    mArmDefaultType9Sk0RiserX32Slot2.Base.CurrentUsage = SlotUsageAvailable;
+  }
   // Slot 3
-  mArmDefaultType9Sk0RiserX32Slot3.Base.CurrentUsage =
-    GetPinStatus (&Controller, S0_RISERX32_SLOT3_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+  if (GetPinStatus (&Controller, S0_RISERX32_SLOT3_PRESENT_PIN1)
+    || GetPinStatus (&Controller, S0_RISERX32_SLOT3_PRESENT_PIN2))
+  {
+    mArmDefaultType9Sk0RiserX32Slot3.Base.CurrentUsage = SlotUsageInUse;
+  } else {
+    mArmDefaultType9Sk0RiserX32Slot3.Base.CurrentUsage = SlotUsageAvailable;
+  }
 
   //
   // Set IOExpander controller for OCP NIC
@@ -1251,8 +1276,15 @@ UpdateSmbiosType9 (
   Controller.I2cBus = S0_OCP_I2C_BUS;
   Controller.I2cAddress = S0_OCP_I2C_ADDRESS;
 
-  mArmDefaultType9Sk0OcpNic.Base.CurrentUsage =
-    GetPinStatus (&Controller, S0_OCP_SLOT_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+  if (GetPinStatus (&Controller, S0_OCP_SLOT_PRESENT_PIN1)
+    || GetPinStatus (&Controller, S0_OCP_SLOT_PRESENT_PIN2)
+    || GetPinStatus (&Controller, S0_OCP_SLOT_PRESENT_PIN3)
+    || GetPinStatus (&Controller, S0_OCP_SLOT_PRESENT_PIN4))
+  {
+    mArmDefaultType9Sk0OcpNic.Base.CurrentUsage = SlotUsageInUse;
+  } else {
+    mArmDefaultType9Sk0OcpNic.Base.CurrentUsage = SlotUsageAvailable;
+  }
 
   if (IsSlaveSocketActive ()) {
     //
@@ -1263,11 +1295,18 @@ UpdateSmbiosType9 (
     Controller.I2cAddress = S1_RISERX24_I2C_ADDRESS;
 
     // Slot 1
-    mArmDefaultType9Sk1RiserX24Slot1.Base.CurrentUsage =
-      GetPinStatus (&Controller, S1_RISERX24_SLOT1_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+    if (GetPinStatus (&Controller, S1_RISERX24_SLOT1_PRESENT_PIN1)
+      || GetPinStatus (&Controller, S1_RISERX24_SLOT1_PRESENT_PIN2))
+    {
+      mArmDefaultType9Sk1RiserX24Slot1.Base.CurrentUsage = SlotUsageInUse;
+    } else {
+      mArmDefaultType9Sk1RiserX24Slot1.Base.CurrentUsage = SlotUsageAvailable;
+    }
+
     // Slot 2
     mArmDefaultType9Sk1RiserX24Slot2.Base.CurrentUsage =
       GetPinStatus (&Controller, S1_RISERX24_SLOT2_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+
     // Slot 3
     mArmDefaultType9Sk1RiserX24Slot3.Base.CurrentUsage =
       GetPinStatus (&Controller, S1_RISERX24_SLOT3_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
@@ -1276,9 +1315,15 @@ UpdateSmbiosType9 (
     // Set IOExpander controller for Riser x8
     //
     Controller.I2cAddress = S1_RISERX8_I2C_ADDRESS;
-    mArmDefaultType9Sk1RiserX8Slot1.Base.CurrentUsage =
-      GetPinStatus (&Controller, S1_RISERX8_SLOT1_PRESENT_PIN) ? SlotUsageInUse : SlotUsageAvailable;
+    if (GetPinStatus (&Controller, S1_RISERX8_SLOT1_PRESENT_PIN1)
+      || GetPinStatus (&Controller, S1_RISERX8_SLOT1_PRESENT_PIN2))
+    {
+      mArmDefaultType9Sk1RiserX8Slot1.Base.CurrentUsage = SlotUsageInUse;
+    } else {
+      mArmDefaultType9Sk1RiserX8Slot1.Base.CurrentUsage = SlotUsageAvailable;
+    }
   }
+
   //
   // According to Mt.Jade schematic for Altra Max, PCIe block diagram,
   // system slots connect to different Root Complex when we compare with
