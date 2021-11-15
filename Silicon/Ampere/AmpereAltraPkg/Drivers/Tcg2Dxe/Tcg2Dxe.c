@@ -30,7 +30,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/PerformanceLib.h>
 #include <Library/PrintLib.h>
 #include <Library/ReportStatusCodeLib.h>
-#include <Library/Tcg2PhysicalPresenceLib.h>
 #include <Library/Tpm2CommandLib.h>
 #include <Library/Tpm2DeviceLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -1348,39 +1347,7 @@ Tcg2SetActivePCRBanks (
   IN UINT32            ActivePcrBanks
   )
 {
-  EFI_STATUS Status;
-  UINT32     ReturnCode;
-
-  DEBUG ((DEBUG_INFO, "Tcg2SetActivePCRBanks ... (0x%x)\n", ActivePcrBanks));
-
-  if (ActivePcrBanks == 0) {
-    return EFI_INVALID_PARAMETER;
-  }
-  if ((ActivePcrBanks & (~mTcgDxeData.BsCap.HashAlgorithmBitmap)) != 0) {
-    return EFI_INVALID_PARAMETER;
-  }
-  if (ActivePcrBanks == mTcgDxeData.BsCap.ActivePcrBanks) {
-    //
-    // Need clear previous SET_PCR_BANKS setting
-    //
-    ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (TCG2_PHYSICAL_PRESENCE_NO_ACTION, 0);
-  } else {
-    ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (TCG2_PHYSICAL_PRESENCE_SET_PCR_BANKS, ActivePcrBanks);
-  }
-
-  if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_SUCCESS) {
-    Status = EFI_SUCCESS;
-  } else if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_GENERAL_FAILURE) {
-    Status = EFI_OUT_OF_RESOURCES;
-  } else if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_NOT_IMPLEMENTED) {
-    Status = EFI_UNSUPPORTED;
-  } else {
-    Status = EFI_DEVICE_ERROR;
-  }
-
-  DEBUG ((DEBUG_INFO, "Tcg2SetActivePCRBanks - %r\n", Status));
-
-  return Status;
+  return EFI_UNSUPPORTED;
 }
 
 /**
@@ -1401,18 +1368,7 @@ Tcg2GetResultOfSetActivePcrBanks (
   OUT UINT32            *Response
   )
 {
-  UINT32 ReturnCode;
-
-  if ((OperationPresent == NULL) || (Response == NULL)) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  ReturnCode = Tcg2PhysicalPresenceLibReturnOperationResponseToOsFunction (OperationPresent, Response);
-  if (ReturnCode == TCG_PP_RETURN_TPM_OPERATION_RESPONSE_SUCCESS) {
-    return EFI_SUCCESS;
-  } else {
-    return EFI_UNSUPPORTED;
-  }
+  return EFI_UNSUPPORTED;
 }
 
 EFI_TCG2_PROTOCOL mTcg2Protocol = {

@@ -31,17 +31,19 @@
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
   SecurityPkg/SecurityPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
 
 [LibraryClasses]
   BaseLib
   BaseMemoryLib
   DebugLib
   HiiLib
+  HobLib
   IoLib
+  MailboxInterfaceLib
   MemoryAllocationLib
   PcdLib
   PrintLib
-  Tcg2PhysicalPresenceLib
   Tpm2CommandLib
   Tpm2DeviceLib
   UefiBootServicesTableLib
@@ -55,6 +57,7 @@
   ## SOMETIMES_PRODUCES ## Variable:L"TCG2_CONFIGURATION"
   ## SOMETIMES_CONSUMES ## Variable:L"TCG2_CONFIGURATION"
   gTcg2ConfigFormSetGuid
+  gPlatformHobGuid
 
 [Protocols]
   gEfiHiiConfigAccessProtocolGuid               ## PRODUCES

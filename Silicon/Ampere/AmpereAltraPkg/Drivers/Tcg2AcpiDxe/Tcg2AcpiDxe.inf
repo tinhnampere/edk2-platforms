@@ -38,7 +38,6 @@
   DebugLib
   HobLib
   PcdLib
-  Tcg2PhysicalPresenceLib
   Tpm2CommandLib
   Tpm2DeviceLib
   TpmMeasurementLib

@@ -7,14 +7,25 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
+#include <Guid/PlatformInfoHobGuid.h>
 #include <Guid/TpmInstance.h>
 #include <IndustryStandard/TpmPtp.h>
+#include <Library/HobLib.h>
 #include <Library/IoLib.h>
 #include <Library/PcdLib.h>
 #include <Library/Tpm2CommandLib.h>
 #include <Library/Tpm2DeviceLib.h>
+#include <Library/MailboxInterfaceLib.h>
+#include <Library/SystemFirmwareInterfaceLib.h>
+#include <PlatformInfoHob.h>
 
 #include "Tcg2ConfigImpl.h"
+
+//
+// Mailbox message of TPM PPI Request
+//
+#define MAILBOX_MESSAGE_TPM_PPI_REQUEST_TYPE      0x6
+#define MAILBOX_MESSAGE_TPM_PPI_REQUEST_SUBTYPE   0xA
 
 #define EFI_TCG2_EVENT_LOG_FORMAT_ALL   (EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 | EFI_TCG2_EVENT_LOG_FORMAT_TCG_2)
 
@@ -51,79 +62,6 @@ HII_VENDOR_DEVICE_PATH mTcg2HiiVendorDevicePath = {
     }
   }
 };
-
-UINT8 mCurrentPpRequest;
-
-/**
-  Return if PTP CRB is supported.
-
-  @param[in] Register                Pointer to PTP register.
-
-  @retval TRUE  PTP CRB is supported.
-  @retval FALSE PTP CRB is unsupported.
-**/
-BOOLEAN
-IsPtpCrbSupported (
-  IN VOID *Register
-  )
-{
-  return TRUE;
-}
-
-/**
-  Return if PTP FIFO is supported.
-
-  @param[in] Register                Pointer to PTP register.
-
-  @retval TRUE  PTP FIFO is supported.
-  @retval FALSE PTP FIFO is unsupported.
-**/
-BOOLEAN
-IsPtpFifoSupported (
-  IN VOID *Register
-  )
-{
-  return FALSE;
-}
-
-/**
-  Set PTP interface type.
-  Do not update PcdActiveTpmInterfaceType here because interface change only happens on next _TPM_INIT
-
-  @param[in] Register                Pointer to PTP register.
-  @param[in] PtpInterface            PTP interface type.
-
-  @retval EFI_SUCCESS                PTP interface type is set.
-  @retval EFI_INVALID_PARAMETER      PTP interface type is invalid.
-  @retval EFI_UNSUPPORTED            PTP interface type is unsupported.
-  @retval EFI_WRITE_PROTECTED        PTP interface is locked.
-**/
-EFI_STATUS
-SetPtpInterface (
-  IN VOID  *Register,
-  IN UINT8 PtpInterface
-  )
-{
-  TPM2_PTP_INTERFACE_TYPE PtpInterfaceCurrent;
-
-  PtpInterfaceCurrent = PcdGet8 (PcdActiveTpmInterfaceType);
-  if ((PtpInterfaceCurrent != Tpm2PtpInterfaceFifo) &&
-      (PtpInterfaceCurrent != Tpm2PtpInterfaceCrb))
-  {
-    return EFI_UNSUPPORTED;
-  }
-
-  switch (PtpInterface) {
-  case Tpm2PtpInterfaceFifo:
-    return EFI_UNSUPPORTED;
-
-  case Tpm2PtpInterfaceCrb:
-    return EFI_SUCCESS;
-
-  default:
-    return EFI_INVALID_PARAMETER;
-  }
-}
 
 /**
   This function allows a caller to extract the current configuration for one
@@ -169,7 +107,56 @@ Tcg2ExtractConfig (
 }
 
 /**
-  Save TPM request to variable space.
+  Raise the PP Clear Request via Non-secure Doorbell.
+
+  @retval    EFI_SUCCESS           The operation is finished successfully.
+  @retval    Others                Other errors as indicated.
+
+ */
+EFI_STATUS
+RaiseTpm2PpClearRequest (
+  VOID
+  )
+{
+  EFI_STATUS                  Status;
+  VOID                        *GuidHob;
+  PLATFORM_INFO_HOB           *PlatformHob;
+  PLATFORM_TPM2_PPI_REQUEST   *PpiRequest;
+  MAILBOX_MESSAGE_DATA        Message;
+
+  GuidHob = GetFirstGuidHob (&gPlatformHobGuid);
+  if (GuidHob == NULL) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  PlatformHob = (PLATFORM_INFO_HOB *)GET_GUID_HOB_DATA (GuidHob);
+  PpiRequest = PlatformHob->Tpm2Info.Tpm2CrbInterfaceParams.PpiRequest;
+
+  //
+  // Write the PPI request to the shared buffer "Current PPI Request"
+  //
+  PpiRequest->CurrentRequest = TCG2_PHYSICAL_PRESENCE_CLEAR;
+
+  //
+  // Ring the doorbell with the TPM-PPI message to register the PPI request
+  //
+  ZeroMem (&Message, sizeof (MAILBOX_MESSAGE_DATA));
+  Message.Data = COMMON_MESSAGE_ENCODE (
+                   MAILBOX_MESSAGE_TPM_PPI_REQUEST_TYPE,
+                   MAILBOX_MESSAGE_TPM_PPI_REQUEST_SUBTYPE,
+                   0
+                   );
+  Status = MailboxWrite (0, SMproDoorbellChannel2, &Message);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[TPM2] Raise PPI Request failed!\n"));
+    return Status;
+  }
+
+  return EFI_SUCCESS;
+}
+
+/**
+  Perform TPM PP request.
 
   @param[in] PpRequest             Physical Presence request command.
 
@@ -182,57 +169,29 @@ SaveTcg2PpRequest (
   IN UINT8 PpRequest
   )
 {
-  UINT32     ReturnCode;
   EFI_STATUS Status;
 
-  ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (PpRequest, 0);
-  if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_SUCCESS) {
-    mCurrentPpRequest = PpRequest;
-    Status = EFI_SUCCESS;
-  } else if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_GENERAL_FAILURE) {
-    Status = EFI_OUT_OF_RESOURCES;
-  } else if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_NOT_IMPLEMENTED) {
-    Status = EFI_UNSUPPORTED;
-  } else {
-    Status = EFI_DEVICE_ERROR;
+  switch (PpRequest) {
+  case TCG2_PHYSICAL_PRESENCE_CLEAR:
+  case TCG2_PHYSICAL_PRESENCE_ENABLE_CLEAR:
+  case TCG2_PHYSICAL_PRESENCE_ENABLE_CLEAR_2:
+  case TCG2_PHYSICAL_PRESENCE_ENABLE_CLEAR_3:
+    Status = RaiseTpm2PpClearRequest ();
+    if (EFI_ERROR (Status)) {
+      return EFI_DEVICE_ERROR;
+    }
+    break;
+
+  default:
+    // The PP Request is not implemented.
+    return EFI_UNSUPPORTED;
   }
 
-  return Status;
+  return EFI_SUCCESS;
 }
 
 /**
-  Save TPM request to variable space.
-
-  @param[in] PpRequestParameter    Physical Presence request parameter.
-
-  @retval    EFI_SUCCESS           The operation is finished successfully.
-  @retval    Others                Other errors as indicated.
-
-**/
-EFI_STATUS
-SaveTcg2PpRequestParameter (
-  IN UINT32 PpRequestParameter
-  )
-{
-  UINT32     ReturnCode;
-  EFI_STATUS Status;
-
-  ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (mCurrentPpRequest, PpRequestParameter);
-  if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_SUCCESS) {
-    Status = EFI_SUCCESS;
-  } else if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_GENERAL_FAILURE) {
-    Status = EFI_OUT_OF_RESOURCES;
-  } else if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_NOT_IMPLEMENTED) {
-    Status = EFI_UNSUPPORTED;
-  } else {
-    Status = EFI_DEVICE_ERROR;
-  }
-
-  return Status;
-}
-
-/**
-  Save Tcg2 PCR Banks request request to variable space.
+  Perform Tcg2 PCR Banks request request.
 
   @param[in] PCRBankIndex     PCR Bank Index.
   @param[in] Enable           Enable or disable this PCR Bank.
@@ -247,8 +206,9 @@ SaveTcg2PCRBanksRequest (
   IN BOOLEAN Enable
   )
 {
-  UINT32     ReturnCode;
-  EFI_STATUS Status;
+  EFI_STATUS                        Status;
+  EFI_TCG2_EVENT_ALGORITHM_BITMAP   TpmHashAlgorithmBitmap;
+  UINT32                            ActivePcrBanks;
 
   if (Enable) {
     mTcg2ConfigPrivateDate->PCRBanksDesired |= (0x1 << PCRBankIndex);
@@ -256,18 +216,27 @@ SaveTcg2PCRBanksRequest (
     mTcg2ConfigPrivateDate->PCRBanksDesired &= ~(0x1 << PCRBankIndex);
   }
 
-  ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (TCG2_PHYSICAL_PRESENCE_SET_PCR_BANKS, mTcg2ConfigPrivateDate->PCRBanksDesired);
-  if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_SUCCESS) {
-    Status = EFI_SUCCESS;
-  } else if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_GENERAL_FAILURE) {
-    Status = EFI_OUT_OF_RESOURCES;
-  } else if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_NOT_IMPLEMENTED) {
-    Status = EFI_UNSUPPORTED;
-  } else {
-    Status = EFI_DEVICE_ERROR;
+  Status = Tpm2GetCapabilitySupportedAndActivePcrs (&TpmHashAlgorithmBitmap, &ActivePcrBanks);
+  ASSERT_EFI_ERROR (Status);
+
+  //
+  // PP spec requirements:
+  //    Firmware should check that all requested (set) hashing algorithms are supported with respective PCR banks.
+  //    Firmware has to ensure that at least one PCR banks is active.
+  // If not, an error is returned and no action is taken.
+  //
+  if (mTcg2ConfigPrivateDate->PCRBanksDesired == 0
+    || (mTcg2ConfigPrivateDate->PCRBanksDesired & (~TpmHashAlgorithmBitmap)) != 0) {
+    DEBUG ((DEBUG_ERROR, "PCR banks %x to allocate are not supported by TPM. Skip operation\n", mTcg2ConfigPrivateDate->PCRBanksDesired));
+    return EFI_DEVICE_ERROR;
   }
 
-  return Status;
+  Status = Tpm2PcrAllocateBanks (NULL, TpmHashAlgorithmBitmap, mTcg2ConfigPrivateDate->PCRBanksDesired);
+  if (EFI_ERROR (Status)) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  return EFI_SUCCESS;
 }
 
 /**
@@ -491,7 +460,6 @@ Tcg2Callback (
   )
 {
   EFI_STATUS               Status;
-  EFI_INPUT_KEY            Key;
   CHAR8                    HidStr[16];
   CHAR16                   UnHidStr[16];
   TCG2_CONFIG_PRIVATE_DATA *Private;
@@ -522,30 +490,12 @@ Tcg2Callback (
     return EFI_SUCCESS;
   }
 
-  if (Action == EFI_BROWSER_ACTION_CHANGING) {
-    if (QuestionId == KEY_TPM_DEVICE_INTERFACE) {
-      Status = SetPtpInterface ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress), Value->u8);
-      if (EFI_ERROR (Status)) {
-        CreatePopUp (
-          EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
-          &Key,
-          L"Error: Fail to set PTP interface!",
-          NULL
-          );
-        return EFI_DEVICE_ERROR;
-      }
-    }
-  }
-
   if (Action == EFI_BROWSER_ACTION_CHANGED) {
     if (QuestionId == KEY_TPM_DEVICE) {
       return EFI_SUCCESS;
     }
     if (QuestionId == KEY_TPM2_OPERATION) {
       return SaveTcg2PpRequest (Value->u8);
-    }
-    if (QuestionId == KEY_TPM2_OPERATION_PARAMETER) {
-      return SaveTcg2PpRequestParameter (Value->u32);
     }
     if ((QuestionId >= KEY_TPM2_PCR_BANKS_REQUEST_0) && (QuestionId <= KEY_TPM2_PCR_BANKS_REQUEST_4)) {
       return SaveTcg2PCRBanksRequest (QuestionId - KEY_TPM2_PCR_BANKS_REQUEST_0, Value->b);
@@ -757,8 +707,6 @@ InstallTcg2ConfigForm (
   TPML_PCR_SELECTION             Pcrs;
   CHAR16                         TempBuffer[1024];
   TCG2_CONFIGURATION_INFO        Tcg2ConfigInfo;
-  TPM2_PTP_INTERFACE_TYPE        TpmDeviceInterfaceDetected;
-  BOOLEAN                        IsCmdImp = FALSE;
 
   DriverHandle = NULL;
   ConfigAccess = &PrivateData->ConfigAccess;
@@ -809,10 +757,6 @@ InstallTcg2ConfigForm (
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_STATE_CONTENT), L"Not Found", NULL);
     break;
 
-  case TPM_DEVICE_1_2:
-    HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_STATE_CONTENT), L"TPM 1.2", NULL);
-    break;
-
   case TPM_DEVICE_2_0_DTPM:
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_STATE_CONTENT), L"TPM 2.0", NULL);
     break;
@@ -844,12 +788,6 @@ InstallTcg2ConfigForm (
     HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_SUPPORTED_HASH_ALGO_CONTENT), TempBuffer, NULL);
   }
 
-  Status = Tpm2GetCapabilityIsCommandImplemented (TPM_CC_ChangeEPS, &IsCmdImp);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2GetCapabilityIsCmdImpl fails %r\n", Status));
-  }
-  Tcg2ConfigInfo.ChangeEPSSupported = IsCmdImp;
-
   FillBufferWithBootHashAlg (TempBuffer, sizeof (TempBuffer), PcdGet32 (PcdTcg2HashAlgorithmBitmap));
   HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_BIOS_HASH_ALGO_CONTENT), TempBuffer, NULL);
 
@@ -872,59 +810,7 @@ InstallTcg2ConfigForm (
   // Update TPM device interface type
   //
   if (PrivateData->TpmDeviceDetected == TPM_DEVICE_2_0_DTPM) {
-    TpmDeviceInterfaceDetected = PcdGet8 (PcdActiveTpmInterfaceType);
-    switch (TpmDeviceInterfaceDetected) {
-    case Tpm2PtpInterfaceTis:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT), L"TIS", NULL);
-      break;
-
-    case Tpm2PtpInterfaceFifo:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT), L"PTP FIFO", NULL);
-      break;
-
-    case Tpm2PtpInterfaceCrb:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT), L"PTP CRB", NULL);
-      break;
-
-    default:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT), L"Unknown", NULL);
-      break;
-    }
-
-    Tcg2ConfigInfo.TpmDeviceInterfaceAttempt = TpmDeviceInterfaceDetected;
-    switch (TpmDeviceInterfaceDetected) {
-    case Tpm2PtpInterfaceTis:
-      Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported = FALSE;
-      Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported  = FALSE;
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_CAPABILITY_CONTENT), L"TIS", NULL);
-      break;
-
-    case Tpm2PtpInterfaceFifo:
-    case Tpm2PtpInterfaceCrb:
-      Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported = IsPtpFifoSupported ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress));
-      Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported  = IsPtpCrbSupported ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress));
-      TempBuffer[0] = 0;
-      if (Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported) {
-        if (TempBuffer[0] != 0) {
-          StrCatS (TempBuffer, sizeof (TempBuffer) / sizeof (CHAR16), L", ");
-        }
-        StrCatS (TempBuffer, sizeof (TempBuffer) / sizeof (CHAR16), L"PTP FIFO");
-      }
-      if (Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported) {
-        if (TempBuffer[0] != 0) {
-          StrCatS (TempBuffer, sizeof (TempBuffer) / sizeof (CHAR16), L", ");
-        }
-        StrCatS (TempBuffer, sizeof (TempBuffer) / sizeof (CHAR16), L"PTP CRB");
-      }
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_CAPABILITY_CONTENT), TempBuffer, NULL);
-      break;
-
-    default:
-      Tcg2ConfigInfo.TpmDeviceInterfacePtpFifoSupported = FALSE;
-      Tcg2ConfigInfo.TpmDeviceInterfacePtpCrbSupported  = FALSE;
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_CAPABILITY_CONTENT), L"Unknown", NULL);
-      break;
-    }
+    HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT), L"PTP CRB", NULL);
   }
 
   //

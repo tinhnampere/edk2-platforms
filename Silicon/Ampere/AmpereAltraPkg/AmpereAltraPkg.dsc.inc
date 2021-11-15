@@ -171,11 +171,9 @@
 !if $(TPM2_ENABLE) == TRUE
   Tpm2DeviceLib|Silicon/Ampere/AmpereAltraPkg/Library/Tpm2DeviceLibArmCrb/Tpm2DeviceLibArmCrb.inf
   Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
-  Tcg2PhysicalPresenceLib|SecurityPkg/Library/DxeTcg2PhysicalPresenceLib/DxeTcg2PhysicalPresenceLib.inf
   Tcg2PpVendorLib|SecurityPkg/Library/Tcg2PpVendorLibNull/Tcg2PpVendorLibNull.inf
   TpmMeasurementLib|SecurityPkg/Library/DxeTpmMeasurementLib/DxeTpmMeasurementLib.inf
 !else
-  Tcg2PhysicalPresenceLib|OvmfPkg/Library/Tcg2PhysicalPresenceLibNull/DxeTcg2PhysicalPresenceLib.inf
   TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
 !endif
 
@@ -224,8 +222,6 @@
 
 !if $(TPM2_ENABLE) == TRUE
   Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
-  Tcg2PhysicalPresenceLib|SecurityPkg/Library/DxeTcg2PhysicalPresenceLib/DxeTcg2PhysicalPresenceLib.inf
-  Tcg2PpVendorLib|SecurityPkg/Library/Tcg2PpVendorLibNull/Tcg2PpVendorLibNull.inf
 
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/PeiCryptLib.inf
 !endif
@@ -526,11 +522,6 @@
   #
   gArmTokenSpaceGuid.PcdMmBufferBase|0x88300000
   gArmTokenSpaceGuid.PcdMmBufferSize|0x100000
-
-!if $(TPM2_ENABLE) == TRUE
-  gEfiSecurityPkgTokenSpaceGuid.PcdTpmBaseAddress|0x88500000
-  gEfiSecurityPkgTokenSpaceGuid.PcdTpmPlatformClass|1
-!endif
 
 [PcdsDynamicHii.common.DEFAULT]
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|L"Timeout"|gEfiGlobalVariableGuid|0x0|10

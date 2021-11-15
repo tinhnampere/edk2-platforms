@@ -2,6 +2,7 @@
   String definitions for TCG2 configuration form.
 
 Copyright (c) 2015 - 2018, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
 SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
@@ -12,12 +13,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #string STR_TCG2_HELP                       #language en-US "Press <Enter> to select TCG2 Setup options."
 
 #string STR_TCG2_DEVICE_STATE_PROMPT        #language en-US "Current TPM Device"
-#string STR_TCG2_DEVICE_STATE_HELP          #language en-US "Current TPM Device: Disable, TPM1.2, or TPM2.0"
+#string STR_TCG2_DEVICE_STATE_HELP          #language en-US "Current TPM Device: TPM2.0"
 #string STR_TCG2_DEVICE_STATE_CONTENT       #language en-US ""
-
-#string STR_TCG2_DEVICE_PROMPT              #language en-US "Attempt TPM Device"
-#string STR_TCG2_DEVICE_HELP                #language en-US "Attempt TPM Device: TPM1.2, or TPM2.0"
-#string STR_TCG2_DEVICE_CONTENT             #language en-US ""
 
 #string STR_TCG2_PPI_VERSION_STATE_PROMPT   #language en-US "Current PPI Version"
 #string STR_TCG2_PPI_VERSION_STATE_HELP     #language en-US "Current PPI Version: 1.2 or 1.3"
@@ -44,18 +41,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #string STR_TCG2_DEVICE_INTERFACE_STATE_PROMPT         #language en-US "Current TPM Device Interface"
 #string STR_TCG2_DEVICE_INTERFACE_STATE_HELP           #language en-US "Current TPM Device Interface: TIS, PTP FIFO, PTP CRB"
 #string STR_TCG2_DEVICE_INTERFACE_STATE_CONTENT        #language en-US ""
-
-#string STR_TCG2_DEVICE_INTERFACE_CAPABILITY_PROMPT    #language en-US "PTP TPM Device Interface Capability"
-#string STR_TCG2_DEVICE_INTERFACE_CAPABILITY_HELP      #language en-US "PTP TPM Device Interface Capability: PTP FIFO, PTP CRB"
-#string STR_TCG2_DEVICE_INTERFACE_CAPABILITY_CONTENT   #language en-US ""
-
-#string STR_TCG2_DEVICE_INTERFACE_PROMPT               #language en-US "Attempt PTP TPM Device Interface"
-#string STR_TCG2_DEVICE_INTERFACE_HELP                 #language en-US "Attempt PTP TPM Device Interface: PTP FIFO, PTP CRB"
-#string STR_TCG2_DEVICE_INTERFACE_CONTENT              #language en-US ""
-
-#string STR_TCG2_DEVICE_INTERFACE_TIS                  #language en-US "TIS"
-#string STR_TCG2_DEVICE_INTERFACE_PTP_FIFO             #language en-US "PTP FIFO"
-#string STR_TCG2_DEVICE_INTERFACE_PTP_CRB              #language en-US "PTP CRB"
 
 #string STR_TCG2_PP_OPERATION              #language en-US "TPM2 Physical Presence Operation"
 

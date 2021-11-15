@@ -14,7 +14,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define TPM_INSTANCE_ID_LIST  { \
   {TPM_DEVICE_INTERFACE_NONE,           TPM_DEVICE_NULL},      \
-  {TPM_DEVICE_INTERFACE_TPM12,          TPM_DEVICE_1_2},       \
   {TPM_DEVICE_INTERFACE_TPM20_DTPM,     TPM_DEVICE_2_0_DTPM},  \
 }
 
