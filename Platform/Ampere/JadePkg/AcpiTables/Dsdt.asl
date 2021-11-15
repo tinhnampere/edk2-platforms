@@ -149,6 +149,9 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
         Method(_IFT) {
           Return(0x04) // IPMI SSIF
         }
+        Method(_ADR) {
+          Return(0x10) // SSIF slave address
+        }
         Method(_SRV) {
           Return(0x0200) // IPMI Specification Revision
         }
