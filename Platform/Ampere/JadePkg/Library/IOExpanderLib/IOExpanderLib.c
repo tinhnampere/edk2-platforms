@@ -60,6 +60,8 @@ CONST UINT8 gTca9534Register[4][1] = {
 #define SET_BIT(register, bit)         (UINT8)(register | ~(0xFE << bit))
 #define CLEAR_BIT(register, bit)       (UINT8)(register & (0xFE << bit))
 
+#define GET_REGISTER_BANK(x)           ((x) ? 0 : 1)
+
 #define IO_EXPANDER_I2C_BUS_SPEED      100000
 
 STATIC
@@ -297,14 +299,13 @@ IOExpanderGetPin (
     return Status;
   }
 
-  ConfigValue = ~ConfigValue;
   switch (Controller->ChipID) {
   case IO_EXPANDER_TCA6424A:
-    RegisterAddress = gTca6424aRegister[ConfigValue][GET_REGISTER_ORDER (Pin)];
+    RegisterAddress = gTca6424aRegister[GET_REGISTER_BANK (ConfigValue)][GET_REGISTER_ORDER (Pin)];
     break;
 
   case IO_EXPANDER_TCA9534:
-    RegisterAddress = gTca9534Register[ConfigValue][GET_REGISTER_ORDER (Pin)];
+    RegisterAddress = gTca9534Register[GET_REGISTER_BANK (ConfigValue)][GET_REGISTER_ORDER (Pin)];
     break;
 
   default:
