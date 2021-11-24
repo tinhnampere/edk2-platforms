@@ -42,7 +42,6 @@
 [Guids]
   gEfiGlobalVariableGuid
   gSpiNorMmGuid
-  gTpmErrorHobGuid
 
 [FixedPcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize

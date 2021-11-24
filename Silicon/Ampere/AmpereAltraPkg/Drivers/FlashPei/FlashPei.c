@@ -10,7 +10,6 @@
 #include <Uefi.h>
 
 #include <Guid/GlobalVariable.h>
-#include <Guid/TcgEventHob.h>
 #include <Library/ArmSmcLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -217,15 +216,10 @@ FlashPeiEntryPoint (
     }
     DEBUG ((DEBUG_INFO, "UUID Changed, Update Storage with FV NVRAM\n"));
 
-    Status = NVParamClrAll ();
-    if (!EFI_ERROR (Status)
-        && (GetFirstGuidHob (&gTpmErrorHobGuid) != NULL))
-    {
-      //
-      // Rest system if TPM is not available.
-      //
-      ResetCold ();
-    }
+    //
+    // Trigger reset to use default NVPARAM
+    //
+    ResetCold ();
   } else {
     /* Copy the stored NVRAM to RAM */
     ZeroMem ((VOID *)MmData, sizeof (MmData));
