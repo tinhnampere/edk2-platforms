@@ -32,14 +32,7 @@
   UefiBootServicesTableLib
   UefiDriverEntryPoint
 
-[Guids]
-  gEfiEndOfDxeEventGroupGuid
-  gEfiEventExitBootServicesGuid
-  gEfiEventReadyToBootGuid
-  gPlatformManagerEntryEventGuid
-
 [Pcd]
-  gAmpereTokenSpaceGuid.PcdNvramErased
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile
 
 [Depex]

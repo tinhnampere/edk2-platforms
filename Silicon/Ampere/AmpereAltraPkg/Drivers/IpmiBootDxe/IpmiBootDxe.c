@@ -29,6 +29,13 @@
 #define BBS_TYPE_MENU                     0xFE
 #define EFI_LAST_BOOT_ORDER_VARIABLE_NAME L"LastBootOrder"
 
+//
+// This variable is used to inidicate the persistent boot to UiApp.
+//   0: Disable persistent boot to UiApp
+//   1: Enable persistent boot to UiApp
+//
+#define FORCE_UIAPP_VARIABLE_NAME         L"ForceUiApp"
+
 /**
   Get BBS Type from a messaging device path.
 
@@ -298,33 +305,26 @@ DeviceSelectorToBBSType (
   }
 }
 
-/**
-  Main function to process the IPMI set bootdev command and force the system to boot with selected boot option.
-
-  @param  Event         Event whose notification function is being invoked.
-  @param  Context       Pointer to the notification function's context, which is
-                        always zero in current implementation.
-
-**/
 VOID
 EFIAPI
-HandleBootTypeCallback (
-  IN EFI_EVENT Event,
-  IN VOID      *Context
+HandleIpmiBootOption (
+  VOID
   )
 {
+  BOOLEAN                                 UpdateNeed;
   EFI_STATUS                              Status;
   IPMI_BOOT_FLAGS_INFO                    BootFlags;
   UINT16                                  *CurrBootOrder;
   UINT16                                  *NewBootOrder;
   UINT16                                  FirstBootOption;
-  UINT64                                  OsIndication;
   UINT8                                   BootInfoAck;
   UINT8                                   BootType;
+  UINT8                                   ForceUiApp;
   UINTN                                   CurrBootOrderSize;
   UINTN                                   DataSize;
 
   NewBootOrder = NULL;
+  BootType = 0xFF;
 
   GetEfiGlobalVariable2 (EFI_BOOT_ORDER_VARIABLE_NAME, (VOID **)&CurrBootOrder, &CurrBootOrderSize);
   if (CurrBootOrder == NULL) {
@@ -335,6 +335,21 @@ HandleBootTypeCallback (
   // FIXME: At this point, BootOrder must contain at least one boot option.
   //
   FirstBootOption = CurrBootOrder[0];
+
+  //
+  // Cache the FORCE_UIAPP_VARIABLE to reduce the accessing time to the NVRAM.
+  //
+  DataSize = sizeof (UINT8);
+  Status = gRT->GetVariable (
+                  FORCE_UIAPP_VARIABLE_NAME,
+                  &gEfiGlobalVariableGuid,
+                  NULL,
+                  &DataSize,
+                  &ForceUiApp
+                  );
+  if (EFI_ERROR (Status) || DataSize != sizeof (UINT8)) {
+    ForceUiApp = 0;
+  }
 
   Status = IpmiGetBootInfoAck (&BootInfoAck);
   if (EFI_ERROR (Status) || (BootInfoAck != BOOT_OPTION_HANDLED_BY_BIOS)) {
@@ -350,6 +365,8 @@ HandleBootTypeCallback (
   if (BootType == BBS_TYPE_UNKNOWN) {
     goto Exit;
   }
+
+  DEBUG ((DEBUG_INFO, "IPMI Boot Type %d, Persistent %d\n", BootType, BootFlags.IsPersistent));
 
   NewBootOrder = BuildBootOrder (BootType, CurrBootOrder, CurrBootOrderSize);
 
@@ -367,7 +384,7 @@ HandleBootTypeCallback (
                       CurrBootOrder
                       );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "%a: Failed to backup the BootOrder\n", __FUNCTION__));
+        DEBUG ((DEBUG_ERROR, "%a: Failed to backup the BootOrder %r\n", __FUNCTION__, Status));
         goto Exit;
       }
     }
@@ -391,6 +408,49 @@ HandleBootTypeCallback (
     FirstBootOption = NewBootOrder[0];
   }
 
+  UpdateNeed = FALSE;
+  if (BootType == BBS_TYPE_MENU) {
+    if (ForceUiApp == 0) {
+      //
+      // IPMI boot type is MENU, but FORCE_UIAPP_VARIABLE is not set.
+      // Set ForceUiApp to allow boot to UiApp on this boot cycle.
+      //
+      ForceUiApp = 1;
+      if (BootFlags.IsPersistent) {
+        //
+        // This is a persistent boot to UiApp request.
+        // Update FORCE_UIAPP_VARIABLE to force the system to boot to UiApp
+        // on next boot.
+        //
+        UpdateNeed = TRUE;
+      }
+    }
+  } else if (ForceUiApp == 1) {
+    //
+    // IPMI boot type is not the UiApp, but FORCE_UIAPP_VARIABLE is set
+    // Clear ForceUiApp to prevent the system from booting to UiApp on this boot cycle.
+    //
+    ForceUiApp = 0;
+    if (BootFlags.IsPersistent) {
+      //
+      // This is a persistent request other than UiApp.
+      // Update FORCE_UIAPP_VARIABLE to prevent the system from booting to UiApp
+      // on next boot.
+      //
+      UpdateNeed = TRUE;
+    }
+  }
+
+  if (UpdateNeed) {
+    Status = gRT->SetVariable (
+                    FORCE_UIAPP_VARIABLE_NAME,
+                    &gEfiGlobalVariableGuid,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                    sizeof (UINT8),
+                    &ForceUiApp
+                    );
+  }
+
   //
   // Update BMC status
   //
@@ -402,33 +462,18 @@ HandleBootTypeCallback (
 Exit:
   //
   // UiApp was registered with HIDDEN attribute and will be ignored by BDS.
-  // Therefore, if first BootOption is UiApp, Manually set Boot OS Indication.
+  // In order to boot to the UiApp, manually update the BootNext variable.
   //
-  if (GetBBSType (FirstBootOption) == BBS_TYPE_MENU) {
-    //
-    // On first boot with NVRAM clear, UiApp will be set as first boot option by BDS.
-    // If UiApp is not explicitly set by IPMI command in this case, refuse to force UiApp boot.
-    //
-    if (!(PcdGetBool (PcdNvramErased) && (BootType != BBS_TYPE_MENU))) {
-      DataSize = sizeof (UINT64);
-      Status = gRT->GetVariable (
-                      EFI_OS_INDICATIONS_VARIABLE_NAME,
-                      &gEfiGlobalVariableGuid,
-                      NULL,
-                      &DataSize,
-                      &OsIndication
-                      );
-      OsIndication |= EFI_OS_INDICATIONS_BOOT_TO_FW_UI;
-      Status = gRT->SetVariable (
-                      EFI_OS_INDICATIONS_VARIABLE_NAME,
-                      &gEfiGlobalVariableGuid,
-                      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
-                      | EFI_VARIABLE_NON_VOLATILE,
-                      sizeof (UINT64),
-                      &OsIndication
-                      );
-      ASSERT_EFI_ERROR (Status);
-    }
+  if (ForceUiApp == 1 && GetBBSType (FirstBootOption) == BBS_TYPE_MENU) {
+    Status = gRT->SetVariable (
+                    EFI_BOOT_NEXT_VARIABLE_NAME,
+                    &gEfiGlobalVariableGuid,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
+                    | EFI_VARIABLE_NON_VOLATILE,
+                    sizeof (UINT16),
+                    &FirstBootOption
+                    );
+    ASSERT_EFI_ERROR (Status);
   }
 
   if (NewBootOrder != NULL) {
@@ -436,8 +481,6 @@ Exit:
   }
 
   FreePool (CurrBootOrder);
-
-  gBS->CloseEvent (Event);
 }
 
 /**
@@ -526,20 +569,11 @@ IpmiBootEntry (
   IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS Status;
-  EFI_EVENT  EndOfDxeEvent;
+  EFI_STATUS Status = EFI_SUCCESS;
 
   RestoreBootOrder ();
 
-  Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_CALLBACK,
-                  HandleBootTypeCallback,
-                  NULL,
-                  &gEfiEndOfDxeEventGroupGuid,
-                  &EndOfDxeEvent
-                  );
-  ASSERT_EFI_ERROR (Status);
+  HandleIpmiBootOption ();
 
   return Status;
 }
