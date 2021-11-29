@@ -108,9 +108,6 @@
   # SMBIOS Type 0 - BIOS Information
   gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate|"MM/DD/YYYY"|VOID*|0xB0000002 # Must follow this MM/DD/YYYY SMBIOS date format
 
-  # NVRam Pcds
-  gAmpereTokenSpaceGuid.PcdNvramErased|FALSE|BOOLEAN|0xB0000009
-
   # Pcie HotPlug reset map
   gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap|0x0|UINT8|0xB000000A
 

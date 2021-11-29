@@ -307,7 +307,6 @@ FlashPeiEntryPoint (
                             );
     if (DataSize == 0) {
       DEBUG((DEBUG_INFO, "BootOrder is not found, NVRAM maybe empty\n"));
-      PcdSetBoolS (PcdNvramErased, TRUE);
     }
   }
 

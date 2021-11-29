@@ -539,8 +539,6 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64|0x0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64|0x0
 
-  gAmpereTokenSpaceGuid.PcdNvramErased|FALSE
-
 [PcdsDynamicExDefault.common.DEFAULT]
 !if $(TPM2_ENABLE) == TRUE
   gEfiSecurityPkgTokenSpaceGuid.PcdActiveTpmInterfaceType|0x02

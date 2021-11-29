@@ -53,7 +53,5 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64
 
-  gAmpereTokenSpaceGuid.PcdNvramErased
-
 [Depex]
   gEfiPeiReadOnlyVariable2PpiGuid
