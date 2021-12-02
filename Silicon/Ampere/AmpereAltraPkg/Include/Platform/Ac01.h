@@ -18,14 +18,14 @@
 /* Number of cores per CPM. */
 #define PLATFORM_CPU_NUM_CORES_PER_CPM      (FixedPcdGet32 (PcdCoreCount) / PLATFORM_CPU_MAX_CPM)
 
+/* Maximum number of cores supported. */
+#define PLATFORM_CPU_MAX_NUM_CORES          (PLATFORM_CPU_MAX_SOCKET * PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM)
+
 /* Socket bit offset of core UID. */
 #define PLATFORM_SOCKET_UID_BIT_OFFSET      16
 
 /* CPM bit offset of core UID. */
 #define PLATFORM_CPM_UID_BIT_OFFSET         8
-
-/* Maximum number of cores supported. */
-#define PLATFORM_CPU_MAX_NUM_CORES  (PLATFORM_CPU_MAX_SOCKET * PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM)
 
 /* Maximum number of memory region */
 #define PLATFORM_DRAM_INFO_MAX_REGION  16

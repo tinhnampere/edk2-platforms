@@ -432,13 +432,8 @@
   #
   # Ampere Altra Core-Cluster profile
   #
-!if $(MAJOR_VER) == 2
   gArmPlatformTokenSpaceGuid.PcdCoreCount|128
   gArmPlatformTokenSpaceGuid.PcdClusterCount|64
-!else
-  gArmPlatformTokenSpaceGuid.PcdCoreCount|80
-  gArmPlatformTokenSpaceGuid.PcdClusterCount|40
-!endif
 
   #
   # PL011 - Serial Terminal

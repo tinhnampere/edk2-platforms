@@ -35,11 +35,6 @@
 #define MONOLITIC_NUM_OF_REGION        1
 #define HEMISPHERE_NUM_OF_REGION       2
 #define QUADRANT_NUM_OF_REGION         4
-#define SUBNUMA_CPM_REGION_SIZE        4
-#define NUM_OF_CPM_PER_MESH_ROW        8
-
-#define CPM_PER_ROW_OFFSET(CpmId)      ((CpmId) % NUM_OF_CPM_PER_MESH_ROW)
-#define CPM_ROW_NUMBER(CpmId)          ((CpmId) / NUM_OF_CPM_PER_MESH_ROW)
 
 #define SOCKET_ID(CpuId)               ((CpuId) / (PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM))
 #define CLUSTER_ID(CpuId)              (((CpuId) / PLATFORM_CPU_NUM_CORES_PER_CPM) % PLATFORM_CPU_MAX_CPM)
@@ -196,19 +191,6 @@ SetNumberOfConfiguredCPMs (
 UINT16
 EFIAPI
 GetMaximumNumberOfCores (
-  VOID
-  );
-
-/**
-  Get the maximum number of CPM per socket. This number
-  should be the same for all sockets.
-
-  @return   UINT32      Maximum number of CPM.
-
-**/
-UINT16
-EFIAPI
-GetMaximumNumberOfCPMs (
   VOID
   );
 
