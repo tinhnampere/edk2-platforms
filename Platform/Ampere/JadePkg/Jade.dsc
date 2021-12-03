@@ -281,3 +281,8 @@
 !if $(REDFISH_ENABLE) == TRUE
   Platform/Ampere/JadePkg/Drivers/SmbiosType42Dxe/SmbiosType42Dxe.inf
 !endif
+
+  #
+  # Platform Boot Manager
+  #
+  Platform/Ampere/AmperePlatformPkg/Drivers/PlatformBootManagerDxe/PlatformBootManagerDxe.inf

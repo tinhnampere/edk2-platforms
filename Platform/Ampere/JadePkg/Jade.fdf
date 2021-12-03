@@ -426,6 +426,11 @@ APRIORI DXE {
   INF Platform/Ampere/JadePkg/Drivers/SmbiosType42Dxe/SmbiosType42Dxe.inf
 !endif
 
+  #
+  # Platform Boot Manager
+  #
+  INF Platform/Ampere/AmperePlatformPkg/Drivers/PlatformBootManagerDxe/PlatformBootManagerDxe.inf
+
 [FV.SystemFirmwareDescriptor]
 FvAlignment        = 8
 ERASE_POLARITY     = 1
