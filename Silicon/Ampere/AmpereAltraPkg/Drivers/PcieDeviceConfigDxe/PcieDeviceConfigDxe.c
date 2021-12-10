@@ -22,6 +22,7 @@
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Protocol/HiiConfigAccess.h>
 #include <Protocol/PciIo.h>
+#include <Protocol/ResetNotification.h>
 
 #include "PcieDeviceConfigDxe.h"
 #include "PcieHelper.h"
@@ -29,6 +30,7 @@
 VOID          *mPciProtocolNotifyRegistration;
 CHAR16        *mVariableName = VARSTORE_NAME;
 PCIE_NODE     *mDeviceBuf[MAX_DEVICE] = {NULL};
+PRIVATE_DATA  *mPrivateData;
 
 HII_VENDOR_DEVICE_PATH mHiiVendorDevicePath = {
   {
@@ -53,24 +55,22 @@ HII_VENDOR_DEVICE_PATH mHiiVendorDevicePath = {
 };
 
 VOID
-FlushDeviceData (
-  IN EFI_EVENT Event,
-  IN VOID      *Context
+FlushVariableToNvram (
+  IN EFI_RESET_TYPE           ResetType,
+  IN EFI_STATUS               ResetStatus,
+  IN UINTN                    DataSize,
+  IN VOID                     *ResetData OPTIONAL
   )
 {
   EFI_STATUS    Status;
-  PCIE_NODE     *Node;
-  PRIVATE_DATA  *PrivateData;
-  UINT8         Index;
   VARSTORE_DATA *LastVarStoreConfig;
   VARSTORE_DATA *VarStoreConfig;
 
-  PrivateData = (PRIVATE_DATA *)Context;
-  LastVarStoreConfig = &PrivateData->LastVarStoreConfig;
-  VarStoreConfig = &PrivateData->VarStoreConfig;
+  LastVarStoreConfig = &mPrivateData->LastVarStoreConfig;
+  VarStoreConfig = &mPrivateData->VarStoreConfig;
 
   //
-  // If config has changed, update NVRAM
+  // If User setting has changed, update the NVRAM
   //
   if (CompareMem (VarStoreConfig, LastVarStoreConfig, sizeof (VARSTORE_DATA)) != 0) {
     DEBUG ((DEBUG_INFO, "%a Update Device Config Variable\n", __FUNCTION__));
@@ -88,9 +88,44 @@ FlushDeviceData (
         __FUNCTION__,
         Status
         ));
-      return;
     }
   }
+}
+
+VOID
+EFIAPI
+OnResetNotificationInstall (
+  IN EFI_EVENT Event,
+  IN VOID      *Context
+  )
+{
+  EFI_STATUS                        Status;
+  EFI_RESET_NOTIFICATION_PROTOCOL   *ResetNotify;
+
+  Status = gBS->LocateProtocol (&gEfiResetNotificationProtocolGuid, NULL, (VOID **)&ResetNotify);
+  if (!EFI_ERROR (Status)) {
+    Status = ResetNotify->RegisterResetNotify (ResetNotify, FlushVariableToNvram);
+    ASSERT_EFI_ERROR (Status);
+
+    gBS->CloseEvent (Event);
+  }
+}
+
+VOID
+FlushDeviceData (
+  IN EFI_EVENT Event,
+  IN VOID      *Context
+  )
+{
+  PCIE_NODE     *Node;
+  PRIVATE_DATA  *PrivateData;
+  UINT8         Index;
+  VARSTORE_DATA *VarStoreConfig;
+
+  PrivateData = (PRIVATE_DATA *)Context;
+  VarStoreConfig = &PrivateData->VarStoreConfig;
+
+  FlushVariableToNvram (0, 0, 0, NULL);
 
   // Iterate through the list, then write corresponding MPS MRR
   for (Index = 0; Index < MAX_DEVICE; Index++) {
@@ -931,17 +966,20 @@ PcieDeviceConfigEntryPoint (
   EFI_STATUS                      Status;
   EFI_EVENT                       PlatformUiEntryEvent;
   EFI_EVENT                       FlushDeviceEvent;
-  EFI_EVENT                       PciProtocolNotifyEvent;
+  EFI_EVENT                       NotifyEvent;
   PRIVATE_DATA                    *PrivateData;
   UINTN                           BufferSize;
+  VOID                            *Registration;
 
   DriverHandle = NULL;
   PrivateData = AllocateZeroPool (sizeof (*PrivateData));
   if (PrivateData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  PrivateData->Signature = PRIVATE_DATA_SIGNATURE;
 
+  mPrivateData = PrivateData;
+
+  PrivateData->Signature = PRIVATE_DATA_SIGNATURE;
   PrivateData->ConfigAccess.ExtractConfig = ExtractConfig;
   PrivateData->ConfigAccess.RouteConfig = RouteConfig;
   PrivateData->ConfigAccess.Callback = DriverCallback;
@@ -1003,14 +1041,24 @@ PcieDeviceConfigEntryPoint (
   }
 
   // Event to collect PciIo
-  PciProtocolNotifyEvent = EfiCreateProtocolNotifyEvent (
-                             &gEfiPciIoProtocolGuid,
-                             TPL_CALLBACK,
-                             OnPciIoProtocolNotify,
-                             (VOID *)PrivateData,
-                             &mPciProtocolNotifyRegistration
-                             );
-  ASSERT (PciProtocolNotifyEvent != NULL);
+  NotifyEvent = EfiCreateProtocolNotifyEvent (
+                  &gEfiPciIoProtocolGuid,
+                  TPL_CALLBACK,
+                  OnPciIoProtocolNotify,
+                  (VOID *)PrivateData,
+                  &mPciProtocolNotifyRegistration
+                  );
+  ASSERT (NotifyEvent != NULL);
+
+  // Hook the system reset to flush the variable to NVRAM
+  NotifyEvent = EfiCreateProtocolNotifyEvent (
+                  &gEfiResetNotificationProtocolGuid,
+                  TPL_CALLBACK,
+                  OnResetNotificationInstall,
+                  NULL,
+                  &Registration
+                  );
+  ASSERT (NotifyEvent != NULL);
 
   // Event to flush device data
   Status = gBS->CreateEventEx (

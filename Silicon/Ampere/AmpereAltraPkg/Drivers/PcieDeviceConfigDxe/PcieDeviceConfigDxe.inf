@@ -48,6 +48,7 @@
   gEfiHiiConfigRoutingProtocolGuid              ## CONSUMES
   gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
   gEfiDevicePathToTextProtocolGuid
+  gEfiResetNotificationProtocolGuid
 
 [Guids]
   gEfiIfrTianoGuid
