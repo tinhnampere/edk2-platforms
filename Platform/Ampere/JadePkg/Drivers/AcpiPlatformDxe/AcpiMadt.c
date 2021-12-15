@@ -199,7 +199,7 @@ AcpiInstallMadtTable (
          sizeof (GicItsTemplate) * (SOCKET0_LAST_RC - SOCKET0_FIRST_RC +  1);
   if (IsSlaveSocketActive ()) {
     Size += (sizeof (GicItsTemplate) * (SOCKET1_LAST_RC - SOCKET1_FIRST_RC +  1));
-  } else if (!IsSlaveSocketPresent ()) {
+  } else if (!IsSlaveSocketAvailable ()) {
     Size += sizeof (GicItsTemplate) * 2; /* RCA0/1 */
   }
 
@@ -239,7 +239,7 @@ AcpiInstallMadtTable (
   }
 
   /* Install Gic ITS */
-  if (!IsSlaveSocketPresent ()) {
+  if (!IsSlaveSocketAvailable ()) {
     for (Index = 0; Index <= 1; Index++) { /* RCA0/1 */
       Length += AcpiInstallMadtGicIts ((VOID *)((UINT64)GiccEntryPointer + Length), Index);
     }

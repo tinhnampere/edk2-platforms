@@ -242,7 +242,7 @@ IsCpuEnabled (
 **/
 BOOLEAN
 EFIAPI
-IsSlaveSocketPresent (
+IsSlaveSocketAvailable (
   VOID
   );
 

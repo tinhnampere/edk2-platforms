@@ -183,7 +183,7 @@ SratAddGicItsAffinity (
   UINTN Index;
 
   /* Install Gic ITSAffinity */
-  if (!IsSlaveSocketPresent ()) {
+  if (!IsSlaveSocketAvailable ()) {
     for (Index = 0; Index <= 1; Index++) { /* RCA0/1 */
       GicItsAffinityTemplate.ItsId = Index;
       GicItsAffinityTemplate.ProximityDomain = 0;
@@ -235,7 +235,7 @@ AcpiInstallSratTable (
          ((SOCKET0_LAST_RC - SOCKET0_FIRST_RC +  1) * sizeof (GicItsAffinityTemplate));
   if (IsSlaveSocketActive ()) {
     Size += (SOCKET1_LAST_RC - SOCKET1_FIRST_RC +  1) * sizeof (GicItsAffinityTemplate);
-  } else if (!IsSlaveSocketPresent ()) {
+  } else if (!IsSlaveSocketAvailable ()) {
     Size += 2 * sizeof (GicItsAffinityTemplate); /* RCA0/1 */
   }
 
