@@ -62,9 +62,9 @@ STATIC UINT32 I2cSclParam[][3] = {
   [I2cSpeedModeFast]       = { 10, 0xA4,  0x13F }, // FS (Fast Speed)
 };
 
-STATIC BOOLEAN          mI2cRuntimeEnableArray[MAX_PLATFORM_I2C_BUS_NUM] = {FALSE};
-STATIC UINTN            mI2cBaseArray[MAX_PLATFORM_I2C_BUS_NUM] = {PLATFORM_I2C_REGISTER_BASE};
-STATIC DW_I2C_CONTEXT_T mI2cBusList[MAX_PLATFORM_I2C_BUS_NUM];
+STATIC BOOLEAN          mI2cRuntimeEnableArray[AC01_I2C_MAX_BUS_NUM] = {FALSE};
+STATIC UINTN            mI2cBaseArray[AC01_I2C_MAX_BUS_NUM] = {AC01_I2C_BASE_ADDRESS_LIST};
+STATIC DW_I2C_CONTEXT_T mI2cBusList[AC01_I2C_MAX_BUS_NUM];
 STATIC UINTN            mI2cClock = 0;
 STATIC EFI_EVENT        mVirtualAddressChangeEvent = NULL;
 
@@ -693,7 +693,7 @@ I2cWrite (
   IN OUT UINT32 *WriteLength
   )
 {
-  if (Bus >= MAX_PLATFORM_I2C_BUS_NUM
+  if (Bus >= AC01_I2C_MAX_BUS_NUM
       || Buf == NULL
       || WriteLength == NULL)
   {
@@ -734,7 +734,7 @@ I2cRead (
   IN OUT UINT32 *ReadLength
   )
 {
-  if (Bus >= MAX_PLATFORM_I2C_BUS_NUM
+  if (Bus >= AC01_I2C_MAX_BUS_NUM
       || Buf == NULL
       || ReadLength == NULL)
   {
@@ -763,7 +763,7 @@ I2cProbe (
   IN UINTN  BusSpeed
   )
 {
-  if (Bus >= MAX_PLATFORM_I2C_BUS_NUM
+  if (Bus >= AC01_I2C_MAX_BUS_NUM
       || BusSpeed > DW_I2C_MAXIMUM_SPEED_HZ)
   {
     return EFI_INVALID_PARAMETER;
@@ -793,7 +793,7 @@ I2cVirtualAddressChangeEvent (
   EfiConvertPointer (0x0, (VOID **)&mI2cBusList);
   EfiConvertPointer (0x0, (VOID **)&mI2cBaseArray);
   EfiConvertPointer (0x0, (VOID **)&mI2cClock);
-  for (Count = 0; Count < MAX_PLATFORM_I2C_BUS_NUM; Count++) {
+  for (Count = 0; Count < AC01_I2C_MAX_BUS_NUM; Count++) {
     if (!mI2cRuntimeEnableArray[Count]) {
       continue;
     }
@@ -820,7 +820,7 @@ I2cSetupRuntime (
   EFI_STATUS                      Status;
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR Descriptor;
 
-  if (Bus >= MAX_PLATFORM_I2C_BUS_NUM) {
+  if (Bus >= AC01_I2C_MAX_BUS_NUM) {
     return EFI_INVALID_PARAMETER;
   }
 

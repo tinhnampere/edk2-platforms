@@ -13,7 +13,7 @@
 
 #define NVDIMM_SK0          0
 #define NVDIMM_SK1          1
-#define NVDIMM_NUM_PER_SK   (PLATFORM_NVDIMM_MCU_MAX_PER_SK * PLATFORM_NVDIMM_NUM_MAX_PER_MCU)
+#define NVDIMM_NUM_PER_SK   (AC01_NVDIMM_MAX_MCU_PER_SOCKET * AC01_NVDIMM_MAX_DIMM_PER_MCU)
 #define ONE_GB              (1024 * 1024 * 1024)
 
 enum NvdimmMode {
@@ -40,7 +40,7 @@ typedef struct {
 
 typedef struct {
   UINT8       NvdRegionNum;
-  UINT8       NvdRegionId[PLATFORM_NVDIMM_REGION_MAX_PER_SK];
+  UINT8       NvdRegionId[AC01_NVDIMM_MAX_REGION_PER_SOCKET];
   UINT8       NvdMode;
   UINT8       NvdNum;
   NVDIMM_INFO NvdInfo[NVDIMM_NUM_PER_SK];

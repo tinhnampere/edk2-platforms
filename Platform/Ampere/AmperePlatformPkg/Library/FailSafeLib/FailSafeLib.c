@@ -21,6 +21,8 @@
 #include <Platform/Ac01.h>
 #include <Protocol/MmCommunication2.h>
 
+#include <NVParamDef.h>
+
 #define EFI_MM_MAX_PAYLOAD_U64_E  10
 #define EFI_MM_MAX_PAYLOAD_SIZE   (EFI_MM_MAX_PAYLOAD_U64_E * sizeof (UINT64))
 
@@ -306,7 +308,7 @@ FailSafeTestBootFailure (
    * Simulate UEFI boot failure due to config wrong NVPARAM for
    * testing failsafe feature
    */
-  Status = NVParamGet (NV_UEFI_FAILURE_FAILSAFE_OFFSET, NV_PERM_ALL, &Value);
+  Status = NVParamGet (NV_SI_UEFI_FAILURE_FAILSAFE, NV_PERM_ALL, &Value);
   if (!EFI_ERROR (Status) && (Value == 1)) {
     while (1) {
     }

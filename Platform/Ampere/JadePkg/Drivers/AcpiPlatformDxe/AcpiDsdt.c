@@ -125,13 +125,13 @@ AcpiPatchNvdimm (
             PlatformHob->DramInfo.Socket[Count] == 0)
         {
           if (PlatformHob->DramInfo.Base[Count] ==
-              PLATFORM_NVDIMM_SK0_NHASHED_REGION0)
+              AC01_NVDIMM_SK0_NHASHED_REGION0_BASE)
           {
             /* Disable NVD2 */
             AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD2._STA");
             AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
           } else if (PlatformHob->DramInfo.Base[Count] ==
-                     PLATFORM_NVDIMM_SK0_NHASHED_REGION1)
+                     AC01_NVDIMM_SK0_NHASHED_REGION1_BASE)
           {
             /* Disable NVD1 */
             AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD1._STA");
@@ -173,13 +173,13 @@ AcpiPatchNvdimm (
             PlatformHob->DramInfo.Socket[Count] == 1)
         {
           if (PlatformHob->DramInfo.Base[Count] ==
-              PLATFORM_NVDIMM_SK1_NHASHED_REGION0)
+              AC01_NVDIMM_SK1_NHASHED_REGION0_BASE)
           {
             /* Disable NVD4 */
             AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD4._STA");
             AcpiDSDTSetNodeStatusValue (NodePath, 0x0);
           } else if (PlatformHob->DramInfo.Base[Count] ==
-                     PLATFORM_NVDIMM_SK1_NHASHED_REGION1)
+                     AC01_NVDIMM_SK1_NHASHED_REGION1_BASE)
           {
             /* Disable NVD3 */
             AsciiSPrint (NodePath, sizeof (NodePath), "\\_SB.NVDR.NVD3._STA");

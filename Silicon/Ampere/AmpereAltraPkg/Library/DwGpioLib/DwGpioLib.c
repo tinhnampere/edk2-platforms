@@ -31,8 +31,8 @@
 #define GPIO_SWPORTA_DDR_ADDR           0x00000004
 #define GPIO_EXT_PORTA_ADDR             0x00000050
 
-STATIC UINT64    GpioBaseAddr[] = { GPIO_DWAPB_BASE_ADDR };
-STATIC UINT64    GpiBaseAddr[] = { GPI_DWAPB_BASE_ADDR };
+STATIC UINT64    GpioBaseAddr[] = { AC01_GPIO_BASE_ADDRESS_LIST };
+STATIC UINT64    GpiBaseAddr[] = { AC01_GPI_BASE_ADDRESS_LIST };
 STATIC BOOLEAN   GpioRuntimeEnableArray[sizeof (GpioBaseAddr) / sizeof (GpioBaseAddr[0])] = { FALSE };
 STATIC EFI_EVENT mVirtualAddressChangeEvent = NULL;
 
@@ -42,13 +42,13 @@ GetBaseAddr (
   )
 {
   UINT32 NumberOfControllers = sizeof (GpioBaseAddr) / sizeof (GpioBaseAddr[0]);
-  UINT32 TotalPins = GPIO_DWAPB_PINS_PER_CONTROLLER * NumberOfControllers;
+  UINT32 TotalPins = AC01_GPIO_PINS_PER_CONTROLLER * NumberOfControllers;
 
   if (NumberOfControllers == 0 || Pin >= TotalPins) {
     return 0;
   }
 
-  return GpioBaseAddr[Pin / GPIO_DWAPB_PINS_PER_CONTROLLER];
+  return GpioBaseAddr[Pin / AC01_GPIO_PINS_PER_CONTROLLER];
 }
 
 VOID
@@ -86,7 +86,7 @@ GpioWriteBit (
     return;
   }
 
-  GpioPin = Pin % GPIO_DWAPB_PINS_PER_CONTROLLER;
+  GpioPin = Pin % AC01_GPIO_PINS_PER_CONTROLLER;
 
   Reg += GPIO_SWPORTA_DR_ADDR;
   GpioRead (Reg, &ReadVal);
@@ -115,7 +115,7 @@ GpioReadBit (
     return 0;
   }
 
-  GpioPin = Pin % GPIO_DWAPB_PINS_PER_CONTROLLER;
+  GpioPin = Pin % AC01_GPIO_PINS_PER_CONTROLLER;
 
   /* Check if a base address is GPI */
   MaxIndex = sizeof (GpiBaseAddr) / sizeof (GpiBaseAddr[0]);
@@ -156,7 +156,7 @@ GpioConfig (
   }
 
   Reg += GPIO_SWPORTA_DDR_ADDR;
-  GpioPin = Pin % GPIO_DWAPB_PINS_PER_CONTROLLER;
+  GpioPin = Pin % AC01_GPIO_PINS_PER_CONTROLLER;
   GpioRead (Reg, &Val);
 
   if (InOut == GPIO_OUT) {
@@ -177,7 +177,7 @@ GpioModeConfig (
   )
 {
   UINT32 NumberOfControllers = sizeof (GpioBaseAddr) / sizeof (UINT64);
-  UINT32 NumersOfPins = NumberOfControllers * GPIO_DWAPB_PINS_PER_CONTROLLER;
+  UINT32 NumersOfPins = NumberOfControllers * AC01_GPIO_PINS_PER_CONTROLLER;
   UINT32 Delay = 10;
 
   if (Mode < GPIO_CONFIG_OUT_LOW
@@ -308,7 +308,7 @@ GpioSetupRuntime (
     return Status;
   }
 
-  GpioRuntimeEnableArray[Pin / GPIO_DWAPB_PINS_PER_CONTROLLER] = TRUE;
+  GpioRuntimeEnableArray[Pin / AC01_GPIO_PINS_PER_CONTROLLER] = TRUE;
 
   return Status;
 }

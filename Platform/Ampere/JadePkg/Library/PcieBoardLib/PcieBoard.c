@@ -301,7 +301,7 @@ PcieBoardReleaseAllPerst (
   UINT32 GpioIndex, GpioPin;
 
   // Write 1 to all GPIO[16..21] to release all PERST
-  GpioPin = GPIO_DWAPB_PINS_PER_SOCKET * SocketId + 16;
+  GpioPin = AC01_GPIO_PINS_PER_SOCKET * SocketId + 16;
   for (GpioIndex = 0; GpioIndex < 6; GpioIndex++) {
     GpioModeConfig (GpioPin + GpioIndex, GPIO_CONFIG_OUT_HI);
   }
@@ -424,7 +424,7 @@ PcieBoardAssertPerst (
       GpioGroupVal = 46 - (RC->ID - 4)*8 - PcieIndex;
     }
 
-    GpioPin = GPIO_DWAPB_PINS_PER_SOCKET * RC->Socket + 16;
+    GpioPin = AC01_GPIO_PINS_PER_SOCKET * RC->Socket + 16;
     for (GpioIndex = 0; GpioIndex < 6; GpioIndex++) {
       // 6: Number of GPIO pins to control via CPLD
       Val = (GpioGroupVal & 0x3F) & (1 << GpioIndex);

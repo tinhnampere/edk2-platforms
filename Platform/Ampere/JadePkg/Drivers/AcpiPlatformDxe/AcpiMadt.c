@@ -21,7 +21,7 @@ EFI_ACPI_6_3_GICR_STRUCTURE GicRTemplate = {
   EFI_ACPI_6_3_GICR,
   sizeof (EFI_ACPI_6_3_GICR_STRUCTURE),
   EFI_ACPI_RESERVED_WORD,
-  GICR_MASTER_BASE_REG, /* DiscoveryRangeBaseAddress */
+  AC01_GICR_MASTER_BASE_ADDRESS, /* DiscoveryRangeBaseAddress */
   0x1000000,            /* DiscoveryRangeLength */
 };
 
@@ -30,7 +30,7 @@ EFI_ACPI_6_3_GIC_DISTRIBUTOR_STRUCTURE GicDTemplate = {
   sizeof (EFI_ACPI_6_3_GIC_DISTRIBUTOR_STRUCTURE),
   EFI_ACPI_RESERVED_WORD,
   0,             /* GicDistHwId */
-  GICD_BASE_REG, /* GicDistBase */
+  AC01_GICD_MASTER_BASE_ADDRESS, /* GicDistBase */
   0,             /* GicDistVector */
   0x3,           /* GicVersion */
   {EFI_ACPI_RESERVED_BYTE, EFI_ACPI_RESERVED_BYTE, EFI_ACPI_RESERVED_BYTE}
@@ -135,7 +135,7 @@ AcpiInstallMadtGicR (
   CopyMem (GicREntryPointer, &GicRTemplate, Size);
 
   if (SocketId == 1) {
-    GicREntryPointer->DiscoveryRangeBaseAddress = GICR_SLAVE_BASE_REG;
+    GicREntryPointer->DiscoveryRangeBaseAddress = AC01_GICR_SLAVE_BASE_ADDRESS;
   }
 
   return Size;
@@ -149,11 +149,11 @@ AcpiInstallMadtGicIts (
 {
   EFI_ACPI_6_3_GIC_ITS_STRUCTURE *GicItsEntryPointer = EntryPointer;
   UINTN                          Size, Offset;
-  UINT64                         GicBase = GICD_BASE_REG;
+  UINT64                         GicBase = AC01_GICD_MASTER_BASE_ADDRESS;
   UINT32                         ItsId = Index;
 
   if (Index > SOCKET0_LAST_RC) { /* Socket 1, Index: 8-15 */
-    GicBase = GICD_SLAVE_BASE_REG;
+    GicBase = AC01_GICD_SLAVE_BASE_ADDRESS;
     Index -= (SOCKET0_LAST_RC + 1); /* Socket 1, Index:8 -> RCA0 */
   }
   Size = sizeof (GicItsTemplate);

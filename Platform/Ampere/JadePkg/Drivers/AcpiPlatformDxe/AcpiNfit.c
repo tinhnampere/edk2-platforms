@@ -151,26 +151,26 @@ AcpiNvdDataInit (
   if (NvdData[Socket].NvdMode == NVDIMM_HASHED) {
     NvdInfo = &NvdData[Socket].NvdInfo[NVDIMM_SK0];
     NvdInfo->DeviceHandle   =
-      (Socket == 0) ? PLATFORM_NVDIMM_NVD1_DEVICE_HANDLE :
-      PLATFORM_NVDIMM_NVD3_DEVICE_HANDLE;
-    NvdInfo->InterleaveWays = PLATFORM_NVDIMM_HASHED_INTERLEAVE_WAYS;
+      (Socket == 0) ? AC01_NVDIMM_NVD1_DEVICE_HANDLE :
+      AC01_NVDIMM_NVD3_DEVICE_HANDLE;
+    NvdInfo->InterleaveWays = AC01_NVDIMM_HASHED_INTERLEAVE_WAYS;
     NvdInfo->RegionOffset   = 0;
     AcpiNvdInfoInit (
       NvdInfo,
-      (Socket == 0) ? PLATFORM_NVDIMM_NVD1_DIMM_ID :
-      PLATFORM_NVDIMM_NVD3_DIMM_ID
+      (Socket == 0) ? AC01_NVDIMM_NVD1_DIMM_ID :
+      AC01_NVDIMM_NVD3_DIMM_ID
       );
 
     NvdInfo = &NvdData[Socket].NvdInfo[1];
     NvdInfo->DeviceHandle   =
-      (Socket == 0) ? PLATFORM_NVDIMM_NVD2_DEVICE_HANDLE :
-      PLATFORM_NVDIMM_NVD4_DEVICE_HANDLE;
-    NvdInfo->InterleaveWays = PLATFORM_NVDIMM_HASHED_INTERLEAVE_WAYS;
-    NvdInfo->RegionOffset   = PLATFORM_NVDIMM_HASHED_REGION_OFFSET;
+      (Socket == 0) ? AC01_NVDIMM_NVD2_DEVICE_HANDLE :
+      AC01_NVDIMM_NVD4_DEVICE_HANDLE;
+    NvdInfo->InterleaveWays = AC01_NVDIMM_HASHED_INTERLEAVE_WAYS;
+    NvdInfo->RegionOffset   = AC01_NVDIMM_HASHED_REGION_OFFSET;
     AcpiNvdInfoInit (
       NvdInfo,
-      (Socket == 0) ? PLATFORM_NVDIMM_NVD2_DIMM_ID :
-      PLATFORM_NVDIMM_NVD4_DIMM_ID
+      (Socket == 0) ? AC01_NVDIMM_NVD2_DIMM_ID :
+      AC01_NVDIMM_NVD4_DIMM_ID
       );
 
     /* Update NvdNum */
@@ -187,37 +187,37 @@ AcpiNvdDataInit (
   for (Count = 0; Count < NvdData[Socket].NvdRegionNum; Count++) {
     RegionId = NvdData[Socket].NvdRegionId[Count];
     if (PlatformHob->DramInfo.Base[RegionId] ==
-        PLATFORM_NVDIMM_SK0_NHASHED_REGION0 ||
+        AC01_NVDIMM_SK0_NHASHED_REGION0_BASE ||
         PlatformHob->DramInfo.Base[RegionId] ==
-        PLATFORM_NVDIMM_SK1_NHASHED_REGION0)
+        AC01_NVDIMM_SK1_NHASHED_REGION0_BASE)
     {
       NvdInfo = &NvdData[Socket].NvdInfo[0];
       NvdInfo->DeviceHandle   =
-        (Socket == 0) ? PLATFORM_NVDIMM_NVD1_DEVICE_HANDLE :
-        PLATFORM_NVDIMM_NVD3_DEVICE_HANDLE;
-      NvdInfo->InterleaveWays = PLATFORM_NVDIMM_NHASHED_INTERLEAVE_WAYS;
+        (Socket == 0) ? AC01_NVDIMM_NVD1_DEVICE_HANDLE :
+        AC01_NVDIMM_NVD3_DEVICE_HANDLE;
+      NvdInfo->InterleaveWays = AC01_NVDIMM_NHASHED_INTERLEAVE_WAYS;
       NvdInfo->RegionOffset   = 0;
       AcpiNvdInfoInit (
         NvdInfo,
-        (Socket == 0) ? PLATFORM_NVDIMM_NVD1_DIMM_ID :
-        PLATFORM_NVDIMM_NVD3_DIMM_ID
+        (Socket == 0) ? AC01_NVDIMM_NVD1_DIMM_ID :
+        AC01_NVDIMM_NVD3_DIMM_ID
         );
 
     } else if (PlatformHob->DramInfo.Base[RegionId] ==
-               PLATFORM_NVDIMM_SK0_NHASHED_REGION1 ||
+               AC01_NVDIMM_SK0_NHASHED_REGION1_BASE ||
                PlatformHob->DramInfo.Base[RegionId] ==
-               PLATFORM_NVDIMM_SK1_NHASHED_REGION1)
+               AC01_NVDIMM_SK1_NHASHED_REGION1_BASE)
     {
       NvdInfo = &NvdData[Socket].NvdInfo[1];
       NvdInfo->DeviceHandle   =
-        (Socket == 0) ? PLATFORM_NVDIMM_NVD2_DEVICE_HANDLE :
-        PLATFORM_NVDIMM_NVD4_DEVICE_HANDLE;
-      NvdInfo->InterleaveWays = PLATFORM_NVDIMM_NHASHED_INTERLEAVE_WAYS;
+        (Socket == 0) ? AC01_NVDIMM_NVD2_DEVICE_HANDLE :
+        AC01_NVDIMM_NVD4_DEVICE_HANDLE;
+      NvdInfo->InterleaveWays = AC01_NVDIMM_NHASHED_INTERLEAVE_WAYS;
       NvdInfo->RegionOffset   = 0;
       AcpiNvdInfoInit (
         NvdInfo,
-        (Socket == 0) ? PLATFORM_NVDIMM_NVD2_DIMM_ID :
-        PLATFORM_NVDIMM_NVD4_DIMM_ID
+        (Socket == 0) ? AC01_NVDIMM_NVD2_DIMM_ID :
+        AC01_NVDIMM_NVD4_DIMM_ID
         );
     }
   }
@@ -429,10 +429,10 @@ AcpiNfitFillTableBySK (
       NfitControlRegionPointer =
         (EFI_ACPI_6_3_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE *)
         (NfitSpaPointer + 1);
-      NvdCount = ((NvdRegionBase == PLATFORM_NVDIMM_SK0_NHASHED_REGION0) ||
-                  (NvdRegionBase == PLATFORM_NVDIMM_SK1_NHASHED_REGION0)) ?
-                 0 : PLATFORM_NVDIMM_NUM_MAX_PER_MCU;
-      MaxNvdCount = NvdCount + PLATFORM_NVDIMM_NUM_MAX_PER_MCU;
+      NvdCount = ((NvdRegionBase == AC01_NVDIMM_SK0_NHASHED_REGION0_BASE) ||
+                  (NvdRegionBase == AC01_NVDIMM_SK1_NHASHED_REGION0_BASE)) ?
+                 0 : AC01_NVDIMM_MAX_DIMM_PER_MCU;
+      MaxNvdCount = NvdCount + AC01_NVDIMM_MAX_DIMM_PER_MCU;
       for (; NvdCount < MaxNvdCount; NvdCount++) {
         if (!NvdData[Socket].NvdInfo[NvdCount].Enabled) {
           continue;
