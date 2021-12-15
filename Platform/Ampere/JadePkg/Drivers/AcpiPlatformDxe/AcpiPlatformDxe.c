@@ -140,8 +140,8 @@ UpdateAcpiOnExitBootServices (
     DEBUG ((DEBUG_INFO, "APEI Table updated!\n"));
   }
 
-  // Configure PCC mailbox base address and unmask interrupt
-  Status = AcpiPcctInit ();
+  // Advertise shared memory regions to SMpro/PMpro and unmask interrupt
+  Status = AcpiPcctInitializeSharedMemory ();
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "PCCT Table updated!\n"));
   }

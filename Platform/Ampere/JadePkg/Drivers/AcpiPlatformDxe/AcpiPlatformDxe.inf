@@ -43,12 +43,14 @@
 [LibraryClasses]
   AcpiHelperLib
   AcpiLib
-  AcpiPccLib
   AmpereCpuLib
   ArmLib
   BaseLib
   DebugLib
   FlashLib
+  MailboxInterfaceLib
+  SystemFirmwareInterfaceLib
+  TimerLib
   IpmiCommandLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint

@@ -49,7 +49,7 @@ AcpiInstallNfitTable (
   );
 
 EFI_STATUS
-AcpiPcctInit (
+AcpiPcctInitializeSharedMemory (
   VOID
   );
 
