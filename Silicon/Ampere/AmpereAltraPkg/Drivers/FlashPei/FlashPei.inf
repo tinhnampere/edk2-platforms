@@ -21,26 +21,19 @@
   ArmPkg/ArmPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
-  SecurityPkg/SecurityPkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
 [LibraryClasses]
-  ArmSmcLib
   BaseMemoryLib
   DebugLib
   MmCommunicationLib
   NVParamLib
   PcdLib
-  PeiServicesLib
   PeimEntryPoint
   ResetSystemLib
 
-[Ppis]
-  gEfiPeiReadOnlyVariable2PpiGuid
-
 [Guids]
-  gEfiGlobalVariableGuid
   gSpiNorMmGuid
 
 [FixedPcd]
@@ -54,4 +47,4 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64
 
 [Depex]
-  gEfiPeiReadOnlyVariable2PpiGuid
+  TRUE
