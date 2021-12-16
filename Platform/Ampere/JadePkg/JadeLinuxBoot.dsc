@@ -48,7 +48,7 @@
   #
   # Pcie Board
   #
-  BoardPcieLib|Silicon/Ampere/AmpereAltraPkg/Library/BoardPcieLibNull/BoardPcieLibNull.inf
+  BoardPcieLib|Platform/Ampere/JadePkg/Library/BoardPcieLib/BoardPcieLib.inf
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   #
