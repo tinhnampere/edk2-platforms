@@ -212,4 +212,4 @@ APRIORI PEI {
     }
   }
 
-!include Platform/Ampere/AmperePlatformPkg/FvRules.fdf.inc
+!include Silicon/Ampere/AmpereSiliconPkg/FvRules.fdf.inc

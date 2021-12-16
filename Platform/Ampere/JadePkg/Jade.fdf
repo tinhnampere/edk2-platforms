@@ -471,4 +471,4 @@ READ_LOCK_STATUS   = TRUE
 
   INF  SignedCapsulePkg/Universal/SystemFirmwareUpdate/SystemFirmwareUpdateDxe.inf
 
-!include Platform/Ampere/AmperePlatformPkg/FvRules.fdf.inc
+!include Silicon/Ampere/AmpereSiliconPkg/FvRules.fdf.inc
