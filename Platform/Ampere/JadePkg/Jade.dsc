@@ -101,11 +101,6 @@
   AcpiHelperLib|Platform/Ampere/AmperePlatformPkg/Library/AcpiHelperLib/AcpiHelperLib.inf
 
   #
-  # Pcie Board
-  #
-  PcieBoardLib|Platform/Ampere/JadePkg/Library/PcieBoardLib/PcieBoardLib.inf
-
-  #
   # EFI Redfish drivers
   #
 !if $(REDFISH_ENABLE) == TRUE

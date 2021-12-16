@@ -126,11 +126,6 @@ APRIORI DXE {
   INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
 
   #
-  # PCIe Support
-  #
-  INF Silicon/Ampere/AmpereAltraPkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
-
-  #
   # SMBus
   #
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcDxe/SmbusHcDxe.inf

@@ -45,11 +45,6 @@
   AcpiLib|EmbeddedPkg/Library/AcpiLib/AcpiLib.inf
   AcpiHelperLib|Platform/Ampere/AmperePlatformPkg/Library/AcpiHelperLib/AcpiHelperLib.inf
 
-  #
-  # Pcie Board
-  #
-  PcieBoardLib|Platform/Ampere/JadePkg/Library/PcieBoardLib/PcieBoardLib.inf
-
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   #
   # RTC Library: Common RTC
