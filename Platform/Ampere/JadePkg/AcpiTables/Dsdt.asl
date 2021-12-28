@@ -103,8 +103,8 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
           Cacheable,            // Cacheable
           ReadWrite,            // ReadAndWrite
           0x0000000000000000,   // AddressGranularity - GRA
-          0x0000000088920000,   // AddressMinimum - MIN
-          0x000000008893FFFF,   // AddressMaximum - MAX
+          0x00000000C0000000,   // AddressMinimum - MIN
+          0x00000000C001FFFF,   // AddressMaximum - MAX
           0x0000000000000000,   // AddressTranslation - TRA
           0x0000000000020000    // RangeLength - LEN
         )
