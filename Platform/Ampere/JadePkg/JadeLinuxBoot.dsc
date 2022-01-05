@@ -40,11 +40,6 @@
 #
 [LibraryClasses.common]
   #
-  # RTC Library: Common RTC
-  #
-  RealTimeClockLib|Platform/Ampere/JadePkg/Library/PCF85063RealTimeClockLib/PCF85063RealTimeClockLib.inf
-
-  #
   # Library for FailSafe support
   #
   FailSafeLib|Platform/Ampere/AmperePlatformPkg/Library/FailSafeLib/FailSafeLib.inf
@@ -60,6 +55,12 @@
   # Pcie Board
   #
   PcieBoardLib|Platform/Ampere/JadePkg/Library/PcieBoardLib/PcieBoardLib.inf
+
+[LibraryClasses.common.DXE_RUNTIME_DRIVER]
+  #
+  # RTC Library: Common RTC
+  #
+  RealTimeClockLib|Platform/Ampere/JadePkg/Library/PCF85063RealTimeClockLib/PCF85063RealTimeClockLib.inf
 
 [LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION, LibraryClasses.common.DXE_RUNTIME_DRIVER, LibraryClasses.common.DXE_DRIVER]
   SmbusLib|Platform/Ampere/JadePkg/Library/DxePlatformSmbusLib/DxePlatformSmbusLib.inf

@@ -96,11 +96,6 @@
   PlatformFlashAccessLib|Silicon/Ampere/AmpereAltraPkg/Library/PlatformFlashAccessLib/PlatformFlashAccessLib.inf
 
   #
-  # RTC Library: Common RTC
-  #
-  RealTimeClockLib|Platform/Ampere/JadePkg/Library/PCF85063RealTimeClockLib/PCF85063RealTimeClockLib.inf
-
-  #
   # Library for FailSafe support
   #
   FailSafeLib|Platform/Ampere/AmperePlatformPkg/Library/FailSafeLib/FailSafeLib.inf
@@ -128,6 +123,11 @@
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibFmp/DxeRuntimeCapsuleLib.inf
+
+  #
+  # RTC Library: Common RTC
+  #
+  RealTimeClockLib|Platform/Ampere/JadePkg/Library/PCF85063RealTimeClockLib/PCF85063RealTimeClockLib.inf
 
 [LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION, LibraryClasses.common.DXE_RUNTIME_DRIVER, LibraryClasses.common.DXE_DRIVER]
   SmbusLib|Platform/Ampere/JadePkg/Library/DxePlatformSmbusLib/DxePlatformSmbusLib.inf

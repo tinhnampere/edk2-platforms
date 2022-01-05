@@ -2,7 +2,7 @@
   Provides functions for communication with System Firmware (SMpro/PMpro)
   via interfaces like Mailbox.
 
-  Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2021 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -157,9 +157,11 @@
 // Parameters for Set Configuration
 //   Param0: Configuration type
 //     20: Turbo configuration
+//     37: Date configuration
 //   Param1: Unused
 //
 #define MAILBOX_SET_CONFIGURATION_TURBO 20
+#define MAILBOX_SET_CONFIGURATION_DATE  37
 
 /**
   Read a register which is not accessible from the non-secure world
@@ -277,6 +279,35 @@ EFIAPI
 MailboxMsgTurboConfig (
   IN UINT8   Socket,
   IN BOOLEAN Enable
+  );
+
+/**
+  Configure date in SMpro/PMpro.
+
+  @param[in]  Time              A pointer to the date time for configuration.
+
+  @retval EFI_SUCCESS           Configure the date successfully.
+  @retval EFI_INVALID_PARAMETER The time parameter is NULL.
+  @retval Otherwise             Errors returned from the MailboxWrite() functions.
+
+**/
+EFI_STATUS
+EFIAPI
+MailboxMsgDateConfig (
+  IN EFI_TIME   *Time
+  );
+
+/**
+  Setup runtime date configuration.
+
+  @retval EFI_SUCCESS           The operation completed successfully.
+  @retval Otherwise             Errors returned from the MailboxRuntimeSetup() functions.
+
+**/
+EFI_STATUS
+EFIAPI
+MailboxMsgDateConfigRuntimeSetup (
+  VOID
   );
 
 #endif /* SYSTEM_FIRMWARE_INTERFACE_LIB_H_ */
