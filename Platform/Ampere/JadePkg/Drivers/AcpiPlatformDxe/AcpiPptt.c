@@ -10,6 +10,8 @@
 #include <Library/ArmLib.h>
 #include "AcpiPlatform.h"
 
+#define NUMBER_OF_RESOURCES 2  // L1I & L1D
+
 EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR PpttProcessorTemplate = {
   EFI_ACPI_6_3_PPTT_TYPE_PROCESSOR,
   sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR),
@@ -41,22 +43,25 @@ EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER PpttTableHeaderTemplate 
     )
 };
 
-STATIC EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER *mPpttTablePointer;
-
 UINT32
 AddProcessorCoreNode (
-  VOID   *EntryPointer,
-  UINT32 CpuId,
-  UINT32 ClusterNodeOffset,
-  UINT32 L1ICacheNodeOffset,
-  UINT32 L1DCacheNodeOffset
+  EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer,
+  UINT32                                CpuId,
+  UINT32                                ParentOffset,
+  UINT32                                L1INodeOffset,
+  UINT32                                L1DNodeOffset
   )
 {
-  EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
   UINT32                                *ResPointer;
-  UINTN                                 SocketId;
   UINTN                                 ClusterIdPerSocket;
   UINTN                                 CoreIdPerCpm;
+  UINTN                                 SocketId;
+
+  ASSERT (CpuId < PLATFORM_CPU_MAX_NUM_CORES);;
+
+  ClusterIdPerSocket = CLUSTER_ID (CpuId);
+  SocketId = SOCKET_ID (CpuId);
+  CoreIdPerCpm = CpuId % PLATFORM_CPU_NUM_CORES_PER_CPM;
 
   CopyMem (
     PpttProcessorEntryPointer,
@@ -64,44 +69,35 @@ AddProcessorCoreNode (
     sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)
     );
 
-  ClusterIdPerSocket = CLUSTER_ID (CpuId);
-  SocketId = SOCKET_ID (CpuId);
-  CoreIdPerCpm = CpuId % PLATFORM_CPU_NUM_CORES_PER_CPM;
   PpttProcessorEntryPointer->Flags.AcpiProcessorIdValid = EFI_ACPI_6_3_PPTT_PROCESSOR_ID_VALID;
   PpttProcessorEntryPointer->Flags.NodeIsALeaf = EFI_ACPI_6_3_PPTT_NODE_IS_LEAF;
   PpttProcessorEntryPointer->Flags.IdenticalImplementation = EFI_ACPI_6_3_PPTT_IMPLEMENTATION_IDENTICAL;
   PpttProcessorEntryPointer->AcpiProcessorId = (SocketId << PLATFORM_SOCKET_UID_BIT_OFFSET) | (ClusterIdPerSocket << 8) | CoreIdPerCpm;
-  PpttProcessorEntryPointer->Parent = ClusterNodeOffset;
-  PpttProcessorEntryPointer->NumberOfPrivateResources = 2; /* L1I + L1D */
+  PpttProcessorEntryPointer->Parent = ParentOffset;
+  PpttProcessorEntryPointer->NumberOfPrivateResources = NUMBER_OF_RESOURCES;
+  PpttProcessorEntryPointer->Length += sizeof (UINT32) * PpttProcessorEntryPointer->NumberOfPrivateResources;
 
-  ResPointer = (UINT32 *)((UINT64)EntryPointer +
-                          sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
-  ResPointer[0] = L1ICacheNodeOffset;
-  ResPointer[1] = L1DCacheNodeOffset;
+  ResPointer = (UINT32 *)((UINT64)PpttProcessorEntryPointer + sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
 
-  PpttProcessorEntryPointer->Length = sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + 2 * sizeof (UINT32);
+  ResPointer[0] = L1INodeOffset;
+  ResPointer[1] = L1DNodeOffset;
 
   return PpttProcessorEntryPointer->Length;
 }
 
 UINT32
 AddClusterNode (
-  VOID   *EntryPointer,
-  UINT32 SocketNodeOffset,
-  UINT32 *ClusterNodeOffset
+  EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer,
+  UINT32                                ParentOffset
   )
 {
-  EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
-
-  *ClusterNodeOffset = (UINT64)EntryPointer - (UINT64)mPpttTablePointer;
-
   CopyMem (
     PpttProcessorEntryPointer,
     &PpttProcessorTemplate,
     sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR)
     );
 
-  PpttProcessorEntryPointer->Parent = SocketNodeOffset;
+  PpttProcessorEntryPointer->Parent = ParentOffset;
   PpttProcessorEntryPointer->Flags.IdenticalImplementation = EFI_ACPI_6_3_PPTT_IMPLEMENTATION_IDENTICAL;
 
   return PpttProcessorEntryPointer->Length;
@@ -109,15 +105,10 @@ AddClusterNode (
 
 UINT32
 AddSocketNode (
-  VOID   *EntryPointer,
-  UINT32 RootNodeOffset,
-  UINT32 *SocketNodeOffset
+  EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer,
+  UINT32                                ParentOffset
   )
 {
-  EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
-
-  *SocketNodeOffset = (UINT64)EntryPointer - (UINT64)mPpttTablePointer;
-
   CopyMem (
     PpttProcessorEntryPointer,
     &PpttProcessorTemplate,
@@ -126,21 +117,16 @@ AddSocketNode (
 
   PpttProcessorEntryPointer->Flags.PhysicalPackage = EFI_ACPI_6_3_PPTT_PACKAGE_PHYSICAL;
   PpttProcessorEntryPointer->Flags.IdenticalImplementation = EFI_ACPI_6_3_PPTT_IMPLEMENTATION_IDENTICAL;
-  PpttProcessorEntryPointer->Parent = RootNodeOffset;
+  PpttProcessorEntryPointer->Parent = ParentOffset;
 
   return PpttProcessorEntryPointer->Length;
 }
 
 UINT32
 AddRootNode (
-  VOID *EntryPointer,
-  UINT32 *RootNodeOffset
+  EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer
   )
 {
-  EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR *PpttProcessorEntryPointer = EntryPointer;
-
-  *RootNodeOffset = (UINT64)EntryPointer - (UINT64)mPpttTablePointer;
-
   CopyMem (
     PpttProcessorEntryPointer,
     &PpttProcessorTemplate,
@@ -184,15 +170,10 @@ AddFillCacheSizeInfo (
 
 UINT32
 AddL1DataCacheNode (
-  VOID   *EntryPointer,
-  UINT32 L2CacheNodeOffset,
-  UINT32 *L1DCacheNodeOffset
+  EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer,
+  UINT32                            NextCacheLevelOffset
   )
 {
-  EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer = EntryPointer;
-
-  *L1DCacheNodeOffset = (UINT64)EntryPointer - (UINT64)mPpttTablePointer;
-
   CopyMem (
     PpttCacheEntryPointer,
     &PpttCacheTemplate,
@@ -201,22 +182,17 @@ AddL1DataCacheNode (
 
   AddFillCacheSizeInfo (PpttCacheEntryPointer, 1, TRUE, FALSE);
   PpttCacheEntryPointer->Attributes.CacheType = EFI_ACPI_6_3_CACHE_ATTRIBUTES_CACHE_TYPE_DATA;
-  PpttCacheEntryPointer->NextLevelOfCache = L2CacheNodeOffset;
+  PpttCacheEntryPointer->NextLevelOfCache = NextCacheLevelOffset;
 
   return PpttCacheEntryPointer->Length;
 }
 
 UINT32
 AddL1InstructionCacheNode (
-  VOID   *EntryPointer,
-  UINT32 L2CacheNodeOffset,
-  UINT32 *L1ICacheNodeOffset
+  EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer,
+  UINT32                            NextCacheLevelOffset
   )
 {
-  EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer = EntryPointer;
-
-  *L1ICacheNodeOffset = (UINT64)EntryPointer - (UINT64)mPpttTablePointer;
-
   CopyMem (
     PpttCacheEntryPointer,
     &PpttCacheTemplate,
@@ -225,21 +201,15 @@ AddL1InstructionCacheNode (
 
   AddFillCacheSizeInfo (PpttCacheEntryPointer, 1, FALSE, FALSE);
   PpttCacheEntryPointer->Attributes.CacheType = EFI_ACPI_6_3_CACHE_ATTRIBUTES_CACHE_TYPE_INSTRUCTION;
-  PpttCacheEntryPointer->NextLevelOfCache = L2CacheNodeOffset;
+  PpttCacheEntryPointer->NextLevelOfCache = NextCacheLevelOffset;
 
   return PpttCacheEntryPointer->Length;
 }
 
-UINT32
-AddL2CacheNode (
-  VOID   *EntryPointer,
-  UINT32 *L2CacheNodeOffset
+UINT32 AddL2CacheNode (
+  EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer
   )
 {
-  EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE *PpttCacheEntryPointer = EntryPointer;
-
-  *L2CacheNodeOffset = (UINT64)EntryPointer - (UINT64)mPpttTablePointer;
-
   CopyMem (
     PpttCacheEntryPointer,
     &PpttCacheTemplate,
@@ -262,21 +232,21 @@ AcpiInstallPpttTable (
   )
 {
   EFI_ACPI_TABLE_PROTOCOL               *AcpiTableProtocol;
-  UINTN                                 PpttTableKey;
   EFI_STATUS                            Status;
-  UINTN                                 Size;
-  UINTN                                 NumSockets;
-  UINTN                                 MaxNumCores;
-  UINTN                                 SocketId;
+  UINT32                                ClusterNodeOffset[PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_MAX_SOCKET];
+  UINT32                                L1DNodeOffset;
+  UINT32                                L1INodeOffset;
+  UINT32                                L2NodeOffset;
+  UINT32                                RootNodeOffset;
+  UINT32                                SocketNodeOffset[PLATFORM_CPU_MAX_SOCKET];
+  UINTN                                 ClusterId;
   UINTN                                 CpuId;
-  UINTN                                 Length;
-  VOID                                  *EntryPointer;
-  UINT32                                RootOffset;
-  UINT32                                SocketOffset;
-  UINT32                                ClusterOffset;
-  UINT32                                L2CacheOffset;
-  UINT32                                L1ICacheOffset;
-  UINT32                                L1DCacheOffset;
+  UINTN                                 NextNodeOffset;
+  UINTN                                 NumSockets;
+  UINTN                                 PpttTableKey;
+  UINTN                                 Size;
+  UINTN                                 SocketId;
+  VOID                                  *PpttTablePointer;
 
   Status = gBS->LocateProtocol (
                   &gEfiAcpiTableProtocolGuid,
@@ -288,77 +258,88 @@ AcpiInstallPpttTable (
   }
 
   NumSockets = GetNumberOfActiveSockets ();
-  MaxNumCores = PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_NUM_CORES_PER_CPM;
 
   Size = sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER) +
-         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) +                                      /* Root node    */
-         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) * NumSockets +                         /* Socket node  */
-         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) * (GetNumberOfActiveCores () / PLATFORM_CPU_NUM_CORES_PER_CPM) +  /* Cluster node */
-         (sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + 2 * sizeof (UINT32)) * GetNumberOfActiveCores () +             /* Core node    */
-         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE) +                                          /* L1I node     */
-         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE) +                                          /* L1D node     */
-         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE);                                           /* L2 node      */
+         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) +                                      // Root node
+         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) * NumSockets +                         // Socket node
+         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) * (GetNumberOfActiveCores () / PLATFORM_CPU_NUM_CORES_PER_CPM) +         // Cluster node
+         (sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + NUMBER_OF_RESOURCES * sizeof (UINT32)) * GetNumberOfActiveCores () +  // Core node
+         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE) +                                          // L1I node
+         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE) +                                          // L1D node
+         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE);                                           // L2 node
 
-  mPpttTablePointer =
-    (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER *)AllocateZeroPool (Size);
-  if (mPpttTablePointer == NULL) {
+  PpttTablePointer = AllocateZeroPool (Size);
+  if (PpttTablePointer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  EntryPointer = (VOID *)((UINT64)mPpttTablePointer + sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER));
-  Length = 0;
+  NextNodeOffset = sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER);
 
-  Length += AddRootNode (EntryPointer + Length, &RootOffset);
-  Length += AddL2CacheNode (EntryPointer + Length, &L2CacheOffset);
-  Length += AddL1InstructionCacheNode (EntryPointer + Length, L2CacheOffset, &L1ICacheOffset);
-  Length += AddL1DataCacheNode (EntryPointer + Length, L2CacheOffset, &L1DCacheOffset);
+  RootNodeOffset = NextNodeOffset;
+  NextNodeOffset += AddRootNode (PpttTablePointer + NextNodeOffset);
+
+  L2NodeOffset = NextNodeOffset;
+  NextNodeOffset += AddL2CacheNode (PpttTablePointer + NextNodeOffset);
+
+  L1INodeOffset = NextNodeOffset;
+  NextNodeOffset += AddL1InstructionCacheNode (PpttTablePointer + NextNodeOffset, L2NodeOffset);
+
+  L1DNodeOffset = NextNodeOffset;
+  NextNodeOffset += AddL1DataCacheNode (PpttTablePointer + NextNodeOffset, L2NodeOffset);
 
   for (SocketId = 0; SocketId < NumSockets; SocketId++) {
-    Length += AddSocketNode (EntryPointer + Length, RootOffset, &SocketOffset);
-    CpuId = SocketId * MaxNumCores;
-    while (CpuId < (SocketId + 1) * MaxNumCores) {
-      if (IsCpuEnabled (CpuId)) {
-        // Assume that the cores in a cluster are enabled in pairs
-        if (CpuId % PLATFORM_CPU_NUM_CORES_PER_CPM == 0) {
-          // A cluster contains two processors
-          Length += AddClusterNode (EntryPointer + Length, SocketOffset, &ClusterOffset);
-        }
-        ASSERT (ClusterOffset != 0);
-
-        Length += AddProcessorCoreNode (
-                    EntryPointer + Length,
-                    CpuId,
-                    ClusterOffset,
-                    L1ICacheOffset,
-                    L1DCacheOffset
-                    );
-      }
-      CpuId++;
-    }
+    SocketNodeOffset[SocketId] = NextNodeOffset;
+    NextNodeOffset += AddSocketNode (PpttTablePointer + NextNodeOffset, RootNodeOffset);
   }
-  ASSERT ((Length + sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER)) == Size);
+
+  for (ClusterId = 0; ClusterId < PLATFORM_CPU_MAX_CPM * PLATFORM_CPU_MAX_SOCKET; ClusterId++) {
+    if (!IsCpuEnabled (ClusterId * PLATFORM_CPU_NUM_CORES_PER_CPM)) {
+      continue;
+    }
+    ClusterNodeOffset[ClusterId] = NextNodeOffset;
+    NextNodeOffset += AddClusterNode (
+                        PpttTablePointer + NextNodeOffset,
+                        SocketNodeOffset[ClusterId / PLATFORM_CPU_MAX_CPM]
+                        );
+  }
+
+  for (CpuId = 0; CpuId < PLATFORM_CPU_MAX_NUM_CORES; CpuId++) {
+    if (!IsCpuEnabled (CpuId)) {
+      continue;
+    }
+    NextNodeOffset += AddProcessorCoreNode (
+                        PpttTablePointer + NextNodeOffset,
+                        CpuId,
+                        ClusterNodeOffset[CLUSTER_ID (CpuId)],
+                        L1INodeOffset,
+                        L1DNodeOffset
+                        );
+  }
+
+  ASSERT (NextNodeOffset == Size);
 
   CopyMem (
-    mPpttTablePointer,
+    PpttTablePointer,
     &PpttTableHeaderTemplate,
     sizeof (EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER)
     );
 
-  mPpttTablePointer->Header.Length = Size;
+  ((EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER *)PpttTablePointer)->Header.Length = Size;
 
   AcpiTableChecksum (
-    (UINT8 *)mPpttTablePointer,
-    mPpttTablePointer->Header.Length
+    (UINT8 *)PpttTablePointer,
+    Size
     );
 
   Status = AcpiTableProtocol->InstallAcpiTable (
                                 AcpiTableProtocol,
-                                (VOID *)mPpttTablePointer,
-                                mPpttTablePointer->Header.Length,
+                                (VOID *)PpttTablePointer,
+                                Size,
                                 &PpttTableKey
                                 );
   ASSERT_EFI_ERROR (Status);
 
-  FreePool ((VOID *)mPpttTablePointer);
+  FreePool (PpttTablePointer);
+
   return Status;
 }
