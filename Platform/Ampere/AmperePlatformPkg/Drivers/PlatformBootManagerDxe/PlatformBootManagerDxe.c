@@ -678,7 +678,7 @@ AddCustomBootOptionToList (
   EFI_STATUS  Status;
   UINTN       Index;
   UINTN       OrderInList;
-  UINTN       NoHandles;
+  UINTN       HandleCount;
   BOOLEAN     NeedDefaultBoot;
   EFI_HANDLE  *Handle;
 
@@ -694,7 +694,7 @@ AddCustomBootOptionToList (
                   ByProtocol,
                   &gEfiPartitionInfoProtocolGuid,
                   NULL,
-                  &NoHandles,
+                  &HandleCount,
                   &Handle
                   );
   if (EFI_ERROR (Status)) {
@@ -702,7 +702,7 @@ AddCustomBootOptionToList (
     return Status;
   }
 
-  for (Index = 0; Index < NoHandles; Index++) {
+  for (Index = 0; Index < HandleCount; Index++) {
     for (OrderInList = 0, NeedDefaultBoot = TRUE;
          KnownOsLoaderList[OrderInList].OSLoaderPath != NULL;
          OrderInList++)
@@ -735,6 +735,70 @@ AddCustomBootOptionToList (
   return EFI_SUCCESS;
 }
 
+/**
+  Caching the Boot Options valid enumerated by default.
+
+  @param LegacyBootOptionList The list of Boot Options enumerated by default
+  @param LegacyBootOptionListCount The number of Boot Option in legacy list
+  @param BootOptionList            The list that legacy Boot Options valid stored
+  @param BootOptionCount      The number of Boot Option in new list.
+
+  @retval VOID
+**/
+VOID
+CacheLegacyBootOptions (
+  IN  CONST EFI_BOOT_MANAGER_LOAD_OPTION *LegacyBootOptionList,
+  IN  CONST UINTN                        LegacyBootOptionListCount,
+  OUT       EFI_BOOT_MANAGER_LOAD_OPTION **BootOptionList,
+  IN OUT    UINTN                        *BootOptionListCount
+  )
+{
+  EFI_STATUS                    Status;
+  UINTN                         Index;
+  UINTN                         NVBootOptionCount;
+  UINTN                         CacheBootOptionCount;
+  EFI_BOOT_MANAGER_LOAD_OPTION  *NVBootOptions;
+  BOOLEAN                       AlreadyExistsInBootOptionsList;
+
+  NVBootOptionCount = 0;
+  NVBootOptions     = NULL;
+  AlreadyExistsInBootOptionsList = FALSE;
+  CacheBootOptionCount = *BootOptionListCount;
+
+  //
+  // Load Boot Options have been stored in the NVRAM
+  //
+  NVBootOptions = EfiBootManagerGetLoadOptions (&NVBootOptionCount, LoadOptionTypeBoot);
+
+  for (Index = 0; Index < LegacyBootOptionListCount; Index++) {
+    if ((EfiBootManagerFindLoadOption (
+             &LegacyBootOptionList[Index],
+             (CONST EFI_BOOT_MANAGER_LOAD_OPTION *)NVBootOptions,
+             NVBootOptionCount
+             ) != -1)
+       && (EfiBootManagerFindLoadOption (
+             &LegacyBootOptionList[Index],
+             (CONST EFI_BOOT_MANAGER_LOAD_OPTION *)*BootOptionList,
+             CacheBootOptionCount
+             ) == -1)
+          )
+    {
+      Status = AppendBootOption (
+                 BootOptionList,
+                 *BootOptionListCount,
+                 (EFI_BOOT_MANAGER_LOAD_OPTION *)&LegacyBootOptionList[Index],
+                 NULL,
+                 NULL,
+                 NULL,
+                 0
+                 );
+      if (!EFI_ERROR (Status)) {
+        (*BootOptionListCount)++;
+      }
+    }
+  }
+}
+
 EFI_STATUS
 RefreshAllBootOptions (
   IN  CONST EFI_BOOT_MANAGER_LOAD_OPTION *BootOptions,
@@ -750,6 +814,7 @@ RefreshAllBootOptions (
 
   *UpdatedBootOptions = NULL;
   *UpdatedBootOptionsCount = 0;
+  DoCustomBootOptionsAdd   = TRUE;
 
   if ((BootOptionsCount == 0) || (BootOptions == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -770,8 +835,6 @@ RefreshAllBootOptions (
     *UpdatedBootOptions = NULL;
     *UpdatedBootOptionsCount = 0;
     DoCustomBootOptionsAdd   = FALSE;
-  } else {
-    DoCustomBootOptionsAdd = TRUE;
   }
 
   //
@@ -799,6 +862,13 @@ RefreshAllBootOptions (
       (*UpdatedBootOptionsCount)++;
     }
   }
+
+  CacheLegacyBootOptions (
+    BootOptions,
+    BootOptionsCount,
+    UpdatedBootOptions,
+    UpdatedBootOptionsCount
+    );
 
   for (Index = 0, BootOptionTemp = *UpdatedBootOptions;
        Index < *UpdatedBootOptionsCount;
@@ -828,7 +898,7 @@ PlatformBootManagerInitialize (
 {
   EFI_STATUS                            Status;
   UINTN                                 Index;
-  UINTN                                 NoHandles;
+  UINTN                                 HandleCount;
   EDKII_PLATFORM_BOOT_MANAGER_PROTOCOL  *Interface;
   EFI_HANDLE                            *Buffer, Handle;
 
@@ -841,11 +911,11 @@ PlatformBootManagerInitialize (
                   ByProtocol,
                   &gEdkiiPlatformBootManagerProtocolGuid,
                   NULL,
-                  &NoHandles,
+                  &HandleCount,
                   &Buffer
                   );
   if (!EFI_ERROR (Status)) {
-    for (Index = 0; Index < NoHandles; Index++) {
+    for (Index = 0; Index < HandleCount; Index++) {
       Status = gBS->HandleProtocol (
                       Buffer[Index],
                       &gEdkiiPlatformBootManagerProtocolGuid,
