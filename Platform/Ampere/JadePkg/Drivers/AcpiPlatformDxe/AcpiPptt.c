@@ -310,7 +310,7 @@ AcpiInstallPpttTable (
     NextNodeOffset += AddProcessorCoreNode (
                         PpttTablePointer + NextNodeOffset,
                         CpuId,
-                        ClusterNodeOffset[CLUSTER_ID (CpuId)],
+                        ClusterNodeOffset[CpuId / PLATFORM_CPU_NUM_CORES_PER_CPM],
                         L1INodeOffset,
                         L1DNodeOffset
                         );
