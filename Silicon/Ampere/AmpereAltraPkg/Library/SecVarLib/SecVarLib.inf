@@ -1,0 +1,43 @@
+## @file
+#
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                   = 0x0001001B
+  BASE_NAME                     = SecVarLib
+  FILE_GUID                     = DC2B87B8-C8E1-4F26-A4D1-3E091A4B7516
+  MODULE_TYPE                   = DXE_DRIVER
+  VERSION_STRING                = 0.1
+  LIBRARY_CLASS                 = SecVarLib
+  CONSTRUCTOR                   = SerVarLibConstructor
+
+[Sources.common]
+  SecVarLibCommon.h
+  SecVarLib.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  CryptoPkg/CryptoPkg.dec
+  MdePkg/MdePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+
+[LibraryClasses]
+  BaseCryptLib
+  BaseMemoryLib
+  DebugLib
+  PrintLib
+  UefiLib
+
+[Guids]
+  gSecVarMmGuid
+  gEfiCertPkcs7Guid              ## SOMETIMES_CONSUMES   ## GUID  # Unique ID for the type of the certificate.
+  gAmpereCertVendorGuid
+
+[Protocols]
+  gEfiMmCommunication2ProtocolGuid
+

@@ -1,6 +1,6 @@
 ## @file
 #
-# Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+# Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -61,6 +61,9 @@
   ## @libraryclass  Defines a set of methods to get/set GPIO via I2C
   IOExpanderLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/IOExpanderLib.h
 
+  ##  @libraryclass  Defines a set of methods to access flash memory.
+  SecVarLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/SecVarLib.h
+
 [Guids]
   # GUID for the CPU HII configuration form
   gCpuConfigFormSetGuid        = { 0x43FAA144, 0xA2DF, 0x4050, { 0xA7, 0xFD, 0xEE, 0x17, 0xC9, 0xB8, 0x88, 0x8E } }
@@ -88,3 +91,9 @@
 
   ## Include/Guid/RootComplexConfigHii.h
   gRootComplexConfigFormSetGuid = { 0xE84E70D6, 0xE4B2, 0x4C6E, { 0x98,  0x51, 0xCB, 0x2B, 0xAC, 0x77, 0x7D, 0xBB } }
+
+  ## SecVar MM GUID
+  gSecVarMmGuid                 = { 0xDBE7E3BA, 0x39EC, 0x40D9, { 0x95, 0x69, 0x78, 0x8C, 0xC5, 0x17, 0x3E, 0xE5 } }
+
+  ## Ampere Certificate Vendor GUID for DBB and DBU
+  gAmpereCertVendorGuid         = { 0x4796d3b0, 0x1bbb, 0x4680, { 0xb4, 0x71, 0xa4, 0x9b, 0x49, 0xb2, 0x39, 0x0e } }
