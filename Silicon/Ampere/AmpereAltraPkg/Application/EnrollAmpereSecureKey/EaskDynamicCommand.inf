@@ -1,0 +1,58 @@
+##  @file
+# Provides Shell 'eask' dynamic command.
+#
+#
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010006
+  BASE_NAME                      = easkDynamicCommand
+  FILE_GUID                      = 26EB636F-F01A-4052-A845-98EDC1E3B02E
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = EaskCommandInitialize
+  UNLOAD_IMAGE                   = EaskUnload
+#
+#  This flag specifies whether HII resource section is generated into PE image.
+#
+  UEFI_HII_RESOURCE_SECTION      = TRUE
+
+[Sources.common]
+  EnrollAmpereSecureKey.uni
+  EnrollAmpereSecureKey.h
+  EnrollAmpereSecureKey.c
+  EaskDynamicCommand.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ShellPkg/ShellPkg.dec
+  SecurityPkg/SecurityPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  HiiLib
+  MemoryAllocationLib
+  SecVarLib
+  ShellLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiHiiServicesLib
+  UefiLib
+
+[Protocols]
+  gEfiHiiPackageListProtocolGuid                 ## CONSUMES
+  gEfiShellDynamicCommandProtocolGuid            ## PRODUCES
+
+[Guids]
+  gAmpereCertVendorGuid
+
+[DEPEX]
+  TRUE

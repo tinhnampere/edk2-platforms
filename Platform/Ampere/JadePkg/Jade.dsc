@@ -1,6 +1,6 @@
 ## @file
 #
-# Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+# Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -93,6 +93,7 @@
   FmpAuthenticationLib|SecurityPkg/Library/FmpAuthenticationLibPkcs7/FmpAuthenticationLibPkcs7.inf
   IniParsingLib|SignedCapsulePkg/Library/IniParsingLib/IniParsingLib.inf
   PlatformFlashAccessLib|Silicon/Ampere/AmpereAltraPkg/Library/PlatformFlashAccessLib/PlatformFlashAccessLib.inf
+  ShellCEntryLib|ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
 
   #
   # ACPI Libraries
@@ -261,6 +262,11 @@
   SignedCapsulePkg/Universal/SystemFirmwareUpdate/SystemFirmwareReportDxe.inf
   SignedCapsulePkg/Universal/SystemFirmwareUpdate/SystemFirmwareUpdateDxe.inf
   MdeModulePkg/Application/CapsuleApp/CapsuleApp.inf
+
+  #
+  # EnrollAmpereSecureKey
+  #
+  Silicon/Ampere/AmpereAltraPkg/Application/EnrollAmpereSecureKey/EaskDynamicCommand.inf
 
   #
   # HII

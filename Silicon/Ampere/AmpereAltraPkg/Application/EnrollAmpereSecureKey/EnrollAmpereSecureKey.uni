@@ -1,0 +1,54 @@
+// /**
+//
+// Copyright (c) 2022, Ampere Computing LLC. All rights reserved
+//
+// SPDX-License-Identifier: BSD-2-Clause-Patent
+//
+// Module Name:
+//
+// EnrollAmpereSecureKey.uni
+//
+// Abstract:
+//
+// String definitions for UEFI Shell EASK command
+//
+//
+// **/
+
+/=#
+
+#langdef   en-US "english"
+
+#string STR_EASK_GEN_TOO_MANY           #language en-US "%H%s%N: Too many arguments\r\n"
+#string STR_EASK_GEN_TOO_FEW            #language en-US "%H%s%N: Too few arguments\r\n"
+#string STR_EASK_GEN_PARAM_INV          #language en-US "%H%s%N: Invalid argument - '%H%s%N'\r\n"
+#string STR_EASK_GEN_PROBLEM            #language en-US "%H%s%N: Unknown flag - '%H%s%N'\r\n"
+#string STR_EASK_GEN_FILE_OPEN_FAIL     #language en-US "%H%s%N: Cannot open file - '%H%s%N'\r\n"
+#string STR_EASK_GEN_CRLF               #language en-US "\r\n"
+
+#string STR_GET_HELP_EASK          #language en-US ""
+".TH eask 0 "Enroll Ampere Secure Keys"\r\n"
+".SH NAME\r\n"
+"Enroll Ampere Secure Keys Usage\r\n"
+" \r\n"
+".SH SYNOPSIS\r\n"
+"EASK \r\n"
+" -K <UpdateDBUPubCertFile>\r\n"
+" -k \r\n"
+" -P <UpdateDBBPubCertFile>\r\n"
+" -p \r\n"
+".SH OPTIONS\r\n"
+" \r\n"
+"  -K: Register the Public Key Certificate to be used for firmware\r\n"
+"      update verification. This must be an x509 certificate.\r\n"
+"      The file provided must be the authorization file (.auth)\r\n"
+"      to register or delete the DBU certificate..\r\n"
+"  -k: Read enrolled DBU certificate\r\n"
+"  -P: Register the Public Key Certificate to be used for firmware\r\n"
+"      verification. This must be an x509 certificate.\r\n"
+"      The file provided must be the authorization file (.auth)\r\n"
+"      to register or delete the DBB certificate..\r\n"
+"  -p: Read enrolled DBB certificate\r\n"
+".SH DESCRIPTION\r\n"
+
+

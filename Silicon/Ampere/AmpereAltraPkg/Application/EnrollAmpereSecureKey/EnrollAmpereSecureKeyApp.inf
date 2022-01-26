@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = EnrollAmpereSecureKeyApp
+  FILE_GUID                      = 8acdf573-84d3-40b8-979e-7a98b11e211a
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 0.1
+  ENTRY_POINT                    = EaskAppInitialize
+
+#
+#  This flag specifies whether HII resource section is generated into PE image.
+#
+  UEFI_HII_RESOURCE_SECTION      = TRUE
+
+[Sources]
+  EnrollAmpereSecureKey.uni
+  EnrollAmpereSecureKey.h
+  EnrollAmpereSecureKey.c
+  EnrollAmpereSecureKeyApp.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  ShellPkg/ShellPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  MemoryAllocationLib
+  DebugLib
+  PrintLib
+  HiiLib
+  SecVarLib
+  ShellLib
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+
+[Guids]
+  gAmpereCertVendorGuid
+
+[Ppis]
+
+[Protocols]
+  gEfiHiiPackageListProtocolGuid          ## CONSUMES
+
+[FeaturePcd]
+
+[Pcd]
