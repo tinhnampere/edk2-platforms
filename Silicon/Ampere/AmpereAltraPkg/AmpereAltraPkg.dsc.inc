@@ -88,6 +88,7 @@
   Ac01PcieLib|Silicon/Ampere/AmpereAltraPkg/Library/Ac01PcieLib/Ac01PcieLib.inf
   AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/AmpereCpuLib.inf
   FlashLib|Silicon/Ampere/AmpereAltraPkg/Library/FlashLib/FlashLib.inf
+  FirmwareUpdateLib|Silicon/Ampere/AmpereAltraPkg/Library/SystemFirmwareUpdateLib/SystemFirmwareUpdateLib.inf
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
   I2cLib|Silicon/Ampere/AmpereAltraPkg/Library/DwI2cLib/DwI2cLib.inf
   GpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwGpioLib/DwGpioLib.inf
@@ -274,6 +275,7 @@
   NVParamLib|Silicon/Ampere/AmpereAltraPkg/Library/NVParamLib/RuntimeNVParamLib.inf
   FlashLib|Silicon/Ampere/AmpereAltraPkg/Library/FlashLib/RuntimeFlashLib.inf
   SecVarLib|Silicon/Ampere/AmpereAltraPkg/Library/SecVarLib/SecVarLib.inf
+  FirmwareUpdateLib|Silicon/Ampere/AmpereAltraPkg/Library/SystemFirmwareUpdateLib/RuntimeSystemFirmwareUpdateLib.inf
   AmpereCpuLib|Silicon/Ampere/AmpereAltraPkg/Library/AmpereCpuLib/RuntimeAmpereCpuLib.inf
   MailboxInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Library/MailboxInterfaceLib/RuntimeMailboxInterfaceLib.inf
   SystemFirmwareInterfaceLib|Silicon/Ampere/AmpereAltraPkg/Library/SystemFirmwareInterfaceLib/RuntimeSystemFirmwareInterfaceLib.inf
