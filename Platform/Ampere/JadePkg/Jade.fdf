@@ -439,6 +439,11 @@ APRIORI DXE {
   #
   INF Platform/Ampere/AmperePlatformPkg/Drivers/PlatformBootManagerDxe/PlatformBootManagerDxe.inf
 
+  #
+  # SystemFirmwareUpdateDxe
+  #
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/SystemFirmwareUpdateDxe/SystemFirmwareUpdateDxe.inf
+
 [FV.SystemFirmwareDescriptor]
 FvAlignment        = 8
 ERASE_POLARITY     = 1

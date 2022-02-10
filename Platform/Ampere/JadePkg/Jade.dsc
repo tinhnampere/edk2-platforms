@@ -300,3 +300,8 @@
   # Platform Boot Manager
   #
   Platform/Ampere/AmperePlatformPkg/Drivers/PlatformBootManagerDxe/PlatformBootManagerDxe.inf
+
+  #
+  # SystemFirmwareUpdateDxe
+  #
+  Silicon/Ampere/AmpereAltraPkg/Drivers/SystemFirmwareUpdateDxe/SystemFirmwareUpdateDxe.inf
