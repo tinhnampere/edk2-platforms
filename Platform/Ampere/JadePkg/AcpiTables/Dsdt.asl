@@ -12,6 +12,9 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
   Name(\BDMD, "Jade Board")
   Name(TPMF, 0)  // TPM presence
   Name(AERF, 0)  // PCIe AER Firmware-First
+
+  Include ("MHPP.asi")
+
   Scope(\_SB) {
 
     Include ("CPU.asi")
@@ -188,82 +191,6 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
           Interrupt(ResourceConsumer, Level, ActiveHigh, Exclusive) { 44 } // PCIe Hot Plug Doorbell Insertion & Ejection (DBNS4 -> GIC-IRQS44)
         })
 
-        // @DRAM base address 0x88970000
-        OperationRegion(MHPP, SystemMemory, 0x88970000, 960)
-        Field (MHPP, DWordAcc, NoLock, Preserve) {
-            A020, 32, // 0. S0 RCA2.0
-            offset (24),
-            A030, 32, // 1. S0 RCA3.0
-            offset (48),
-            B000, 32, // 2. S0 RCB0.0
-            offset (72),
-            B002, 32, // 3. S0 RCB0.2
-            offset (96),
-            B004, 32, // 4. S0 RCB0.4
-            offset (120),
-            B006, 32, // 5. S0 RCB0.6
-            offset (144),
-            B010, 32, // 6. S0 RCB1.0
-            offset (168),
-            B012, 32, // 7. S0 RCB1.2
-            offset (192),
-            B014, 32, // 8. S0 RCB1.4
-            offset (216),
-            B016, 32, // 9. S0 RCB1.6
-            offset (240),
-            B020, 32, // 10. S0 RCB2.0
-            offset (264),
-            B022, 32, // 11. S0 RCB2.2
-            offset (288),
-            B024, 32, // 12. S0 RCB2.4
-            offset (312),
-            B030, 32, // 13. S0 RCB3.0
-            offset (336),
-            B034, 32, // 14. S0 RCB3.4
-            offset (360),
-            B036, 32, // 15. S0 RCB3.6
-            offset (384),
-            A120, 32, // 16. S1 RCA2.0
-            offset (408),
-            A121, 32, // 17. S1 RCA2.1
-            offset (432),
-            A122, 32, // 18. S1 RCA2.2
-            offset (456),
-            A123, 32, // 19. S1 RCA2.3
-            offset (480),
-            A130, 32, // 20. S1 RCA3.0
-            offset (504),
-            A132, 32, // 21. S1 RCA3.2
-            offset (528),
-            B100, 32, // 22. S1 RCB0.0
-            offset (552),
-            B104, 32, // 23. S1 RCB0.4
-            offset (576),
-            B106, 32, // 24. S1 RCB0.6
-            offset (600),
-            B110, 32, // 25. S1 RCB1.0
-            offset (624),
-            B112, 32, // 26. S1 RCB1.2
-            offset (648),
-            B114, 32, // 27. S1 RCB1.4
-            offset (672),
-            B120, 32, // 28. S1 RCB2.0
-            offset (696),
-            B122, 32, // 29. S1 RCB2.2
-            offset (720),
-            B124, 32, // 30. S1 RCB2.4
-            offset (744),
-            B126, 32, // 31. S1 RCB2.6
-            offset (768),
-            B130, 32, // 32. S1 RCB3.0
-            offset (792),
-            B132, 32, // 33. S1 RCB3.2
-            offset (816),
-            B134, 32, // 34. S1 RCB3.4
-            offset (840),
-            B136, 32, // 35. S1 RCB3.6
-        }
-
         // @DBN4 agent base address for HP PCIe insertion/ejection event: 0x1000.0054.4000
         OperationRegion(DBN4, SystemMemory, 0x100000544010, 20)
         Field (DBN4, DWordAcc, NoLock, Preserve) {
@@ -286,99 +213,99 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
                   Store(local0, STA4) // clear interrupt
                 }
                 local0 = A120 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIA.P2P1, 1) // insertion action
                 }
                 local0 = A121 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIA.P2P2, 1) // insertion action
                 }
                 local0 = A122 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIA.P2P3, 1) // insertion action
                 }
                 local0 = A123 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIA.P2P4, 1) // insertion action
                 }
                 local0 = B000 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCI4.P2P1, 1) // insertion action
                 }
                 local0 = B002 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCI4.P2P3, 1) // insertion action
                 }
                 local0 = B004 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCI4.P2P5, 1) // insertion action
                 }
                 local0 = B006 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCI4.P2P7, 1) // insertion action
                 }
                 local0 = B010 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCI5.P2P1, 1) // insertion action
                 }
                 local0 = B012 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCI5.P2P3, 1) // insertion action
                 }
                 local0 = B014 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCI5.P2P5, 1) // insertion action
                 }
                 local0 = B016 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCI5.P2P7, 1) // insertion action
                 }
                 local0 = B104 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIC.P2P5, 1) // insertion action
                 }
                 local0 = B106 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIC.P2P7, 1) // insertion action
                 }
                 local0 = B110 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCID.P2P1, 1) // insertion action
                 }
                 local0 = B112 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCID.P2P3, 1) // insertion action
                 }
                 local0 = B120 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIE.P2P1, 1) // insertion action
                 }
                 local0 = B122 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIE.P2P3, 1) // insertion action
                 }
                 local0 = B124 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIE.P2P5, 1) // insertion action
                 }
                 local0 = B126 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIE.P2P7, 1) // insertion action
                 }
                 local0 = B130 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIF.P2P1, 1) // insertion action
                 }
                 local0 = B132 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIF.P2P3, 1) // insertion action
                 }
                 local0 = B134 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIF.P2P5, 1) // insertion action
                 }
                 local0 = B136 & 0xFF000000
-                if (local0 == 0x01000000) {
+                if ((local0 == 0x01000000) || (local0 == 0x0F000000)) {
                   Notify (\_SB.PCIF.P2P7, 1) // insertion action
                 }
               }
@@ -390,98 +317,374 @@ DefinitionBlock("Dsdt.aml", "DSDT", 0x02, "Ampere", "Jade", 1) {
                 local0 = A120 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIA.P2P1, 1) // ejection action
+                  A120 = 0x10000201 // inprogress remove
                 }
                 local0 = A121 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIA.P2P2, 1) // ejection action
+                  A121 = 0x10010201 // inprogress remove
                 }
                 local0 = A122 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIA.P2P3, 1) // ejection action
+                  A122 = 0x10020201 // inprogress remove
                 }
                 local0 = A123 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIA.P2P4, 1) // ejection action
+                  A123 = 0x10030201 // inprogress remove
                 }
                 local0 = B000 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCI4.P2P1, 1) // ejection action
+                  B000 = 0x10000400 // inprogress remove
                 }
                 local0 = B002 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCI4.P2P3, 1) // ejection action
+                  B002 = 0x10020400 // inprogress remove
                 }
                 local0 = B004 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCI4.P2P5, 1) // ejection action
+                  B004 = 0x10040400 // inprogress remove
                 }
                 local0 = B006 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCI4.P2P7, 1) // ejection action
+                  B006 = 0x10060400 // inprogress remove
                 }
                 local0 = B010 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCI5.P2P1, 1) // ejection action
+                  B010 = 0x10000500 // inprogress remove
                 }
                 local0 = B012 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCI5.P2P3, 1) // ejection action
+                  B012 = 0x10020500 // inprogress remove
                 }
                 local0 = B014 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCI5.P2P5, 1) // ejection action
+                  B014 = 0x10040500 // inprogress remove
                 }
                 local0 = B016 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCI5.P2P7, 1) // ejection action
+                  B016 = 0x10060500 // inprogress remove
                 }
                 local0 = B104 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIC.P2P5, 1) // ejection action
+                  B104 = 0x10040401 // inprogress remove
                 }
                 local0 = B106 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIC.P2P7, 1) // ejection action
+                  B106 = 0x10060401 // inprogress remove
                 }
                 local0 = B110 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCID.P2P1, 1) // ejection action
+                  B110 = 0x10000501 // inprogress remove
                 }
                 local0 = B112 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCID.P2P3, 1) // ejection action
+                  B112 = 0x10020501 // inprogress remove
                 }
                 local0 = B120 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIE.P2P1, 1) // ejection action
+                  B120 = 0x10000601 // inprogress remove
                 }
                 local0 = B122 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIE.P2P3, 1) // ejection action
+                  B122 = 0x10020601 // inprogress remove
                 }
                 local0 = B124 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIE.P2P5, 1) // ejection action
+                  B124 = 0x10040601 // inprogress remove
                 }
                 local0 = B126 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIE.P2P7, 1) // ejection action
+                  B126 = 0x10060601 // inprogress remove
                 }
                 local0 = B130 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIF.P2P1, 1) // ejection action
+                  B130 = 0x10000701 // inprogress remove
                 }
                 local0 = B132 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIF.P2P3, 1) // ejection action
+                  B132 = 0x10020701 // inprogress remove
                 }
                 local0 = B134 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIF.P2P5, 1) // ejection action
+                  B134 = 0x10040701 // inprogress remove
                 }
                 local0 = B136 & 0xFF000000
                 if (local0 == 0x00000000) {
                   Notify (\_SB.PCIF.P2P7, 1) // ejection action
+                  B136 = 0x10060701 // inprogress remove
+                }
+              }
+              elseif (local0 == 0x00020000) { // is either unstable link or too fast insertion?
+                local0 = STA4 & 0xFFFFFFFF
+                if (local0) {
+                    Store(local0, STA4) // clear interrupt
+                }
+                local0 = A120 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIA.P2P1, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIA.P2P1, 1) // insertion action
+                }
+                local0 = A121 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIA.P2P2, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIA.P2P2, 1) // insertion action
+                }
+                local0 = A122 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIA.P2P3, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIA.P2P3, 1) // insertion action
+                }
+                local0 = A123 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIA.P2P4, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIA.P2P4, 1) // insertion action
+                }
+                local0 = B000 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI4.P2P1, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCI4.P2P1, 1) // insertion action
+                }
+                local0 = B002 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI4.P2P3, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCI4.P2P3, 1) // insertion action
+                }
+                local0 = B004 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI4.P2P5, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCI4.P2P5, 1) // insertion action
+                }
+                local0 = B006 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI4.P2P7, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCI4.P2P7, 1) // insertion action
+                }
+                local0 = B010 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI5.P2P1, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCI5.P2P1, 1) // insertion action
+                }
+                local0 = B012 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI5.P2P3, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCI5.P2P3, 1) // insertion action
+                }
+                local0 = B014 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI5.P2P5, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCI5.P2P5, 1) // insertion action
+                }
+                local0 = B016 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI5.P2P7, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCI5.P2P7, 1) // insertion action
+                }
+                local0 = B104 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIC.P2P5, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIC.P2P5, 1) // insertion action
+                }
+                local0 = B106 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIC.P2P7, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIC.P2P7, 1) // insertion action
+                }
+                local0 = B110 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCID.P2P1, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCID.P2P1, 1) // insertion action
+                }
+                local0 = B112 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCID.P2P3, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCID.P2P3, 1) // insertion action
+                }
+                local0 = B120 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIE.P2P1, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIE.P2P1, 1) // insertion action
+                }
+                local0 = B122 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIE.P2P3, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIE.P2P3, 1) // insertion action
+                }
+                local0 = B124 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIE.P2P5, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIE.P2P5, 1) // insertion action
+                }
+                local0 = B126 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIE.P2P7, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIE.P2P7, 1) // insertion action
+                }
+                local0 = B130 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIF.P2P1, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIF.P2P1, 1) // insertion action
+                }
+                local0 = B132 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIF.P2P3, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIF.P2P3, 1) // insertion action
+                }
+                local0 = B134 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIF.P2P5, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIF.P2P5, 1) // insertion action
+                }
+                local0 = B136 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIF.P2P7, 3) // force remove bridge port and port itself
+                  Notify (\_SB.PCIF.P2P7, 1) // insertion action
+                }
+              }
+              elseif (local0 == 0x00030000) { // got incomplete remove before?
+                local0 = STA4 & 0xFFFFFFFF
+                if (local0) {
+                    Store(local0, STA4) // clear interrupt
+                }
+                local0 = A120 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIA.P2P1.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIA.P2P1, 1) // insertion action
+                }
+                local0 = A121 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIA.P2P2.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIA.P2P2, 1) // insertion action
+                }
+                local0 = A122 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIA.P2P3.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIA.P2P3, 1) // insertion action
+                }
+                local0 = A123 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIA.P2P4.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIA.P2P4, 1) // insertion action
+                }
+                local0 = B000 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI4.P2P1.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCI4.P2P1, 1) // insertion action
+                }
+                local0 = B002 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI4.P2P3.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCI4.P2P3, 1) // insertion action
+                }
+                local0 = B004 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI4.P2P5.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCI4.P2P5, 1) // insertion action
+                }
+                local0 = B006 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI4.P2P7.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCI4.P2P7, 1) // insertion action
+                }
+                local0 = B010 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI5.P2P1.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCI5.P2P1, 1) // insertion action
+                }
+                local0 = B012 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI5.P2P3.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCI5.P2P3, 1) // insertion action
+                }
+                local0 = B014 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI5.P2P5.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCI5.P2P5, 1) // insertion action
+                }
+                local0 = B016 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCI5.P2P7.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCI5.P2P7, 1) // insertion action
+                }
+                local0 = B104 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIC.P2P5.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIC.P2P5, 1) // insertion action
+                }
+                local0 = B106 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIC.P2P7.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIC.P2P7, 1) // insertion action
+                }
+                local0 = B110 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCID.P2P1.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCID.P2P1, 1) // insertion action
+                }
+                local0 = B112 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCID.P2P3.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCID.P2P3, 1) // insertion action
+                }
+                local0 = B120 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIE.P2P1.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIE.P2P1, 1) // insertion action
+                }
+                local0 = B122 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIE.P2P3.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIE.P2P3, 1) // insertion action
+                }
+                local0 = B124 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIE.P2P5.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIE.P2P5, 1) // insertion action
+                }
+                local0 = B126 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIE.P2P7.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIE.P2P7, 1) // insertion action
+                }
+                local0 = B130 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIF.P2P1.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIF.P2P1, 1) // insertion action
+                }
+                local0 = B132 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIF.P2P3.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIF.P2P3, 1) // insertion action
+                }
+                local0 = B134 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIF.P2P5.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIF.P2P5, 1) // insertion action
+                }
+                local0 = B136 & 0xFF000000
+                if ((local0 == 0x0E000000) || (local0 == 0x0F000000)) {
+                  Notify (\_SB.PCIF.P2P7.S0F0, 3) // remove port itself
+                  Notify (\_SB.PCIF.P2P7, 1) // insertion action
                 }
               }
             }
