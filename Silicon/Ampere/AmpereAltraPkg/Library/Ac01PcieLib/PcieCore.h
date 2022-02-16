@@ -39,6 +39,7 @@
 #define PIPE_CLOCK_TIMEOUT               20000       // 20,000 us
 #define LTSSM_TRANSITION_TIMEOUT         100000      // 100 ms in total
 #define EP_LINKUP_TIMEOUT                (10 * 1000) // 10ms
+#define EP_LINKUP_EXTRA_TIMEOUT          (500 * 1000) // 500ms
 #define LINK_WAIT_INTERVAL_US            50
 
 #define PFA_MODE_ENABLE                  0
@@ -368,5 +369,19 @@
 // AUX_CLK_FREQ_OFF
 #define AUX_CLK_FREQ_SET(dst, src)                  (((dst) & ~0x1FF) | (((UINT32) (src)) & 0x1FF))
 #define   AUX_CLK_500MHZ                            500
+
+VOID
+EnableDbiAccess (
+  AC01_ROOT_COMPLEX *RootComplex,
+  UINT32            PcieIndex,
+  BOOLEAN           EnableDbi
+  );
+
+UINT32
+EndpointCfgReady (
+  IN AC01_ROOT_COMPLEX  *RootComplex,
+  IN UINT8              PcieIndex,
+  IN UINT32             Timeout
+  );
 
 #endif /* AC01_PCIE_CORE_H_ */
