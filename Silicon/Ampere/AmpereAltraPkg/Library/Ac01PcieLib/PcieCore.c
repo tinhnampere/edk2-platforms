@@ -688,9 +688,14 @@ Ac01PcieCoreSetupRC (
     // Allow programming to config space
     EnableDbiAccess (RootComplex, PcieIndex, TRUE);
 
-    // Program the power limit
     TargetAddress = CfgBase + PCIE_CAPABILITY_BASE + SLOT_CAPABILITIES_REG;
     Val = MmioRead32 (TargetAddress);
+    // In order to detect the NVMe disk for booting without disk,
+    // need to set Hot-Plug Slot Capable during port initialization.
+    // It will help PCI Linux driver to initialize its slot iomem resource,
+    // the one is used for detecting the disk when it is inserted.
+    Val = SLOT_HPC_SET(Val, 1);
+    // Program the power limit
     Val = SLOT_CAP_SLOT_POWER_LIMIT_VALUE_SET (Val, SLOT_POWER_LIMIT_75W);
     MmioWrite32 (TargetAddress, Val);
 
