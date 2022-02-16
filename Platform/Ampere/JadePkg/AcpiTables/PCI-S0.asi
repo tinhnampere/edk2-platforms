@@ -914,10 +914,10 @@
         NonCacheable,         // NonCacheable
         ReadWrite,            // ReadAndWrite
         0x0000000000000000,   // AddressGranularity - GRA
-        0x0000000001000000,   // AddressMinimum - MIN
+        0x0000000004000000,   // AddressMinimum - MIN
         0x0000000007FFFFFF,   // AddressMinimum - MAX
         0x0000000000000000,   // AddressTranslation - TRA
-        0x0000000007000000    // RangeLength - LEN
+        0x0000000004000000    // RangeLength - LEN
       )
 
       QWordMemory (
