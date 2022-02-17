@@ -757,9 +757,14 @@ Ac01PcieCoreSetupRC (
       }
     }
 
-    // Link timeout after 1ms
-    SetLinkTimeout (RootComplex, PcieIndex, 1);
+    //
+    // As AMBA_LINK_TIMEOUT_OFF spec, it impacts OS HP removal delay.
+    // The greater value the longer dalay it is. Per discussion,
+    // set it 2 from beginning of RP initialization.
+    //
+    SetLinkTimeout (RootComplex, PcieIndex, 2);
 
+    // Mask Completion Timeout
     DisableCompletionTimeOut (RootComplex, PcieIndex, TRUE);
 
     ProgramRootPortInfo (RootComplex, PcieIndex);
@@ -1332,9 +1337,6 @@ Ac01PcieCoreUpdateLink (
 
         // Doing link checking and recovery if needed
         Ac01PcieCoreQoSLinkCheckRecovery (RootComplex, PcieIndex);
-
-        // Link timeout after 32ms
-        SetLinkTimeout (RootComplex, PcieIndex, 32);
 
         // Un-mask Completion Timeout
         DisableCompletionTimeOut (RootComplex, PcieIndex, FALSE);
