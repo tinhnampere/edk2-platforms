@@ -11,7 +11,7 @@ This document also assumes your new platform meets Ampere(R) Altra(R) Interface
 Firmware Requirements and is working with the Ampere system firmware and Ampere
 Trusted Firmware (ATF).
 
-**Note:** Information for this guide was written based on the Ampere Tianocore v1.08.100 release.
+**Note:** Information for this guide was written based on the Ampere Tianocore v2.03.100 release.
 
 ---
 
@@ -88,62 +88,57 @@ Please refer to the Ampere Altra Interface Firmware Requirements at the Table 4 
 
 ### PCIe
 
-The PCIe software stack is shown as below:
+Below modules are generic and can be shared among Ampere Altra-based platforms.
 
-```
-+---------------------------+
-│     PciHostBridgeDxe      │  -> Silicon/Ampere/AmpereAltraPkg/Bus/Pci/PciHostBridgeDxe
-+---------------------------+
-│       PcieCoreLib         │  -> Silicon/Ampere/AmpereAltraPkg/Library/PcieCoreLib
-+--------------+------------+
-│ PcieBoardLib │ PciePhyLib │  -> Silicon/Ampere/AmpereAltraPkg/Library/PciePhyLib
-+--------------+------------+
-    \
-     `-> Platform/Ampere/JadePkg/Library/PcieBoardLib
-```
+Module Name                                            | Description
+-------------------------------------------------------|---------------------------------------------------------------------------------
+Platform/Ampere/JadePkg/Drivers/AcpiPlatformDxe        | Patch DSDT and install MCFG, IORT tables
+Platform/Ampere/JadePkg/Drivers/PciPlatformDxe         | Install PCI platform protocol for post-initialization phase
+Silicon/Ampere/AmpereAltraPkg/Drivers/PcieInitPei      | Install Root Complex Shared HOB consumed by other modules
+Silicon/Ampere/AmpereAltraPkg/Library/Ac01PcieLib      | Core library including basic function to initialize the PCIe Root Complex
+Silicon/Ampere/AmpereAltraPkg/Library/PciePhyLib       | Provide functions to initialize the PCIe PHY
+Silicon/Ampere/AmpereAltraPkg/Library/PciHostbridgeLib | Provide functions to build and free the array of Root Bridge resource
+Silicon/Ampere/AmpereAltraPkg/Library/PciSegmentLib    | Provide functions to access the PCIe Configuration space
 
-PciHostBridgeDxe, PcieCoreLib, PciePhyLib, and most of PcieBoardLib are generic and can be shared among Ampere Altra-based platforms.
-The difference between platforms could be the mechanism to control the PERST line for each PCIe controller.
-Platform code must modify the two functions below in the Platform/Ampere/JadePkg/Library/PcieBoardLib/PcieBoard.c to comply with specific platform hardware.
+The difference between platforms could be the mechanism to control the PERST line for each PCIe controller and the segment number.
+Platform code must modify the functions below in the Platform/Ampere/JadePkg/Library/BoardPcieLib/BoardPcieLib.c to comply with specific platform hardware.
 
-**PcieBoardReleaseAllPerst**
+**BoardPcieAssertPerst**
 
   ```c
   /**
-    Provide the capability to release all PERST lines.
+    Assert PERST of the PCIe controller
 
-    Input:
-      UINT8 SocketId: Tell the function to release all PERST that belonged to this SocketId.
+    @param[in]  RootComplex           Root Complex instance.
+    @param[in]  PcieIndex             PCIe controller index of input Root Complex.
+    @param[in]  IsPullToHigh          Target status for the PERST.
 
-    Output: None
-
+    @retval RETURN_SUCCESS            The operation is successful.
+    @retval Others                    An error occurred.
   **/
-  VOID
-  PcieBoardReleaseAllPerst (
-    IN UINT8 SocketId
+  RETURN_STATUS
+  EFIAPI
+  BoardPcieAssertPerst (
+    IN AC01_ROOT_COMPLEX *RootComplex,
+    IN UINT8             PcieIndex,
+    IN BOOLEAN           IsPullToHigh
     );
   ```
 
-**PcieBoardAssertPerst**
+**BoardPcieGetSegmentNumber**
 
   ```c
   /**
-    Provide the capability to assert the PERST line of a specific PCIe controller.
+    Override the segment number for a root complex with a board specific number.
 
-    Input:
-      AC01_RC *RC              : Pointer to the data structure of the parent Root Complex
-                                 managed the target PCIe controller.
-      UINT32  PcieIndex,       : Index of the PCIe Controller within the Root Complex.
-      UINT8   Bifurcation,     : Bifurcation mode of the Root Complex.
-      BOOLEAN isPullToHigh     : Set to FALSE to assert and TRUE to release the PERST line.
+    @param[in]  RootComplex           Root Complex instance with properties.
 
+    @retval Segment number corresponding to the input root complex.
+            Default segment number is 0x0F.
   **/
-  VOID
-  PcieBoardAssertPerst (
-    AC01_RC *RC,
-    UINT32  PcieIndex,
-    UINT8   Bifurcation,
-    BOOLEAN isPullToHigh
+  UINT16
+  BoardPcieGetSegmentNumber (
+    IN  AC01_ROOT_COMPLEX *RootComplex
     );
   ```
 
