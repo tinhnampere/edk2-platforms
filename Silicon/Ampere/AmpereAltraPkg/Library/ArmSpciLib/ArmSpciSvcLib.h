@@ -92,7 +92,7 @@
 #define OEN_SPCI_END                    0x3F
 
 #define SPCI_SMC(spci_fid)      ((OEN_SPCI_START << FUNCID_OEN_SHIFT) | \
-                                 (1 << 31) | (spci_fid))
+                                 (1U << 31) | (spci_fid))
 #define SPCI_MISC_32(misc_fid)  ((SMC_32 << FUNCID_CC_SHIFT) |  \
                                  SPCI_FID_MISC_FLAG |           \
                                  SPCI_SMC ((misc_fid) << SPCI_FID_MISC_SHIFT))

@@ -308,8 +308,8 @@ GetCacheConfig (
   BOOLEAN SupportWT;
 
   Val = ReadCCSIDR (Level);
-  SupportWT = (Val & (1 << 31)) ? TRUE : FALSE;
-  SupportWB = (Val & (1 << 30)) ? TRUE : FALSE;
+  SupportWT = (Val & (1U << 31)) ? TRUE : FALSE;
+  SupportWB = (Val & (1U << 30)) ? TRUE : FALSE;
   if (SupportWT && SupportWB) {
     return 2; /* Varies with Memory Address */
   }

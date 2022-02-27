@@ -1116,7 +1116,7 @@ TcgDxeHashLogExtendEvent (
 {
   EFI_STATUS         Status;
   TPML_DIGEST_VALUES DigestList;
-  TCG_PCR_EVENT2_HDR NoActionEvent;
+  TCG_PCR_EVENT2_HDR NoActionEvent = {0};
 
   if (!mTcgDxeData.BsCap.TPMPresentFlag) {
     return EFI_DEVICE_ERROR;

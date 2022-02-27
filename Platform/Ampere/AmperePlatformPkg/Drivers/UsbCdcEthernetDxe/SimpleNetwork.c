@@ -426,12 +426,12 @@ SnpReceiveFilters (
   UINT8                   Temp;
   UINT16                  CdcFilterMask;
 
-  Mode = This->Mode;
-  CdcFilterMask = USB_CDC_ECM_PACKET_TYPE_DIRECTED | USB_CDC_ECM_PACKET_TYPE_BROADCAST;
-
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
+  Mode = This->Mode;
+  CdcFilterMask = USB_CDC_ECM_PACKET_TYPE_DIRECTED | USB_CDC_ECM_PACKET_TYPE_BROADCAST;
 
   //
   // Check that driver was started and initialised

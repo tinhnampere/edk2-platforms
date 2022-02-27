@@ -339,12 +339,18 @@ GetUsbDescription (
                   &gEfiDevicePathProtocolGuid,
                   (VOID **)&UsbDevicePath
                   );
+  if (EFI_ERROR (Status)) {
+    return NULL;
+  }
 
   Status = gBS->LocateDevicePath (
                   &gEfiUsbIoProtocolGuid,
                   &UsbDevicePath,
                   &UsbHandle
                   );
+  if (EFI_ERROR (Status)) {
+    return NULL;
+  }
 
   Status = gBS->HandleProtocol (
                   UsbHandle,
@@ -598,6 +604,9 @@ CreateNewBootOption (
                            Handle,
                            OsDescription.OSLoaderPath
                            );
+  if (BootOptionDevicePath == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
   //
   // Skip if Boot Option already exists
   //
@@ -758,11 +767,9 @@ CacheLegacyBootOptions (
   UINTN                         NVBootOptionCount;
   UINTN                         CacheBootOptionCount;
   EFI_BOOT_MANAGER_LOAD_OPTION  *NVBootOptions;
-  BOOLEAN                       AlreadyExistsInBootOptionsList;
 
   NVBootOptionCount = 0;
   NVBootOptions     = NULL;
-  AlreadyExistsInBootOptionsList = FALSE;
   CacheBootOptionCount = *BootOptionListCount;
 
   //

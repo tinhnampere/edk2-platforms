@@ -681,6 +681,10 @@ UsbCdcEthernetDriverStop (
                     This->DriverBindingHandle,
                     ControllerHandle
                     );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%d: Failed to close the bus driver - %r",__LINE__, Status));
+      return Status;
+    }
 
     Status = gBS->CloseProtocol (
                     ControllerHandle,
@@ -688,6 +692,10 @@ UsbCdcEthernetDriverStop (
                     This->DriverBindingHandle,
                     ControllerHandle
                     );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%d: Failed to close the bus driver - %r",__LINE__, Status));
+      return Status;
+    }
 
     return EFI_SUCCESS;
   }

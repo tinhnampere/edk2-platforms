@@ -922,7 +922,7 @@ DriverCallback (
   switch (Action) {
   case EFI_BROWSER_ACTION_CHANGING:
     if ((QuestionId >= DEVICE_KEY)
-        & (QuestionId <= (DEVICE_KEY + MAX_DEVICE)))
+        & (QuestionId < (DEVICE_KEY + MAX_DEVICE)))
     {
       Status = UpdateDeviceForm (QuestionId - DEVICE_KEY, PrivateData);
       if (EFI_ERROR (Status)) {

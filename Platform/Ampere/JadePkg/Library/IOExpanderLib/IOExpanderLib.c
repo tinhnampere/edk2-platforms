@@ -77,8 +77,6 @@ IOExpanderI2cRead (
   EFI_STATUS Status;
   UINT32     NumberOfRegisterAddress;
 
-  Status = EFI_SUCCESS;
-
   Status = I2cProbe (I2cBus, IO_EXPANDER_I2C_BUS_SPEED);
   if (EFI_ERROR (Status)) {
     return Status;
@@ -90,17 +88,17 @@ IOExpanderI2cRead (
     return Status;
   }
 
-  return Status;
+  return EFI_SUCCESS;
 }
 
 STATIC
 EFI_STATUS
 IOExpanderI2cWrite (
-  IN UINT32 I2cBus,
-  IN UINT32 I2cAddress,
-  IN UINT8  *RegisterAddress,
-  IN UINT32 *NumberOfRegister,
-  IN UINT8  *Data
+  IN UINT32       I2cBus,
+  IN UINT32       I2cAddress,
+  IN CONST UINT8  *RegisterAddress,
+  IN CONST UINT32 *NumberOfRegister,
+  IN UINT8        *Data
   )
 {
   EFI_STATUS Status;
@@ -120,7 +118,7 @@ IOExpanderI2cWrite (
     return Status;
   }
 
-  return Status;
+  return EFI_SUCCESS;
 }
 
 /**
