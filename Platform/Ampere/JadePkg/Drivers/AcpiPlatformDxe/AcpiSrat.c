@@ -137,14 +137,17 @@ SratAddGiccAffinity (
   NumNode = 0;
   while (Count != ArmProcessorTable->NumberOfEntries) {
     for (Idx = 0; Idx < ArmProcessorTable->NumberOfEntries; Idx++ ) {
-      Socket = ArmCoreInfoTable[Idx].ClusterId;
-      Cpm = (ArmCoreInfoTable[Idx].CoreId >> PLATFORM_CPM_UID_BIT_OFFSET);
+      Socket  = AC01_GET_SOCKET_ID (ArmCoreInfoTable[Idx].Mpidr);
+      Cpm     = AC01_GET_CLUSTER_ID (ArmCoreInfoTable[Idx].Mpidr);
       if (CpuGetSubNumNode (Socket, Cpm) != NumNode) {
         /* We add nodes based on ProximityDomain order */
         continue;
       }
-      AcpiProcessorUid = (ArmCoreInfoTable[Idx].ClusterId << PLATFORM_SOCKET_UID_BIT_OFFSET) +
-                         ArmCoreInfoTable[Idx].CoreId;
+
+      AcpiProcessorUid =
+        (AC01_GET_SOCKET_ID (ArmCoreInfoTable[Idx].Mpidr) << PLATFORM_SOCKET_UID_BIT_OFFSET)
+        + (AC01_GET_CLUSTER_ID (ArmCoreInfoTable[Idx].Mpidr) << PLATFORM_CPM_UID_BIT_OFFSET)
+        +  AC01_GET_CORE_ID (ArmCoreInfoTable[Idx].Mpidr);
       ZeroMem ((VOID *)&SratGiccAffinity[Count], sizeof (SratGiccAffinity[Count]));
       SratGiccAffinity[Count].AcpiProcessorUid = AcpiProcessorUid;
       SratGiccAffinity[Count].Flags = 1;
