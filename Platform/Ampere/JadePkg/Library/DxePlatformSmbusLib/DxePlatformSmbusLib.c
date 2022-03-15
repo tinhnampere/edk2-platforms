@@ -95,7 +95,9 @@ InternalSmBusExec (
   if (SmbusDeviceAddress.SmbusDeviceAddress == BMC_SLAVE_ADDRESS
       && GpioReadBit (BMC_READY_GPIO) == 0x0)
   {
-    *Status = EFI_NOT_READY;
+    if (Status != NULL) {
+      *Status = EFI_NOT_READY;
+    }
     return 0;
   }
 
