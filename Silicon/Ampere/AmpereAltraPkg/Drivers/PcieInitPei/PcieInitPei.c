@@ -95,7 +95,7 @@ BuildRootComplexData (
     RootComplex = &mRootComplexList[RCIndex];
     RootComplex->Active = ConfigFound ? RootComplexConfig.RCStatus[RCIndex] : TRUE;
     RootComplex->DevMapLow = ConfigFound ? RootComplexConfig.RCBifurcationLow[RCIndex] : 0;
-    RootComplex->DevMapHigh = ConfigFound ? RootComplexConfig.RCBifurcationLow[RCIndex] : 0;
+    RootComplex->DevMapHigh = ConfigFound ? RootComplexConfig.RCBifurcationHigh[RCIndex] : 0;
     RootComplex->Socket = RCIndex / AC01_PCIE_MAX_RCS_PER_SOCKET;
     RootComplex->ID = RCIndex % AC01_PCIE_MAX_RCS_PER_SOCKET;
     RootComplex->CsrBase = mCsrBase[RCIndex];
