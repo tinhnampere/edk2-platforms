@@ -40,7 +40,8 @@ typedef enum {
   DevMapMode2,
   DevMapMode3,
   DevMapMode4,
-  MaxDevMapMode = DevMapMode4
+  DevMapModeAuto,
+  MaxDevMapMode = DevMapModeAuto
 } DEV_MAP_MODE;
 
 //

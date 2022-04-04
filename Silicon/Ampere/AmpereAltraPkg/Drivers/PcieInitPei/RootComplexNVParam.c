@@ -122,6 +122,7 @@ SetRootComplexBifurcation (
     RootComplex->Pcie[RPStart + 3].Active = TRUE;
     break;
 
+  case DevMapModeAuto:
   case DevMapMode4:
     MaxWidth = (RootComplex->Type == RootComplexTypeA) ? LINK_WIDTH_X4 : LINK_WIDTH_X2;
     RootComplex->Pcie[RPStart].MaxWidth = PCIE_GET_MAX_WIDTH (RootComplex->Pcie[RPStart], MaxWidth);
@@ -491,6 +492,7 @@ GetMaxSpeedGen (
       }
       break;
 
+    case DevMapModeAuto:
     case DevMapMode4: /* x4 x4 x4 x4 */
       if (RootComplex->Flags & PCIE_ERRATA_SPEED1) {
         MaxGen = ErrataSpeedDevMap4;

@@ -600,6 +600,16 @@ CreateDevMapOptions (
     DevMapMode4
     );
 
+  if (RootComplex->Type == RootComplexTypeA) {
+    HiiCreateOneOfOptionOpCode (
+      OptionsOpCodeHandle,
+      STRING_TOKEN (STR_PCIE_BIFUR_SELECT_AUTO),
+      0,
+      EFI_IFR_NUMERIC_SIZE_1,
+      DevMapModeAuto
+      );
+  }
+
   return OptionsOpCodeHandle;
 }
 
