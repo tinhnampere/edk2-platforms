@@ -693,21 +693,15 @@ AddCustomBootOptionToList (
 
   Handle = NULL;
 
-  //
-  // According to UEFI specification 2.8 section 13.8:
-  // Partition Information Protocols are installed along with
-  // Block IO Protocol for logical partition. Use this protocol
-  // to properly find Simple File System Protocol.
-  //
   Status = gBS->LocateHandleBuffer (
                   ByProtocol,
-                  &gEfiPartitionInfoProtocolGuid,
+                  &gEfiSimpleFileSystemProtocolGuid,
                   NULL,
                   &HandleCount,
                   &Handle
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Fail to locate handle buffer for Partition Info Protocol - %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Fail to locate handle buffer for Simple FS Protocol - %r\n", Status));
     return Status;
   }
 

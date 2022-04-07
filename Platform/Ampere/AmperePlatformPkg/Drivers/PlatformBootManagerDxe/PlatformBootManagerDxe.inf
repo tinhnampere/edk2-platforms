@@ -33,7 +33,6 @@
 [Protocols]
   gEdkiiPlatformBootManagerProtocolGuid
   gEfiBlockIoProtocolGuid
-  gEfiPartitionInfoProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
   gEfiUsbIoProtocolGuid
 
