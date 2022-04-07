@@ -15,6 +15,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
+#include <Library/FlashLib.h>
 #include <Library/IpmiCommandLibExt.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
@@ -24,6 +25,8 @@
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Protocol/DevicePathToText.h>
+
+#define UUID_SIZE     PcdGetSize (PcdPlatformConfigUuid)
 
 #define BBS_TYPE_OS_HARDDRIVE             0xFD
 #define BBS_TYPE_MENU                     0xFE
@@ -307,6 +310,41 @@ DeviceSelectorToBBSType (
   }
 }
 
+/**
+  Clear Platform UUID to trigger refresh NVRAM/NVPARAM
+
+  @retval EFI_SUCCESS       The function executed successfully.
+  @retval Other             Some error occurs when saving the variables.
+
+**/
+EFI_STATUS
+ClearPlatformUuid (
+  VOID
+  )
+{
+  EFI_STATUS  Status;
+  UINTN       FWNvRamStartOffset;
+  UINT32      FWNvRamSize;
+  UINTN       UefiMiscOffset;
+  UINT32      UefiMiscSize;
+
+  Status = FlashGetNvRamInfo (&FWNvRamStartOffset, &FWNvRamSize, &UefiMiscOffset, &UefiMiscSize);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Failed to get Flash NVRAM info %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  //
+  // Clear PlatformConfigUuid
+  //
+  Status = FlashEraseCommand (UefiMiscOffset, UUID_SIZE);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Clear Platform Config UUID - %r\n", __FUNCTION__, Status));
+  }
+
+  return Status;
+}
+
 VOID
 EFIAPI
 HandleIpmiBootOption (
@@ -361,6 +399,21 @@ HandleIpmiBootOption (
   Status = IpmiGetBootFlags (&BootFlags);
   if (EFI_ERROR (Status) || !BootFlags.IsBootFlagsValid) {
     goto Exit;
+  }
+
+  if (BootFlags.IsCmosClear) {
+    Status = ClearPlatformUuid ();
+    if (EFI_ERROR (Status)) {
+      goto Exit;
+    }
+
+    Status = IpmiClearCmosBootFlags ();
+    if (EFI_ERROR (Status)) {
+      goto Exit;
+    }
+
+    DEBUG ((DEBUG_INFO, "%a: Handle clear-cmos done, resetting ...\n", __FUNCTION__));
+    gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
   }
 
   BootType = DeviceSelectorToBBSType (BootFlags.DeviceSelector);

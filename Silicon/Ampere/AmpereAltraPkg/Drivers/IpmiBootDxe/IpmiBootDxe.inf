@@ -26,14 +26,20 @@
 [LibraryClasses]
   BaseLib
   DevicePathLib
+  FlashLib
   IpmiCommandLibExt
   MemoryAllocationLib
+  NVParamLib
+  PcdLib
   UefiBootManagerLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
+  UefiRuntimeServicesTableLib
 
 [Pcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile
+
+  gAmpereTokenSpaceGuid.PcdPlatformConfigUuid
 
 [Depex]
   TRUE
