@@ -26,11 +26,18 @@
 #define IPMI_COMP_CODE_READ_ONLY          0x82
 
 //
+// IPMI Boot Flag clear cmos
+//
+#define IPMI_BOOT_FLAG_CLEAR_CMOS_YES             0x01
+#define IPMI_BOOT_FLAG_CLEAR_CMOS_NO              0x00
+
+//
 // IPMI Boot Option param 5 (Boot Flags) info
 //
 typedef struct {
   BOOLEAN IsBootFlagsValid;
   BOOLEAN IsPersistent;
+  BOOLEAN IsCmosClear;
   UINT8   DeviceSelector;
   UINT8   InstanceSelector;
 } IPMI_BOOT_FLAGS_INFO;
@@ -158,6 +165,19 @@ EFI_STATUS
 EFIAPI
 IpmiGetBootFlags (
   OUT IPMI_BOOT_FLAGS_INFO *BootFlags
+  );
+
+/**
+  Send command to clear BMC Clear Cmos in Boot Flags parameter.
+
+  @retval EFI_SUCCESS      The command byte stream was successfully submit
+                           to the device and a response was successfully received.
+  @retval other            Failed to write data to the device.
+**/
+EFI_STATUS
+EFIAPI
+IpmiClearCmosBootFlags (
+  VOID
   );
 
 #pragma pack()

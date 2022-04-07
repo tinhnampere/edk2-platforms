@@ -440,10 +440,86 @@ IpmiGetBootFlags (
   if (!EFI_ERROR (Status)) {
     BootFlags->IsPersistent = ParameterData->Data1.Bits.PersistentOptions;
     BootFlags->IsBootFlagsValid = ParameterData->Data1.Bits.BootFlagValid;
+    BootFlags->IsCmosClear = ParameterData->Data2.Bits.CmosClear;
     BootFlags->DeviceSelector = ParameterData->Data2.Bits.BootDeviceSelector;
     BootFlags->InstanceSelector = ParameterData->Data5.Bits.DeviceInstanceSelector;
   }
 
   FreePool (GetBootOptionsResponse);
+  return Status;
+}
+
+/**
+  Send command to clear BMC Clear Cmos in Boot Flags parameter.
+
+  @retval EFI_SUCCESS      The command byte stream was successfully submit
+                           to the device and a response was successfully received.
+  @retval other            Failed to write data to the device.
+**/
+EFI_STATUS
+EFIAPI
+IpmiClearCmosBootFlags (
+  VOID
+  )
+{
+  EFI_STATUS                              Status;
+  IPMI_SET_BOOT_OPTIONS_REQUEST           *SetBootOptionsRequest;
+  UINT32                                  SetBootOptionsRequestSize;
+  UINT8                                   CompletionCode;
+  IPMI_BOOT_OPTIONS_RESPONSE_PARAMETER_5  *ParameterData;
+  IPMI_GET_BOOT_OPTIONS_RESPONSE          *GetBootOptionsResponse;
+  UINT32                                  GetBootOptionsResponseSize;
+
+  //
+  // Get current boot flag
+  //
+  GetBootOptionsResponseSize = sizeof (*GetBootOptionsResponse) + sizeof (*ParameterData);
+  GetBootOptionsResponse     = AllocateZeroPool (GetBootOptionsResponseSize);
+  if (GetBootOptionsResponse == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  ParameterData = (IPMI_BOOT_OPTIONS_RESPONSE_PARAMETER_5 *)&GetBootOptionsResponse->ParameterData;
+
+  Status = IpmiGetSystemBootOptions (
+             IPMI_BOOT_OPTIONS_PARAMETER_BOOT_FLAGS,
+             GetBootOptionsResponse,
+             &GetBootOptionsResponseSize
+             );
+  if (EFI_ERROR (Status)) {
+    goto Exit;
+  }
+
+  SetBootOptionsRequestSize = sizeof (*SetBootOptionsRequest) + sizeof (*ParameterData);
+  SetBootOptionsRequest     = AllocateZeroPool (SetBootOptionsRequestSize);
+  if (SetBootOptionsRequest == NULL) {
+    Status = EFI_OUT_OF_RESOURCES;
+    goto Exit;
+  }
+
+  SetBootOptionsRequest->ParameterValid.Bits.ParameterSelector    = IPMI_BOOT_OPTIONS_PARAMETER_BOOT_FLAGS;
+  SetBootOptionsRequest->ParameterValid.Bits.MarkParameterInvalid = 0x0;
+
+  //
+  // Get current boot flag
+  //
+  ParameterData->Data2.Bits.CmosClear = IPMI_BOOT_FLAG_CLEAR_CMOS_NO;
+  CopyMem (&SetBootOptionsRequest->ParameterData, ParameterData, sizeof (IPMI_BOOT_OPTIONS_RESPONSE_PARAMETER_5));
+
+  Status = IpmiSetSystemBootOptions (
+             SetBootOptionsRequest,
+             SetBootOptionsRequestSize,
+             &CompletionCode
+             );
+
+Exit:
+  if (GetBootOptionsResponse != NULL) {
+    FreePool (GetBootOptionsResponse);
+  }
+
+  if (SetBootOptionsRequest != NULL) {
+    FreePool (SetBootOptionsRequest);
+  }
+
   return Status;
 }
