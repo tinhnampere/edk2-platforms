@@ -173,11 +173,14 @@ PcieInitEntry (
       continue;
     }
 
+    DEBUG ((DEBUG_INIT, "Initializing S%d-RC%d...", RootComplex->Socket, RootComplex->ID));
     Status = Ac01PcieCoreSetupRC (RootComplex, FALSE, 0);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "RootComplex[%d]: Init Failed\n", Index));
+      DEBUG ((DEBUG_ERROR, "Failed\n"));
       RootComplex->Active = FALSE;
       continue;
+    } else {
+      DEBUG ((DEBUG_INIT, "Done + DevMapLow/High: %d/%d\n", RootComplex->DevMapLow, RootComplex->DevMapHigh));
     }
   }
 
