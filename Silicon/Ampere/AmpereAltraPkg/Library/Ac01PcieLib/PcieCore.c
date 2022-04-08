@@ -1456,7 +1456,7 @@ Ac01PFACommand (
   return Ret;
 }
 
-UINT32
+BOOLEAN
 EndpointCfgReady (
   IN AC01_ROOT_COMPLEX  *RootComplex,
   IN UINT8              PcieIndex,
