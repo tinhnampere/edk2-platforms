@@ -154,20 +154,22 @@ GetDefaultDevMap (
 
   IsAc01 = IsAc01Processor ();
 
-  if (RootComplex->Pcie[PcieController0].Active
-      && RootComplex->Pcie[PcieController1].Active
-      && RootComplex->Pcie[PcieController2].Active
-      && RootComplex->Pcie[PcieController3].Active) {
-    RootComplex->DefaultDevMapLow = DevMapMode4;
-  } else if (RootComplex->Pcie[PcieController0].Active
-             && RootComplex->Pcie[PcieController2].Active
-             && RootComplex->Pcie[PcieController3].Active) {
-    RootComplex->DefaultDevMapLow = DevMapMode3;
-  } else if (RootComplex->Pcie[PcieController0].Active
-             && RootComplex->Pcie[PcieController2].Active) {
-    RootComplex->DefaultDevMapLow = DevMapMode2;
-  } else {
-    RootComplex->DefaultDevMapLow = DevMapMode1;
+  if (RootComplex->DefaultDevMapLow != DevMapModeAuto) {
+    if (RootComplex->Pcie[PcieController0].Active
+        && RootComplex->Pcie[PcieController1].Active
+        && RootComplex->Pcie[PcieController2].Active
+        && RootComplex->Pcie[PcieController3].Active) {
+      RootComplex->DefaultDevMapLow = DevMapMode4;
+    } else if (RootComplex->Pcie[PcieController0].Active
+              && RootComplex->Pcie[PcieController2].Active
+              && RootComplex->Pcie[PcieController3].Active) {
+      RootComplex->DefaultDevMapLow = DevMapMode3;
+    } else if (RootComplex->Pcie[PcieController0].Active
+              && RootComplex->Pcie[PcieController2].Active) {
+      RootComplex->DefaultDevMapLow = DevMapMode2;
+    } else {
+      RootComplex->DefaultDevMapLow = DevMapMode1;
+    }
   }
 
   if (RootComplex->Pcie[PcieController4].Active
@@ -243,7 +245,7 @@ GetLaneAllocation (
   } else {
     Controller = RootComplex->MaxPcieController;
   }
-  for (RPIndex = 0; RPIndex < Controller; RPIndex++) {
+  for (RPIndex = PcieController0; RPIndex < Controller; RPIndex++) {
     Width = (Value >> (RPIndex * BITS_PER_BYTE)) & BYTE_MASK;
     switch (Width) {
     case 1:
@@ -262,6 +264,14 @@ GetLaneAllocation (
       RootComplex->Pcie[RPIndex].Active = FALSE;
       break;
     }
+  }
+
+  // Update RootComplex data to handle auto bifurcation mode on RCA
+  if (Value == AUTO_BIFURCATION_SETTING_VALUE) {
+    RootComplex->Pcie[PcieController0].MaxWidth = LINK_WIDTH_X4;
+    RootComplex->Pcie[PcieController0].MaxGen = LINK_SPEED_GEN3;
+    RootComplex->Pcie[PcieController0].Active = TRUE;
+    RootComplex->DefaultDevMapLow = DevMapModeAuto;
   }
 
   if (RootComplex->Type == RootComplexTypeB) {

@@ -13,6 +13,8 @@
 #define BYTE_MASK               0xFF
 #define PCIE_ERRATA_SPEED1      0x0001 // Limited speed errata
 
+#define AUTO_BIFURCATION_SETTING_VALUE  0x0A
+
 #ifndef BIT
 #define BIT(nr) (1 << (nr))
 #endif
