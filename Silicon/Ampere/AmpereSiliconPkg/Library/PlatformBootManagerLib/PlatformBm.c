@@ -11,6 +11,11 @@
 
 **/
 
+#include <Guid/AmpereAfterConsole.h>
+#include <Guid/EventGroup.h>
+#include <Guid/NonDiscoverableDevice.h>
+#include <Guid/SerialPortLibVendor.h>
+#include <Guid/TtyTerm.h>
 #include <IndustryStandard/Pci22.h>
 #include <Library/BootLogoLib.h>
 #include <Library/CapsuleLib.h>
@@ -28,10 +33,6 @@
 #include <Protocol/PciIo.h>
 #include <Protocol/PciRootBridgeIo.h>
 #include <Protocol/PlatformBootManager.h>
-#include <Guid/EventGroup.h>
-#include <Guid/NonDiscoverableDevice.h>
-#include <Guid/TtyTerm.h>
-#include <Guid/SerialPortLibVendor.h>
 
 #include "PlatformBm.h"
 
@@ -727,6 +728,7 @@ PlatformBootManagerAfterConsole (
   UINTN                         PosX;
   UINTN                         PosY;
   EFI_INPUT_KEY                 Key;
+  EFI_EVENT                     AfterConsoleEvent;
 
   FirmwareVerLength = StrLen (PcdGetPtr (PcdFirmwareVersionString));
 
@@ -779,6 +781,21 @@ PlatformBootManagerAfterConsole (
   Key.ScanCode     = SCAN_NULL;
   Key.UnicodeChar  = L's';
   PlatformRegisterFvBootOption (&gUefiShellFileGuid, L"UEFI Shell", 0, &Key);
+
+  //
+  // Signal After Console event
+  //
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  EfiEventEmptyFunction,
+                  NULL,
+                  &gAmpereAfterConsoleEventGuid,
+                  &AfterConsoleEvent
+                  );
+  ASSERT_EFI_ERROR (Status);
+  gBS->SignalEvent (AfterConsoleEvent);
+  gBS->CloseEvent (AfterConsoleEvent);
 }
 
 /**
