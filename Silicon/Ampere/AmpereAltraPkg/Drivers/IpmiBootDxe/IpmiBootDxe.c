@@ -348,7 +348,8 @@ ClearPlatformUuid (
 VOID
 EFIAPI
 HandleIpmiBootOption (
-  VOID
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
   )
 {
   BOOLEAN                                 UpdateNeed;
@@ -362,7 +363,9 @@ HandleIpmiBootOption (
   UINT8                                   ForceUiApp;
   UINTN                                   CurrBootOrderSize;
   UINTN                                   DataSize;
+  UINT64                                  OsIndication;
 
+  OsIndication = 0;
   NewBootOrder = NULL;
   BootType = 0xFF;
 
@@ -520,13 +523,21 @@ Exit:
   // In order to boot to the UiApp, manually update the BootNext variable.
   //
   if (ForceUiApp == 1 && GetBBSType (FirstBootOption) == BBS_TYPE_MENU) {
-    Status = gRT->SetVariable (
-                    EFI_BOOT_NEXT_VARIABLE_NAME,
+    DataSize = sizeof (UINT64);
+    Status = gRT->GetVariable (
+                    EFI_OS_INDICATIONS_VARIABLE_NAME,
                     &gEfiGlobalVariableGuid,
-                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
-                    | EFI_VARIABLE_NON_VOLATILE,
-                    sizeof (UINT16),
-                    &FirstBootOption
+                    NULL,
+                    &DataSize,
+                    &OsIndication
+                    );
+    OsIndication |= EFI_OS_INDICATIONS_BOOT_TO_FW_UI;
+    Status = gRT->SetVariable (
+                    EFI_OS_INDICATIONS_VARIABLE_NAME,
+                    &gEfiGlobalVariableGuid,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                    sizeof (UINT64),
+                    &OsIndication
                     );
     ASSERT_EFI_ERROR (Status);
   }
@@ -624,11 +635,19 @@ IpmiBootEntry (
   IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS Status = EFI_SUCCESS;
+  EFI_EVENT   Event;
+  EFI_STATUS  Status = EFI_SUCCESS;
 
   RestoreBootOrder ();
 
-  HandleIpmiBootOption ();
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  HandleIpmiBootOption,
+                  NULL,
+                  &gAmpereAfterConsoleEventGuid,
+                  &Event
+                  );
 
   return Status;
 }

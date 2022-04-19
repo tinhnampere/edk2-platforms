@@ -41,5 +41,9 @@
 
   gAmpereTokenSpaceGuid.PcdPlatformConfigUuid
 
+[Guids]
+  gAmpereAfterConsoleEventGuid
+  gEfiGlobalVariableGuid
+
 [Depex]
   TRUE
