@@ -9,6 +9,8 @@
 #include <IndustryStandard/ArmCache.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/ArmLib.h>
+#include <Guid/CpuConfigHii.h>
+#include <CpuConfigNVDataStruc.h>
 #include "AcpiPlatform.h"
 
 #define NUMBER_OF_RESOURCES 2  // L1I & L1D
@@ -122,11 +124,15 @@ AddSocketNode (
   PpttProcessorEntryPointer->Flags.PhysicalPackage = EFI_ACPI_6_3_PPTT_PACKAGE_PHYSICAL;
   PpttProcessorEntryPointer->Flags.IdenticalImplementation = EFI_ACPI_6_3_PPTT_IMPLEMENTATION_IDENTICAL;
   PpttProcessorEntryPointer->Parent = ParentOffset;
-  PpttProcessorEntryPointer->NumberOfPrivateResources = 1;
-  PpttProcessorEntryPointer->Length += sizeof (UINT32) * PpttProcessorEntryPointer->NumberOfPrivateResources;
+  if (SlcNodeOffset > 0) {
+    PpttProcessorEntryPointer->NumberOfPrivateResources = 1;
+    PpttProcessorEntryPointer->Length += sizeof (UINT32) * PpttProcessorEntryPointer->NumberOfPrivateResources;
 
-  ResPointer = (UINT32 *)((UINT64)PpttProcessorEntryPointer + sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
-  ResPointer[0] = SlcNodeOffset;
+    ResPointer = (UINT32 *)((UINT64)PpttProcessorEntryPointer + sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR));
+    ResPointer[0] = SlcNodeOffset;
+  } else {
+    PpttProcessorEntryPointer->NumberOfPrivateResources = 0;
+  }
 
   return PpttProcessorEntryPointer->Length;
 }
@@ -290,6 +296,21 @@ AcpiInstallPpttTable (
   UINTN                                 Size;
   UINTN                                 SocketId;
   VOID                                  *PpttTablePointer;
+  CPU_VARSTORE_DATA                     CpuConfigData;
+  UINTN                                 BufferSize;
+
+  BufferSize = sizeof (CPU_VARSTORE_DATA);
+  ZeroMem (&CpuConfigData, BufferSize);
+  Status = gRT->GetVariable (
+                  CPU_CONFIG_VARIABLE_NAME,
+                  &gCpuConfigFormSetGuid,
+                  NULL,
+                  &BufferSize,
+                  &CpuConfigData
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a %d Can not get CPU Configuration Data \n", __FUNCTION__, __LINE__));
+  }
 
   Status = gBS->LocateProtocol (
                   &gEfiAcpiTableProtocolGuid,
@@ -309,8 +330,10 @@ AcpiInstallPpttTable (
          (sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR) + NUMBER_OF_RESOURCES * sizeof (UINT32)) * GetNumberOfActiveCores () +  // Core node
          sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE) +                                          // L1I node
          sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE) +                                          // L1D node
-         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE) +                                          // L2 node
-         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE) + sizeof (UINT32);                         // SLC node
+         sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE);                                           // L2 node
+  if (CpuConfigData.CpuSlcAsL3 == CPU_SLC_AS_L3_ENABLE) {
+    Size += sizeof (EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE) + sizeof (UINT32);                      // SLC node
+  }
 
   PpttTablePointer = AllocateZeroPool (Size);
   if (PpttTablePointer == NULL) {
@@ -322,8 +345,11 @@ AcpiInstallPpttTable (
   RootNodeOffset = NextNodeOffset;
   NextNodeOffset += AddRootNode (PpttTablePointer + NextNodeOffset);
 
-  SlcNodeOffset = NextNodeOffset;
-  NextNodeOffset += AddSlcCacheNode (PpttTablePointer + NextNodeOffset);
+  SlcNodeOffset = 0;
+  if (CpuConfigData.CpuSlcAsL3 == CPU_SLC_AS_L3_ENABLE) {
+    SlcNodeOffset = NextNodeOffset;
+    NextNodeOffset += AddSlcCacheNode (PpttTablePointer + NextNodeOffset);
+  }
 
   L2NodeOffset = NextNodeOffset;
   NextNodeOffset += AddL2CacheNode (PpttTablePointer + NextNodeOffset);

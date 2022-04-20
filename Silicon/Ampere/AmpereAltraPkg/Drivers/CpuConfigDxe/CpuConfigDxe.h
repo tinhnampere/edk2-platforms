@@ -9,7 +9,7 @@
 #ifndef CPU_CONFIG_H_
 #define CPU_CONFIG_H_
 
-#include "CpuConfigNVDataStruc.h"
+#include <CpuConfigNVDataStruc.h>
 
 //
 // This is the generated IFR binary data for each formset defined in VFR.
