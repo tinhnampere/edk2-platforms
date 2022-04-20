@@ -9,6 +9,7 @@
 
 #include <Uefi.h>
 
+#include <Guid/AmpereVariable.h>
 #include <Guid/GlobalVariable.h>
 #include <IndustryStandard/Ipmi.h>
 #include <Library/BaseLib.h>
@@ -385,7 +386,7 @@ HandleIpmiBootOption (
   DataSize = sizeof (UINT8);
   Status = gRT->GetVariable (
                   FORCE_UIAPP_VARIABLE_NAME,
-                  &gEfiGlobalVariableGuid,
+                  &gAmpereVariableGuid,
                   NULL,
                   &DataSize,
                   &ForceUiApp
@@ -435,9 +436,8 @@ HandleIpmiBootOption (
     if (!BootFlags.IsPersistent) {
       Status = gRT->SetVariable (
                       EFI_LAST_BOOT_ORDER_VARIABLE_NAME,
-                      &gEfiGlobalVariableGuid,
-                      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
-                      | EFI_VARIABLE_NON_VOLATILE,
+                      &gAmpereVariableGuid,
+                      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
                       CurrBootOrderSize,
                       CurrBootOrder
                       );
@@ -502,11 +502,19 @@ HandleIpmiBootOption (
   if (UpdateNeed) {
     Status = gRT->SetVariable (
                     FORCE_UIAPP_VARIABLE_NAME,
-                    &gEfiGlobalVariableGuid,
+                    &gAmpereVariableGuid,
                     EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
                     sizeof (UINT8),
                     &ForceUiApp
                     );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: Failed to set the Force UiApp variable - %r\n",
+        __FUNCTION__,
+        Status
+        ));
+    }
   }
 
   //
@@ -567,7 +575,12 @@ RestoreBootOrder (
   UINTN      CurrBootOrderSize;
   UINTN      LastBootOrderSize;
 
-  GetEfiGlobalVariable2 (EFI_LAST_BOOT_ORDER_VARIABLE_NAME, (VOID **)&LastBootOrder, &LastBootOrderSize);
+  Status = GetVariable2 (
+             EFI_LAST_BOOT_ORDER_VARIABLE_NAME,
+             &gAmpereVariableGuid,
+             (VOID **)&LastBootOrder,
+             &LastBootOrderSize
+             );
   if (LastBootOrder == NULL) {
     return EFI_SUCCESS;
   }
@@ -596,19 +609,19 @@ RestoreBootOrder (
                   LastBootOrder
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to restore the BootOrder\n"));
+    DEBUG ((DEBUG_ERROR, "%a: Failed to restore the BootOrder\n", __FUNCTION__));
     goto Exit;
   }
 
   Status = gRT->SetVariable (
                   EFI_LAST_BOOT_ORDER_VARIABLE_NAME,
-                  &gEfiGlobalVariableGuid,
+                  &gAmpereVariableGuid,
                   0,
                   0,
                   NULL
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to erase the LastBootOrder\n"));
+    DEBUG ((DEBUG_ERROR, "%a: Failed to erase the LastBootOrder\n", __FUNCTION__));
     goto Exit;
   }
 

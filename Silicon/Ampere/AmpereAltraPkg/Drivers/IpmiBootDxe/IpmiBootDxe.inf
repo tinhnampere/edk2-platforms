@@ -43,6 +43,7 @@
 
 [Guids]
   gAmpereAfterConsoleEventGuid
+  gAmpereVariableGuid
   gEfiGlobalVariableGuid
 
 [Depex]
