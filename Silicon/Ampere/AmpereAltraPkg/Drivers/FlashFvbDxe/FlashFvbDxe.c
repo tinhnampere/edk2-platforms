@@ -486,7 +486,7 @@ FlashFvbDxeInitialize (
     ));
 
   // Get NV Flash information
-  Status = FlashGetNvRamInfo (&mNvFlashBase, &mNvFlashSize);
+  Status = FlashGetNvRamInfo (&mNvFlashBase, &mNvFlashSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Failed to get Flash info\n", __FUNCTION__));
     return EFI_DEVICE_ERROR;

@@ -15,6 +15,8 @@
 
 #include "FlashLibCommon.h"
 
+#define UEFI_MISC_SIZE        0x1000
+
 BOOLEAN                       gFlashLibRuntime = FALSE;
 UINT8                         *gFlashLibPhysicalBuffer;
 UINT8                         *gFlashLibVirtualBuffer;
@@ -98,9 +100,14 @@ FlashGetFailSafeInfo (
 
 /**
   Get the information about the Flash region to store the NVRAM variables.
+  This region was divided into two parts:
+    The first part is for the NVRAM data
+    The second part is reserved for multi purpose data, eg: UUID
 
   @param[out] NvRamBase          Base address of the NVRAM space.
   @param[out] NvRamSize          Total size of the NVRAM space.
+  @param[out] MiscBase           Base address of the UEFI Misc.
+  @param[out] MiscSize           Total size of the UEFI Misc.
 
   @retval EFI_SUCCESS            Operation succeeded.
   @retval EFI_INVALID_PARAMETER  NvRamBase or NvRamSize is NULL.
@@ -110,7 +117,9 @@ EFI_STATUS
 EFIAPI
 FlashGetNvRamInfo (
   OUT UINTN  *NvRamBase,
-  OUT UINT32 *NvRamSize
+  OUT UINT32 *NvRamSize,
+  OUT UINTN  *MiscBase     OPTIONAL,
+  OUT UINT32 *MiscSize     OPTIONAL
   )
 {
   EFI_MM_COMMUNICATE_NVRAM_INFO_RESPONSE    NvRamInfo;
@@ -134,8 +143,11 @@ FlashGetNvRamInfo (
   }
 
   if (NvRamInfo.Status == MM_SPINOR_RES_SUCCESS) {
+    ASSERT (NvRamInfo.NvRamSize > UEFI_MISC_SIZE);
+
     *NvRamBase = NvRamInfo.NvRamBase;
-    *NvRamSize = NvRamInfo.NvRamSize;
+    *NvRamSize = NvRamInfo.NvRamSize - UEFI_MISC_SIZE;
+
     DEBUG ((
       DEBUG_INFO,
       "%a: NVRAM Base 0x%llx, Size 0x%lx\n",
@@ -143,6 +155,16 @@ FlashGetNvRamInfo (
       *NvRamBase,
       *NvRamSize
       ));
+  } else {
+    return EFI_DEVICE_ERROR;
+  }
+
+  if (MiscBase != NULL) {
+    *MiscBase = *NvRamBase + *NvRamSize;
+  }
+
+  if (MiscSize != NULL) {
+    *MiscSize = UEFI_MISC_SIZE;
   }
 
   return EFI_SUCCESS;

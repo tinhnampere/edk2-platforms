@@ -17,6 +17,8 @@
 #include <Library/PeimEntryPoint.h>
 #include <Library/ResetSystemLib.h>
 
+#define UUID_SIZE     PcdGetSize (PcdPlatformConfigUuid)
+
 /**
   Entry point function for the PEIM
 
@@ -33,15 +35,17 @@ FlashPeiEntryPoint (
   IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
-  CHAR8               BuildUuid[PcdGetSize (PcdPlatformConfigUuid)];
-  CHAR8               StoredUuid[PcdGetSize (PcdPlatformConfigUuid)];
+  CHAR8               BuildUuid[UUID_SIZE];
+  CHAR8               StoredUuid[UUID_SIZE];
   EFI_STATUS          Status;
   UINTN               FWNvRamStartOffset;
   UINT32              FWNvRamSize;
   UINTN               NvRamAddress;
   UINT32              NvRamSize;
+  UINTN               UefiMiscOffset;
+  UINT32              UefiMiscSize;
 
-  CopyMem ((VOID *)BuildUuid, PcdGetPtr (PcdPlatformConfigUuid), sizeof (BuildUuid));
+  CopyMem ((VOID *)BuildUuid, PcdGetPtr (PcdPlatformConfigUuid), UUID_SIZE);
 
   NvRamAddress = PcdGet64 (PcdFlashNvStorageVariableBase64);
   NvRamSize = FixedPcdGet32 (PcdFlashNvStorageVariableSize) +
@@ -56,13 +60,14 @@ FlashPeiEntryPoint (
     NvRamSize
     ));
 
-  Status = FlashGetNvRamInfo (&FWNvRamStartOffset, &FWNvRamSize);
+  Status = FlashGetNvRamInfo (&FWNvRamStartOffset, &FWNvRamSize, &UefiMiscOffset, &UefiMiscSize);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Failed to get Flash NVRAM info %r\n", __FUNCTION__, Status));
     return Status;
   }
 
-  if (FWNvRamSize < (NvRamSize * 2 + sizeof (BuildUuid))) {
+  if (FWNvRamSize < (NvRamSize * 2)
+      || UefiMiscSize < UUID_SIZE) {
     //
     // NVRAM size provided by FW is not enough
     //
@@ -70,21 +75,21 @@ FlashPeiEntryPoint (
   }
 
   //
-  // We stored BUILD UUID build at the offset NVRAM_SIZE * 2
+  // Get the Platform UUID stored in the very first bytes of the UEFI Misc.
   //
   Status = FlashReadCommand (
-             FWNvRamStartOffset + NvRamSize * 2,
+             UefiMiscOffset,
              (UINT8 *)StoredUuid,
-             sizeof (StoredUuid)
+             UUID_SIZE
              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  if (CompareMem ((VOID *)StoredUuid, (VOID *)BuildUuid, sizeof (BuildUuid)) != 0) {
+  if (CompareMem ((VOID *)StoredUuid, (VOID *)BuildUuid, UUID_SIZE) != 0) {
     DEBUG ((DEBUG_INFO, "BUILD UUID Changed, Update Storage with NVRAM FV\n"));
 
-    Status = FlashEraseCommand (FWNvRamStartOffset, NvRamSize * 2 + sizeof (BuildUuid));
+    Status = FlashEraseCommand (FWNvRamStartOffset, NvRamSize * 2);
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -101,10 +106,15 @@ FlashPeiEntryPoint (
     //
     // Write new BUILD UUID to the Flash
     //
+    Status = FlashEraseCommand (UefiMiscOffset, UUID_SIZE);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+
     Status = FlashWriteCommand (
-               FWNvRamStartOffset + NvRamSize * 2,
+               UefiMiscOffset,
                (UINT8 *)BuildUuid,
-               sizeof (BuildUuid)
+               UUID_SIZE
                );
     if (EFI_ERROR (Status)) {
       return Status;

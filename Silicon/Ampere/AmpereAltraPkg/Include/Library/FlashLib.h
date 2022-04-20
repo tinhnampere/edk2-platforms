@@ -28,9 +28,14 @@ FlashGetFailSafeInfo (
 
 /**
   Get the information about the Flash region to store the NVRAM variables.
+  This region was divided into two parts:
+    The first part is for the NVRAM data
+    The second part is reserved for multi purpose data, eg: UUID
 
   @param[out] NvRamBase          Base address of the NVRAM space.
   @param[out] NvRamSize          Total size of the NVRAM space.
+  @param[out] MiscBase           Base address of the UEFI Misc.
+  @param[out] MiscSize           Total size of the UEFI Misc.
 
   @retval EFI_SUCCESS            Operation succeeded.
   @retval EFI_INVALID_PARAMETER  NvRamBase or NvRamSize is NULL.
@@ -40,7 +45,9 @@ EFI_STATUS
 EFIAPI
 FlashGetNvRamInfo (
   OUT UINTN  *NvRamBase,
-  OUT UINT32 *NvRamSize
+  OUT UINT32 *NvRamSize,
+  OUT UINTN  *MiscBase     OPTIONAL,
+  OUT UINT32 *MiscSize     OPTIONAL
   );
 
 /**
