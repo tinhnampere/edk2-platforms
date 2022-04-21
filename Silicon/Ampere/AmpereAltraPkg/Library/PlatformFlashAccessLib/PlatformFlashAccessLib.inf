@@ -32,6 +32,8 @@
 
 [Protocols]
   gEfiMmCommunication2ProtocolGuid
+  gEfiMmCommunicationProtocolGuid
 
 [Depex]
-  TRUE
+  gEfiMmCommunication2ProtocolGuid OR
+  gEfiMmCommunicationProtocolGuid

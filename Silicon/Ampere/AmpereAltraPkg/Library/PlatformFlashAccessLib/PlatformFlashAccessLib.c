@@ -16,7 +16,8 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Protocol/MmCommunication2.h>
 
-EFI_MM_COMMUNICATION2_PROTOCOL *mMmCommunication = NULL;
+EFI_MM_COMMUNICATION2_PROTOCOL *mMmCommunication2 = NULL;
+EFI_MM_COMMUNICATION_PROTOCOL  *mMmCommunication  = NULL;
 
 #define EFI_MM_MAX_PAYLOAD_U64_E 10
 #define EFI_MM_MAX_PAYLOAD_SIZE  (EFI_MM_MAX_PAYLOAD_U64_E * sizeof (UINT64))
@@ -127,16 +128,23 @@ MmFlashUpdate (
     ImageSize
     ));
 
-  if (mMmCommunication == NULL) {
+  if (mMmCommunication2 == NULL && mMmCommunication == NULL) {
     Status = gBS->LocateProtocol (
                     &gEfiMmCommunication2ProtocolGuid,
                     NULL,
-                    (VOID **)&mMmCommunication
+                    (VOID **)&mMmCommunication2
                     );
-
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: Can't locate gEfiMmCommunication2ProtocolGuid.\n", __FUNCTION__));
-      return Status;
+      Status = gBS->LocateProtocol (
+                      &gEfiMmCommunicationProtocolGuid,
+                      NULL,
+                      (VOID **)&mMmCommunication
+                      );
+
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "%a: Can't locate MM Communication protocol.\n", __FUNCTION__));
+        return Status;
+      }
     }
   }
 
@@ -149,12 +157,23 @@ MmFlashUpdate (
     UefiMmCreateSysFwuReq ((VOID *)&MmData, sizeof (MmData));
 
     Size = sizeof (EFI_MM_COMM_HEADER_NOPAYLOAD) + sizeof (MmData);
-    Status = mMmCommunication->Communicate (
-                                 mMmCommunication,
-                                 (VOID *)&mEfiMmSysFwuReq,
-                                 (VOID *)&mEfiMmSysFwuReq,
-                                 &Size
-                                 );
+    if (mMmCommunication2 != NULL) {
+      Status = mMmCommunication2->Communicate (
+                                    mMmCommunication2,
+                                    (VOID *)&mEfiMmSysFwuReq,
+                                    (VOID *)&mEfiMmSysFwuReq,
+                                    &Size
+                                    );
+    } else if (mMmCommunication != NULL) {
+      Status =  mMmCommunication->Communicate (
+                                    mMmCommunication,
+                                    (VOID *)&mEfiMmSysFwuReq,
+                                    &Size
+                                    );
+    } else {
+      return EFI_UNSUPPORTED;
+    }
+
     if (EFI_ERROR (Status)) {
       DEBUG ((
         DEBUG_ERROR,
