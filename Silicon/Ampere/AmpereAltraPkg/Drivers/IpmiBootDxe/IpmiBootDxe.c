@@ -66,9 +66,7 @@ GetBBSTypeFromMessagingDevicePath (
     break;
 
   case MSG_USB_DP:
-    //
-    // TODO: Add support for USB devices
-    //
+    Result = BBS_TYPE_FLOPPY;
     break;
 
   case MSG_SATA_DP:
@@ -305,6 +303,9 @@ DeviceSelectorToBBSType (
 
   case IPMI_BOOT_DEVICE_SELECTOR_BIOS_SETUP:
     return BBS_TYPE_MENU;
+
+  case IPMI_BOOT_DEVICE_SELECTOR_FLOPPY:
+    return BBS_TYPE_FLOPPY;
 
   default:
     return BBS_TYPE_UNKNOWN;
