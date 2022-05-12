@@ -213,10 +213,11 @@ typedef enum {
   NV_SI_MESH_TURBO_ACTIVITY_THRESHOLD       = (66 * 8) + NV_MANU_PARAM_START,
   NV_SI_ALTRAMAX_ICCMAX_OC_LIMIT_MARGIN     = (67 * 8) + NV_MANU_PARAM_START,
   NV_SI_SLT_VREF_EXT_PROG_EN                = (68 * 8) + NV_MANU_PARAM_START,
-  NV_PMPRO_REGION2_LOAD_END                 = NV_SI_SLT_VREF_EXT_PROG_EN,
+  NV_SI_SLT_FLAGS                           = (69 * 8) + NV_MANU_PARAM_START,
+  NV_PMPRO_REGION2_LOAD_END                 = NV_SI_SLT_FLAGS,
 
   /* NOTE: Add before NV_MANU_PARAM_MAX and increase its value */
-  NV_MANU_PARAM_MAX                         = (68 * 8) + NV_MANU_PARAM_START,
+  NV_MANU_PARAM_MAX                         = (69 * 8) + NV_MANU_PARAM_START,
 
   /*
    * User non-volatile memory
@@ -602,10 +603,11 @@ typedef enum {
   NV_SI_RO_BOARD_BMC_HANDSHAKE_SPI_TO2              = (247 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
   NV_SI_RO_BOARD_PCIE_AER_CE_THRESHOLD              = (248 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000001 */
   NV_SI_RO_BOARD_PCIE_AER_CE_INTERVAL               = (249 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
-  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_PCIE_AER_CE_INTERVAL,
+  NV_SI_RO_BOARD_I2C_RCA_VRD_VOUT_FORMAT            = (250 * 8) + NV_BOARD_PARAM_START, /* Default: 0x00000000 */
+  NV_PMPRO_REGION4_LOAD_END                         = NV_SI_RO_BOARD_I2C_RCA_VRD_VOUT_FORMAT,
 
   /* NOTE: Add before NV_BOARD_PARAM_MAX and increase its value */
-  NV_BOARD_PARAM_MAX                                = (249 * 8) + NV_BOARD_PARAM_START,
+  NV_BOARD_PARAM_MAX                                = (250 * 8) + NV_BOARD_PARAM_START,
 } NVPARAM;
 
 #endif /* NVPARAMDEF_H_ */
