@@ -164,11 +164,6 @@ APRIORI PEI {
   INF MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/PcieInitPei/PcieInitPei.inf
 
-!if $(TPM2_ENABLE) == TRUE
-  INF MdeModulePkg/Universal/ResetSystemPei/ResetSystemPei.inf
-  INF Silicon/Ampere/AmpereAltraPkg/Drivers/Tcg2Pei/Tcg2Pei.inf
-!endif
-
   #
   # Print platform information before passing control into the Driver Execution Environment (DXE) phase
   #
@@ -183,6 +178,11 @@ APRIORI PEI {
       SECTION FV_IMAGE = FVMAIN
     }
   }
+
+!if $(TPM2_ENABLE) == TRUE
+  INF MdeModulePkg/Universal/ResetSystemPei/ResetSystemPei.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/Tcg2Pei/Tcg2Pei.inf
+!endif
 
 [FV.FvMain]
 FvAlignment        = 16
