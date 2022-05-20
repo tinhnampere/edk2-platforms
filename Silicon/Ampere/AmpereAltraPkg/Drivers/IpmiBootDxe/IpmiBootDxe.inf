@@ -45,6 +45,7 @@
   gAmpereAfterConsoleEventGuid
   gAmpereVariableGuid
   gEfiGlobalVariableGuid
+  gEfiEventReadyToBootGuid
 
 [Depex]
   TRUE

@@ -631,6 +631,19 @@ Exit:
   return Status;
 }
 
+VOID
+EFIAPI
+RestoreBootOrderOnReadytoBoot (
+  IN EFI_EVENT        Event,
+  IN VOID             *Context
+  )
+{
+  //
+  // Restore BootOrder variable in normal condition.
+  //
+  RestoreBootOrder ();
+}
+
 /**
   The Entry Point for IPMI Boot handler.
 
@@ -661,6 +674,22 @@ IpmiBootEntry (
                   &gAmpereAfterConsoleEventGuid,
                   &Event
                   );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Create AfterConsole event %r!\n", Status));
+    return Status;
+  }
+
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  RestoreBootOrderOnReadytoBoot,
+                  NULL,
+                  &gEfiEventReadyToBootGuid,
+                  &Event
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Create ready to boot event %r!\n", Status));
+  }
 
   return Status;
 }
