@@ -206,6 +206,20 @@ UpdatePlatformInfoScreen (
     NULL
     );
 
+  /* SLC cache as L3 */
+  if (IsAc01Processor ()) {
+    UnicodeSPrint (Str, sizeof (Str), L"32MB");
+  } else {
+    UnicodeSPrint (Str, sizeof (Str), L"16MB");
+  }
+
+  HiiSetString (
+    HiiHandle,
+    STRING_TOKEN (STR_PLATFORM_INFO_L3CACHE_VALUE),
+    Str,
+    NULL
+    );
+
   /* AHB clock */
   UnicodeSPrint (Str, sizeof (Str), L"%dMHz", PlatformHob->AhbClk / MHZ_SCALE_FACTOR);
   HiiSetString (

@@ -41,6 +41,9 @@
 #string STR_PLATFORM_INFO_L2CACHE                   #language en-US "L2 CACHE"
 #string STR_PLATFORM_INFO_L2CACHE_VALUE             #language en-US "0KB"
 
+#string STR_PLATFORM_INFO_L3CACHE                   #language en-US "SLC as L3 CACHE"
+#string STR_PLATFORM_INFO_L3CACHE_VALUE             #language en-US "0KB"
+
 #string STR_PLATFORM_INFO_SOCCLK                    #language en-US "SOC Clock"
 #string STR_PLATFORM_INFO_SOCCLK_VALUE              #language en-US "0MHz"
 
