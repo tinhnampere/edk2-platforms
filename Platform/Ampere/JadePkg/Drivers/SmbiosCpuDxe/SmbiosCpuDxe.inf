@@ -31,6 +31,7 @@
   DebugLib
   HobLib
   MemoryAllocationLib
+  NVParamLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
   UefiLib
@@ -39,6 +40,7 @@
   gEfiSmbiosProtocolGuid                     ## CONSUMED
 
 [Guids]
+  gCpuConfigFormSetGuid
   gPlatformInfoHobGuid
 
 [Depex]

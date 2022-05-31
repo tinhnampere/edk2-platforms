@@ -8,6 +8,7 @@
 
 #include <Uefi.h>
 
+#include <CpuConfigNVDataStruc.h>
 #include <Guid/PlatformInfoHob.h>
 #include <Guid/SmBios.h>
 #include <Library/AmpereCpuLib.h>
@@ -18,16 +19,21 @@
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/NVParamLib.h>
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
+#include <NVParamDef.h>
 #include <Protocol/Smbios.h>
 
-#define CPU_CACHE_LEVEL_COUNT 3
+#define CPU_CACHE_LEVEL_COUNT 4
 
 #define MHZ_SCALE_FACTOR 1000000
 
 #define CACHE_SIZE(x, y)            (UINT16) (0x8000 | ((x >> 16) * GetNumberOfActiveCoresPerSocket (y)))
 #define CACHE_SIZE_2(x, y)          (0x80000000 | ((x >> 16) * GetNumberOfActiveCoresPerSocket (y)))
+#define SLC_SIZE(x)                 (UINT16)(0x8000 | (((x) * (1 << 20)) / (64 * (1 << 10))))
+#define SLC_SIZE_2(x)               (0x80000000 | (((x) * (1 << 20)) / (64 * (1 << 10))))
 #define PROCESSOR_VERSION_ALTRA     "Ampere(R) Altra(R) Processor\0"
 #define PROCESSOR_VERSION_ALTRA_MAX "Ampere(R) Altra(R) Max Processor\0"
 
@@ -144,7 +150,7 @@ STATIC ARM_TYPE4 mArmDefaultType4Sk1 = {
   TYPE4_ADDITIONAL_STRINGS
 };
 
-// Type 7 Cache Information
+// Type 7 Cache Information socket 0
 STATIC ARM_TYPE7 mArmDefaultType7Sk0L1I = {
   {
     {                                    // SMBIOS_STRUCTURE Hdr
@@ -166,7 +172,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L1I = {
   "L1 Instruction Cache\0"
 };
 
-// Type 7 Cache Information
+// Type 7 Cache Information socket 0
 STATIC ARM_TYPE7 mArmDefaultType7Sk0L1D = {
   {
     {                                    // SMBIOS_STRUCTURE Hdr
@@ -187,7 +193,8 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L1D = {
   },
   "L1 Data Cache\0"
 };
-// Type 7 Cache Information
+
+// Type 7 Cache Information socket 0
 STATIC ARM_TYPE7 mArmDefaultType7Sk0L2 = {
   {
     {                                    // SMBIOS_STRUCTURE Hdr
@@ -209,7 +216,29 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L2 = {
   "L2 Cache\0"
 };
 
-// Type 7 Cache Information
+// Type 7 Cache Information socket 0
+STATIC ARM_TYPE7 mArmDefaultType7Sk0L3 = {
+  {
+    {                                    // SMBIOS_STRUCTURE Hdr
+      EFI_SMBIOS_TYPE_CACHE_INFORMATION, // UINT8 Type
+      sizeof (SMBIOS_TABLE_TYPE7),       // UINT8 Length
+      SMBIOS_HANDLE_PI_RESERVED,
+    },
+    ADDITIONAL_STR_INDEX_1,
+    0x182,                   // L3 enabled, Write Back
+    0x8010,                  // 1M cache max
+    0x8010,                  // 1M installed
+    {0, 0, 0, 0, 0, 1},      // SRAM type
+    {0, 0, 0, 0, 0, 1},      // SRAM type
+    0,                       // unkown speed
+    CacheErrorSingleBit,     // single bit ECC
+    CacheTypeUnified,        // Unified cache
+    CacheAssociativity16Way, // 16-way
+  },
+  "L3 Cache (SLC)\0"
+};
+
+// Type 7 Cache Information socket 1
 STATIC ARM_TYPE7 mArmDefaultType7Sk1L1I = {
   {
     {                                    // SMBIOS_STRUCTURE Hdr
@@ -231,7 +260,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L1I = {
   "L1 Instruction Cache\0"
 };
 
-// Type 7 Cache Information
+// Type 7 Cache Information socket 1
 STATIC ARM_TYPE7 mArmDefaultType7Sk1L1D = {
   {
     {                                    // SMBIOS_STRUCTURE Hdr
@@ -252,7 +281,8 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L1D = {
   },
   "L1 Data Cache\0"
 };
-// Type 7 Cache Information
+
+// Type 7 Cache Information socket 1
 STATIC ARM_TYPE7 mArmDefaultType7Sk1L2 = {
   {
     {                                    // SMBIOS_STRUCTURE Hdr
@@ -286,6 +316,7 @@ STATIC CONST VOID *DefaultType7Sk0Tables[] =
   &mArmDefaultType7Sk0L1I,
   &mArmDefaultType7Sk0L1D,
   &mArmDefaultType7Sk0L2,
+  &mArmDefaultType7Sk0L3,
   NULL
 };
 
@@ -529,6 +560,23 @@ UpdateSmbiosType7 (
   UpdateCacheInfo (Table, 1, 0);
   Table = &mArmDefaultType7Sk0L2.Base;
   UpdateCacheInfo (Table, 2, 0);
+  // SLC dont like L3/SLC is a non-architectural cache
+  if (IsAc01Processor ()) {
+    //
+    // Altra's SLC size is 32MB
+    //
+    mArmDefaultType7Sk0L3.Base.MaximumCacheSize  = SLC_SIZE (32);
+    mArmDefaultType7Sk0L3.Base.MaximumCacheSize2 = SLC_SIZE_2 (32);
+  } else {
+    //
+    // Altra Max's SLC size is 16MB
+    //
+    mArmDefaultType7Sk0L3.Base.MaximumCacheSize  = SLC_SIZE (16);
+    mArmDefaultType7Sk0L3.Base.MaximumCacheSize2 = SLC_SIZE_2 (16);
+  }
+  mArmDefaultType7Sk0L3.Base.InstalledSize     = mArmDefaultType7Sk0L3.Base.MaximumCacheSize;
+  mArmDefaultType7Sk0L3.Base.InstalledSize2    = mArmDefaultType7Sk0L3.Base.MaximumCacheSize2;
+
   if (IsSlaveSocketActive ()) {
     Table = &mArmDefaultType7Sk1L1I.Base;
     UpdateCacheInfo (Table, 1, 1);
@@ -577,6 +625,33 @@ InstallType7Structures (
   CONST VOID         **Tables;
   UINTN              Index;
   UINTN              Level;
+  UINT32             NumaMode;
+  CPU_VARSTORE_DATA  CpuConfigData;
+  UINTN              CpuConfigDataSize;
+
+  CpuConfigDataSize = sizeof (CPU_VARSTORE_DATA);
+
+  Status = NVParamGet (
+             NV_SI_SUBNUMA_MODE,
+             NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+             &NumaMode
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Can not get SubNUMA mode - %r\n", __FUNCTION__, Status));
+    NumaMode = SUBNUMA_MODE_MONOLITHIC;
+  }
+
+  Status = gRT->GetVariable (
+                  CPU_CONFIG_VARIABLE_NAME,
+                  &gCpuConfigFormSetGuid,
+                  NULL,
+                  &CpuConfigDataSize,
+                  &CpuConfigData
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Can not get CPU configuration information - %r\n", __FUNCTION__, Status));
+    CpuConfigData.CpuSlcAsL3 = CPU_SLC_AS_L3_ENABLE;
+  }
 
   for ( Index = 0; Index < GetNumberOfSupportedSockets (); Index++ ) {
     if ( Index == 0) {
@@ -587,7 +662,15 @@ InstallType7Structures (
       Type4Table = &mArmDefaultType4Sk1.Base;
     }
 
-    for (Level = 0; Level < CPU_CACHE_LEVEL_COUNT; Level++ ) {
+    for (Level = 0; (Level < CPU_CACHE_LEVEL_COUNT) && (Tables[Level] != NULL); Level++ ) {
+      if ((Level == 3)
+        && ((NumaMode != SUBNUMA_MODE_MONOLITHIC)
+        || (IsSlaveSocketActive ())
+        || (CpuConfigData.CpuSlcAsL3 == CPU_SLC_AS_L3_DISABLE)))
+      {
+        continue;
+      }
+
       SmbiosHandle = ((EFI_SMBIOS_TABLE_HEADER *)Tables[Level])->Handle;
       Status = Smbios->Add (
                          Smbios,
@@ -612,6 +695,8 @@ InstallType7Structures (
         Type4Table->L1CacheHandle = SmbiosHandle;
       } else if (Level == 2) { // L2 cache
         Type4Table->L2CacheHandle = SmbiosHandle;
+      } else if (Level == 3) { // L3 cache (SLC)
+        Type4Table->L3CacheHandle = SmbiosHandle;
       }
     }
   }
