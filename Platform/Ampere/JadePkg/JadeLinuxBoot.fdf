@@ -121,6 +121,11 @@ APRIORI DXE {
   INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
 
   #
+  # Watchdog Timer
+  #
+  INF ArmPkg/Drivers/GenericWatchdogDxe/GenericWatchdogDxe.inf
+
+  #
   # ARM GIC Dxe
   #
   INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
@@ -144,11 +149,6 @@ APRIORI DXE {
   # Bds
   #
   INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
-
-  #
-  # Driver to handle HW Watchdog
-  #
-  INF Silicon/Ampere/AmpereAltraPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
 
   #
   # ACPI

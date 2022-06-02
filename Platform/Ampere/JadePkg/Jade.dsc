@@ -215,11 +215,6 @@
 ################################################################################
 [Components.common]
   #
-  # FailSafe and Watchdog Timer
-  #
-  Silicon/Ampere/AmpereAltraPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
-
-  #
   # ACPI
   #
   MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf {

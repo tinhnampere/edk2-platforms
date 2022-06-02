@@ -265,9 +265,9 @@ APRIORI DXE {
   INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
 
   #
-  # FailSafe and Watchdog Timer
+  # Watchdog Timer
   #
-  INF Silicon/Ampere/AmpereAltraPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
+  INF ArmPkg/Drivers/GenericWatchdogDxe/GenericWatchdogDxe.inf
 
   #
   # ARM GIC Dxe

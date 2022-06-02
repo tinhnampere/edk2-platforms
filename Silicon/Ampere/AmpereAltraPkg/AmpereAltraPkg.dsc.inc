@@ -679,9 +679,9 @@
   ArmPkg/Drivers/TimerDxe/TimerDxe.inf
 
   #
-  # FailSafe and Watchdog Timer
+  # Watchdog Timer
   #
-  Silicon/Ampere/AmpereAltraPkg/Drivers/FailSafeDxe/FailSafeDxe.inf
+  ArmPkg/Drivers/GenericWatchdogDxe/GenericWatchdogDxe.inf
 
   #
   # ARM GIC Dxe
