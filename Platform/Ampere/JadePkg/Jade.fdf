@@ -419,6 +419,11 @@ APRIORI DXE {
   INF Silicon/Ampere/AmpereAltraPkg/Application/EnrollAmpereSecureKey/EaskDynamicCommand.inf
 
   #
+  # Ipmi utilities
+  #
+  INF   Silicon/Ampere/AmpereAltraPkg/Application/IpmiUtil/IpmiUtilDynamicCommand.inf
+
+  #
   # HII
   #
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInfoDxe/PlatformInfoDxe.inf

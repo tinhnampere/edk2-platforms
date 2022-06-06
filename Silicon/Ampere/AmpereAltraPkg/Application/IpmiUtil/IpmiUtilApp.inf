@@ -1,0 +1,43 @@
+## @file
+#  Ipmi utilities to test interaction with BMC via ipmi command
+#
+#  Copyright (c) 2022, Ampere Computing. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010019
+  BASE_NAME                      = IpmiUtilApplication
+  FILE_GUID                      = CCE908A4-CF0E-4D78-8E65-839932337885
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = IpmiUtilApplicationEntryPoint
+  UEFI_HII_RESOURCE_SECTION      = TRUE
+
+[Sources.common]
+  IpmiRawCommand.c
+  IpmiUtilApp.c
+  IpmiUtilHelper.c
+  IpmiUtilViewStrings.uni
+
+[Packages]
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  ShellPkg/ShellPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  HiiLib
+  PcdLib
+  PrintLib
+  ShellLib
+  UefiApplicationEntryPoint
+
+[Protocols]
+  gEfiHiiPackageListProtocolGuid
+  gEfiShellDynamicCommandProtocolGuid
+  gEfiShellParametersProtocolGuid
+  gIpmiProtocolGuid

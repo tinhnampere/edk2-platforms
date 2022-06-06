@@ -269,6 +269,11 @@
   Silicon/Ampere/AmpereAltraPkg/Application/EnrollAmpereSecureKey/EaskDynamicCommand.inf
 
   #
+  # Ipmi utilities
+  #
+  Silicon/Ampere/AmpereAltraPkg/Application/IpmiUtil/IpmiUtilDynamicCommand.inf
+
+  #
   # HII
   #
   Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInfoDxe/PlatformInfoDxe.inf
