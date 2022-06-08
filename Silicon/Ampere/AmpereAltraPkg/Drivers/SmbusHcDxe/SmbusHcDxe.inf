@@ -1,6 +1,6 @@
 ## @file
 #
-# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -29,15 +29,12 @@
   GpioLib
   I2cLib
   PcdLib
+  SmbusHcCommonLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
 
 [Protocols]
   gEfiSmbusHcProtocolGuid
-
-[Pcd]
-  gAmpereTokenSpaceGuid.PcdSmbusI2cBusNumber
-  gAmpereTokenSpaceGuid.PcdSmbusI2cBusSpeed
 
 [Depex]
   TRUE

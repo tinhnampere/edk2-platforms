@@ -1,0 +1,34 @@
+## @file
+#
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = SmbusHcCommonLib
+  FILE_GUID                      = 350B0251-7643-4705-A6E5-4C6C2F651A0D
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SmbusHcCommonLib
+
+[Sources]
+  SmbusHcCommonLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  GpioLib
+  I2cLib
+  PcdLib
+
+[Pcd]
+  gAmpereTokenSpaceGuid.PcdSmbusI2cBusNumber
+  gAmpereTokenSpaceGuid.PcdSmbusI2cBusSpeed

@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -8,6 +8,8 @@
 
 #ifndef GPIO_LIB_H_
 #define GPIO_LIB_H_
+
+#include <Uefi/UefiBaseType.h>
 
 typedef enum {
   GpioConfigOutLow = 0,

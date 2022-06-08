@@ -1,6 +1,6 @@
 ## @file
 #
-# Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+# Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -86,6 +86,7 @@
   I2cLib|Silicon/Ampere/AmpereAltraPkg/Library/DwI2cLib/DwI2cLib.inf
   GpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwGpioLib/DwGpioLib.inf
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Library/MmCommunicationLib/MmCommunicationLib.inf
+  SmbusHcCommonLib|Silicon/Ampere/AmpereAltraPkg/Library/SmbusHcCommonLib/SmbusHcCommonLib.inf
 
   #
   # ARM PL011 UART Driver

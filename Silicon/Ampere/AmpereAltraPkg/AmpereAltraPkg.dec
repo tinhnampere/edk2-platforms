@@ -64,6 +64,9 @@
   ##  @libraryclass  Defines a set of methods to access flash memory.
   SecVarLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/SecVarLib.h
 
+  ##  @libraryclass  Defines SmbusHc common apis.
+  SmbusHcCommonLib|Silicon/Ampere/AmpereAltraPkg/Include/Library/SmbusHcCommonLib.h
+
 [Guids]
   # GUID for the CPU HII configuration form
   gCpuConfigFormSetGuid        = { 0x43FAA144, 0xA2DF, 0x4050, { 0xA7, 0xFD, 0xEE, 0x17, 0xC9, 0xB8, 0x88, 0x8E } }
