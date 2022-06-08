@@ -1,6 +1,6 @@
 ## @file
 #
-# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -15,8 +15,9 @@
   ENTRY_POINT                    = SsifEntry
 
 [Sources.common]
+  IpmiSsifCommon.c
+  IpmiSsifCommon.h
   IpmiSsifDxe.c
-  IpmiSsifDxe.h
 
 [Packages]
   MdeModulePkg/MdeModulePkg.dec

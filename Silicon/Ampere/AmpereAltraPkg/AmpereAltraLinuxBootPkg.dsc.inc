@@ -568,7 +568,7 @@
   #
   # SSIF
   #
-  Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsifDxe/IpmiSsifDxe.inf
+  Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsif/IpmiSsifDxe.inf
 
   #
   # Bds

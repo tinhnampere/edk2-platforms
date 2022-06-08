@@ -1,7 +1,7 @@
 /** @file
   IPMI Protocol implementation follows IPMI 2.0 Specification.
 
-  Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -9,30 +9,14 @@
 
 #include <Uefi.h>
 
-#include <IndustryStandard/IpmiNetFnApp.h>
-#include <IndustryStandard/IpmiNetFnAppExt.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/SmbusLib.h>
 #include <Library/TimerLib.h>
-#include <Library/UefiBootServicesTableLib.h>
 #include <Protocol/IpmiProtocol.h>
 
-#include "IpmiSsifDxe.h"
-
-//
-// Initialize SSIF Interface capability
-//
-BOOLEAN mPecSupport         = FALSE;
-UINT8   mMaxRequestSize     = IPMI_SSIF_BLOCK_LEN;
-UINT8   mMaxResponseSize    = IPMI_SSIF_BLOCK_LEN;
-UINT8   mTransactionSupport = SSIF_SINGLE_PART_RW;
-
-//
-// Handle to install SMBus Host Controller protocol.
-//
-EFI_HANDLE mIpmiHandle = NULL;
+#include "IpmiSsifCommon.h"
 
 /**
   Write SSIF request to BMC.
@@ -49,12 +33,12 @@ SsifWriteRequest (
   IN UINT32 RequestDataSize
   )
 {
-  BOOLEAN    IsMultiPartWrite;
-  EFI_STATUS Status;
-  UINT8      SsifCmd;
-  UINT8      Idx;
-  UINT8      MiddleCount;
-  UINT8      WriteLen;
+  BOOLEAN     IsMultiPartWrite;
+  EFI_STATUS  Status;
+  UINT8       SsifCmd;
+  UINT8       Idx;
+  UINT8       MiddleCount;
+  UINT8       WriteLen;
 
   ASSERT (RequestData != NULL && RequestDataSize > 0);
 
@@ -65,8 +49,8 @@ SsifWriteRequest (
     IsMultiPartWrite = TRUE;
     MiddleCount = ((RequestDataSize - 1) / IPMI_SSIF_BLOCK_LEN) - 1;
 
-    if ((MiddleCount == 0 && mTransactionSupport == SSIF_SINGLE_PART_RW)
-        || (MiddleCount > 0 && mTransactionSupport != SSIF_MULTI_PART_RW))
+    if (  ((MiddleCount == 0) && (mTransactionSupport == SSIF_SINGLE_PART_RW))
+       || ((MiddleCount > 0) && (mTransactionSupport != SSIF_MULTI_PART_RW)))
     {
       DEBUG ((DEBUG_ERROR, "%a: Unsupported Request transaction\n", __FUNCTION__));
       return EFI_UNSUPPORTED;
@@ -88,8 +72,8 @@ SsifWriteRequest (
     &Status
     );
 
-  if (EFI_ERROR (Status)
-      || !IsMultiPartWrite)
+  if (  EFI_ERROR (Status)
+     || !IsMultiPartWrite)
   {
     goto Exit;
   }
@@ -147,18 +131,18 @@ SsifReadResponse (
   IN OUT UINT32 *ResponseDataSize
   )
 {
-  BOOLEAN    IsMultiPartRead;
-  EFI_STATUS Status;
-  UINT32     CopiedLen;
-  UINT8      BlockNumber;
-  UINT8      Offset;
-  UINT8      ReadLen;
-  UINT8      ResponseTemp[IPMI_SSIF_BLOCK_LEN];
+  BOOLEAN     IsMultiPartRead;
+  EFI_STATUS  Status;
+  UINT32      CopiedLen;
+  UINT8       BlockNumber;
+  UINT8       Offset;
+  UINT8       ReadLen;
+  UINT8       ResponseTemp[IPMI_SSIF_BLOCK_LEN];
 
   ASSERT (ResponseData != NULL && ResponseDataSize != NULL);
 
-  BlockNumber = 0;
-  CopiedLen = 0;
+  BlockNumber     = 0;
+  CopiedLen       = 0;
   IsMultiPartRead = FALSE;
   Offset = 2; // Ignore LUN and Command byte in return ResponseData
   Status = EFI_SUCCESS;
@@ -183,9 +167,9 @@ SsifReadResponse (
     goto Exit;
   }
 
-  if (ReadLen == IPMI_SSIF_BLOCK_LEN
-      && ResponseTemp[0] == IPMI_SSIF_MULTI_PART_READ_START_PATTERN1
-      && ResponseTemp[1] == IPMI_SSIF_MULTI_PART_READ_START_PATTERN2)
+  if (  (ReadLen == IPMI_SSIF_BLOCK_LEN)
+     && (ResponseTemp[0] == IPMI_SSIF_MULTI_PART_READ_START_PATTERN1)
+     && (ResponseTemp[1] == IPMI_SSIF_MULTI_PART_READ_START_PATTERN2))
   {
     Offset += 2;  // Ignore pattern1 and pattern2
     IsMultiPartRead = TRUE;
@@ -198,6 +182,7 @@ SsifReadResponse (
   if (ReadLen > *ResponseDataSize) {
     ReadLen = *ResponseDataSize;
   }
+
   CopyMem (ResponseData, &ResponseTemp[Offset], ReadLen);
   CopiedLen = ReadLen;
 
@@ -260,7 +245,6 @@ Exit:
 /**
   This function enables submitting Ipmi command via Ssif interface.
 
-  @param[in]         This              This point for IPMI_PROTOCOL structure.
   @param[in]         NetFunction       Net function of the command.
   @param[in]         Command           IPMI Command.
   @param[in]         RequestData       Command Request Data.
@@ -277,25 +261,22 @@ Exit:
   @retval EFI_OUT_OF_RESOURCES   The resource allcation is out of resource or data size error.
 **/
 EFI_STATUS
-IpmiSsifCmd (
-  IN     IPMI_PROTOCOL *This,
-  IN     UINT8         NetFunction,
-  IN     UINT8         Command,
-  IN     UINT8         *RequestData,
-  IN     UINT32        RequestDataSize,
-  OUT    UINT8         *ResponseData,
-  IN OUT UINT32        *ResponseDataSize
+IpmiSsifCommonCmd (
+  IN     UINT8  NetFunction,
+  IN     UINT8  Command,
+  IN     UINT8  *RequestData,
+  IN     UINT32 RequestDataSize,
+  OUT    UINT8  *ResponseData,
+  IN OUT UINT32 *ResponseDataSize
   )
 {
-  EFI_STATUS Status;
-  EFI_TPL    PreviousTpl;
-  UINT32     TempLength;
-  UINT8      *RequestTemp;
-  UINT8      RetryCount;
+  EFI_STATUS  Status;
+  UINT32      TempLength;
+  UINT8       *RequestTemp;
+  UINT8       RetryCount;
 
   DEBUG ((DEBUG_INFO, "%a Entry\n", __FUNCTION__));
 
-  ASSERT (This != NULL);
   ASSERT (NetFunction <= IPMI_MAX_NETFUNCTION);
   ASSERT (IPMI_LUN_NUMBER <= IPMI_MAX_LUN);
 
@@ -306,7 +287,7 @@ IpmiSsifCmd (
 
   RequestTemp[0] = (UINT8)((NetFunction << 2) | (IPMI_LUN_NUMBER & 0x3));
   RequestTemp[1] = Command;
-  TempLength = 2;
+  TempLength     = 2;
 
   if (RequestData != NULL) {
     if (RequestDataSize > 0) {
@@ -325,19 +306,14 @@ IpmiSsifCmd (
     goto Cleanup;
   }
 
-  if (ResponseData == NULL
-      || ResponseDataSize == NULL
-      || *ResponseDataSize == 0)
+  if (  (ResponseData == NULL)
+     || (ResponseDataSize == NULL)
+     || (*ResponseDataSize == 0))
   {
     Status = EFI_OUT_OF_RESOURCES;
     DEBUG ((DEBUG_ERROR, "%a: Invalid Response info\n", __FUNCTION__));
     goto Cleanup;
   }
-
-  //
-  // Prevent interrupt while processing command
-  //
-  PreviousTpl = gBS->RaiseTPL (TPL_HIGH_LEVEL);
 
   //
   // Write Request
@@ -352,7 +328,7 @@ IpmiSsifCmd (
 
     if (++RetryCount > IPMI_SSIF_REQUEST_RETRY_COUNT) {
       DEBUG ((DEBUG_ERROR, "%a: Write Request error %r\n", __FUNCTION__, Status));
-      goto Exit;
+      goto Cleanup;
     }
 
     MicroSecondDelay (IPMI_SSIF_REQUEST_RETRY_INTERVAL);
@@ -378,99 +354,15 @@ IpmiSsifCmd (
     if (++RetryCount > IPMI_SSIF_RESPONSE_RETRY_COUNT) {
       DEBUG ((DEBUG_ERROR, "%a: Read Response error %r\n", __FUNCTION__, Status));
       *ResponseDataSize = 0;
-      goto Exit;
+      goto Cleanup;
     }
 
     *ResponseDataSize = TempLength;
     MicroSecondDelay (IPMI_SSIF_RESPONSE_RETRY_INTERVAL);
   }
 
-Exit:
-  gBS->RestoreTPL (PreviousTpl);
-
 Cleanup:
   FreePool (RequestTemp);
-
-  return Status;
-}
-
-//
-// Interface defintion of IPMI Protocol.
-//
-IPMI_PROTOCOL mIpmiSsifProtocol = {
-  IpmiSsifCmd
-};
-
-/**
-  The user Entry Point for the Ssif driver.
-
-  @param[in] ImageHandle    The firmware allocated handle for the EFI image.
-  @param[in] SystemTable    A pointer to the EFI System Table.
-
-  @retval EFI_SUCCESS       The entry point is executed successfully.
-  @retval Other             Some error occurs when executing this entry point.
-
-**/
-EFI_STATUS
-EFIAPI
-SsifEntry (
-  IN EFI_HANDLE       ImageHandle,
-  IN EFI_SYSTEM_TABLE *SystemTable
-  )
-{
-  EFI_STATUS                                           Status;
-  IPMI_GET_SYSTEM_INTERFACE_CAPABILITIES_REQUEST       Request;
-  IPMI_GET_SYSTEM_INTERFACE_SSIF_CAPABILITIES_RESPONSE SsifCap;
-  UINT32                                               ResponseSize;
-
-  Request.Uint8 = IPMI_GET_SYSTEM_INTERFACE_CAPABILITIES_INTERFACE_TYPE_SSIF;
-  ResponseSize = sizeof (SsifCap);
-
-  //
-  // Check for BMC SSIF capabilities
-  //
-  Status = mIpmiSsifProtocol.IpmiSubmitCommand (
-                               &mIpmiSsifProtocol,
-                               IPMI_NETFN_APP,
-                               IPMI_APP_GET_SYSTEM_INTERFACE_CAPABILITIES,
-                               (VOID *)&Request,
-                               sizeof (Request),
-                               (VOID *)&SsifCap,
-                               &ResponseSize
-                               );
-
-  if (!EFI_ERROR (Status)
-      && SsifCap.CompletionCode == 0)
-  {
-    mTransactionSupport = SsifCap.InterfaceCap.Bits.TransactionSupport;
-    mPecSupport = SsifCap.InterfaceCap.Bits.PecSupport;
-    mMaxRequestSize = SsifCap.InputMsgSize;
-    mMaxResponseSize = SsifCap.OutputMsgSize;
-
-    DEBUG ((
-      DEBUG_INFO,
-      "SSIF Capabilities transaction %d, insize %d, outsize %d, pec %d\n",
-      mTransactionSupport,
-      mMaxRequestSize,
-      mMaxResponseSize,
-      mPecSupport
-      ));
-  }
-
-  //
-  // TODO: Get global settings, check for Alert support.
-  //
-
-  //
-  // Install IPMI Protocol
-  //
-  Status = gBS->InstallMultipleProtocolInterfaces (
-                  &mIpmiHandle,
-                  &gIpmiProtocolGuid,
-                  &mIpmiSsifProtocol,
-                  NULL
-                  );
-  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
