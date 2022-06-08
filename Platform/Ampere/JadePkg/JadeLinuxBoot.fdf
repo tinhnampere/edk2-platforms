@@ -205,6 +205,7 @@ APRIORI PEI {
   INF ArmPkg/Drivers/CpuPei/CpuPei.inf
   INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
   INF MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcPei/SmbusHcPei.inf
 
   INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
 

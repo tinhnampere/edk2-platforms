@@ -1,0 +1,37 @@
+## @file
+#
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = SmbusHcPeim
+  FILE_GUID                      = A92C6874-B59E-49A7-957D-8511C9D8520E
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InitializeSmbusPeim
+
+[Sources]
+  SmbusHcPei.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+  Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  SmbusHcCommonLib
+  PeiServicesLib
+  PeimEntryPoint
+
+[Ppis]
+  gEfiPeiSmbus2PpiGuid        # PRODUCES
+
+[Depex]
+  TRUE

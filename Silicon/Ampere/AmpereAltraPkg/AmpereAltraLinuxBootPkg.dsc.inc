@@ -487,6 +487,10 @@
     <LibraryClasses>
       NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
+  #
+  # SMBusPei
+  #
+  Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcPei/SmbusHcPei.inf
 
   #
   # DXE Phase modules

@@ -593,6 +593,11 @@
   MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/BootProgress/BootProgressPeim/BootProgressPeim.inf
 
+  #
+  # SMBusPei
+  #
+  Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcPei/SmbusHcPei.inf
+
 !if $(TPM2_ENABLE) == TRUE
   MdeModulePkg/Universal/ResetSystemPei/ResetSystemPei.inf {
     <LibraryClasses>
