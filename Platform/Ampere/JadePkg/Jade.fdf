@@ -166,6 +166,11 @@ APRIORI PEI {
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcPei/SmbusHcPei.inf
 
   #
+  # IPMI
+  #
+  INF Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsif/IpmiSsifPeim.inf
+
+  #
   # Print platform information before passing control into the Driver Execution Environment (DXE) phase
   #
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/DebugInfoPei/DebugInfoPei.inf

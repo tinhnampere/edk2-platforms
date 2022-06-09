@@ -1,0 +1,49 @@
+## @file
+#
+# Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                   = 0x0001001B
+  BASE_NAME                     = IpmiSsifPeim
+  FILE_GUID                     = 6B4FDE91-7C5C-4A46-873D-01186E4A4070
+  MODULE_TYPE                   = PEIM
+  VERSION_STRING                = 1.0
+  ENTRY_POINT                   = InitializeSsifPeim
+
+[Sources]
+  IpmiSsifCommon.c
+  IpmiSsifCommon.h
+  IpmiSsifPeim.c
+
+[Packages]
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  PcdLib
+  PeiServicesLib
+  PeimEntryPoint
+  PlatformBmcReadyLib
+  SmbusLib
+  TimerLib
+
+[Pcd]
+  gAmpereTokenSpaceGuid.PcdBmcSlaveAddr
+  gAmpereTokenSpaceGuid.PcdIpmiLunNumber
+  gAmpereTokenSpaceGuid.PcdIpmiSsifRequestRetryCount
+  gAmpereTokenSpaceGuid.PcdIpmiSsifRequestRetryInterval
+  gAmpereTokenSpaceGuid.PcdIpmiSsifResponseRetryCount
+  gAmpereTokenSpaceGuid.PcdIpmiSsifResponseRetryInterval
+
+[Ppis]
+  gPeiIpmiPpiGuid              # PRODUCES
+
+[Depex]
+  TRUE

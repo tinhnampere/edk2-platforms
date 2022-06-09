@@ -217,6 +217,7 @@
   PeiResourcePublicationLib|MdePkg/Library/PeiResourcePublicationLib/PeiResourcePublicationLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   PeiServicesTablePointerLib|ArmPkg/Library/PeiServicesTablePointerLib/PeiServicesTablePointerLib.inf
+  IpmiLib|MdeModulePkg/Library/PeiIpmiLibIpmiPpi/PeiIpmiLibIpmiPpi.inf
 
 !if $(TPM2_ENABLE) == TRUE
   Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
@@ -592,6 +593,11 @@
   MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
   MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
   Silicon/Ampere/AmpereAltraPkg/Drivers/BootProgress/BootProgressPeim/BootProgressPeim.inf
+
+  #
+  # SSIF Peim
+  #
+  Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsif/IpmiSsifPeim.inf
 
   #
   # SMBusPei

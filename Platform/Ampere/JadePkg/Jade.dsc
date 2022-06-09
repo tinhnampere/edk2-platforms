@@ -119,6 +119,9 @@
 
   PlatformBmcReadyLib|Platform/Ampere/JadePkg/Library/PlatformBmcReadyLib/PlatformBmcReadyLib.inf
 
+[LibraryClasses.common.PEIM]
+  SmbusLib|MdePkg/Library/PeiSmbusLibSmbus2Ppi/PeiSmbusLibSmbus2Ppi.inf
+
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibFmp/DxeRuntimeCapsuleLib.inf
 

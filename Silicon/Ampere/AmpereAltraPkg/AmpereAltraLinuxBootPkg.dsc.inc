@@ -487,6 +487,12 @@
     <LibraryClasses>
       NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
+
+  #
+  # SSIF Peim
+  #
+  Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsif/IpmiSsifPeim.inf
+
   #
   # SMBusPei
   #
