@@ -562,12 +562,17 @@ UpdateSmbiosType4 (
     Table->EnabledCoreCount = (UINT8)GetNumberOfActiveCoresPerSocket (Index);
 
     if (Table->EnabledCoreCount) {
-      Table->CurrentSpeed = (UINT16)(PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
-      Table->ExternalClock = (UINT16)(PlatformHob->PcpClk / MHZ_SCALE_FACTOR);
-      Table->MaxSpeed = (UINT16)(PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
-      if (PlatformHob->TurboCapability[Index]) {
+      if (PlatformHob->TurboCapability[Index] != 0) {
         Table->MaxSpeed = (UINT16)(PlatformHob->TurboFrequency[Index]);
+      } else {
+        Table->MaxSpeed = (UINT16)(PlatformHob->CpuClk / MHZ_SCALE_FACTOR);
       }
+
+      //
+      // The base frequency is the same as maximum frequency
+      //
+      Table->CurrentSpeed = Table->MaxSpeed;
+      Table->ExternalClock = (UINT16)(PlatformHob->PcpClk / MHZ_SCALE_FACTOR);
     } else {
       Table->CurrentSpeed = 0;
       Table->ExternalClock = 0;
