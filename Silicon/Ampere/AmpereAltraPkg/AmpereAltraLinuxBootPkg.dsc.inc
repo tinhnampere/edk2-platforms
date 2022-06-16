@@ -533,6 +533,11 @@
   ArmPkg/Drivers/TimerDxe/TimerDxe.inf
 
   #
+  # Initialize works at Dxe phase
+  #
+  Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInitDxe/PlatformInitDxe.inf
+
+  #
   # Watchdog Timer
   #
   ArmPkg/Drivers/GenericWatchdogDxe/GenericWatchdogDxe.inf

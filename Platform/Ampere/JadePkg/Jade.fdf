@@ -211,6 +211,7 @@ APRIORI DXE {
   INF ArmPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
   INF Silicon/Ampere/AmpereAltraPkg/Drivers/FlashFvbDxe/FlashFvbDxe.inf
   INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInitDxe/PlatformInitDxe.inf
 }
 
   INF MdeModulePkg/Core/Dxe/DxeMain.inf
@@ -263,6 +264,11 @@ APRIORI DXE {
   # Timer
   #
   INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
+
+  #
+  # Initialize works at Dxe phase
+  #
+  INF Silicon/Ampere/AmpereAltraPkg/Drivers/PlatformInitDxe/PlatformInitDxe.inf
 
   #
   # Watchdog Timer
