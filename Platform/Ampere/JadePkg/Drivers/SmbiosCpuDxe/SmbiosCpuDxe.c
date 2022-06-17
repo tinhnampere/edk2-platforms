@@ -11,9 +11,11 @@
 #include <CpuConfigNVDataStruc.h>
 #include <Guid/PlatformInfoHob.h>
 #include <Guid/SmBios.h>
+#include <IndustryStandard/ArmStdSmc.h>
 #include <Library/AmpereCpuLib.h>
 #include <Library/ArmLib.h>
 #include <Library/ArmLib/ArmLibPrivate.h>
+#include <Library/ArmSmcLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -431,17 +433,107 @@ UpdateStringPack (
   return EFI_SUCCESS;
 }
 
+/**
+  Checks if ther ARM64 SoC ID SMC call is supported
+
+  @return TRUE  the ARM64 SoC ID call is supported.
+  @return FALSE the ARM64 SoC ID call is supported.
+**/
+BOOLEAN
+HasSmcArm64SocId (
+  VOID
+  )
+{
+  INT32    SmcCallReturnedValue;
+  BOOLEAN  Arm64SocIdSupported;
+  UINTN    ArchFuncId;
+
+  Arm64SocIdSupported = FALSE;
+
+  SmcCallReturnedValue = ArmCallSmc0 (SMCCC_VERSION, NULL, NULL, NULL);
+
+  if ((SmcCallReturnedValue >> 16) >= 1) {
+    ArchFuncId = SMCCC_ARCH_SOC_ID;
+    SmcCallReturnedValue = ArmCallSmc1 (SMCCC_ARCH_FEATURES, &ArchFuncId, NULL, NULL);
+    if (SmcCallReturnedValue >= 0) {
+      Arm64SocIdSupported = TRUE;
+    }
+  }
+
+  return Arm64SocIdSupported;
+}
+
+/**
+  Fetches the JEP106 code and SoC Revision.
+
+  @param[out] Jep106Code  JEP 106 code.
+  @param[out] SocRevision SoC revision.
+**/
+VOID
+SmbiosGetSmcArm64SocId (
+  OUT INT32  *Jep106Code,
+  OUT INT32  *SocRevision
+  )
+{
+  INT32       SmcCallReturnedValue;
+  EFI_STATUS  Status;
+  UINTN       SocIdType;
+
+  Status = EFI_SUCCESS;
+
+  //
+  // JEP-106 code value will be returned by a SMCCC_ARCH_SOC_ID call
+  // with input parameter SocIdType set to 0
+  //
+  SocIdType = 0;
+  SmcCallReturnedValue = ArmCallSmc1 (SMCCC_ARCH_SOC_ID, &SocIdType, NULL, NULL);
+  *Jep106Code = SmcCallReturnedValue;
+
+  //
+  // SoC revision value will be returned by the SMCCC_ARCH_SOC_ID call
+  // with input parameter SocIdType set to 1
+  //
+  SocIdType = 1;
+  SmcCallReturnedValue = ArmCallSmc1 (SMCCC_ARCH_SOC_ID, &SocIdType, NULL, NULL);
+  *SocRevision = SmcCallReturnedValue;
+}
+
+/**
+  Returns a value for the Processor ID field that conforms to SMBIOS requirements.
+
+  @return Processor ID.
+**/
+UINT64
+SmbiosGetProcessorId (
+  VOID
+  )
+{
+  INT32   Jep106Code;
+  INT32   SocRevision;
+  UINT64  ProcessorId;
+
+  if (HasSmcArm64SocId ()) {
+    SmbiosGetSmcArm64SocId (&Jep106Code, &SocRevision);
+    ProcessorId = ((UINT64)SocRevision << 32) | Jep106Code;
+  } else {
+    ProcessorId = ArmReadMidr ();
+  }
+
+  return ProcessorId;
+}
+
 STATIC
 VOID
 UpdateSmbiosType4 (
   PLATFORM_INFO_HOB  *PlatformHob
   )
 {
-  UINTN              Index;
-  CHAR8              Str[40];
-  CHAR8              *StringPack;
-  SMBIOS_TABLE_TYPE4 *Table;
-  CHAR8              *VersionString;
+  UINTN                           Index;
+  CHAR8                           Str[40];
+  CHAR8                           *StringPack;
+  SMBIOS_TABLE_TYPE4              *Table;
+  CHAR8                           *VersionString;
+  PROCESSOR_CHARACTERISTIC_FLAGS  ProcessorCharacteristics;
 
   ASSERT (PlatformHob != NULL);
 
@@ -483,9 +575,15 @@ UpdateSmbiosType4 (
       Table->Status = 0;
     }
 
-    *((UINT32 *)&Table->ProcessorId) = (UINT32)ArmReadMidr ();
-    *((UINT32 *)&Table->ProcessorId + 1) = 0;
+    *((UINT64 *)&Table->ProcessorId) =  SmbiosGetProcessorId ();
     *((UINT8 *)&Table->Voltage) = 0x80 | PlatformHob->CoreVoltage[Index] / 100;
+
+    //
+    // Arm64 Soc ID indicator bit need to be set if processor
+    // support SMCCC_ARCH_SOC_ID architectural call
+    //
+    ProcessorCharacteristics.ProcessorArm64SocId = (UINT16)HasSmcArm64SocId ();
+    Table->ProcessorCharacteristics |= *((UINT16 *)&ProcessorCharacteristics);
 
     /* Type 4 Part number and processor serial number */
     if (Table->EnabledCoreCount) {
