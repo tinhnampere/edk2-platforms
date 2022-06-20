@@ -61,7 +61,7 @@
   RealTimeClockLib|Platform/Ampere/JadePkg/Library/PCF85063RealTimeClockLib/PCF85063RealTimeClockLib.inf
 
 [LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION, LibraryClasses.common.DXE_RUNTIME_DRIVER, LibraryClasses.common.DXE_DRIVER]
-  SmbusLib|Platform/Ampere/JadePkg/Library/DxePlatformSmbusLib/DxePlatformSmbusLib.inf
+  SmbusLib|MdePkg/Library/DxeSmbusLib/DxeSmbusLib.inf
 
 [PcdsDynamicDefault.common.DEFAULT]
   # SMBIOS Type 0 - BIOS Information

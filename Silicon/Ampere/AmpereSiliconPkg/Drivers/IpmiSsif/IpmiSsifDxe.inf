@@ -29,6 +29,7 @@
   DebugLib
   MemoryAllocationLib
   PcdLib
+  PlatformBmcReadyLib
   SmbusLib
   TimerLib
   UefiBootServicesTableLib

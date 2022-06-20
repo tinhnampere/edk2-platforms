@@ -12,6 +12,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/PlatformBmcReadyLib.h>
 #include <Library/SmbusLib.h>
 #include <Library/TimerLib.h>
 #include <Protocol/IpmiProtocol.h>
@@ -279,6 +280,13 @@ IpmiSsifCommonCmd (
 
   ASSERT (NetFunction <= IPMI_MAX_NETFUNCTION);
   ASSERT (IPMI_LUN_NUMBER <= IPMI_MAX_LUN);
+
+  //
+  // Check BMC ready
+  //
+  if (PlatformBmcReady () != TRUE) {
+    return EFI_NOT_READY;
+  }
 
   RequestTemp = AllocateZeroPool (RequestDataSize + 2);
   if (RequestTemp == NULL) {
