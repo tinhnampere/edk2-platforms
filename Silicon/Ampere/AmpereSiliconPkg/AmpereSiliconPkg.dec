@@ -1,6 +1,6 @@
 ## @file
 #
-# Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+# Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -27,6 +27,9 @@
 [LibraryClasses]
   ##  @libraryclass  Provides helper functions to update ACPI DSDT Table.
   AcpiHelperLib|Silicon/Ampere/AmpereSiliconPkg/Include/Library/AcpiHelperLib.h
+
+  ##  @libraryclass  Provides functions to check BMC is ready
+  PlatformBmcReadyLib|Silicon/Ampere/AmpereSiliconPkg/Include/Library/PlatformBmcReadyLib.h
 
 [Guids]
   gAmpereTokenSpaceGuid = { 0xdbd4436e, 0x89cb, 0x44dc, { 0xb5, 0xc0, 0x49, 0xc3, 0x91, 0x35, 0xbf, 0xdf } }
