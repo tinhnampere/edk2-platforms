@@ -198,6 +198,12 @@ SnpInitialize (
   PrivateData = USB_CDC_ETHERNET_PRIVATE_DATA_FROM_THIS_SNP (This);
   Mode = This->Mode;
 
+  //
+  // Reset SNP receive packet filter
+  //
+  PrivateData->RequestCounter       = 0;
+  PrivateData->FilterRequestCounter = 0;
+
   if (Mode->State == EfiSimpleNetworkStopped) {
     return EFI_NOT_STARTED;
   } else if (Mode->State != EfiSimpleNetworkStarted) {
@@ -249,6 +255,50 @@ SnpMCastIPtoMAC (
   )
 {
   return EFI_UNSUPPORTED;
+}
+
+/**
+  This function is intended to control the receive packet operation
+  of SNP driver based on the USB CDC Ethernet driver.
+
+  Managed Network Protocol will poll for incoming data packets every
+  <T>ms (typically it is 10ms) by calling SNP Receive. In some cases,
+  slave USB device does not return `NAK + data length = 0` when it is idle.
+  The underlying driver will stall the CPU and wait for timeout.
+  As a result, the system performs very poorly.
+
+  This function drops `FilterValue - 1` attempts to receive incoming
+  data after doing it.
+
+  @param[in]  PrivateData       Pointer to the private data of driver instance.
+  @param[in]  FilterValue       Filter value.
+
+  @retval EFI_SUCCESS             This operation is successful.
+  @retval EFI_NOT_READY           The device has no data.
+  @retval EFI_DEVICE_ERROR        The transfer failed.
+  @retval EFI_INVALID_PARAMETER   The PrivateData was NULL.
+
+**/
+EFI_STATUS
+SnpReceivePacket (
+  IN USB_CDC_ETHERNET_PRIVATE_DATA   *PrivateData,
+  IN UINTN                           FilterValue
+  )
+{
+  EFI_STATUS Status;
+
+  Status = EFI_NOT_READY;
+
+  if (PrivateData->FilterRequestCounter % FilterValue == 0) {
+    Status = UsbCdcBulkIn (PrivateData);
+  }
+
+  PrivateData->FilterRequestCounter++;
+  if (PrivateData->FilterRequestCounter >= FilterValue) {
+    PrivateData->FilterRequestCounter = 0;
+  }
+
+  return Status;
 }
 
 /**
@@ -343,16 +393,27 @@ SnpReceive (
   //
   //  Attempt to receive an Ethernet packet
   //
-  Status = UsbCdcBulkIn (PrivateData);
+  if (PrivateData->RequestCounter < SNP_FILTER_THRESHOLD) {
+    PrivateData->RequestCounter++;
+    Status = SnpReceivePacket (PrivateData, SNP_FILTER1_VALUE);
+  } else {
+    Status = SnpReceivePacket (PrivateData, SNP_FILTER2_VALUE);
+  }
 
   if (PrivateData->BulkInLength == 0) {
     return EFI_NOT_READY;
   }
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a %d No packet received!\n", __FUNCTION__, __LINE__));
+    DEBUG ((DEBUG_VERBOSE, "%a %d No packet received!\n", __FUNCTION__, __LINE__));
     return Status;
   }
+
+  //
+  // Reset SNP receive packet filter
+  //
+  PrivateData->RequestCounter       = 0;
+  PrivateData->FilterRequestCounter = 0;
 
   PktLen = PrivateData->BulkInLength;
 

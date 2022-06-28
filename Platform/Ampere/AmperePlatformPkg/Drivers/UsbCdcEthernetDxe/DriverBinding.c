@@ -331,6 +331,12 @@ UsbCdcEthernetDriverStart (
     goto FreePrivateData;
   }
 
+  //
+  // Initialize SNP receive packet filter
+  //
+  PrivateData->RequestCounter  = SNP_FILTER_THRESHOLD;
+  PrivateData->FilterRequestCounter = 0;
+
   ZeroMem (PrivateData, BufferSize);
   PrivateData->Signature = USB_CDC_ETHERNET_SIGNATURE;
 

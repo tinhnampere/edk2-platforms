@@ -113,6 +113,17 @@ typedef enum {
 
 #define USB_CDC_ECM_USB_INTERFACE_MAX         2
 
+//
+// SNP receive packet filter, set by experience
+//  - Threshold: After the request counter exceeds the threshold,
+//    filter 2 is applied. Otherwise the filter 1 is applied.
+//  - Filter x value: UsbCdcBulkIn is executed once
+//    the filter request counter has reached these values.
+//
+#define SNP_FILTER_THRESHOLD  100
+#define SNP_FILTER1_VALUE     2
+#define SNP_FILTER2_VALUE     5
+
 #pragma pack(1)
 
 typedef struct {
@@ -219,6 +230,9 @@ typedef struct {
   UINT8                         MulticastHash[8];
 
   EFI_DEVICE_PATH_PROTOCOL      *MacDevicePath;
+
+  UINTN                         RequestCounter;
+  UINT8                         FilterRequestCounter;
 } USB_CDC_ETHERNET_PRIVATE_DATA;
 
 #define USB_CDC_ETHERNET_PRIVATE_DATA_FROM_THIS_SNP(a) \
