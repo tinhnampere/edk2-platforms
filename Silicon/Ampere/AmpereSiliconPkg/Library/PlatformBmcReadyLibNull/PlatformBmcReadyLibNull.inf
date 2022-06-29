@@ -1,0 +1,22 @@
+## @file
+#
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PlatformBmcReadyLibNull
+  FILE_GUID                      = 102FA7F4-F64F-4844-AE4C-8FB98E549F32
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PlatformBmcReadyLib
+
+[Sources]
+  PlatformBmcReadyLibNull.c
+
+[Packages]
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
