@@ -14,6 +14,7 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/NetLib.h>
 #include <Library/PrintLib.h>
+#include <Library/TimerLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 #include <Protocol/IpmiProtocol.h>
@@ -23,7 +24,12 @@
 #define USB_CDC_ETHERNET_SIGNATURE   SIGNATURE_32('U', 'E', 't', 'h')
 #define INSTANCE_FROM_SNP_THIS(a)    BASE_CR (a, COMMON_SNP_INSTANCE, Snp)
 
-#define REDFISH_BMC_CHANNEL          3
+#define REDFISH_BMC_CHANNEL                 3
+#define REDFISH_BMC_POLL_INTERVAL_US        (500 * 1000)
+#define REDFISH_HOST_NAME_IP4_STR_MAX_SIZE  16
+#define REDFISH_HTTPS_DEFAULT_PORT          443
+#define REDFISH_RETRY                       20
+#define REDFISH_VLAN_ID_RESERVE             0xFFFFFFFF
 
 //
 // Most SNP protocols follow below structure for their private data instance.
@@ -38,13 +44,14 @@ typedef struct {
 } COMMON_SNP_INSTANCE;
 
 VOID                            *mRegistration;
-REDFISH_OVER_IP_PROTOCOL_DATA   *mRedfishOverIpProtocolData;
-UINT8                           mRedfishProtocolDataLength;
 
 /**
   Create SMBIOS type 42 record for Redfish host interface.
 
-  @param[in] MacAddress[in]  NIC MAC address
+  @param[in] MacAddress                NIC MAC address.
+  @param[in] RedfishOverIpProtocolData Pointer to protocol-specific
+                                       data for the "Redfish Over IP" protocol.
+  @param[in] RedfishProtocolDataLength The length in bytes of RedfishOverIpProtocolData pool.
 
   @retval EFI_SUCCESS        SMBIOS type 42 record is created.
   @retval Others             Fail to create SMBIOS 42 record.
@@ -52,7 +59,9 @@ UINT8                           mRedfishProtocolDataLength;
 **/
 EFI_STATUS
 CreateSmbiosTable42 (
-  IN EFI_MAC_ADDRESS MacAddress
+  IN EFI_MAC_ADDRESS               MacAddress,
+  IN REDFISH_OVER_IP_PROTOCOL_DATA *RedfishOverIpProtocolData,
+  IN UINT8                         RedfishProtocolDataLength
   )
 {
   EFI_SMBIOS_HANDLE                 SmbiosHandle;
@@ -64,6 +73,9 @@ CreateSmbiosTable42 (
   UINT8                             InterfaceDataLength;
   UINT8                             ProtocolRecordLength;
   UINT8                             Type42RecordLength;
+
+  ASSERT (RedfishOverIpProtocolData != NULL);
+  ASSERT (RedfishProtocolDataLength != 0);
 
   //
   // Construct Interface Specific Data
@@ -84,15 +96,15 @@ CreateSmbiosTable42 (
   // Construct Protocol Record
   //
   ProtocolRecordLength = sizeof (MC_HOST_INTERFACE_PROTOCOL_RECORD) - sizeof (ProtocolRecord->ProtocolTypeData)
-                         + mRedfishProtocolDataLength;
+                         + RedfishProtocolDataLength;
   ProtocolRecord = AllocateZeroPool (ProtocolRecordLength);
   if (ProtocolRecord == NULL) {
     FreePool (InterfaceData);
     return EFI_OUT_OF_RESOURCES;
   }
   ProtocolRecord->ProtocolType = MCHostInterfaceProtocolTypeRedfishOverIP;
-  ProtocolRecord->ProtocolTypeDataLen = mRedfishProtocolDataLength;
-  CopyMem ((VOID *)&ProtocolRecord->ProtocolTypeData, (VOID *)mRedfishOverIpProtocolData, mRedfishProtocolDataLength);
+  ProtocolRecord->ProtocolTypeDataLen = RedfishProtocolDataLength;
+  CopyMem ((VOID *)&ProtocolRecord->ProtocolTypeData, (VOID *)RedfishOverIpProtocolData, RedfishProtocolDataLength);
 
   //
   // Construct SMBIOS Type 42h for Redfish host inteface.
@@ -174,19 +186,112 @@ ON_EXIT:
   return Status;
 }
 
+/**
+  Get information of BMC network for Redfish.
+
+  @param[out] RedfishOverIpProtocolData Return a pointer to pool which contains information for
+                                        Redfish over IP protocol. Caller must free it.
+  @param[out] RedfishProtocolDataLength Return the length in bytes of RedfishOverIpProtocolData pool.
+
+  @retval  EFI_SUCCESS            Get Network information successfully.
+  @retval  EFI_INVALID_PARAMETER  Input parameters are not a valid.
+  @retval  EFI_OUT_OF_RESOURCES   Memory allocation failed.
+  @retval  EFI_UNSUPPORTED        This is not USB CDC device or some error occurred.
+**/
+EFI_STATUS
+GetRedfishRecordFromBmc (
+  OUT REDFISH_OVER_IP_PROTOCOL_DATA **RedfishOverIpProtocolData,
+  OUT UINT8                         *RedfishProtocolDataLength
+  )
+{
+  BMC_LAN_INFO      BmcLanInfo;
+  CHAR8             RedfishHostName[REDFISH_HOST_NAME_IP4_STR_MAX_SIZE] = {0};
+  UINT8             RedfishIpv4NotRead[] = {0, 0, 0, 0};
+  UINT8             HostNameLength;
+  UINTN             Index;
+
+  if (RedfishProtocolDataLength == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  //
+  // Get the Service IP and Netmask
+  //
+  for (Index = 0; Index <= REDFISH_RETRY; ++Index) {
+    if (EFI_ERROR (IpmiGetBmcLanInfo (REDFISH_BMC_CHANNEL, &BmcLanInfo))
+       || (Index == REDFISH_RETRY))
+    {
+      return EFI_UNSUPPORTED;
+    }
+
+    AsciiSPrint (
+      RedfishHostName,
+      sizeof (RedfishHostName),
+      "%d.%d.%d.%d",
+      BmcLanInfo.IpAddress.IpAddress[0],
+      BmcLanInfo.IpAddress.IpAddress[1],
+      BmcLanInfo.IpAddress.IpAddress[2],
+      BmcLanInfo.IpAddress.IpAddress[3]
+      );
+    DEBUG ((DEBUG_INFO, "Redfish Host Name IPv4: %s\n", RedfishHostName));
+
+    if (!EFI_IP4_EQUAL (BmcLanInfo.IpAddress.IpAddress, &RedfishIpv4NotRead)) {
+      break;
+    }
+
+    MicroSecondDelay (REDFISH_BMC_POLL_INTERVAL_US);
+  }
+
+  HostNameLength = (UINT8)AsciiStrLen (RedfishHostName) + 1;
+
+  *RedfishProtocolDataLength = sizeof (REDFISH_OVER_IP_PROTOCOL_DATA) - sizeof ((*RedfishOverIpProtocolData)->RedfishServiceHostname)
+                               + HostNameLength;
+  *RedfishOverIpProtocolData = AllocateZeroPool (*RedfishProtocolDataLength);
+  if (*RedfishOverIpProtocolData == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  CopyGuid (&((*RedfishOverIpProtocolData)->ServiceUuid), &gAmpereRedfishServiceGuid);
+
+  (*RedfishOverIpProtocolData)->HostIpAssignmentType = REDFISH_HOST_INTERFACE_HOST_IP_ASSIGNMENT_TYPE_STATIC;
+  (*RedfishOverIpProtocolData)->HostIpAddressFormat  = REDFISH_HOST_INTERFACE_HOST_IP_ADDRESS_FORMAT_IP4;
+
+  IP4_COPY_ADDRESS ((*RedfishOverIpProtocolData)->HostIpAddress, BmcLanInfo.IpAddress.IpAddress);
+  (*RedfishOverIpProtocolData)->HostIpAddress[3]++;
+
+  IP4_COPY_ADDRESS ((*RedfishOverIpProtocolData)->HostIpMask, BmcLanInfo.SubnetMask.IpAddress);
+
+  (*RedfishOverIpProtocolData)->RedfishServiceIpDiscoveryType = 1;  // Use static IP address
+  (*RedfishOverIpProtocolData)->RedfishServiceIpAddressFormat = 1;  // Only support IPv4
+
+  IP4_COPY_ADDRESS ((*RedfishOverIpProtocolData)->RedfishServiceIpAddress, BmcLanInfo.IpAddress.IpAddress);
+
+  IP4_COPY_ADDRESS ((*RedfishOverIpProtocolData)->RedfishServiceIpMask, BmcLanInfo.SubnetMask.IpAddress);
+
+  (*RedfishOverIpProtocolData)->RedfishServiceIpPort = REDFISH_HTTPS_DEFAULT_PORT;
+  (*RedfishOverIpProtocolData)->RedfishServiceVlanId = REDFISH_VLAN_ID_RESERVE;
+
+  (*RedfishOverIpProtocolData)->RedfishServiceHostnameLength = HostNameLength;
+  AsciiStrCpyS ((CHAR8 *)((*RedfishOverIpProtocolData)->RedfishServiceHostname), HostNameLength, RedfishHostName);
+
+  return EFI_SUCCESS;
+}
+
 VOID
 SnpInstallCallback (
   IN EFI_EVENT        Event,
   IN VOID             *Context
   )
 {
-  COMMON_SNP_INSTANCE          *Instance;
-  EFI_HANDLE                   Handle;
-  EFI_SIMPLE_NETWORK_PROTOCOL  *Snp;
-  EFI_STATUS                   Status;
-  UINTN                        BufferSize;
-  UINTN                        MacLength;
-  EFI_MAC_ADDRESS              MacAddress;
+  COMMON_SNP_INSTANCE           *Instance;
+  EFI_HANDLE                    Handle;
+  EFI_MAC_ADDRESS               MacAddress;
+  EFI_SIMPLE_NETWORK_PROTOCOL   *Snp;
+  EFI_STATUS                    Status;
+  REDFISH_OVER_IP_PROTOCOL_DATA *RedfishOverIpProtocolData;
+  UINT8                         RedfishProtocolDataLength;
+  UINTN                         BufferSize;
+  UINTN                         MacLength;
 
   while (TRUE) {
     BufferSize = sizeof (EFI_HANDLE);
@@ -217,9 +322,22 @@ SnpInstallCallback (
     // Assume that there is only one instance of this kind of device
     //
     if (Instance->Signature == USB_CDC_ETHERNET_SIGNATURE) {
+      Status = GetRedfishRecordFromBmc (
+                 &RedfishOverIpProtocolData,
+                 &RedfishProtocolDataLength
+                 );
+      if (EFI_ERROR (Status)) {
+        //
+        // Redfish service is based on SMBIOS type 42
+        // Should not create when we can't get proper information
+        //
+        continue;
+      }
+
       Status = NetLibGetMacAddress (Handle, &MacAddress, &MacLength);
-      if (!EFI_ERROR (Status)) {
-        Status = CreateSmbiosTable42 (MacAddress);
+      if (!EFI_ERROR (Status) && (RedfishOverIpProtocolData != NULL)) {
+        Status = CreateSmbiosTable42 (MacAddress, RedfishOverIpProtocolData, RedfishProtocolDataLength);
+        FreePool (RedfishOverIpProtocolData);
         if (!EFI_ERROR (Status)) {
           gBS->CloseEvent (Event);
           return;
@@ -245,72 +363,7 @@ EntryPoint (
   IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  CHAR8                           RedfishHostName[20];
-  EFI_EVENT                       SnpInstallEvent;
-  EFI_STATUS                      Status;
-  BMC_LAN_INFO                    BmcLanInfo;
-  UINT8                           HostNameLength;
-
-  //
-  // Get the Service IP and Netmask
-  //
-  Status = IpmiGetBmcLanInfo (REDFISH_BMC_CHANNEL, &BmcLanInfo);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to get BMC info %r\n", __FUNCTION__, Status));
-    return Status;
-  }
-
-  AsciiSPrint (
-    RedfishHostName,
-    sizeof (RedfishHostName),
-    "%d.%d.%d.%d",
-    BmcLanInfo.IpAddress.IpAddress[0],
-    BmcLanInfo.IpAddress.IpAddress[1],
-    BmcLanInfo.IpAddress.IpAddress[2],
-    BmcLanInfo.IpAddress.IpAddress[3]
-    );
-  HostNameLength = (UINT8)AsciiStrLen (RedfishHostName) + 1;
-
-  mRedfishProtocolDataLength = sizeof (REDFISH_OVER_IP_PROTOCOL_DATA) - sizeof (mRedfishOverIpProtocolData->RedfishServiceHostname)
-                               + HostNameLength;
-  mRedfishOverIpProtocolData = AllocateZeroPool (mRedfishProtocolDataLength);
-  if (mRedfishOverIpProtocolData == NULL) {
-    return EFI_OUT_OF_RESOURCES;
-  }
-
-  CopyGuid (&mRedfishOverIpProtocolData->ServiceUuid, &gAmpereRedfishServiceGuid);
-
-  mRedfishOverIpProtocolData->HostIpAssignmentType = REDFISH_HOST_INTERFACE_HOST_IP_ASSIGNMENT_TYPE_STATIC;
-  mRedfishOverIpProtocolData->HostIpAddressFormat = REDFISH_HOST_INTERFACE_HOST_IP_ADDRESS_FORMAT_IP4;
-
-  mRedfishOverIpProtocolData->HostIpAddress[0] = BmcLanInfo.IpAddress.IpAddress[0];
-  mRedfishOverIpProtocolData->HostIpAddress[1] = BmcLanInfo.IpAddress.IpAddress[1];
-  mRedfishOverIpProtocolData->HostIpAddress[2] = BmcLanInfo.IpAddress.IpAddress[2];
-  mRedfishOverIpProtocolData->HostIpAddress[3] = BmcLanInfo.IpAddress.IpAddress[3] + 1;
-
-  mRedfishOverIpProtocolData->HostIpMask[0] = BmcLanInfo.SubnetMask.IpAddress[0];
-  mRedfishOverIpProtocolData->HostIpMask[1] = BmcLanInfo.SubnetMask.IpAddress[1];
-  mRedfishOverIpProtocolData->HostIpMask[2] = BmcLanInfo.SubnetMask.IpAddress[2];
-  mRedfishOverIpProtocolData->HostIpMask[3] = BmcLanInfo.SubnetMask.IpAddress[3];
-
-  mRedfishOverIpProtocolData->RedfishServiceIpDiscoveryType = 1;  // Use static IP address
-  mRedfishOverIpProtocolData->RedfishServiceIpAddressFormat = 1;  // Only support IPv4
-
-  mRedfishOverIpProtocolData->RedfishServiceIpAddress[0] = BmcLanInfo.IpAddress.IpAddress[0];
-  mRedfishOverIpProtocolData->RedfishServiceIpAddress[1] = BmcLanInfo.IpAddress.IpAddress[1];
-  mRedfishOverIpProtocolData->RedfishServiceIpAddress[2] = BmcLanInfo.IpAddress.IpAddress[2];
-  mRedfishOverIpProtocolData->RedfishServiceIpAddress[3] = BmcLanInfo.IpAddress.IpAddress[3];
-
-  mRedfishOverIpProtocolData->RedfishServiceIpMask[0] = BmcLanInfo.SubnetMask.IpAddress[0];
-  mRedfishOverIpProtocolData->RedfishServiceIpMask[1] = BmcLanInfo.SubnetMask.IpAddress[1];
-  mRedfishOverIpProtocolData->RedfishServiceIpMask[2] = BmcLanInfo.SubnetMask.IpAddress[2];
-  mRedfishOverIpProtocolData->RedfishServiceIpMask[3] = BmcLanInfo.SubnetMask.IpAddress[3];
-
-  mRedfishOverIpProtocolData->RedfishServiceIpPort = 443;         // HTTPS
-  mRedfishOverIpProtocolData->RedfishServiceVlanId = 0xffffffff;
-
-  mRedfishOverIpProtocolData->RedfishServiceHostnameLength = HostNameLength;
-  AsciiStrCpyS ((CHAR8 *)(mRedfishOverIpProtocolData->RedfishServiceHostname), HostNameLength, RedfishHostName);
+  EFI_EVENT  SnpInstallEvent;
 
   //
   // Register callback event for SimpleNetworkProtocol

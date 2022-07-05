@@ -33,6 +33,7 @@
   MemoryAllocationLib
   NetLib
   PrintLib
+  TimerLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
   UefiLib
