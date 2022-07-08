@@ -30,4 +30,5 @@
   PcdLib
 
 [Pcd]
-  gAmpereTokenSpaceGuid.gPcieHotPlugGpioResetMap
+  gAmpereTokenSpaceGuid.PcdPcieHotPlugGpioResetMap
+  gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable

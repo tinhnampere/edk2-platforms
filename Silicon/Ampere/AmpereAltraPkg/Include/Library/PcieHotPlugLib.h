@@ -1,6 +1,6 @@
 /** @file
 
-   Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+   Copyright (c) 2021-2022, Ampere Computing LLC. All rights reserved.<BR>
 
    SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -30,6 +30,56 @@
 #define LED_SET_OFF             2
 #define LED_SET_BLINK           3
 
+/**
+  Set GPIO pins used for PCIe reset. This command
+  limits the number of GPIO[16:21] for reset purpose.
+**/
+VOID
+PcieHotPlugSetGpioMap (
+  VOID
+  );
+
+/**
+  Lock current Portmap table.
+**/
+VOID
+PcieHotPlugSetLockPortMap (
+  VOID
+  );
+
+/**
+  Start Hot plug service.
+**/
+VOID
+PcieHotPlugSetStart (
+  VOID
+  );
+
+/**
+  Clear current configuration of Portmap table.
+**/
+VOID
+PcieHotPlugSetClear (
+  VOID
+);
+
+/**
+  Set configuration for Portmap table.
+**/
+VOID
+PcieHotPlugSetPortMap (
+  VOID
+  );
+
+/**
+  This function will start Hotplug service after following steps:
+  - Open handle to make a SPCI call.
+  - Set GPIO pins for PCIe reset.
+  - Set configuration for Portmap table.
+  - Lock current Portmap table.
+  - Start Hot plug service.
+  - Close handle.
+**/
 VOID
 PcieHotPlugStart (
   VOID
