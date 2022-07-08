@@ -24,12 +24,27 @@
 #include <Protocol/PartitionInfo.h>
 #include <Protocol/PlatformBootManager.h>
 #include <Protocol/SimpleFileSystem.h>
+#include <Protocol/SimpleNetwork.h>
 #include <Protocol/UsbIo.h>
+
+#define USB_CDC_ETHERNET_SIGNATURE  SIGNATURE_32('U', 'E', 't', 'h')
+#define COMMON_SNP_INSTANCE_FROM_THIS_SNP(a)  BASE_CR (a, COMMON_SNP_INSTANCE, Snp)
+
+#pragma pack (1)
+typedef struct {
+  UINTN                         Signature;
+  EFI_HANDLE                    Controller;
+
+  // EFI SNP protocol instances
+  EFI_SIMPLE_NETWORK_PROTOCOL   Snp;
+  EFI_SIMPLE_NETWORK_MODE       SnpMode;
+} COMMON_SNP_INSTANCE;
 
 typedef struct {
   CHAR16    *OSLoaderPath;
   CHAR16    *OSLoaderName;
 } OS_LOADER_DESC;
+#pragma pack ()
 
 CONST OS_LOADER_DESC  KnownOsLoaderList[] =
 {
@@ -800,6 +815,45 @@ CacheLegacyBootOptions (
   }
 }
 
+BOOLEAN
+NetworkBootOverUsbCdcCheck (
+  IN EFI_DEVICE_PATH_PROTOCOL  *BootOptionDevicePath
+  )
+{
+  COMMON_SNP_INSTANCE          *Instance;
+  EFI_HANDLE                   Handle;
+  EFI_SIMPLE_NETWORK_PROTOCOL  *Snp;
+  EFI_STATUS                   Status;
+
+  ASSERT (BootOptionDevicePath != NULL);
+
+  Status = gBS->LocateDevicePath (
+                  &gEfiSimpleNetworkProtocolGuid,
+                  &BootOptionDevicePath,
+                  &Handle
+                  );
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
+
+  Status = gBS->HandleProtocol (
+                  Handle,
+                  &gEfiSimpleNetworkProtocolGuid,
+                  (VOID **)&Snp
+                  );
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
+
+  Instance = COMMON_SNP_INSTANCE_FROM_THIS_SNP (Snp);
+
+  if (Instance->Signature == USB_CDC_ETHERNET_SIGNATURE) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
 EFI_STATUS
 RefreshAllBootOptions (
   IN  CONST EFI_BOOT_MANAGER_LOAD_OPTION *BootOptions,
@@ -847,6 +901,14 @@ RefreshAllBootOptions (
     // based on Block IO Protocol
     //
     if (IsBlockIoProtocolInstalled (BootOptions[Index].FilePath) && DoCustomBootOptionsAdd) {
+      continue;
+    }
+
+    //
+    // USB CDC Ethernet is only used for Host In-band Interface
+    // that no media boot is supported. Remove it to prevent enumerating in Boot Options.
+    //
+    if (NetworkBootOverUsbCdcCheck (BootOptions[Index].FilePath)) {
       continue;
     }
 
