@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -412,6 +412,146 @@ CpuGetCacheSize (
   return ((CCSIDR_NUMSETS (CacheCCSIDR) + 1) *
           (CCSIDR_ASSOCIATIVITY (CacheCCSIDR) + 1) *
           CacheLineSize);
+}
+
+/**
+  Get max CPU frequency.
+
+  @param    SocketId   Socket index.
+  @return   UINTN      Max CPU frequency.
+
+**/
+UINTN
+EFIAPI
+CpuGetMaxFreq (
+  UINT8 SocketId
+  )
+{
+  PLATFORM_INFO_HOB  *PlatformHob;
+
+  PlatformHob = GetPlatformHob ();
+  if (PlatformHob == NULL) {
+    return 0;
+  }
+
+  if (PlatformHob->TurboCapability[SocketId] != 0) {
+    return PlatformHob->TurboFrequency[SocketId];
+  }
+
+  return PlatformHob->CpuClk;
+}
+
+/**
+  Get current frequency of CPU.
+
+  @return   UINTN   Current frequency of CPU.
+
+**/
+UINTN
+EFIAPI
+CpuGetCurrentFreq (
+  VOID
+  )
+{
+  PLATFORM_INFO_HOB  *PlatformHob;
+
+  PlatformHob = GetPlatformHob ();
+  if (PlatformHob == NULL) {
+    return 0;
+  }
+
+  return PlatformHob->CpuClk;
+}
+
+/**
+  Get CPU voltage.
+
+  @param    SocketId   Socket index.
+  @return   UINT16     CPU voltage.
+
+**/
+UINT16
+EFIAPI
+CpuGetVoltage (
+  UINT8 SocketId
+  )
+{
+  PLATFORM_INFO_HOB  *PlatformHob;
+
+  PlatformHob = GetPlatformHob ();
+  if (PlatformHob == NULL) {
+    return 0;
+  }
+
+  return PlatformHob->CoreVoltage[SocketId];
+}
+
+/**
+  Get CPU Ecid.
+
+  @param        SocketId   Socket index.
+  @param[out]   Ecid       Pointer to contain Ecid value.
+
+**/
+VOID
+EFIAPI
+CpuGetEcid (
+  UINT8  SocketId,
+  UINT32 **Ecid
+  )
+{
+  PLATFORM_INFO_HOB  *PlatformHob;
+
+  PlatformHob = GetPlatformHob ();
+  if (PlatformHob != NULL) {
+    *Ecid = (UINT32 *)(PlatformHob->Ecid[SocketId]);
+  }
+}
+
+/**
+  Get max cores of socket.
+
+  @param    SocketId   Socket index.
+  @return   UINT8      Max cores of socket.
+
+**/
+UINT8
+EFIAPI
+GetSkuMaxCore (
+  UINT8 SocketId
+  )
+{
+  PLATFORM_INFO_HOB  *PlatformHob;
+
+  PlatformHob = GetPlatformHob ();
+  if (PlatformHob == NULL) {
+    return 0;
+  }
+
+  return PlatformHob->SkuMaxCore[SocketId];
+}
+
+/**
+  Get max turbo of socket.
+
+  @param    SocketId   Socket index.
+  @return   UINT8      Max turbo of socket.
+
+**/
+UINT8
+EFIAPI
+GetSkuMaxTurbo (
+  UINT8 SocketId
+  )
+{
+  PLATFORM_INFO_HOB  *PlatformHob;
+
+  PlatformHob = GetPlatformHob ();
+  if (PlatformHob == NULL) {
+    return 0;
+  }
+
+  return PlatformHob->SkuMaxTurbo[SocketId];
 }
 
 /**

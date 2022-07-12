@@ -96,6 +96,7 @@
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Library/MmCommunicationLib/MmCommunicationLib.inf
   SecVarLib|Silicon/Ampere/AmpereAltraPkg/Library/SecVarLib/SecVarLib.inf
   SmbusHcCommonLib|Silicon/Ampere/AmpereAltraPkg/Library/SmbusHcCommonLib/SmbusHcCommonLib.inf
+  OemMiscLib|Silicon/Ampere/AmpereAltraPkg/Library/OemMiscLib/OemMiscLib.inf
 
   #
   # ARM PL011 UART Driver
@@ -534,6 +535,12 @@
   # Number of address lines in the I/O space for the CPU
   #
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|32
+
+  #
+  # SMBIOS PCDs
+  #
+  gArmTokenSpaceGuid.PcdProcessorManufacturer|L"Ampere(R)"
+  gArmTokenSpaceGuid.PcdProcessorAssetTag|L"Not Specified"
 
 [PcdsDynamicHii.common.DEFAULT]
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|L"Timeout"|gEfiGlobalVariableGuid|0x0|10

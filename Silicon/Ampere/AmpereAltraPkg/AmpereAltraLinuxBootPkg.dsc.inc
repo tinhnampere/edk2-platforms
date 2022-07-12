@@ -87,6 +87,7 @@
   GpioLib|Silicon/Ampere/AmpereAltraPkg/Library/DwGpioLib/DwGpioLib.inf
   MmCommunicationLib|Silicon/Ampere/AmpereAltraPkg/Library/MmCommunicationLib/MmCommunicationLib.inf
   SmbusHcCommonLib|Silicon/Ampere/AmpereAltraPkg/Library/SmbusHcCommonLib/SmbusHcCommonLib.inf
+  OemMiscLib|Silicon/Ampere/AmpereAltraPkg/Library/OemMiscLib/OemMiscLib.inf
 
   #
   # ARM PL011 UART Driver

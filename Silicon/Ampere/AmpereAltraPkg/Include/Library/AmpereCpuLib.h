@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -116,6 +116,84 @@ UINT32
 EFIAPI
 CpuGetCacheSize (
   UINT32 Level
+  );
+
+/**
+  Get max CPU frequency.
+
+  @param    SocketId   Socket index.
+  @return   UINTN      Max CPU frequency.
+
+**/
+UINTN
+EFIAPI
+CpuGetMaxFreq (
+  UINT8 SocketId
+  );
+
+/**
+  Get current frequency of CPU.
+
+  @return   UINTN   Current frequency of CPU.
+
+**/
+UINTN
+EFIAPI
+CpuGetCurrentFreq (
+  VOID
+  );
+
+/**
+  Get CPU voltage.
+
+  @param    SocketId   Socket index.
+  @return   UINT16     CPU voltage.
+
+**/
+UINT16
+EFIAPI
+CpuGetVoltage (
+  UINT8 SocketId
+  );
+
+/**
+  Get CPU Ecid.
+
+  @param        SocketId   Socket index.
+  @param[out]   Ecid       Pointer to contain Ecid value.
+
+**/
+VOID
+EFIAPI
+CpuGetEcid (
+  UINT8  SocketId,
+  UINT32 **Ecid
+  );
+
+/**
+  Get max cores of socket.
+
+  @param    SocketId   Socket index.
+  @return   UINT8      Max cores of socket.
+
+**/
+UINT8
+EFIAPI
+GetSkuMaxCore (
+  UINT8 SocketId
+  );
+
+/**
+  Get max turbo of socket.
+
+  @param    SocketId   Socket index.
+  @return   UINT8      Max turbo of socket.
+
+**/
+UINT8
+EFIAPI
+GetSkuMaxTurbo (
+  UINT8 SocketId
   );
 
 /**

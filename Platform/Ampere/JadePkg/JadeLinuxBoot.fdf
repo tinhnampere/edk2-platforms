@@ -169,8 +169,8 @@ APRIORI DXE {
   # SMBIOS
   #
   INF MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+  INF ArmPkg/Universal/Smbios/ProcessorSubClassDxe/ProcessorSubClassDxe.inf
   INF Platform/Ampere/JadePkg/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.inf
-  INF Platform/Ampere/JadePkg/Drivers/SmbiosCpuDxe/SmbiosCpuDxe.inf
   INF Platform/Ampere/JadePkg/Drivers/SmbiosMemInfoDxe/SmbiosMemInfoDxe.inf
 
 [FV.FVMAIN_COMPACT]
