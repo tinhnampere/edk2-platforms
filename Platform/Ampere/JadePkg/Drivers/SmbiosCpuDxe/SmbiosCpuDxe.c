@@ -161,7 +161,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L1I = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x180,                  // L1 enabled, Write Back
+    0x100,                  // L1 disabled, Write Back
     0x8001,                 // 64k i cache max
     0x8001,                 // 64k installed
     {0, 0, 0, 0, 0, 1},     // SRAM type
@@ -183,7 +183,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L1D = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x180,                  // L1 enabled, Write Back
+    0x100,                  // L1 disabled, Write Back
     0x8001,                 // 64k i cache max
     0x8001,                 // 64k installed
     {0, 0, 0, 0, 0, 1},     // SRAM type
@@ -205,7 +205,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk0L2 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x181,                  // L2 enabled, Write Back
+    0x101,                  // L2 disabled, Write Back
     0x8010,                 // 1M cache max
     0x8010,                 // 1M installed
     {0, 0, 0, 0, 0, 1},     // SRAM type
@@ -249,7 +249,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L1I = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x180,                  // L1 enabled, Write Back
+    0x100,                  // L1 disabled, Write Back
     0x8001,                 // 64k i cache max
     0x8001,                 // 64k installed
     {0, 0, 0, 0, 0, 1},     // SRAM type
@@ -271,7 +271,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L1D = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x180,                  // L1 enabled, Write Back
+    0x100,                  // L1 disabled, Write Back
     0x8001,                 // 64k i cache max
     0x8001,                 // 64k installed
     {0, 0, 0, 0, 0, 1},     // SRAM type
@@ -293,7 +293,7 @@ STATIC ARM_TYPE7 mArmDefaultType7Sk1L2 = {
       SMBIOS_HANDLE_PI_RESERVED,
     },
     ADDITIONAL_STR_INDEX_1,
-    0x181,                  // L2 enabled, Write Back
+    0x101,                  // L2 disabled, Write Back
     0x8010,                 // 1M cache max
     0x8010,                 // 1M installed
     {0, 0, 0, 0, 0, 1},     // SRAM type
