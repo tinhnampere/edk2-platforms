@@ -124,10 +124,6 @@ GetBBSTypeFromMediaDevicePath (
     }
     break;
 
-  case MEDIA_HARDDRIVE_DP:
-    Result = BBS_TYPE_OS_HARDDRIVE;
-    break;
-
   default:
     break;
   }
@@ -150,9 +146,14 @@ GetBBSType (
 {
   CHAR16                       OptionName[sizeof ("Boot####")];
   EFI_BOOT_MANAGER_LOAD_OPTION Option;
+  EFI_DEVICE_PATH_PROTOCOL     *StartOfMediaDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL     *StartOfMessagingDevicePath;
   EFI_DEVICE_PATH_PROTOCOL     *Node;
   EFI_STATUS                   Status;
   UINT16                       Result;
+
+  StartOfMediaDevicePath     = NULL;
+  StartOfMessagingDevicePath = NULL;
 
   UnicodeSPrint (OptionName, sizeof (OptionName), L"Boot%04x", OptionNumber);
   Status = EfiBootManagerVariableToLoadOption (OptionName, &Option);
@@ -170,25 +171,44 @@ GetBBSType (
 
   Node = Option.FilePath;
   while (!IsDevicePathEnd (Node)) {
-    switch (DevicePathType (Node)) {
-    case MEDIA_DEVICE_PATH:
-      Result = GetBBSTypeFromMediaDevicePath (Node);
-      break;
-
-    case MESSAGING_DEVICE_PATH:
-      Result = GetBBSTypeFromMessagingDevicePath (Node);
-      break;
-
-    default:
-      Result = BBS_TYPE_UNKNOWN;
-      break;
+    if ((DevicePathType (Node) == MESSAGING_DEVICE_PATH)
+       && (StartOfMessagingDevicePath == NULL))
+    {
+      StartOfMessagingDevicePath = Node;
     }
 
-    if (Result != BBS_TYPE_UNKNOWN) {
+    if ((DevicePathType (Node) == MEDIA_DEVICE_PATH)
+       && (StartOfMediaDevicePath == NULL))
+    {
+      StartOfMediaDevicePath = Node;
       break;
     }
 
     Node = NextDevicePathNode (Node);
+  }
+
+  Result = BBS_TYPE_UNKNOWN;
+
+  if (StartOfMediaDevicePath != NULL) {
+    while (!IsDevicePathEnd (Node)) {
+      Result = GetBBSTypeFromMediaDevicePath (Node);
+      if (Result != BBS_TYPE_UNKNOWN) {
+        return Result;
+      }
+
+      Node = NextDevicePathNode (Node);
+    }
+  }
+
+  if (StartOfMessagingDevicePath != NULL) {
+    while (!IsDevicePathEnd (StartOfMessagingDevicePath)) {
+      Result = GetBBSTypeFromMessagingDevicePath (StartOfMessagingDevicePath);
+      if (Result != BBS_TYPE_UNKNOWN) {
+        return Result;
+      }
+
+      StartOfMessagingDevicePath = NextDevicePathNode (StartOfMessagingDevicePath);
+    }
   }
 
   return Result;
