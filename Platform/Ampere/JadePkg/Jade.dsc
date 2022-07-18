@@ -61,7 +61,7 @@
   DEFINE NETWORK_HTTP_BOOT_ENABLE            = TRUE
   DEFINE NETWORK_ALLOW_HTTP_CONNECTIONS      = TRUE
   DEFINE NETWORK_TLS_ENABLE                  = TRUE
-  DEFINE REDFISH_ENABLE                      = FALSE
+  DEFINE REDFISH_ENABLE                      = TRUE
 
   DEFINE DEFAULT_KEYS        = TRUE
   DEFINE PK_DEFAULT_FILE     = Platform/Ampere/JadePkg/TestKeys/PK.cer
@@ -304,6 +304,8 @@
   # Network PCIe I210
   #
   Platform/Ampere/AmperePlatformPkg/Drivers/GigUndiDxe/GigUndiDxe.inf
+
+  Platform/Ampere/AmperePlatformPkg/Drivers/UsbCdcEthernetDxe/UsbCdcEthernetDxe.inf
 
   #
   # VGA Aspeed
