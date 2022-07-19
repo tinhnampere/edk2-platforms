@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -8,6 +8,7 @@
 
 #include <Uefi.h>
 
+#include <CpuConfigNVDataStruc.h>
 #include <Guid/PlatformInfoHob.h>
 #include <Guid/SmBios.h>
 #include <Library/AmpereCpuLib.h>
@@ -17,9 +18,12 @@
 #include <Library/HobLib.h>
 #include <Library/IOExpanderLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/NVParamLib.h>
 #include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
+#include <NVParamDef.h>
 #include <Protocol/IpmiProtocol.h>
 #include <Protocol/Smbios.h>
 
@@ -79,6 +83,36 @@
   "Socket 0 Riser 1 x32 - Slot 1\0"
 
 #define  RISER_PRESENT      0
+
+//
+// Type7 SLC Data
+//
+#define MAX_CACHE_LEVEL 2
+
+#define CACHE_SOCKETED_SHIFT        3
+#define CACHE_LOCATION_SHIFT        5
+#define CACHE_ENABLED_SHIFT         7
+#define CACHE_OPERATION_MODE_SHIFT  8
+
+#define SLC_SIZE(x)                 (UINT16)(0x8000 | (((x) * (1 << 20)) / (64 * (1 << 10))))
+#define SLC_SIZE_2(x)               (0x80000000 | (((x) * (1 << 20)) / (64 * (1 << 10))))
+
+typedef enum {
+  CacheModeWriteThrough = 0,  ///< Cache is write-through
+  CacheModeWriteBack,         ///< Cache is write-back
+  CacheModeVariesWithAddress, ///< Cache mode varies by address
+  CacheModeUnknown,           ///< Cache mode is unknown
+  CacheModeMax
+} CACHE_OPERATION_MODE;
+
+typedef enum {
+  CacheLocationInternal = 0, ///< Cache is internal to the processor
+  CacheLocationExternal,     ///< Cache is external to the processor
+  CacheLocationReserved,     ///< Reserved
+  CacheLocationUnknown,      ///< Cache location is unknown
+  CacheLocationMax
+} CACHE_LOCATION;
+
 //
 // IO Expander Assignment
 //
@@ -1327,6 +1361,172 @@ UpdateSmbiosType9 (
   }
 }
 
+/**
+  Fills necessary information of SLC in SMBIOS Type 7.
+
+  @param[out]   Type7Record            The Type 7 structure to allocate and initialize.
+
+  @retval       EFI_SUCCESS            The Type 7 structure was successfully
+                                       allocated and the strings initialized.
+                EFI_OUT_OF_RESOURCES   Could not allocate memory needed.
+**/
+EFI_STATUS
+ConfigSLCArchitectureInformation (
+  OUT SMBIOS_TABLE_TYPE7  **Type7Record
+  )
+{
+  CHAR8 *CacheSocketStr;
+  CHAR8 *OptionalStart;
+  UINTN CacheSocketStrLen;
+  UINTN TableSize;
+
+  CacheSocketStr = AllocateZeroPool (SMBIOS_STRING_MAX_LENGTH);
+  if (CacheSocketStr == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  CacheSocketStrLen = AsciiSPrint (
+                        CacheSocketStr,
+                        SMBIOS_STRING_MAX_LENGTH - 1,
+                        "L%d Cache (SLC)",
+                        MAX_CACHE_LEVEL + 1
+                        );
+
+  TableSize   = sizeof (SMBIOS_TABLE_TYPE7) + CacheSocketStrLen + 1 + 1;
+  *Type7Record = AllocateZeroPool (TableSize);
+  if (*Type7Record == NULL) {
+    FreePool (CacheSocketStr);
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  (*Type7Record)->Hdr.Type   = EFI_SMBIOS_TYPE_CACHE_INFORMATION;
+  (*Type7Record)->Hdr.Length = sizeof (SMBIOS_TABLE_TYPE7);
+  (*Type7Record)->Hdr.Handle = SMBIOS_HANDLE_PI_RESERVED;
+
+  /* Cache Configuration */
+  (*Type7Record)->CacheConfiguration  = (UINT16)(CacheModeWriteBack << CACHE_OPERATION_MODE_SHIFT);
+  (*Type7Record)->CacheConfiguration |= (UINT16)(CacheLocationInternal << CACHE_LOCATION_SHIFT);
+  (*Type7Record)->CacheConfiguration |= (UINT16)(1 << CACHE_ENABLED_SHIFT);
+  (*Type7Record)->CacheConfiguration |= (UINT16)(MAX_CACHE_LEVEL);
+
+  /* Cache Size */
+  if (IsAc01Processor ()) {
+    //
+    // Altra's SLC size is 32MB
+    //
+    (*Type7Record)->MaximumCacheSize = SLC_SIZE (32);
+    (*Type7Record)->MaximumCacheSize2 = SLC_SIZE_2 (32);
+  } else {
+    //
+    // Altra Max's SLC size is 16MB
+    //
+    (*Type7Record)->MaximumCacheSize = SLC_SIZE (16);
+    (*Type7Record)->MaximumCacheSize2 = SLC_SIZE_2 (16);
+  }
+  (*Type7Record)->InstalledSize = (*Type7Record)->MaximumCacheSize;
+  (*Type7Record)->InstalledSize2 = (*Type7Record)->MaximumCacheSize2;
+
+  /* Other information of SLC */
+  (*Type7Record)->SocketDesignation             = 1;
+  (*Type7Record)->SupportedSRAMType.Synchronous = 1;
+  (*Type7Record)->CurrentSRAMType.Synchronous   = 1;
+  (*Type7Record)->CacheSpeed                    = 0;
+  (*Type7Record)->SystemCacheType               = CacheTypeUnified;
+  (*Type7Record)->Associativity                 = CacheAssociativity16Way;
+  (*Type7Record)->ErrorCorrectionType           = CacheErrorSingleBit;
+
+  OptionalStart = (CHAR8 *)(*Type7Record + 1);
+  CopyMem (OptionalStart, CacheSocketStr, CacheSocketStrLen + 1);
+  FreePool (CacheSocketStr);
+
+  return EFI_SUCCESS;
+}
+
+/**
+  Checks whether SLC cache is should be displayed or not.
+
+  @return   TRUE    Should be displayed.
+            FALSE   Should not be displayed.
+**/
+BOOLEAN
+CheckSlcCache (
+  VOID
+  )
+{
+  EFI_STATUS        Status;
+  UINT32            NumaMode;
+  UINTN             CpuConfigDataSize;
+  CPU_VARSTORE_DATA CpuConfigData;
+
+  CpuConfigDataSize = sizeof (CPU_VARSTORE_DATA);
+
+  Status = gRT->GetVariable (
+                  CPU_CONFIG_VARIABLE_NAME,
+                  &gCpuConfigFormSetGuid,
+                  NULL,
+                  &CpuConfigDataSize,
+                  &CpuConfigData
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Can not get CPU configuration information - %r\n", __FUNCTION__, Status));
+
+    Status = NVParamGet (
+               NV_SI_SUBNUMA_MODE,
+               NV_PERM_ATF | NV_PERM_BIOS | NV_PERM_MANU | NV_PERM_BMC,
+               &NumaMode
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a: Can not get SubNUMA mode - %r\n", __FUNCTION__, Status));
+      NumaMode = SUBNUMA_MODE_MONOLITHIC;
+    }
+
+    if (!IsSlaveSocketActive () && (NumaMode == SUBNUMA_MODE_MONOLITHIC)) {
+      return TRUE;
+    }
+  } else if (CpuConfigData.CpuSlcAsL3 == CPU_SLC_AS_L3_ENABLE) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+  Installs Type 7 structure for SLC.
+
+  @param[in]   Smbios        SMBIOS protocol to add type structure.
+
+  @retval      EFI_SUCCESS   Installed Type7 structure of SLC  sucessfully.
+               Other value   Failed to install Type7 structure of SLC.
+**/
+EFI_STATUS
+InstallType7SlcStructure (
+  IN EFI_SMBIOS_PROTOCOL *Smbios
+  )
+{
+  EFI_STATUS         Status;
+  SMBIOS_TABLE_TYPE7 *Type7Record;
+  EFI_SMBIOS_HANDLE  SmbiosHandle;
+
+  if (CheckSlcCache ()) {
+    Status = ConfigSLCArchitectureInformation (&Type7Record);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+
+    SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
+    Status = Smbios->Add (
+                       Smbios,
+                       NULL,
+                       &SmbiosHandle,
+                       (EFI_SMBIOS_TABLE_HEADER *)Type7Record
+                       );
+
+    FreePool (Type7Record);
+  }
+
+  return Status;
+}
+
 STATIC
 VOID
 UpdateSmbiosInfo (
@@ -1377,6 +1577,10 @@ InstallAllStructures (
 
   // Install Type 3 table
   InstallType3Structure (Smbios);
+
+  // Install Type 7 for System Level Cache (SLC)
+  Status = InstallType7SlcStructure (Smbios);
+  ASSERT_EFI_ERROR (Status);
 
   // Install Tables
   Status = InstallStructures (Smbios, DefaultCommonTables);

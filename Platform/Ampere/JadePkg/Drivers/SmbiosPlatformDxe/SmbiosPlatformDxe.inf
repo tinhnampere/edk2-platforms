@@ -36,6 +36,7 @@
   IpmiCommandLib
   IpmiLib
   MemoryAllocationLib
+  NVParamLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
   UefiLib
@@ -78,6 +79,7 @@
   gAmpereTokenSpaceGuid.PcdFruSystemUniqueID
 
 [Guids]
+  gCpuConfigFormSetGuid
   gPlatformInfoHobGuid
 
 [Depex]
