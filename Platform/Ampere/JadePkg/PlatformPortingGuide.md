@@ -86,7 +86,7 @@ Modify it appropriately for the new platform configuration.
 
 Please refer to the Ampere Altra Interface Firmware Requirements at the Table 4 for detailed descriptions of each Board Setting fields.
 
-### PCIe
+### PCIe Root Complex Configuration
 
 Below modules are generic and can be shared among Ampere Altra-based platforms.
 
@@ -102,6 +102,8 @@ Silicon/Ampere/AmpereAltraPkg/Library/PciSegmentLib    | Provide functions to ac
 
 The difference between platforms could be the mechanism to control the PERST line for each PCIe controller and the segment number.
 Platform code must modify the functions below in the Platform/Ampere/JadePkg/Library/BoardPcieLib/BoardPcieLib.c to comply with specific platform hardware.
+
+This `BoardPcieAssertPesrt()` function controls the toggling of PERST to release reset to endpoint card. The Mt. Jade platform uses a combination of GPIO pins to assert PERST to endpoint card.
 
 **BoardPcieAssertPerst**
 
@@ -125,6 +127,8 @@ Platform code must modify the functions below in the Platform/Ampere/JadePkg/Lib
     );
   ```
 
+This `BoardPcieGetSegmentNumber()` defines the segment number mapping of PCIe root complexes. See the content in the inline function for more information about PCIe segment mapping in Ampere Mt. Jade platform.
+
 **BoardPcieGetSegmentNumber**
 
   ```c
@@ -141,6 +145,92 @@ Platform code must modify the functions below in the Platform/Ampere/JadePkg/Lib
     IN  AC01_ROOT_COMPLEX *RootComplex
     );
   ```
+Note: Although the PCIe segment number mapping could be changed but it is not recommended unless the custom board has to use a different mapping. If using different mapping, along with the change in `BoardPcieGetSegmentNumber()`, the PCIe segment number must be also updated in ACPI DSDT and MCFG tables.
+
+### PCIe Hot-Plug
+`Silicon/Ampere/AmpereAltraPkg/Library/PcieHotPlugLib` is the base library that supports the function calls to start PCIe Hot-Plug service including the SPCI callings to ATF to set hot-plug port map, and GPIO or I2C for PCIe reset. There are two functions in this library that a custom board can use to change the hot-plug configuration if it is different from Mt. Jade platform: `PcieHotPlugSetPortMap()` and `PcieHotplugSetGpioMap()`. By default, the configuration of Ampere Mt. Jade 2U platform will be set. In case the new board uses a different configuration, user can override the default PCDs used by these two functions with the custom configuration in `NewBoard.dsc`.
+
+**PcieHotplugSetPortMap()**
+
+Function `PcieHotplugSetPortMap()` passes hot-plug configuration to Arm Trusted Firmware (ATF) to update/customize port map entries such as I2C address, RCA port, RCA sub-port, etc. It uses SPCI PORTMAP_SET_CMD to send that information to ATF. Refer to the document titled Altra ATF Interface Specification for more details on this function.
+
+A custom platform that does not use the same Hot-Plug PortMap configuration with Ampere Mt. Jade 2U platform must define the corresponding PCD below.
+
+```c
+#
+# Flag to indicate option of using default or specific platform Port Map table
+#   Set TRUE: if using the default setting in Ampere Mt. Jade 2U platform.
+#   Set FALSE: if using a custom PCIe Hot-Plug Port Map settings.
+#
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.UseDefaultConfig|TRUE
+
+#
+# Setting Portmap table
+#
+# * Elements of array:
+#   - 0: Index of Portmap entry in Portmap table structure (Vport).
+#   - 1: Socket number (Socket).
+#   - 2: Root complex port for each Portmap entry (RcaPort).
+#   - 3: Root complex sub-port for each Portmap entry (RcaSubPort).
+#   - 4: Select output port of IO expander (PinPort).
+#   - 5: I2C address of IO expander that CPLD backplane simulates (I2cAddress).
+#   - 6: Address of I2C switch between CPU and CPLD backplane (MuxAddress).
+#   - 7: Channel of I2C switch (MuxChannel).
+#   - 8: It is set from PcieHotPlugSetGpioMap () function to select GPIO[16:21] (PcdPcieHotPlugGpioResetMap) or I2C for PCIe reset purpose.
+#   - 9: Segment of root complex (Segment).
+#   - 10: SSD slot index on the front panel of backplane (DriveIndex).
+#
+# * Caution:
+#   - The last array ({ 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF }) require if no fully structured used.
+#   - Size of Portmap table: PortMap[MAX_PORTMAP_ENTRY][sizeof(PCIE_HOTPLUG_PORTMAP_ENTRY)] <=> PortMap[96][11].
+# * Example: Bellow configuration is an example for Portmap table of Mt. Jade 2U platform.
+#
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[0]|{ 0, 0, 2, 0, 0, 0x00, 0x00, 0x0, 0, 1, 0xFF } # S0 RCA2.0
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[1]|{ 1, 0, 3, 0, 1, 0x00, 0x00, 0x0, 0, 0, 0xFF } # S0 RCA3.0
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[2]|{ 2, 0, 4, 0, 2, 0x27, 0x70, 0x1, 0, 2, 6 } # S0 RCB0.0 - SSD6
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[3]|{ 3, 0, 4, 2, 3, 0x27, 0x70, 0x1, 0, 2, 7 } # S0 RCB0.2 - SSD7
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[4]|{ 4, 0, 4, 4, 0, 0x25, 0x70, 0x1, 0, 2, 2 } # S0 RCB0.4 - SSD2
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[5]|{ 5, 0, 4, 6, 1, 0x25, 0x70, 0x1, 0, 2, 3 } # S0 RCB0.6 - SSD3
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[6]|{ 6, 0, 5, 0, 0, 0x24, 0x70, 0x1, 0, 3, 0 } # S0 RCB1.0 - SSD0
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[7]|{ 7, 0, 5, 2, 1, 0x24, 0x70, 0x1, 0, 3, 1 } # S0 RCB1.2 - SSD1
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[8]|{ 8, 0, 5, 4, 2, 0x26, 0x70, 0x1, 0, 3, 4 } # S0 RCB1.4 - SSD4
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[9]|{ 9, 0, 5, 6, 3, 0x26, 0x70, 0x1, 0, 3, 5 } # S0 RCB1.6 - SSD5
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[10]|{ 10, 0, 6, 0, 2, 0x00, 0x00, 0x0, 0, 4, 0xFF } # S0 RCB2.0
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[11]|{ 11, 0, 6, 2, 3, 0x00, 0x00, 0x0, 0, 4, 0xFF } # S0 RCB2.2
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[12]|{ 12, 0, 6, 4, 0, 0x00, 0x00, 0x0, 0, 4, 0xFF } # S0 RCB2.4
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[13]|{ 13, 0, 7, 0, 1, 0x00, 0x00, 0x0, 0, 5, 0xFF } # S0 RCB3.0
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[14]|{ 14, 0, 7, 4, 2, 0x00, 0x00, 0x0, 0, 5, 0xFF } # S0 RCB3.4
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[15]|{ 15, 0, 7, 6, 3, 0x00, 0x00, 0x0, 0, 5, 0xFF } # S0 RCB3.6
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[16]|{ 16, 1, 2, 0, 0, 0x26, 0x70, 0x2, 0, 6, 20 } # S1 RCA2.0 - SSD20
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[17]|{ 17, 1, 2, 1, 1, 0x26, 0x70, 0x2, 0, 6, 21 } # S1 RCA2.1 - SSD21
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[18]|{ 18, 1, 2, 2, 2, 0x27, 0x70, 0x2, 0, 6, 22 } # S1 RCA2.2 - SSD22
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[19]|{ 19, 1, 2, 3, 3, 0x27, 0x70, 0x2, 0, 6, 23 } # S1 RCA2.3 - SSD23
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[20]|{ 20, 1, 3, 0, 0, 0x00, 0x00, 0x0, 0, 7, 0xFF } # S1 RCA3.0
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[21]|{ 21, 1, 3, 2, 1, 0x00, 0x00, 0x0, 0, 7, 0xFF } # S1 RCA3.2
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[22]|{ 22, 1, 4, 0, 0, 0x00, 0x00, 0x0, 0, 8, 0xFF } # S1 RCB0.0
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[23]|{ 23, 1, 4, 4, 2, 0x25, 0x70, 0x2, 0, 8, 18 } # S1 RCB0.4 - SSD18
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[24]|{ 24, 1, 4, 6, 3, 0x25, 0x70, 0x2, 0, 8, 19 } # S1 RCB0.6 - SSD19
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[25]|{ 25, 1, 5, 0, 0, 0x24, 0x70, 0x2, 0, 9, 16 } # S1 RCB1.0 - SSD16
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[26]|{ 26, 1, 5, 2, 1, 0x24, 0x70, 0x2, 0, 9, 17 } # S1 RCB1.2 - SSD17
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[27]|{ 27, 1, 5, 4, 2, 0x00, 0x00, 0x0, 0, 9, 0xFF } # S1 RCB1.4
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[28]|{ 28, 1, 6, 0, 3, 0x25, 0x70, 0x4, 0, 10, 11 } # S1 RCB2.0 - SSD11
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[29]|{ 29, 1, 6, 2, 2, 0x25, 0x70, 0x4, 0, 10, 10 } # S1 RCB2.2 - SSD10
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[30]|{ 30, 1, 6, 4, 1, 0x27, 0x70, 0x4, 0, 10, 15 } # S1 RCB2.4 - SSD15
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[31]|{ 31, 1, 6, 6, 0, 0x27, 0x70, 0x4, 0, 10, 14 } # S1 RCB2.6 - SSD14
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[32]|{ 32, 1, 7, 0, 3, 0x26, 0x70, 0x4, 0, 11, 13 } # S1 RCB3.0 - SSD13
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[33]|{ 33, 1, 7, 2, 2, 0x26, 0x70, 0x4, 0, 11, 12 } # S1 RCB3.2 - SSD12
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[34]|{ 34, 1, 7, 4, 1, 0x24, 0x70, 0x4, 0, 11, 9 } # S1 RCB3.4 - SSD9
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[35]|{ 35, 1, 7, 6, 0, 0x24, 0x70, 0x4, 0, 11, 8 } # S1 RCB3.6 - SSD8
+gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.PortMap[36]|{ 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF } # Require if no fully structure used
+```
+
+**PcieHotplugSetGpioMap()**
+
+Function `PcieHotplugSetGpioMap()` is used to limit the number of GPIO[16:21] pins or use I2C instead of GPIO for PCIe reset. It uses SPCI GPIOMAP_CMD to send information to ATF. Ampere EDK2 defines `gPcieHotPlugGpioResetMap` PCD to allow user to define a custom GPIO Map. In `NewBoard.dsc`, user should set the new PCD indicating the GPIO Map for PCIe Hot-Plug. Below is the GPIO Reset Map PCD definition for Ampere Mt. Jade platform.
+
+```c
+gAmpereTokenSpaceGuid.PcdPcieHotPlugGpioResetMap|0x3F
+```
 
 ### ACPI
 
@@ -159,6 +249,16 @@ In order to modify the platform specific tables under `Platform/Ampere/NewBoardP
     * UART2 for ACPI DBG2 table
     * UART3: non-use
   * Add or remove UART devices based on the platform configuration.
+* DSDT/MHPP for Memory Hot-Plug Port Mapping
+  * This is a shared DRAM memory region between ATF and UEFI to indicate a PCIe hot-plug event action. An item of this MHPP region is used to reflect a hot-plug event action of each PCIe port. Whenever there is a PCIe hot-plug event, ATF will update the action value to each item of MHPP region, and UEFI will handle the hot-plug ejection/insertion accordingly
+  * An item of MHPP is 24-bytes in size and is named by a 4-character word (mnemonic) to represent a PCIe Root Port device. The name format is <root_complex_A/B><socket><root_complex_number><root_complex_port>. For example, if the board has a PCIe Root Port device RCA2.0 on socket 1 the hot-plug event action item must be named A120.
+  * This MHPP region is declared in the file named `Platform/Ampere/JadePkg/AcpiTable/MHPP.asi`. For Altra Max, this ACPI table is located at `Platform/Ampere/JadePkg/Ac02AcpiTables/MHPP.asi`. If the new board has the list of PCIe devices different than the Ampere Mt. Jade board, these items in MHPP region must be renamed.
+* DSDT/PCI for Hot-Plug events
+  * The files to declare the PCIe Root Port are `Platform/Ampere/JadePkg/AcpiTables/{PCI-S0.asi, PCI-S1.asi}`. Note that the ACPI tables for Altra Max based platform is at `Platform/Ampere/JadePkg/Ac02AcpiTables/` folder. To support full hot-plug feature (software and hardware hot-plug with LED behavior functioning), the Segment:Bus:Device.Function (S:B:D.F) of the Root Port must be declared correctly. Follow the steps listed below to declare them.
+    * List down PCIe devices tree in Linux using lspci -tv command to see all Root Port S:B:D.F values.
+    * Find out which PCIe device includes the segment that the Root Port has.
+    * Based on this S:B:D.F, declare Root Port device into the PCIe Device just found.
+    * Add _STA and _EJ0 instance to handle insertion and ejection events.
 
 ### SMBIOS
 
@@ -203,17 +303,24 @@ You can also leverage `EmbeddedPkg/Library/VirtualRealTimeClockLib/VirtualRealTi
 
 The IPMI SSIF is used for the communication between the BMC and the SoC. It requires the following modules:
 
-* `Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcDxe/SmbusHcDxe.inf`: This driver produces the SMBUS protocol.
-* `Silicon/Ampere/AmpereSiliconPkg/Library/IpmiCommandLibExt/IpmiCommandLibExt.inf`: This library instance provides supplementary IPMI Commands to the `Features/Intel/OutOfBandManagement/IpmiFeaturePkg/Library/IpmiCommandLib`.
-* `Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsifDxe/IpmiSsifDxe.inf`: This driver produces the IPMI protocol.
-* `Platform/Ampere/NewBoardPkg/Library/DxePlatformSmbusLib/DxePlatformSmbusLib.inf`: This library layers on top of the SMBUS protocol to provide platform specific SMBUS API functions. On the Mt. Jade platform, the SoC relies on the GPI0 (referred to as BMC READY GPIO) to determine whether the BMC is ready for the communication.
+* `Silicon/Ampere/AmpereAltraPkg/Library/SmbusHcCommonLib/SmbusHcCommonLib.inf`: This library instance provides common API to execute SMBus operations.
+* `Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcDxe/SmbusHcDxe.inf`: This driver produces the SMBUS protocol at DXE phase.
+* `Silicon/Ampere/AmpereAltraPkg/Drivers/SmbusHcPei/SmbusHcPei.inf`: This driver produces the SMBUS protocol at PEI phase.
+* `Silicon/Ampere/AmpereSiliconPkg/Library/IpmiCommandLibExt/IpmiCommandLibExt.inf`: This library instance provides supplementary IPMI Commands to the Features/Intel/OutOfBandManagement/IpmiFeaturePkg/Library/IpmiCommandLib.
+* `Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsif/IpmiSsifDxe.inf`: This driver produces the IPMI protocol at DXE phase.
+* `Silicon/Ampere/AmpereSiliconPkg/Drivers/IpmiSsif/IpmiSsifPeim.inf`: This driver produces the IPMI protocol at PEI phase.
+* `Platform/Ampere/NewBoardPkg/Library/PlatformBmcReadyLib/PlatformBmcReadyLib.inf`: This platform-dependent library provides API to check BMC status before executing SMBus commands for IPMI communication. On the Mt. Jade platform, the Altra SoC relies on GPI0 (referred to as BMC_READY GPIO) to determine status of BMC is ready for the IPMI communication. If the custom platform does not support this pin, use a NULL library that assumes BMC is always on and ready to accept IPMI messages. Put below line to NewBoard.dsc.
+
+```c
+PlatformBmcReadyLib|Silicon/Ampere/AmpereSiliconPkg/Library/PlatformBmcReadyLibNull/PlatformBmcReadyLibNull.inf
+```
 
 In order to enable the IPMI SSIF support:
 
 1. Ensure that the I2C4 is connected to the BMC and the frequency is operated at 400KHz.
-2. Update correspondingly the following PCDs if there are different configuration from the BMC slave address and the BMC READY GPIO.
-   * gAmpereTokenSpaceGuid.PcdBmcSlaveAddr
-   * gAmpereTokenSpaceGuid.PcdBmcReadyGpio
+2. Update correspondingly the following PCDs if there are different configuration from the BMC slave address and the BMC_READY GPIO if the custom board uses BMC_READY GPIO to determine the status of BMC.
+   * `gAmpereTokenSpaceGuid.PcdBmcSlaveAddr`
+   * `gAmpereTokenSpaceGuid.PcdBmcReadyGpio`
 
 ### Signed Capsule Update
 
@@ -231,6 +338,36 @@ Please refer to [Capsule Based Firmware Update and Firmware Recovery](https://gi
 No change is needed.
 
 It's important that the ATF running on the new platform must comply with the Ampere Altra Interface Firmware Requirements.
+
+### Secure Boot and Update
+No change is needed. The new platform can inherit the required libraries and modules to support this feature.
+
+Ampere EDK2 supports UEFI Secure Boot and it complies with UEFI Specifications. User can change the UEFI secure boot keys using UEFI Menu Setup.
+
+Starting from Ampere EDK2 release 2.04.100, the new UEFI Shell utility: `eask` is used to deploy DBB/DBU key for UEFI/BL33 firmware authentication at boot and upgrade. In the build command, the argument `VER=<Major.Minor>` must be greater than 2.04 and the build process will append the certificate into the firmware image for the BL33 Root-of-Trust Secure Boot purpose.
+
+If the DBB/DBU secure keys are deployed, requires to boot and update EDK2 firmware via capsule using the signed firmware image.
+
+Below is the command usage of UEFI Shell utility eask to deploy dbb/dbu secure keys for BL33 UEFI authentication.
+
+  ```c
+  Shell> help eask
+    Enroll Ampere Secure Keys Usage
+    EASK
+    -K <UpdateDBUPubCertFile>
+    -k
+    -P <UpdateDBBPubCertFile>
+    -p
+
+    -K: Register the Public Key Certificate to be used for firmware update verification. This must be an x509 certificate.
+        The file provided must be the authorization file (.auth) to register or delete the DBU certificate.
+    -k: Read enrolled DBU certificate
+    -P: Register the Public Key Certificate to be used for firmware verification. This must be an x509 certificate.
+        The file provided must be the authorization file (.auth) to register or delete the DBB certificate.
+    -p: Read enrolled DBB certificate
+  ```
+
+Starting from Ampere EDK2 2.05.100, user can run firmware update at run-time OS without reboot using [amp_fwupgrade](https://github.com/AmpereComputing/amp-fwupgrade) utility to update signed ATF-UEFI EDK2 image and signed SCP image.
 
 ---
 
