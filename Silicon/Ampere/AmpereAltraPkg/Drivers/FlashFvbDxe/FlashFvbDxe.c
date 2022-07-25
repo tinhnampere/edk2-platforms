@@ -1,11 +1,12 @@
 /** @file
 
-  Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/FlashLib.h>
 #include <Library/PcdLib.h>
@@ -361,6 +362,7 @@ FlashFvbDxeWrite (
     return EFI_DEVICE_ERROR;
   }
 
+  CopyMem ((UINT8 *)(UINTN)mNvStorageBase + Lba * mFlashBlockSize + Offset, Buffer, *NumBytes);
   return Status;
 }
 
