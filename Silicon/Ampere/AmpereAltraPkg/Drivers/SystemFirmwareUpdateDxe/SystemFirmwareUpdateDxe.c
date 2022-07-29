@@ -73,8 +73,12 @@ SystemFirmwareUpdateGetVariable (
   CHAR8       AsciiStrType[FWU_STR_TYPE_LENGTH];
   CHAR8       AsciiStrStatus[FWU_STR_STATUS_LENGTH];
 
-  if ((VendorGuid != NULL) && !CompareGuid (VendorGuid, &gAmpereFWUpgradeGuid)) {
+  if ((VendorGuid == NULL) || (!CompareGuid (VendorGuid, &gAmpereFWUpgradeGuid))) {
     return mOriginGetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
+  }
+
+  if ((VariableName == NULL) || (DataSize == NULL)) {
+    return EFI_INVALID_PARAMETER;
   }
 
   /*
@@ -170,6 +174,10 @@ SystemFirmwareUpdateGetVariable (
     return EFI_BUFFER_TOO_SMALL;
   }
 
+  if (Data == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
   AsciiSPrint (Data, Size, "%a,%a", AsciiStrType, AsciiStrStatus);
 
   return EFI_SUCCESS;
@@ -205,13 +213,15 @@ SystemFirmwareUpdateSetVariable (
   EFI_STATUS  Status;
   UINTN       ImageId, SubId;
 
-  if ((VendorGuid != NULL) && !CompareGuid (VendorGuid, &gAmpereFWUpgradeGuid)) {
+  if ((VendorGuid == NULL) || (!CompareGuid (VendorGuid, &gAmpereFWUpgradeGuid))) {
     return mOriginSetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
   }
 
   if (((mDataCount == 0) && (DataSize == 0)) ||
       (DataSize > FIRMWARE_UPDATE_MAX_SIZE) ||
-      (mDataCount > FIRMWARE_UPDATE_MAX_SIZE))
+      (mDataCount > FIRMWARE_UPDATE_MAX_SIZE) ||
+      (VariableName == NULL) ||
+      (Data == NULL))
   {
     return EFI_INVALID_PARAMETER;
   }
