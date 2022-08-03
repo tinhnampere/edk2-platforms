@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -12,6 +12,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/FlashLib.h>
+#include <Library/IpmiCommandLibExt.h>
 #include <Library/NVParamLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PeimEntryPoint.h>
@@ -35,15 +36,19 @@ FlashPeiEntryPoint (
   IN CONST EFI_PEI_SERVICES    **PeiServices
   )
 {
-  CHAR8               BuildUuid[UUID_SIZE];
-  CHAR8               StoredUuid[UUID_SIZE];
-  EFI_STATUS          Status;
-  UINTN               FWNvRamStartOffset;
-  UINT32              FWNvRamSize;
-  UINTN               NvRamAddress;
-  UINT32              NvRamSize;
-  UINTN               UefiMiscOffset;
-  UINT32              UefiMiscSize;
+  CHAR8                 BuildUuid[UUID_SIZE];
+  CHAR8                 StoredUuid[UUID_SIZE];
+  EFI_STATUS            Status;
+  IPMI_BOOT_FLAGS_INFO  BootFlags;
+  BOOLEAN               NeedToClearUserConfiguration;
+  UINT32                FWNvRamSize;
+  UINT32                NvRamSize;
+  UINT32                UefiMiscSize;
+  UINTN                 FWNvRamStartOffset;
+  UINTN                 NvRamAddress;
+  UINTN                 UefiMiscOffset;
+
+  NeedToClearUserConfiguration = FALSE;
 
   CopyMem ((VOID *)BuildUuid, PcdGetPtr (PcdPlatformConfigUuid), UUID_SIZE);
 
@@ -75,6 +80,25 @@ FlashPeiEntryPoint (
   }
 
   //
+  // Get Boot Flags from BMC to determine if an NVRAM clear request has been made or not.
+  //
+  Status = IpmiGetBootFlags (&BootFlags);
+  if (!EFI_ERROR (Status)) {
+    if (BootFlags.IsCmosClear) {
+      DEBUG ((DEBUG_INFO, "FlashPei: Clear-cmos option is selected\n"));
+      NeedToClearUserConfiguration = TRUE;
+    }
+
+    Status = IpmiClearCmosBootFlags ();
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "FlashPei: Failed to clear clear-cmos boot flags - %r\n", Status));
+      NeedToClearUserConfiguration = FALSE;
+    }
+  } else {
+    DEBUG ((DEBUG_ERROR, "FlashPei: Failed to get Boot Flags via IPMI - %r\n", Status));
+  }
+
+  //
   // Get the Platform UUID stored in the very first bytes of the UEFI Misc.
   //
   Status = FlashReadCommand (
@@ -86,8 +110,12 @@ FlashPeiEntryPoint (
     return Status;
   }
 
-  if (CompareMem ((VOID *)StoredUuid, (VOID *)BuildUuid, UUID_SIZE) != 0) {
+  if ((CompareMem ((VOID *)StoredUuid, (VOID *)BuildUuid, UUID_SIZE)) != 0) {
     DEBUG ((DEBUG_INFO, "BUILD UUID Changed, Update Storage with NVRAM FV\n"));
+    NeedToClearUserConfiguration = TRUE;
+  }
+
+  if (NeedToClearUserConfiguration) {
 
     Status = FlashEraseCommand (FWNvRamStartOffset, NvRamSize * 2);
     if (EFI_ERROR (Status)) {

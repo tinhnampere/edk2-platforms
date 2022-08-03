@@ -1,7 +1,7 @@
 
 ## @file
 #
-# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+# Copyright (c) 2021 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -26,20 +26,14 @@
 [LibraryClasses]
   BaseLib
   DevicePathLib
-  FlashLib
   IpmiCommandLibExt
   MemoryAllocationLib
-  NVParamLib
-  PcdLib
   UefiBootManagerLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
-  UefiRuntimeServicesTableLib
 
 [Pcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile
-
-  gAmpereTokenSpaceGuid.PcdPlatformConfigUuid
 
 [Guids]
   gAmpereAfterConsoleEventGuid
