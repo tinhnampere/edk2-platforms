@@ -1,0 +1,32 @@
+## @file
+#
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = IpmiCommandLibExtPei
+  FILE_GUID                      = 666A95D1-0C49-4B11-9202-D89EEDE1F024
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = IpmiCommandLibExt|PEIM
+
+[Sources]
+  IpmiCommandLibExt.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  IpmiLib
+  MemoryAllocationLib
+
+[Depex]
+  gPeiIpmiPpiGuid
