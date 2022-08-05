@@ -541,7 +541,7 @@
   # SMBIOS PCDs
   #
   gArmTokenSpaceGuid.PcdProcessorManufacturer|L"Ampere(R)"
-  gArmTokenSpaceGuid.PcdProcessorAssetTag|L"Not Specified"
+  gArmTokenSpaceGuid.PcdProcessorAssetTag|L"Not Set"
 
 [PcdsDynamicHii.common.DEFAULT]
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|L"Timeout"|gEfiGlobalVariableGuid|0x0|10
