@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2021 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -53,6 +53,12 @@ FindCapabilityPtr (
   IN  EFI_PCI_IO_PROTOCOL *PciIo,
   IN  UINT8               CapabilityId,
   OUT UINT8               *CapabilityPtr
+  );
+
+EFI_STATUS
+SetSerr (
+  PCIE_NODE *Node,
+  UINT8     Value
   );
 
 #endif // PCIE_HELPER_H_

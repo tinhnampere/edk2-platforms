@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2021 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -25,11 +25,13 @@
 #define DEVICE_KEY          0x6000
 #define MPS_ONE_OF_KEY      0x7000
 #define MRR_ONE_OF_KEY      0x8000
+#define SERR_ONE_OF_KEY     0x9000
 
 #define MAX_DEVICE          40
 
 #define DEFAULT_MPS         0x00 // Section 7.5.3.4
 #define DEFAULT_MRR         0x02 // Section 7.5.3.4
+#define DEFAULT_SERR        0x01 // Section 7.5.1.1
 
 #define PCIE_ADD(Vid, Did, Seg, Bus, Dev) \
         (UINT64)(Vid) << 40 | (UINT64)(Did) << 24 | Seg << 16 | Bus << 8 | Dev;
@@ -48,6 +50,7 @@ typedef struct {
 typedef struct {
   UINT8  MPS[MAX_DEVICE];
   UINT8  MRR[MAX_DEVICE];
+  UINT8  SERR[MAX_DEVICE];
   UINT64 SlotInfo[MAX_DEVICE];
 } VARSTORE_DATA;
 

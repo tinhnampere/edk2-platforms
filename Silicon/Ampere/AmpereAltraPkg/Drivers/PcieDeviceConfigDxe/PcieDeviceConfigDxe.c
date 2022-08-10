@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2021 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -151,6 +151,11 @@ FlushDeviceData (
     FOR_EACH (Node, mDeviceBuf[Index], Brother) {
       WriteMrr (Node, VarStoreConfig->MRR[Index]);
     }
+
+    //
+    // Set SERR
+    //
+    SetSerr (mDeviceBuf[Index], VarStoreConfig->SERR[Index]);
   }
 
   gBS->CloseEvent (Event);
@@ -171,6 +176,7 @@ UpdateDeviceForm (
   EFI_IFR_GUID_LABEL *EndLabel;
   VOID               *MpsOpCodeHandle;
   VOID               *MrrOpCodeHandle;
+  VOID               *SerrOpCodeHandle;
   PCIE_NODE          *Node;
 
   if (mDeviceBuf[Index] == NULL) {
@@ -372,6 +378,40 @@ UpdateDeviceForm (
     NULL                              // Default Opcode is NULl
     );
 
+  // Create Option OpCode for SERR selection
+  SerrOpCodeHandle = HiiAllocateOpCodeHandle ();
+  ASSERT (SerrOpCodeHandle != NULL);
+
+  HiiCreateOneOfOptionOpCode (
+    SerrOpCodeHandle,
+    STRING_TOKEN (STR_PCIE_SERR_ENABLE),
+    0,
+    EFI_IFR_NUMERIC_SIZE_1,
+    PCIE_SERR_ENABLE
+    );
+
+  HiiCreateOneOfOptionOpCode (
+    SerrOpCodeHandle,
+    STRING_TOKEN (STR_PCIE_SERR_DISABLE),
+    0,
+    EFI_IFR_NUMERIC_SIZE_1,
+    PCIE_SERR_DISABLE
+    );
+
+  // Create SERR OneOf
+  HiiCreateOneOfOpCode (
+    StartOpCodeHandle,
+    (SERR_ONE_OF_KEY + Index),
+    VARSTORE_ID,
+    MAX_DEVICE * 2 + Index,
+    STRING_TOKEN (STR_PCIE_SERR),
+    STRING_TOKEN (STR_PCIE_SERR_HELP),
+    EFI_IFR_FLAG_CALLBACK,
+    EFI_IFR_NUMERIC_SIZE_1,
+    SerrOpCodeHandle,
+    NULL
+    );
+
   HiiUpdateForm (
     PrivateData->HiiHandle,        // HII handle
     &gPcieDeviceConfigFormSetGuid, // Formset GUID
@@ -384,6 +424,7 @@ UpdateDeviceForm (
   HiiFreeOpCodeHandle (EndOpCodeHandle);
   HiiFreeOpCodeHandle (MpsOpCodeHandle);
   HiiFreeOpCodeHandle (MrrOpCodeHandle);
+  HiiFreeOpCodeHandle (SerrOpCodeHandle);
   return EFI_SUCCESS;
 }
 
@@ -410,6 +451,7 @@ OnPciIoProtocolNotify (
   UINT64 SlotInfo;
 
   PCIE_NODE        *Node;
+  PCIE_NODE        TempNode;
   PRIVATE_DATA     *PrivateData;
   STATIC PCIE_NODE *LastNode;
   STATIC UINT8     Index;
@@ -442,6 +484,16 @@ OnPciIoProtocolNotify (
                     );
     if (EFI_ERROR (Status)) {
       break;
+    }
+
+    //
+    // By default, SERR of all devices both Endpoint devices and Bridge devices
+    // should be enabled.
+    //
+    TempNode.PciIo = PciIo;
+    Status = SetSerr (&TempNode, PCIE_SERR_ENABLE);
+    if (EFI_ERROR (Status)) {
+      continue;
     }
 
     // Get device bus location
@@ -529,6 +581,7 @@ OnPciIoProtocolNotify (
 
         VarStoreConfig->MPS[Index] = DEFAULT_MPS;
         VarStoreConfig->MRR[Index] = DEFAULT_MRR;
+        VarStoreConfig->SERR[Index] = DEFAULT_SERR;
         VarStoreConfig->SlotInfo[Index] = SlotInfo;
 
         // Retrieve setting from previous variable
@@ -536,6 +589,7 @@ OnPciIoProtocolNotify (
           if (SlotInfo == LastVarStoreConfig->SlotInfo[Idx]) {
             VarStoreConfig->MPS[Index] = LastVarStoreConfig->MPS[Idx];
             VarStoreConfig->MRR[Index] = LastVarStoreConfig->MRR[Idx];
+            VarStoreConfig->SERR[Index] = LastVarStoreConfig->SERR[Idx];
             break;
           }
         }
@@ -943,6 +997,12 @@ DriverCallback (
         & (QuestionId <= (MRR_ONE_OF_KEY + MAX_DEVICE)))
     {
       Value->u8 = DEFAULT_MRR;
+    }
+
+    if ((QuestionId >= SERR_ONE_OF_KEY)
+        & (QuestionId <= (SERR_ONE_OF_KEY + MAX_DEVICE)))
+    {
+      Value->u8 = DEFAULT_SERR;
     }
     break;
 

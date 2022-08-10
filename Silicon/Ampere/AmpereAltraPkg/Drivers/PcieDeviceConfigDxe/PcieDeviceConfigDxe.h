@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2021, Ampere Computing LLC. All rights reserved.<BR>
+  Copyright (c) 2021 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -25,6 +25,9 @@
 #define PRIVATE_DATA_SIGNATURE        SIGNATURE_32 ('P', 'E', 'D', 'C')
 #define PRIVATE_DATA_FROM_THIS(a)     \
              CR (a, PRIVATE_DATA, ConfigAccess, PRIVATE_DATA_SIGNATURE)
+
+#define PCIE_SERR_ENABLE    0x01
+#define PCIE_SERR_DISABLE   0x00
 
 #pragma pack(1)
 
