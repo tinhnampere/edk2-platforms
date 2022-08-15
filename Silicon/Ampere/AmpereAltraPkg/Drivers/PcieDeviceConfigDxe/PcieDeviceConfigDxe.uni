@@ -27,3 +27,30 @@
 #string STR_PCIE_SERR_ENABLE    #language en-US "Enabled"
 #string STR_PCIE_SERR_DISABLE   #language en-US "Disabled"
 
+//
+// PCI Code and ID assignments (Rev 1.14)
+//
+#string STR_PCI_CLASS_00                             #language en-US "Old PCI Device"
+#string STR_PCI_CLASS_01                             #language en-US "Mass Storage Controller"
+#string STR_PCI_CLASS_02                             #language en-US "Network Controller"
+#string STR_PCI_CLASS_03                             #language en-US "Display Controller"
+#string STR_PCI_CLASS_04                             #language en-US "Multimedia Device"
+#string STR_PCI_CLASS_05                             #language en-US "Memory Controller"
+#string STR_PCI_CLASS_06                             #language en-US "Bridge Device"
+#string STR_PCI_CLASS_07                             #language en-US "Simple Communication Controller"
+#string STR_PCI_CLASS_08                             #language en-US "Generic System Peripheral"
+#string STR_PCI_CLASS_09                             #language en-US "Input Device"
+#string STR_PCI_CLASS_0A                             #language en-US "Docking Station"
+#string STR_PCI_CLASS_0B                             #language en-US "Processor"
+#string STR_PCI_CLASS_0C                             #language en-US "Serial Bus Controller"
+#string STR_PCI_CLASS_0D                             #language en-US "Wireless Controller"
+#string STR_PCI_CLASS_0E                             #language en-US "Intelligent I/O Controller"
+#string STR_PCI_CLASS_0F                             #language en-US "Satellite Communication Controller"
+
+//
+// Base class 10h
+// Base class 11h
+// Base class 12h
+// Base class 13h
+// Unsupported
+//

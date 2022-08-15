@@ -608,6 +608,99 @@ OnPciIoProtocolNotify (
   }
 }
 
+EFI_STRING_ID
+GetPciClassString (
+  PCIE_NODE       *PciNode
+  )
+{
+  EFI_STRING_ID  HelpStringId;
+  EFI_STATUS     Status;
+  UINT8          Data[4];
+
+  //
+  // Get Class code
+  //
+  Status = PciNode->PciIo->Pci.Read (
+                                 PciNode->PciIo,
+                                 EfiPciIoWidthUint32,
+                                 PCI_REVISION_ID_OFFSET,
+                                 1,
+                                 Data
+                                 );
+
+  switch (Data[3]) {
+    case PCI_CLASS_OLD:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_00);
+      break;
+
+    case PCI_CLASS_MASS_STORAGE:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_01);
+      break;
+
+    case PCI_CLASS_NETWORK:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_02);
+      break;
+
+    case PCI_CLASS_DISPLAY:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_03);
+      break;
+
+    case PCI_CLASS_MEDIA:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_04);
+      break;
+
+    case PCI_CLASS_MEMORY_CONTROLLER:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_05);
+      break;
+
+    case PCI_CLASS_BRIDGE:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_06);
+      break;
+
+    case PCI_CLASS_SCC:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_07);
+      break;
+
+    case PCI_CLASS_SYSTEM_PERIPHERAL:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_08);
+      break;
+
+    case PCI_CLASS_INPUT_DEVICE:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_09);
+      break;
+
+    case PCI_CLASS_DOCKING_STATION:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_0A);
+      break;
+
+    case PCI_CLASS_PROCESSOR:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_0B);
+      break;
+
+    case PCI_CLASS_SERIAL:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_0C);
+      break;
+
+    case PCI_CLASS_WIRELESS:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_0D);
+      break;
+
+    case PCI_CLASS_INTELLIGENT_IO:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_0E);
+      break;
+
+    case PCI_CLASS_SATELLITE:
+    HelpStringId = STRING_TOKEN (STR_PCI_CLASS_0F);
+      break;
+
+    default:
+    HelpStringId = STRING_TOKEN (STR_DEVICE_GOTO_HELP);
+      break;
+  }
+
+  return HelpStringId;
+}
+
 VOID
 UpdateMainForm (
   IN EFI_EVENT Event,
@@ -684,12 +777,12 @@ UpdateMainForm (
     // Create a Goto OpCode to device configuration
     //
     HiiCreateGotoOpCode (
-      StartOpCodeHandle,                   // Container for dynamic created opcodes
-      DEVICE_FORM_ID,                      // Target Form ID
-      StrId,                               // Prompt text
-      STRING_TOKEN (STR_DEVICE_GOTO_HELP), // Help text
-      EFI_IFR_FLAG_CALLBACK,               // Question flag
-      (DEVICE_KEY + Index)                 // Question ID
+      StartOpCodeHandle,                               // Container for dynamic created opcodes
+      DEVICE_FORM_ID,                                  // Target Form ID
+      StrId,                                           // Prompt text
+      GetPciClassString (mDeviceBuf[Index]),           // Help text
+      EFI_IFR_FLAG_CALLBACK,                           // Question flag
+      (DEVICE_KEY + Index)                             // Question ID
       );
   }
 
