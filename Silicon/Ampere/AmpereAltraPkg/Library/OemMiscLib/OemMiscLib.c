@@ -32,7 +32,7 @@
 #define CACHE_OPERATION_MODE_SHIFT  8
 
 #define PROCESSOR_VERSION_ALTRA     L"Ampere(R) Altra(R) Processor"
-#define PROCESSOR_VERSION_ALTRA_MAX L"Ampere(R) Alra(R) Max Processor"
+#define PROCESSOR_VERSION_ALTRA_MAX L"Ampere(R) Altra(R) Max Processor"
 
 #define VOLTAGE_SCALE_FACTOR        1000
 
