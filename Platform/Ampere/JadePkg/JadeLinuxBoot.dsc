@@ -67,12 +67,13 @@
   SmbusLib|MdePkg/Library/DxeSmbusLib/DxeSmbusLib.inf
 
 [PcdsDynamicDefault.common.DEFAULT]
-  # SMBIOS Type 0 - BIOS Information
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate|"MM/DD/YYYY"
+!ifdef $(FIRMWARE_VER)
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L"$(FIRMWARE_VER)                                 "
+!endif
 
 [PcdsFixedAtBuild.common]
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|$(MAJOR_VER)
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|$(MINOR_VER)
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0MajorVersion|$(MAJOR_VER)
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0MinorVersion|$(MINOR_VER)
 
   # Clearing BIT0 in this PCD prevents installing a 32-bit SMBIOS entry point,
   # if the entry point version is >= 3.0. AARCH64 OSes cannot assume the
@@ -101,5 +102,6 @@
   #
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
   ArmPkg/Universal/Smbios/ProcessorSubClassDxe/ProcessorSubClassDxe.inf
+  ArmPkg/Universal/Smbios/SmbiosMiscDxe/SmbiosMiscDxe.inf
   Platform/Ampere/JadePkg/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.inf
   Platform/Ampere/JadePkg/Drivers/SmbiosMemInfoDxe/SmbiosMemInfoDxe.inf

@@ -150,10 +150,6 @@
   gAmpereTokenSpaceGuid.PcdPcieHotPlugPortMapTable.UseDefaultConfig|TRUE
 
 [PcdsFixedAtBuild]
-!ifdef $(FIRMWARE_VER)
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L"$(FIRMWARE_VER)"
-!endif
-
   gAmpereTokenSpaceGuid.PcdPcieHotPlugGpioResetMap|0x3F
 
   #
@@ -221,8 +217,8 @@
   #
   gAmpereTokenSpaceGuid.PcdPlatformConfigUuid|"$(PLATFORM_CONFIG_UUID)"
 
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|$(MAJOR_VER)
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|$(MINOR_VER)
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0MajorVersion|$(MAJOR_VER)
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0MinorVersion|$(MINOR_VER)
 
   # Clearing BIT0 in this PCD prevents installing a 32-bit SMBIOS entry point,
   # if the entry point version is >= 3.0. AARCH64 OSes cannot assume the
@@ -259,11 +255,9 @@
 !endif
 
 [PcdsDynamicDefault.common.DEFAULT]
-  # SMBIOS Type 0 - BIOS Information
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate|"MM/DD/YYYY"
-
-  # SMBIOS Type 1 - UUID
-  gAmpereTokenSpaceGuid.PcdFruSystemUniqueID|{ 0x50, 0xFC, 0x29, 0x26, 0xCB, 0xB7, 0x11, 0xEB, 0xB8, 0xBC, 0x02, 0x42, 0xAC, 0x13, 0x00, 0x03 }
+!ifdef $(FIRMWARE_VER)
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L"$(FIRMWARE_VER)                                 "
+!endif
 
 [PcdsDynamicExDefault.common.DEFAULT]
   gEfiSignedCapsulePkgTokenSpaceGuid.PcdEdkiiSystemFirmwareImageDescriptor|{0x0}|VOID*|0x100
@@ -317,6 +311,7 @@
   #
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
   ArmPkg/Universal/Smbios/ProcessorSubClassDxe/ProcessorSubClassDxe.inf
+  ArmPkg/Universal/Smbios/SmbiosMiscDxe/SmbiosMiscDxe.inf
   Platform/Ampere/JadePkg/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.inf
   Platform/Ampere/JadePkg/Drivers/SmbiosMemInfoDxe/SmbiosMemInfoDxe.inf
 

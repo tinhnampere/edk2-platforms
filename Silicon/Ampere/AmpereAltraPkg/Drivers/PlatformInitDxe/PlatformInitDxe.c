@@ -8,10 +8,15 @@
 
 #include <Uefi.h>
 
+#include <IndustryStandard/SmBios.h>
+#include <Library/AmpereCpuLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/FlashLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
+#include <Library/PcdLib.h>
+#include <Library/PrintLib.h>
 
 #include "PlatformInitDxe.h"
 
@@ -107,6 +112,72 @@ FailSafeClearContext (
     return FlashEraseCommand (FailSafeStartOffset, FailSafeSize);
 }
 
+/**
+  Prepare Firmware Version for SMBIOS Type 0. "PcdFirmwareVersionString"
+  will contains version of UEFI and SCP.
+
+  @param[out] PcdFirmwareVersionString PCD of Firmware Version String is updated
+**/
+VOID
+UpdateFirmwareVersionString (
+  VOID
+  )
+{
+  UINT8      UnicodeStrLen;
+  UINT8      FirmwareVersionStrLen;
+  UINT8      FirmwareVersionStrSize;
+  UINT8      *ScpVersion;
+  UINT8      *ScpBuild;
+  CHAR16     UnicodeStr[SMBIOS_STRING_MAX_LENGTH * sizeof (CHAR16)];
+  CHAR16     *FirmwareVersionPcdPtr;
+
+  FirmwareVersionStrLen  = 0;
+  ZeroMem (UnicodeStr, sizeof (UnicodeStr));
+  FirmwareVersionPcdPtr  = (CHAR16 *)PcdGetPtr (PcdFirmwareVersionString);
+  FirmwareVersionStrSize = StrLen (FirmwareVersionPcdPtr) * sizeof (CHAR16);
+  //
+  // Format of PcdFirmwareVersionString is
+  // "(MAJOR_VER).(MINOR_VER).(BUILD) Build YYYY.MM.DD", we only need
+  // "(MAJOR_VER).(MINOR_VER).(BUILD)" showed in BIOS version. Using
+  // space character to determine this string. Another case uses null
+  // character to end while loop.
+  //
+  while (*FirmwareVersionPcdPtr != ' ' && *FirmwareVersionPcdPtr != '\0') {
+    FirmwareVersionStrLen++;
+    FirmwareVersionPcdPtr++;
+  }
+  FirmwareVersionPcdPtr = (CHAR16 *)PcdGetPtr (PcdFirmwareVersionString);
+  UnicodeStrLen = FirmwareVersionStrLen * sizeof (CHAR16);
+  CopyMem (UnicodeStr, FirmwareVersionPcdPtr, UnicodeStrLen);
+
+  GetScpVersion (&ScpVersion);
+  GetScpBuild (&ScpBuild);
+  if (ScpVersion == NULL || ScpBuild == NULL) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a:%d: Fail to get SMpro/PMpro information\n",
+      __FUNCTION__,
+      __LINE__));
+    UnicodeSPrint (
+      FirmwareVersionPcdPtr,
+      FirmwareVersionStrSize,
+      L"TianoCore %.*s (SYS: 0.00.00000000)",
+      FirmwareVersionStrLen,
+      (UINT16 *)UnicodeStr
+    );
+  } else {
+    UnicodeSPrint (
+      FirmwareVersionPcdPtr,
+      FirmwareVersionStrSize,
+      L"TianoCore %.*s (SYS: %a.%a)",
+      FirmwareVersionStrLen,
+      (UINT16 *)UnicodeStr,
+      ScpVersion,
+      ScpBuild
+    );
+  }
+}
+
 EFI_STATUS
 EFIAPI
 PlatformInitDxeEntryPoint (
@@ -128,6 +199,8 @@ PlatformInitDxeEntryPoint (
 
     Status = FailSafeClearContext ();
     ASSERT_EFI_ERROR (Status);
+
+    UpdateFirmwareVersionString ();
 
     return Status;
 }

@@ -332,10 +332,6 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|FALSE
 
 [PcdsFixedAtBuild.common]
-!ifdef $(FIRMWARE_VER)
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L"$(FIRMWARE_VER)"
-!endif
-
   gEfiMdePkgTokenSpaceGuid.PcdMaximumUnicodeStringLength|1000000
   gEfiMdePkgTokenSpaceGuid.PcdMaximumAsciiStringLength|1000000
   gEfiMdePkgTokenSpaceGuid.PcdMaximumLinkedListLength|1000000
@@ -541,6 +537,7 @@
   # SMBIOS PCDs
   #
   gArmTokenSpaceGuid.PcdProcessorManufacturer|L"Ampere(R)"
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"Ampere(R)"
   gArmTokenSpaceGuid.PcdProcessorAssetTag|L"Not Set"
 
 [PcdsDynamicHii.common.DEFAULT]

@@ -85,10 +85,10 @@
   gAmpereTokenSpaceGuid.PcdPmproDbBaseReg|0x100001540000|UINT64|0x00000004
 
   #
-  # SMBIOS Type 1 Pcd
+  # SMBIOS Type 0 Pcd
   #
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion|0|UINT8|0x00000005
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion|0|UINT8|0x00000006
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0MajorVersion|0|UINT8|0x00000005
+  gAmpereTokenSpaceGuid.PcdSmbiosTables0MinorVersion|0|UINT8|0x00000006
 
   #
   # SMBus
@@ -117,12 +117,6 @@
   #
   gAmpereTokenSpaceGuid.PcdFvBlockSize|0|UINT32|0xB0000001
 
-  #
-  # SMBIOS, default or template values
-  #
-  # SMBIOS Type 0 - BIOS Information
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate|"MM/DD/YYYY"|VOID*|0xB0000002 # Must follow this MM/DD/YYYY SMBIOS date format
-
   # Pcie HotPlug reset map
   gAmpereTokenSpaceGuid.PcdPcieHotPlugGpioResetMap|0x0|UINT8|0xB000000A
 
@@ -148,28 +142,3 @@
   # The user ID and password are fixed as below.
   gAmpereTokenSpaceGuid.PcdRedfishServiceUserId|"root"|VOID*|0xB0000012
   gAmpereTokenSpaceGuid.PcdRedfishServicePassword|"0penBmc"|VOID*|0xB0000013
-
-[PcdsDynamic, PcdsDynamicEx]
-  # FRU Chassis Information
-  gAmpereTokenSpaceGuid.PcdFruChassisPartNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000021
-  gAmpereTokenSpaceGuid.PcdFruChassisSerialNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000022
-  gAmpereTokenSpaceGuid.PcdFruChassisExtra|"To be filled by O.E.M.                             "|VOID*|0xB0000023
-
-  # FRU Board Information
-  gAmpereTokenSpaceGuid.PcdFruBoardManufacturerName|"To be filled by O.E.M.                             "|VOID*|0xB0000031
-  gAmpereTokenSpaceGuid.PcdFruBoardProductName|"To be filled by O.E.M.                             "|VOID*|0xB0000032
-  gAmpereTokenSpaceGuid.PcdFruBoardSerialNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000033
-  gAmpereTokenSpaceGuid.PcdFruBoardPartNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000034
-
-  # FRU Product Information
-  gAmpereTokenSpaceGuid.PcdFruProductManufacturerName|"To be filled by O.E.M.                             "|VOID*|0xB0000041
-  gAmpereTokenSpaceGuid.PcdFruProductName|"To be filled by O.E.M.                             "|VOID*|0xB0000042
-  gAmpereTokenSpaceGuid.PcdFruProductPartNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000043
-  gAmpereTokenSpaceGuid.PcdFruProductVersion|"To be filled by O.E.M.                             "|VOID*|0xB0000044
-  gAmpereTokenSpaceGuid.PcdFruProductSerialNumber|"To be filled by O.E.M.                             "|VOID*|0xB0000045
-  gAmpereTokenSpaceGuid.PcdFruProductAssetTag|"To be filled by O.E.M.                             "|VOID*|0xB0000046
-  gAmpereTokenSpaceGuid.PcdFruProductFruFileId|"To be filled by O.E.M.                             "|VOID*|0xB0000047
-  gAmpereTokenSpaceGuid.PcdFruProductExtra|"To be filled by O.E.M.                             "|VOID*|0xB0000048
-
-  # FRU MultiRecord
-  gAmpereTokenSpaceGuid.PcdFruSystemUniqueID|{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }|VOID*|0xB0000049

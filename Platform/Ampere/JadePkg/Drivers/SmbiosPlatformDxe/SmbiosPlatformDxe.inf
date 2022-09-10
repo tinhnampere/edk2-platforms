@@ -1,6 +1,6 @@
 ## @file
 #
-# Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+# Copyright (c) 2020 - 2022, Ampere Computing LLC. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -15,14 +15,12 @@
   ENTRY_POINT                    = SmbiosPlatformDxeEntry
 
 [Sources]
-  IpmiFruInfo.c
   SmbiosPlatformDxe.c
 
 [Packages]
   ArmPkg/ArmPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
-  OutOfBandManagement/IpmiFeaturePkg/IpmiFeaturePkg.dec
   Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dec
   Silicon/Ampere/AmpereSiliconPkg/AmpereSiliconPkg.dec
 
@@ -31,10 +29,7 @@
   BaseLib
   BaseMemoryLib
   DebugLib
-  HobLib
   IOExpanderLib
-  IpmiCommandLib
-  IpmiLib
   MemoryAllocationLib
   NVParamLib
   UefiBootServicesTableLib
@@ -43,44 +38,9 @@
 
 [Protocols]
   gEfiSmbiosProtocolGuid                     ## CONSUMED
-  gIpmiProtocolGuid
-
-[Pcd]
-  # Type 0
-  gAmpereTokenSpaceGuid.PcdSmbiosTables0BiosReleaseDate
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MajorVersion
-  gAmpereTokenSpaceGuid.PcdSmbiosTables1MinorVersion
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString
-
-  gArmTokenSpaceGuid.PcdFdSize
-
-  # FRU Chassis Information
-  gAmpereTokenSpaceGuid.PcdFruChassisPartNumber
-  gAmpereTokenSpaceGuid.PcdFruChassisSerialNumber
-  gAmpereTokenSpaceGuid.PcdFruChassisExtra
-
-  # FRU Board Information
-  gAmpereTokenSpaceGuid.PcdFruBoardManufacturerName
-  gAmpereTokenSpaceGuid.PcdFruBoardProductName
-  gAmpereTokenSpaceGuid.PcdFruBoardSerialNumber
-  gAmpereTokenSpaceGuid.PcdFruBoardPartNumber
-
-  # FRU Product Information
-  gAmpereTokenSpaceGuid.PcdFruProductManufacturerName
-  gAmpereTokenSpaceGuid.PcdFruProductName
-  gAmpereTokenSpaceGuid.PcdFruProductPartNumber
-  gAmpereTokenSpaceGuid.PcdFruProductVersion
-  gAmpereTokenSpaceGuid.PcdFruProductSerialNumber
-  gAmpereTokenSpaceGuid.PcdFruProductAssetTag
-  gAmpereTokenSpaceGuid.PcdFruProductFruFileId
-  gAmpereTokenSpaceGuid.PcdFruProductExtra
-
-  # FRU MultiRecord
-  gAmpereTokenSpaceGuid.PcdFruSystemUniqueID
 
 [Guids]
   gCpuConfigFormSetGuid
-  gPlatformInfoHobGuid
 
 [Depex]
   gEfiSmbiosProtocolGuid

@@ -300,6 +300,28 @@ GetNumberOfActiveCores (
   );
 
 /**
+  Get version of SCP.
+
+  @param[out]   ScpVer   Pointer to contain version of SCP value.
+**/
+VOID
+EFIAPI
+GetScpVersion (
+  UINT8 **ScpVer
+  );
+
+/**
+  Get date of build release for SCP.
+
+  @param[out]   ScpBuild   Pointer to contain date of build release for SCP.
+**/
+VOID
+EFIAPI
+GetScpBuild (
+  UINT8 **ScpBuild
+  );
+
+/**
   Check if the logical CPU is enabled or not.
 
   @param    CpuId       The logical Cpu ID. Started from 0.

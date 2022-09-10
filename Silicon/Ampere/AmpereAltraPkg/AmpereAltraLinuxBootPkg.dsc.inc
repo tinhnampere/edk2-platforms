@@ -456,6 +456,13 @@
   gArmTokenSpaceGuid.PcdMmBufferBase|0x88300000
   gArmTokenSpaceGuid.PcdMmBufferSize|0x100000
 
+  #
+  # SMBIOS PCDs
+  #
+  gArmTokenSpaceGuid.PcdProcessorManufacturer|L"Ampere(R)"
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"Ampere(R)"
+  gArmTokenSpaceGuid.PcdProcessorAssetTag|L"Not Set"
+
 [PcdsDynamicHii.common.DEFAULT]
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|L"Timeout"|gEfiGlobalVariableGuid|0x0|0
 
