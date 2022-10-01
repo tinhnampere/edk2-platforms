@@ -1052,6 +1052,14 @@ AutoLaneBifurcationRetry:
     // Hold link training
     StartLinkTraining (RootComplex, PcieIndex, FALSE);
 
+    // Clear BUSCTRL.CfgUrMask to set CRS (Configuration Request Retry Status) to 0xFFFF.FFFF
+    // rather than 0xFFFF.0001 as per PCIe specification requirement. Otherwise, this causes
+    // device drivers respond incorrectly on timeout due to long device operations.
+    TargetAddress = CsrBase + AC01_PCIE_CORE_BUS_CONTROL_REG;
+    Val = MmioRead32 (TargetAddress);
+    Val &= ~BUS_CTL_CFG_UR_MASK;
+    MmioWrite32 (TargetAddress, Val);
+
     if (!EnableAxiPipeClock (RootComplex, PcieIndex)) {
       DEBUG ((DEBUG_ERROR, "- Pcie[%d] - PIPE clock is not stable\n", PcieIndex));
       return RETURN_DEVICE_ERROR;
