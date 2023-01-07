@@ -77,6 +77,9 @@
   ResetSystemLib|ArmPkg/Library/ArmSmcPsciResetSystemLib/ArmSmcPsciResetSystemLib.inf
   TimerLib|ArmPkg/Library/ArmArchTimerLib/ArmArchTimerLib.inf
 
+  # USB Libraries
+  UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
+
   #
   # Ampere Altra specific Libraries
   #

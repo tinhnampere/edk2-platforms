@@ -335,7 +335,9 @@ APRIORI DXE {
   #
   INF Platform/Ampere/AmperePlatformPkg/Drivers/GigUndiDxe/GigUndiDxe.inf
 
-  INF Platform/Ampere/AmperePlatformPkg/Drivers/UsbCdcEthernetDxe/UsbCdcEthernetDxe.inf
+  # INF Platform/Ampere/AmperePlatformPkg/Drivers/UsbCdcEthernetDxe/UsbCdcEthernetDxe.inf
+  INF UsbNetworkPkg/NetworkCommon/NetworkCommon.inf
+  INF UsbNetworkPkg/UsbCdcEcm/UsbCdcEcm.inf
 
   #
   # VGA Aspeed
