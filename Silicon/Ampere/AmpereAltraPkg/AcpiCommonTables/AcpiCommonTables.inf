@@ -14,15 +14,15 @@
   VERSION_STRING                 = 1.0
 
 [Sources]
-  Bert.aslc
-  Dbg2.aslc
-  Einj.asl
+  # Bert.aslc
+  # Dbg2.aslc
+  # Einj.asl
   Fadt.aslc
   Gtdt.aslc
-  Hest.asl
-  Sdei.asl
+  # Hest.asl
+  # Sdei.asl
   Spcr.aslc
-  Ssdt.asl
+  # Ssdt.asl
 
 [Packages]
   ArmPkg/ArmPkg.dec

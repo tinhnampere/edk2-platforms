@@ -68,45 +68,45 @@ InstallAcpiOnReadyToBoot (
     DEBUG ((DEBUG_INFO, "Installed MADT table\n"));
   }
 
-  Status = AcpiInstallPpttTable ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Installed PPTT table\n"));
-  }
+  // Status = AcpiInstallPpttTable ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "Installed PPTT table\n"));
+  // }
 
-  Status = AcpiInstallSlitTable ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Installed SLIT table\n"));
-  }
+  // Status = AcpiInstallSlitTable ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "Installed SLIT table\n"));
+  // }
 
-  Status = AcpiInstallSratTable ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Installed SRAT table\n"));
-  }
+  // Status = AcpiInstallSratTable ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "Installed SRAT table\n"));
+  // }
 
-  Status = AcpiInstallPcctTable ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Installed PCCT table\n"));
-  }
+  // Status = AcpiInstallPcctTable ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "Installed PCCT table\n"));
+  // }
 
-  Status = AcpiInstallNfitTable ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Installed NFIT table\n"));
-  }
+  // Status = AcpiInstallNfitTable ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "Installed NFIT table\n"));
+  // }
 
-  Status = AcpiInstallIort ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Installed IORT table\n"));
-  }
+  // Status = AcpiInstallIort ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "Installed IORT table\n"));
+  // }
 
-  Status = AcpiInstallMcfg ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Installed MCFG table\n"));
-  }
+  // Status = AcpiInstallMcfg ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "Installed MCFG table\n"));
+  // }
 
-  Status = AcpiPopulateBert ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Populate BERT record\n"));
-  }
+  // Status = AcpiPopulateBert ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "Populate BERT record\n"));
+  // }
 
   //
   // Close the event, so it will not be signalled again.
@@ -129,16 +129,16 @@ UpdateAcpiOnExitBootServices (
   }
 
   // Configure ACPI Platform Error Interfaces
-  Status = AcpiApeiUpdate ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "APEI Table updated!\n"));
-  }
+  // Status = AcpiApeiUpdate ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "APEI Table updated!\n"));
+  // }
 
   // Advertise shared memory regions to SMpro/PMpro and unmask interrupt
-  Status = AcpiPcctInitializeSharedMemory ();
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "PCCT Table updated!\n"));
-  }
+  // Status = AcpiPcctInitializeSharedMemory ();
+  // if (!EFI_ERROR (Status)) {
+  //   DEBUG ((DEBUG_INFO, "PCCT Table updated!\n"));
+  // }
 
   //
   // Close the event, so it will not be signalled again.
