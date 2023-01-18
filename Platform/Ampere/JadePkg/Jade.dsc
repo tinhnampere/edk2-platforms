@@ -66,6 +66,9 @@
 # Include default Ampere Platform DSC file
 !include Silicon/Ampere/AmpereAltraPkg/AmpereAltraPkg.dsc.inc
 
+# Include Dynamic table framework
+!include DynamicTablesPkg/DynamicTables.dsc.inc
+
 ################################################################################
 #
 # Specific Platform Library
@@ -163,6 +166,7 @@
   Platform/Ampere/JadePkg/Drivers/AcpiPlatformDxe/AcpiPlatformDxe.inf
   Silicon/Ampere/AmpereAltraPkg/AcpiCommonTables/AcpiCommonTables.inf
   Platform/Ampere/JadePkg/AcpiTables/AcpiTables.inf
+  Platform/Ampere/JadePkg/Drivers/ConfigurationManager/ConfigurationManager.inf
 
   #
   # PCIe
