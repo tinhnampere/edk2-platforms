@@ -54,7 +54,10 @@ SetupIpmiTransportHardwareInformation (
     *HardwareInformation                          =
       (MANAGEABILITY_TRANSPORT_HARDWARE_INFORMATION)KcsHardwareInfo;
     return EFI_SUCCESS;
-  } else {
+  } else if (CompareGuid (&gManageabilityTransportI2CGuid, TransportToken->Transport->ManageabilityTransportSpecification)) {
+    return EFI_SUCCESS;
+  }
+  else {
     DEBUG ((DEBUG_ERROR, "%a: No implementation of setting hardware information.", __FUNCTION__));
     ASSERT (FALSE);
   }
@@ -112,12 +115,40 @@ SetupIpmiRequestTransportPacket (
     if (PacketHeader != NULL) {
       *PacketHeader = (MANAGEABILITY_TRANSPORT_HEADER *)IpmiHeader;
     }
+
     if (PacketTrailer != NULL) {
       *PacketTrailer = NULL;
     }
+
     if (PacketBody != NULL) {
       *PacketBody = NULL;
     }
+
+    if (PacketBodySize != NULL) {
+      *PacketBodySize = 0;
+    }
+  } else if (CompareGuid (&gManageabilityTransportI2CGuid, TransportToken->Transport->ManageabilityTransportSpecification)) {
+    // This is SMBus transport interface
+    IpmiHeader = AllocateZeroPool (sizeof (MANAGEABILITY_IPMI_TRANSPORT_HEADER));
+    if (IpmiHeader == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
+
+    IpmiHeader->Command = Command;
+    IpmiHeader->Lun     = 0;
+    IpmiHeader->NetFn   = NetFunction;
+    if (PacketHeader != NULL) {
+      *PacketHeader = (MANAGEABILITY_TRANSPORT_HEADER *)IpmiHeader;
+    }
+
+    if (PacketTrailer != NULL) {
+      *PacketTrailer = NULL;
+    }
+
+    if (PacketBody != NULL) {
+      *PacketBody = NULL;
+    }
+
     if (PacketBodySize != NULL) {
       *PacketBodySize = 0;
     }
@@ -125,6 +156,7 @@ SetupIpmiRequestTransportPacket (
     DEBUG ((DEBUG_ERROR, "%a: No implementation of building up packet.", __FUNCTION__));
     ASSERT (FALSE);
   }
+
   return EFI_SUCCESS;
 }
 
@@ -180,8 +212,8 @@ CommonIpmiSubmitCommand (
     return Status;
   }
 
-  ThisRequestData       = RequestData;
-  ThisRequestDataSize   = RequestDataSize;
+  ThisRequestData      = RequestData;
+  ThisRequestDataSize  = RequestDataSize;
   IpmiTransportHeader  = NULL;
   IpmiTransportTrailer = NULL;
   Status               = SetupIpmiRequestTransportPacket (
@@ -204,7 +236,6 @@ CommonIpmiSubmitCommand (
 
   // Transmit packet.
   if ((ThisRequestData == NULL) || (ThisRequestDataSize == 0)) {
-
     // Transmit parameter were not changed by SetupIpmiRequestTransportPacket().
     TransferToken.TransmitPackage.TransmitPayload    = RequestData;
     TransferToken.TransmitPackage.TransmitSizeInByte = RequestDataSize;
@@ -248,5 +279,6 @@ CommonIpmiSubmitCommand (
   if (ResponseDataSize != NULL) {
     *ResponseDataSize = TransferToken.ReceivePackage.ReceiveSizeInByte;
   }
+
   return Status;
 }

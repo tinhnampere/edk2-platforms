@@ -1,0 +1,46 @@
+## @file
+#
+# Copyright (c) 2022, Ampere Computing LLC. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001D
+  BASE_NAME                      = ManageabilityTransportLibDxe
+  FILE_GUID                      = EBBBC192-A62B-492B-A568-8B0E1626B35D
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = ManageabilityTransportLib
+
+[Sources.common]
+  ManageabilityTransportSmbusDxe.c  
+  ../Common/SmbusCommon.c
+  ../Common/SmbusCommon.h
+  
+
+[Packages]
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  ManageabilityPkg/ManageabilityPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  PcdLib
+
+[Guids]
+  gManageabilityTransportI2CGuid
+  gManageabilityProtocolIpmiGuid
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdIpmiSmbusSlaveAddr
+  gEfiMdePkgTokenSpaceGuid.PcdIpmiSsifRequestRetryCount
+  gEfiMdePkgTokenSpaceGuid.PcdIpmiSsifRequestRetryInterval
+  gEfiMdePkgTokenSpaceGuid.PcdIpmiSsifResponseRetryCount
+  gEfiMdePkgTokenSpaceGuid.PcdIpmiSsifResponseRetryInterval
+
+[Depex]
+  TRUE

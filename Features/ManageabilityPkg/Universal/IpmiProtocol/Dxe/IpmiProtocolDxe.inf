@@ -36,12 +36,15 @@
   ManageabilityTransportLib
   UefiDriverEntryPoint
   UefiBootServicesTableLib
+  SmbusLib
+  TimerLib
 
 [Protocols]
   gIpmiProtocolGuid               # PROTOCOL ALWAYS_PRODUCED
 
 [Guids]
   gManageabilityProtocolIpmiGuid
+  gManageabilityTransportI2CGuid
   gManageabilityTransportKcsGuid
 
 [FixedPcd]

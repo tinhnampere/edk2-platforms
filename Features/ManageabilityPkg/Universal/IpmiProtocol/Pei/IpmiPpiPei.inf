@@ -38,6 +38,8 @@
   ManageabilityTransportLib
   PeimEntryPoint
   # ManageabilityTransportLib
+  SmbusLib
+  TimerLib
 
 [Ppis]
   gPeiIpmiPpiGuid       # PPI ALWAYS PRODUCED
@@ -45,6 +47,7 @@
 [Guids]
   gManageabilityProtocolIpmiGuid
   gManageabilityTransportKcsGuid
+  gManageabilityTransportI2CGuid
 
 [FixedPcd]
   gEfiMdePkgTokenSpaceGuid.PcdIpmiKcsBaseAddress
