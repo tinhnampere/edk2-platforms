@@ -12,13 +12,13 @@
 
 //
 // BaseManageabilityTransportHelper is used by PEI, DXE and SMM.
-// Make sure the global variables added here should be unchangable.
+// Make sure the global variables added here should be unchangeable.
 //
 MANAGEABILITY_SPECIFICATION_NAME  ManageabilitySpecNameTable[] = {
   { &gManageabilityTransportKcsGuid,    L"KCS"     },
   { &gManageabilityTransportI2CGuid,    L"I2C"     },
   { &gManageabilityTransportPciVdmGuid, L"PCI VDM" },
-  { &gManageabilityTransportMctpGuid,   L"MCTP"    },
+  // { &gManageabilityTransportMctpGuid,   L"MCTP"    },
   { &gManageabilityProtocolIpmiGuid,    L"IPMI"    },
   { &gManageabilityProtocolMctpGuid,    L"MCTP"    },
   { &gManageabilityProtocolPldmGuid,    L"PLDM"    }

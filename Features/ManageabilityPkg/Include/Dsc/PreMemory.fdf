@@ -1,0 +1,11 @@
+## @file
+#  FDF file for pre-memory modules that enable USB3 Debug.
+#
+# Copyright (c) 2019, Intel Corporation. All rights reserved.<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+INF ManageabilityPkg/Universal/IpmiProtocol/Pei/IpmiPpiPei.inf
+

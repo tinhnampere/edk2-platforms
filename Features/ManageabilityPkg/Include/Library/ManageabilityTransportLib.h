@@ -80,7 +80,7 @@ typedef UINT32 MANAGEABILITY_TRANSPORT_CAPABILITY;
 ///   e.g., MANAGEABILITY_TRANSPORT_FUNCTION_V1_1.
 ///
 /// The new function must be added base on the last version of
-/// MANAGEABILITY_TRANSPORT_FUNCTION to keep the backward compatability.
+/// MANAGEABILITY_TRANSPORT_FUNCTION to keep the backward compatibility.
 ///
 typedef union {
   MANAGEABILITY_TRANSPORT_FUNCTION_V1_0    *Version1_0;

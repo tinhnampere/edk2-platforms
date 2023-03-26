@@ -37,7 +37,7 @@
   ManageabilityTransportHelperLib
   ManageabilityTransportLib
   PeimEntryPoint
-  ManageabilityTransportLib
+  # ManageabilityTransportLib
 
 [Ppis]
   gPeiIpmiPpiGuid       # PPI ALWAYS PRODUCED

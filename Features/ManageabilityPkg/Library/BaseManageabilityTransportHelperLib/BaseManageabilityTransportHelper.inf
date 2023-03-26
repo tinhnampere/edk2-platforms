@@ -34,7 +34,7 @@
   gManageabilityTransportKcsGuid
   gManageabilityTransportI2CGuid
   gManageabilityTransportPciVdmGuid
-  gManageabilityTransportMctpGuid
+  # gManageabilityTransportMctpGuid
   gManageabilityProtocolIpmiGuid
   gManageabilityProtocolMctpGuid
   gManageabilityProtocolPldmGuid

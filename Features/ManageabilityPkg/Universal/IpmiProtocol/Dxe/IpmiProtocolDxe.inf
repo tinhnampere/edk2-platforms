@@ -30,6 +30,7 @@
 
 [LibraryClasses]
   BaseMemoryLib
+  MemoryAllocationLib
   DebugLib
   ManageabilityTransportHelperLib
   ManageabilityTransportLib
